@@ -144,6 +144,9 @@
   "languageKorean": "Korean",
   "languageArabic": "Arabic",
   "languageHindi": "Hindi",
+  "languageSwahili": "Swahili",
+  "Professional": "Professional",
+  "Casual": "Casual",
   "translatorNoTextError": "Please enter text to translate.",
   "translatorTranslateButton": "Translate",
   "translatorNoTargetLanguageError": "Please select a target language.",
@@ -476,6 +479,91 @@
   "enterPromptNamePlaceholder": "e.g., Email Response",
   "enterPromptDescriptionPlaceholder": "What is this prompt for?",
   "enterPromptContentPlaceholder": "Write your prompt here. Use {{variable}} for dynamic content.",
+  "welcomeBanner": {
+    "title": "Welcome to AI Assistant V2",
+    "whatsNew": "What's New",
+    "whatsNewQuestion": "What's New?"
+  },
+  "welcomeV2": {
+    "backToChat": "Back to Chat",
+    "title": "Welcome to AI Assistant V2",
+    "subtitle": "A complete redesign with powerful new features",
+    "webSearch": {
+      "title": "Web Search Mode",
+      "description": "Give AI access to real-time web search with privacy-focused options",
+      "quickAccess": "Quick access:",
+      "quickAccessInstructions": "Click the + button next to chat input → Select \"Web Search\"",
+      "setAsDefault": "Set as default:",
+      "setAsDefaultInstructions": "Open model settings and enable Web Search Mode toggle. Choose between:",
+      "privacyFocused": "Privacy-Focused (default)",
+      "privacyFocusedDescription": "Only search query sent externally",
+      "azureAIFoundry": "Azure AI Foundry Mode",
+      "azureAIFoundryDescription": "Faster, but full conversation stored externally",
+      "learnMore": "Learn more about search modes →"
+    },
+    "tones": {
+      "title": "Tones (Voice Profiles)",
+      "description": "Control AI writing style, formality, and personality",
+      "createTones": "1. Create tones:",
+      "createTonesInstructions": "Quick Actions in sidebar → Tones tab",
+      "useTones": "2. Use tones:",
+      "useTonesInstructions": "Click tone dropdown next to chat input",
+      "exampleProfessionalDesc": "Formal, business tone",
+      "exampleCasualDesc": "Friendly, conversational"
+    },
+    "aiAssist": {
+      "title": "AI Assist for Prompts & Tones",
+      "description": "Let AI help you create better prompts and tones faster",
+      "step1": "Open Quick Actions in sidebar",
+      "step2Prefix": "Navigate to",
+      "step2Suffix": "tab",
+      "step3": "Look for the AI Assistant panel",
+      "getSuggestions": "Get suggestions",
+      "getSuggestionsDesc": "AI analyzes your draft and offers improvements",
+      "buildFromFiles": "Build from files",
+      "buildFromFilesDesc": "Upload documents to generate prompts/tones",
+      "testBeforeSaving": "Test before saving",
+      "testBeforeSavingDesc": "Try out prompts/tones in a live chat preview"
+    },
+    "customAgents": {
+      "title": "Custom Agents",
+      "advancedBadge": "ADVANCED",
+      "description": "Specialized AI agents with enhanced capabilities like web search and code interpretation",
+      "advancedFeature": "Advanced Feature",
+      "advancedFeatureDesc": "Custom Agents run on Azure AI Foundry with specialized tools. Requires coordination with the AI Assistant technical team to create agent IDs.",
+      "howToAccess": "How to access:",
+      "howToAccessInstructions": "Settings → Models → Agents tab",
+      "whatYouCanDo": "What you can do:",
+      "configureAgents": "Configure agents with specialized capabilities",
+      "importExport": "Import/export agent configurations",
+      "selectFromDropdown": "Select custom agents from model dropdown"
+    },
+    "audioTranslation": {
+      "title": "Audio Transcription with Translation",
+      "description": "Automatically translate audio transcripts to 13+ languages",
+      "howToUse": "How to use:",
+      "step1": "Upload an audio or video file",
+      "step2": "Click the language dropdown in transcription interface",
+      "step3": "Select your target language",
+      "availableLanguages": "Available languages:",
+      "moreLanguages": "+7 more"
+    },
+    "pwa": {
+      "title": "Install as Mobile App",
+      "description": "Progressive Web App with native experience",
+      "installTip": "Tip: Install after signing in to preserve your authentication and have the best experience.",
+      "howToInstall": "How to install:",
+      "step1": "Sign in to your account",
+      "step2": "Open Settings → Mobile App for detailed instructions",
+      "step3": "On mobile: Tap browser menu (⋮ or ⚙️)",
+      "step4": "Look for \"Add to Home Screen\" or \"Install App\"",
+      "step5": "Follow prompts to install",
+      "benefits": "Benefits:",
+      "benefit1": "Launch like a native app from home screen",
+      "benefit2": "Full-screen without browser UI",
+      "benefit3": "Offline access to saved conversations"
+    }
+  },
   "common": {
     "close": "Close",
     "remove": "Remove",
@@ -955,20 +1043,20 @@
       "description": "AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.",
       "knowledgeCutoff": "Real-time web search"
     },
-    "gpt_5": {
-      "name": "GPT-5",
+    "gpt_5_2": {
+      "name": "GPT-5.2",
       "description": "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
-      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+      "knowledgeCutoff": "Dec 2025"
     },
     "gpt_5_mini": {
       "name": "GPT-5 Mini",
       "description": "Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.",
       "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
     },
-    "gpt_5_chat": {
-      "name": "GPT-5 Chat",
-      "description": "Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.",
-      "knowledgeCutoff": "Oct 1, 2025 8:00 PM"
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Specialized variant of GPT-5.2 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.",
+      "knowledgeCutoff": "Dec 2025"
     },
     "o3": {
       "name": "o3",
