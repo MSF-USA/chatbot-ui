@@ -336,7 +336,19 @@
   "Team Templates": "Team-Vorlagen",
   "selected": "ausgewählt",
   "folders": "Ordner",
-  "agents": "Agenten",
+  "agents": {
+    "exportAgent": "Agent exportieren",
+    "editAgent": "Agent bearbeiten",
+    "agentName": "Agentenname",
+    "myResearchAssistant": "Mein Forschungsassistent",
+    "agentId": "Agenten-ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Beschreibung (optional)",
+    "descriptionPlaceholder": "Spezialisierter Agent für Forschungsaufgaben...",
+    "baseModel": "Basismodell",
+    "formatDescription": "Format: asst_xxxxx (von MSF AI Assistant Foundry)",
+    "importantInfo": "Dieser Agent hat Zugriff auf den Konversationskontext und kann die gleichen Tools wie Standardmodelle verwenden. Stellen Sie sicher, dass die Agenten-ID korrekt ist, da sie später nicht geändert werden kann."
+  },
   "Quick Actions": "Schnellaktionen",
   "Type / in chat to access your prompts": "Geben Sie / im Chat ein, um auf Ihre Eingabeaufforderungen zuzugreifen",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Geben Sie / im Chat ein, wählen Sie Ihre Eingabeaufforderung aus und füllen Sie die Variablen aus, wenn Sie dazu aufgefordert werden",
@@ -383,7 +395,6 @@
   "Custom Agents": "Benutzerdefinierte Agenten",
   "Delete template and all its items": "Vorlage und alle ihre Elemente löschen",
   "Description (Optional)": "Beschreibung (Optional)",
-  "Edit Prompt": "Eingabeaufforderung bearbeiten",
   "Edit Tone": "Ton bearbeiten",
   "Email Response Template": "E-Mail-Antwortvorlage",
   "Example Prompt": "Beispiel-Eingabeaufforderung",
@@ -443,7 +454,6 @@
   "msf_logo_alt": "MSF-Logo",
   "collapse_sidebar": "Seitenleiste einklappen",
   "expand_sidebar": "Seitenleiste erweitern",
-  "Voice Guidelines": "Sprachrichtlinien",
   "Please upload some content or describe the tone you want": "Bitte laden Sie Inhalte hoch oder beschreiben Sie den gewünschten Ton",
   "Untitled Tone": "Unbenannter Ton",
   "Failed to analyze tone": "Ton-Analyse fehlgeschlagen",
@@ -567,19 +577,6 @@
     "criticalErrorReload": "Ein kritischer Fehler ist aufgetreten. Bitte laden Sie die Seite neu.",
     "reloadPage": "Seite neu laden",
     "persistContactSupport": "Wenn dieses Problem weiterhin besteht, wenden Sie sich bitte an den Support"
-  },
-  "agents": {
-    "exportAgent": "Agent exportieren",
-    "editAgent": "Agent bearbeiten",
-    "agentName": "Agentenname",
-    "myResearchAssistant": "Mein Forschungsassistent",
-    "agentId": "Agenten-ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Beschreibung (optional)",
-    "descriptionPlaceholder": "Spezialisierter Agent für Forschungsaufgaben...",
-    "baseModel": "Basismodell",
-    "formatDescription": "Format: asst_xxxxx (von MSF AI Assistant Foundry)",
-    "importantInfo": "Dieser Agent hat Zugriff auf den Konversationskontext und kann die gleichen Tools wie Standardmodelle verwenden. Stellen Sie sicher, dass die Agenten-ID korrekt ist, da sie später nicht geändert werden kann."
   },
   "prompts": {
     "buildReusablePrompts": "Erstellen Sie wiederverwendbare Eingabeaufforderungen mit KI-Unterstützung",
@@ -1056,5 +1053,78 @@
   },
   "notFound": {
     "lostDog": "Verlorener Hund"
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Speicher wird überprüft",
+      "analyzingData": "Daten werden analysiert...",
+      "updateAvailable": "Update verfügbar",
+      "storageSpaceLimited": "Speicherplatz begrenzt",
+      "migratingData": "Daten werden migriert",
+      "migrationComplete": "Migration abgeschlossen",
+      "partiallyComplete": "Teilweise abgeschlossen",
+      "migrationFailed": "Migration fehlgeschlagen"
+    },
+    "descriptions": {
+      "foundLegacyData": "Wir haben Daten aus einer früheren Version gefunden. Möchten Sie diese für das verbesserte System migrieren?",
+      "storageSpaceWarning": "Ihre Daten benötigen mehr Speicherplatz als derzeit verfügbar ist. Wir empfehlen den inkrementellen Migrationsmodus.",
+      "pleaseWait": "Bitte warten Sie, während wir Ihre Daten aktualisieren...",
+      "dataIsSafe": "Ihre Originaldaten sind sicher. Sie können es erneut versuchen oder vorerst überspringen.",
+      "itemsTooLarge": "Diese Elemente sind zu groß für den Speicher. Sie können sie exportieren, Speicherplatz freigeben oder ohne sie fortfahren.",
+      "settingsUpdated": "Ihre Einstellungen wurden aktualisiert."
+    },
+    "benefits": {
+      "title": "Vorteile",
+      "fasterPerformance": "Schnellere Leistung",
+      "betterReliability": "Höhere Zuverlässigkeit",
+      "dataPreserved": "Ihre Daten bleiben erhalten"
+    },
+    "options": {
+      "advancedOptions": "Erweiterte Optionen",
+      "useIncrementalMode": "Inkrementellen Modus verwenden",
+      "slowerButSafer": "langsamer, aber sicherer",
+      "recommended": "empfohlen",
+      "deleteLegacyData": "Altdaten nach Migration löschen",
+      "freesUpSpace": "gibt Speicherplatz frei"
+    },
+    "actions": {
+      "skip": "Überspringen",
+      "migrateData": "Daten migrieren",
+      "migrateAnyway": "Dennoch migrieren",
+      "continue": "Fortfahren",
+      "retry": "Wiederholen",
+      "exportBackupFirst": "Zuerst Backup exportieren",
+      "exportSkippedItems": "Übersprungene Elemente exportieren"
+    },
+    "quota": {
+      "availableSpace": "Verfügbarer Speicherplatz",
+      "dataToMigrate": "Zu migriernde Daten",
+      "additionalSpaceNeeded": "Zusätzlicher Speicherplatz benötigt"
+    },
+    "progress": {
+      "migratingConversations": "Konversationen werden migriert",
+      "migratingPrompts": "Prompts werden migriert",
+      "migratingAgents": "Agents werden migriert",
+      "finishingUp": "Abschluss läuft"
+    },
+    "results": {
+      "successfullyMigrated": "Erfolgreich migriert",
+      "notes": "Notizen",
+      "couldNotMigrate": "Konnte nicht migriert werden",
+      "legacyDataDeleted": "Altdaten gelöscht",
+      "freed": "freigegeben"
+    },
+    "units": {
+      "conversation": "Konversation",
+      "conversations": "Konversationen",
+      "folder": "Ordner",
+      "folders": "Ordner",
+      "prompt": "Prompt",
+      "prompts": "Prompts",
+      "customAgent": "Custom Agent",
+      "customAgents": "benutzerdefinierte Agenten",
+      "item": "Element",
+      "items": "Elemente"
+    }
   }
 }
