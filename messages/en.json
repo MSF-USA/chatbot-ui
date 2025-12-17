@@ -644,6 +644,22 @@
     "collapseThinking": "Collapse thinking",
     "expandThinking": "Expand thinking"
   },
+  "transcript": {
+    "originalTranscript": "Original Transcript",
+    "transcript": "Transcript",
+    "transcriptionOf": "Transcription of",
+    "translating": "Translating...",
+    "copied": "Copied!",
+    "copy": "Copy",
+    "download": "Download",
+    "translate": "Translate",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "expandHint": "Click \"Expand\" to view the original transcript",
+    "listen": "Listen to transcript",
+    "stopAudio": "Stop audio",
+    "openAsDocument": "Open as document"
+  },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
