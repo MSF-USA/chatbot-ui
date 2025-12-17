@@ -308,7 +308,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
     event.stopPropagation();
 
     if (!filePreview.file) {
-      alert('File not available for editing');
+      alert(t('fileUpload.fileNotAvailable'));
       return;
     }
 
@@ -365,7 +365,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       openArtifact(text, language, filePreview.name);
     } catch (error) {
       console.error('Error opening file in code editor:', error);
-      alert('Failed to open file in code editor. Please try again.');
+      alert(t('fileUpload.failedToOpenInEditor'));
     } finally {
       setIsOpeningInEditor(false);
     }
@@ -585,7 +585,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                     size={12}
                     className="flex-shrink-0 animate-spin"
                   />
-                  <span>Extracting audio...</span>
+                  <span>{t('fileUpload.extractingAudio')}</span>
                 </div>
               )}
               {/* Transcription status indicators */}
@@ -595,7 +595,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                     size={12}
                     className="flex-shrink-0 animate-spin"
                   />
-                  <span>Queued for transcription</span>
+                  <span>{t('fileUpload.queuedForTranscription')}</span>
                 </div>
               )}
               {filePreview.transcriptionStatus === 'processing' && (
@@ -604,19 +604,19 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                     size={12}
                     className="flex-shrink-0 animate-spin"
                   />
-                  <span>Transcribing...</span>
+                  <span>{t('fileUpload.transcribing')}</span>
                 </div>
               )}
               {filePreview.transcriptionStatus === 'completed' && (
                 <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
                   <IconCheck size={12} className="flex-shrink-0" />
-                  <span>Transcribed</span>
+                  <span>{t('fileUpload.transcribed')}</span>
                 </div>
               )}
               {filePreview.transcriptionStatus === 'failed' && (
                 <div className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
                   <IconX size={12} className="flex-shrink-0" />
-                  <span>Transcription failed</span>
+                  <span>{t('fileUpload.transcriptionFailed')}</span>
                 </div>
               )}
               {/* Extracted from video indicator */}
@@ -624,21 +624,21 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                 <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
                   <IconCheck size={12} className="flex-shrink-0" />
                   <span>
-                    Extracted from{' '}
-                    {(
-                      (1 -
-                        filePreview.extractedFromVideo.extractedSize /
-                          filePreview.extractedFromVideo.originalSize) *
-                      100
-                    ).toFixed(0)}
-                    % smaller
+                    {t('fileUpload.extractedFromSmaller', {
+                      percent: (
+                        (1 -
+                          filePreview.extractedFromVideo.extractedSize /
+                            filePreview.extractedFromVideo.originalSize) *
+                        100
+                      ).toFixed(0),
+                    })}
                   </span>
                 </div>
               )}
               {isPdf && status === 'completed' && (
                 <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                   <IconInfoCircle size={12} className="flex-shrink-0" />
-                  <span>Text extraction</span>
+                  <span>{t('fileUpload.textExtraction')}</span>
                 </div>
               )}
               {(isAudio || isVideo) &&
@@ -654,14 +654,16 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                   onClick={openInCodeEditor}
                   disabled={isOpeningInEditor}
                   className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Open in Code Editor"
+                  title={t('fileUpload.openInEditor')}
                 >
                   <IconCode
                     size={12}
                     className={isOpeningInEditor ? 'animate-pulse' : ''}
                   />
                   <span>
-                    {isOpeningInEditor ? 'Opening...' : 'Open in Editor'}
+                    {isOpeningInEditor
+                      ? t('fileUpload.opening')
+                      : t('fileUpload.openInEditor')}
                   </span>
                 </button>
               )}
@@ -685,7 +687,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         {status === 'failed' && (
           <div className="absolute inset-0 bg-red-500/10 backdrop-blur-sm flex items-center justify-center pointer-events-none">
             <span className="text-red-600 dark:text-red-400 text-sm font-medium">
-              Failed to upload
+              {t('fileUpload.failedToUpload')}
             </span>
           </div>
         )}
@@ -700,6 +702,8 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
   setSubmitType,
   uploadProgress,
 }) => {
+  const t = useTranslations();
+
   if (filePreviews.length === 0) {
     return null;
   }
@@ -709,7 +713,9 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
       <div className="mb-1.5">
         <span className="text-xs text-gray-500 dark:text-gray-400">
           {filePreviews.length}{' '}
-          {filePreviews.length === 1 ? 'attachment' : 'attachments'}
+          {filePreviews.length === 1
+            ? t('fileUpload.attachment')
+            : t('fileUpload.attachments')}
         </span>
       </div>
       <div className="flex flex-wrap gap-2 mb-2">
