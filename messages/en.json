@@ -1256,6 +1256,29 @@
     "transcribing": "Transcribing...",
     "complete": "Complete",
     "failed": "Failed",
-    "uploadFiles": "Upload files (audio, video, or text)"
+    "uploadFiles": "Upload files (audio, video, or text)",
+    "autoDetect": "Auto-detect",
+    "fileNotAvailable": "File not available for editing",
+    "failedToOpenInEditor": "Failed to open file in code editor. Please try again.",
+    "extractingAudio": "Extracting audio...",
+    "queuedForTranscription": "Queued for transcription",
+    "transcribed": "Transcribed",
+    "transcriptionFailed": "Transcription failed",
+    "extractedFromSmaller": "Extracted from {percent}% smaller",
+    "textExtraction": "Text extraction",
+    "opening": "Opening...",
+    "openInEditor": "Open in Editor",
+    "failedToUpload": "Failed to upload",
+    "attachment": "attachment",
+    "attachments": "attachments"
+  },
+  "userMessage": {
+    "open": "Open",
+    "showFullMessage": "Show full message",
+    "collapse": "Collapse",
+    "customTone": "Custom Tone"
+  },
+  "codeBlock": {
+    "openInEditor": "Open in editor"
   }
 }
