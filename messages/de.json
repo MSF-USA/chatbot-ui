@@ -1003,6 +1003,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Schnelles und kostengünstiges Claude-Modell, optimiert für schnelle Aufgaben. Ideal für einfache Anfragen, Zusammenfassungen und Hochvolumen-Anwendungen.",
       "knowledgeCutoff": "Januar 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAIs fortschrittlichstes Modell – hervorragend geeignet für komplexes Denken, Code-Generierung und technische Problemlösungen. Am besten für analytische Aufgaben, Programmierherausforderungen, Forschung und detaillierte Erklärungen. Unterstützt anpassbaren Denkaufwand und Antwortlänge.",
+      "knowledgeCutoff": "Dez 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Spezialisierte Variante von GPT-5.2, optimiert für Konversationsinteraktionen und emotionale Intelligenz. Hervorragend für einfühlsame Kommunikation, mentale Unterstützung, kreatives Schreiben, Brainstorming und natürliche Dialoge. Am besten für lockere Unterhaltungen, Beratungssituationen und Aufgaben mit emotionalem Bezug.",
+      "knowledgeCutoff": "Dez 2025"
     }
   },
   "searchMode": {
@@ -1126,5 +1136,94 @@
       "item": "Element",
       "items": "Elemente"
     }
-  }
+  },
+  "languageSwahili": "Suaheli",
+  "welcomeBanner": {
+    "title": "Willkommen beim AI Assistant V2",
+    "whatsNew": "Neues",
+    "whatsNewQuestion": "Was ist neu?"
+  },
+  "welcomeV2": {
+    "backToChat": "Zurück zum Chat",
+    "title": "Willkommen beim AI Assistant V2",
+    "subtitle": "Komplett neu gestaltet mit leistungsstarken neuen Funktionen",
+    "webSearch": {
+      "title": "Websuche-Modus",
+      "description": "Geben Sie der KI Zugriff auf Echtzeit-Websuche mit datenschutzfreundlichen Optionen",
+      "quickAccess": "Schnellzugriff:",
+      "quickAccessInstructions": "Klicken Sie auf die + Schaltfläche neben dem Chatfeld → Wählen Sie \"Websuche\"",
+      "setAsDefault": "Als Standard festlegen:",
+      "setAsDefaultInstructions": "Öffnen Sie die Modelleinstellungen und aktivieren Sie den Websuche-Modus. Wählen Sie zwischen:",
+      "privacyFocused": "Datenschutzorientiert (Standard)",
+      "privacyFocusedDescription": "Es wird nur die Suchanfrage extern gesendet",
+      "azureAIFoundry": "Azure AI Foundry-Modus",
+      "azureAIFoundryDescription": "Schneller, aber vollständiger Gesprächsverlauf wird extern gespeichert",
+      "learnMore": "Mehr über die Suchmodi erfahren →"
+    },
+    "tones": {
+      "title": "Töne (Sprachprofile)",
+      "description": "Steuern Sie Schreibstil, Formalität und Persönlichkeit der KI",
+      "createTones": "1. Töne erstellen:",
+      "createTonesInstructions": "Schnellaktionen in der Seitenleiste → Reiter \"Töne\"",
+      "useTones": "2. Töne verwenden:",
+      "useTonesInstructions": "Dropdown für Ton neben dem Chatfeld anklicken",
+      "exampleProfessionalDesc": "Formeller, geschäftlicher Ton",
+      "exampleCasualDesc": "Freundlich, umgangssprachlich"
+    },
+    "aiAssist": {
+      "title": "AI-Assistenz für Prompts & Töne",
+      "description": "Lassen Sie die KI Ihnen helfen, bessere Prompts und Töne schneller zu erstellen",
+      "step1": "Schnellaktionen in der Seitenleiste öffnen",
+      "step2": "Zum Tab {prompts} oder {tones} wechseln",
+      "step3": "Suchen Sie das AI Assistant-Panel",
+      "getSuggestions": "Vorschläge erhalten",
+      "getSuggestionsDesc": "Die KI analysiert Ihren Entwurf und gibt Verbesserungsvorschläge",
+      "buildFromFiles": "Aus Dateien erstellen",
+      "buildFromFilesDesc": "Dokumente hochladen, um Prompts/Töne zu generieren",
+      "testBeforeSaving": "Vor dem Speichern testen",
+      "testBeforeSavingDesc": "Testen Sie Prompts/Töne in einer Chat-Vorschau",
+      "step2Prefix": "Navigieren Sie zu",
+      "step2Suffix": "Tab"
+    },
+    "customAgents": {
+      "title": "Benutzerdefinierte Agents",
+      "advancedBadge": "FORTGESCHRITTEN",
+      "description": "Spezialisierte KI-Agents mit erweiterten Funktionen wie Websuche und Code-Interpretation",
+      "advancedFeature": "Fortgeschrittene Funktion",
+      "advancedFeatureDesc": "Benutzerdefinierte Agents laufen auf Azure AI Foundry mit spezialisierten Tools. Die Erstellung von Agent-IDs erfolgt in Abstimmung mit dem technischen Team des AI Assistant.",
+      "howToAccess": "Zugriff:",
+      "howToAccessInstructions": "Einstellungen → Modelle → Reiter \"Agents\"",
+      "whatYouCanDo": "Das können Sie tun:",
+      "configureAgents": "Agents mit spezialisierten Fähigkeiten konfigurieren",
+      "importExport": "Agent-Konfigurationen importieren/exportieren",
+      "selectFromDropdown": "Benutzerdefinierte Agents aus dem Modell-Dropdown auswählen"
+    },
+    "audioTranslation": {
+      "title": "Audio-Transkription mit Übersetzung",
+      "description": "Audio-Transkripte automatisch in über 13 Sprachen übersetzen",
+      "howToUse": "So verwenden Sie es:",
+      "step1": "Laden Sie eine Audio- oder Videodatei hoch",
+      "step2": "Klicken Sie im Transkriptions-Interface auf das Sprach-Dropdown",
+      "step3": "Wählen Sie Ihre Zielsprache",
+      "availableLanguages": "Verfügbare Sprachen:",
+      "moreLanguages": "+7 weitere"
+    },
+    "pwa": {
+      "title": "Als Mobile App installieren",
+      "description": "Progressive Web App mit nativer Nutzererfahrung",
+      "installTip": "Tipp: Installieren Sie die App nach dem Anmelden, um Ihre Authentifizierung beizubehalten und das beste Nutzungserlebnis zu erzielen.",
+      "howToInstall": "So installieren Sie die App:",
+      "step1": "Melden Sie sich bei Ihrem Konto an",
+      "step2": "Öffnen Sie Einstellungen → Mobile App für eine detaillierte Anleitung",
+      "step3": "Auf dem Mobilgerät: Tippen Sie auf das Browser-Menü (⋮ oder ⚙️)",
+      "step4": "Suchen Sie nach \"Zum Startbildschirm hinzufügen\" oder \"App installieren\"",
+      "step5": "Folgen Sie den Anweisungen zur Installation",
+      "benefits": "Vorteile:",
+      "benefit1": "Wie eine native App vom Startbildschirm starten",
+      "benefit2": "Vollbild ohne Browser-Oberfläche",
+      "benefit3": "Offline-Zugriff auf gespeicherte Unterhaltungen"
+    }
+  },
+  "Professional": "Professionell",
+  "Casual": "Locker"
 }
