@@ -87,10 +87,10 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
 
           {isAdvancedExpanded && (
             <div className="px-4 pb-3 border-t border-gray-200 dark:border-gray-700">
-              {/* System Prompt */}
+              {/* Custom Instructions */}
               <div className="mt-3">
                 <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-                  {t('settings.Default System Prompt') + '*'}
+                  {t('settings.Custom Instructions') + '*'}
                 </div>
                 <SystemPrompt
                   prompts={homeState.prompts}
