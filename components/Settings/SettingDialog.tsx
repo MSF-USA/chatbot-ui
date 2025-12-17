@@ -55,6 +55,8 @@ export function SettingDialog() {
       systemPrompt: '',
       advancedMode: false,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
     },
   });
 
@@ -199,6 +201,8 @@ export function SettingDialog() {
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       advancedMode: false,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
     };
     setTheme(defaultTheme);
     setTemperature(0.5);

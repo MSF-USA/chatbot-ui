@@ -17,6 +17,8 @@ import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
 import { useModalState } from '@/client/hooks/ui/useModalSync';
 import { useUI } from '@/client/hooks/ui/useUI';
 
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
 import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 
 import { PromptModal } from '@/components/Prompts/PromptModal';
@@ -92,6 +94,8 @@ export function Chat({
     systemPrompt,
     temperature,
     defaultSearchMode,
+    displayNamePreference,
+    customDisplayName,
     addPrompt,
   } = useSettings();
   const {
@@ -303,10 +307,11 @@ export function Chat({
               <div className="w-full flex flex-col items-center justify-center gap-6 -translate-y-12">
                 {/* Logo and Heading */}
                 <EmptyState
-                  userName={
-                    session?.user?.givenName ||
-                    session?.user?.displayName?.split(' ')[0]
-                  }
+                  userName={getUserDisplayName(
+                    session?.user,
+                    displayNamePreference,
+                    customDisplayName,
+                  )}
                 />
 
                 {/* Centered Chat Input */}

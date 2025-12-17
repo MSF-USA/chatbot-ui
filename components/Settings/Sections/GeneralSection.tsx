@@ -4,6 +4,7 @@ import {
   IconMoon,
   IconSettings,
   IconSun,
+  IconUser,
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
 
@@ -11,8 +12,12 @@ import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useUI } from '@/client/hooks/ui/useUI';
 
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
+import { DisplayNamePreference } from '@/types/settings';
 import { Settings } from '@/types/settings';
 
 import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
@@ -60,6 +65,12 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
 }) => {
   const t = useTranslations();
   const { theme, setTheme } = useUI();
+  const {
+    displayNamePreference,
+    customDisplayName,
+    setDisplayNamePreference,
+    setCustomDisplayName,
+  } = useSettings();
   const [fullProfile, setFullProfile] = useState<FullUserProfile | null>(
     prefetchedProfile || null,
   );
@@ -243,6 +254,70 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
                     <IconMoon size={16} />
                   </button>
                 </Tooltip>
+              </div>
+            </div>
+
+            {/* Display Name Preference */}
+            <div className="px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+              <div className="flex flex-row justify-between items-center">
+                <div className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  <IconUser
+                    size={18}
+                    className="text-gray-500 dark:text-gray-400"
+                  />
+                  {t('settings.Display Name')}
+                </div>
+                <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                  {(
+                    [
+                      'firstName',
+                      'lastName',
+                      'fullName',
+                      'custom',
+                      'none',
+                    ] as const
+                  ).map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => setDisplayNamePreference(option)}
+                      className={`px-2.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                        displayNamePreference === option
+                          ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {t(
+                        `settings.${option === 'firstName' ? 'First Name' : option === 'lastName' ? 'Last Name' : option === 'fullName' ? 'Full Name' : option === 'custom' ? 'Custom' : 'None'}`,
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Name Input */}
+              {displayNamePreference === 'custom' && (
+                <div className="mt-3 ml-6">
+                  <input
+                    type="text"
+                    value={customDisplayName}
+                    onChange={(e) => setCustomDisplayName(e.target.value)}
+                    placeholder={t('settings.Custom Display Name Placeholder')}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    maxLength={50}
+                  />
+                </div>
+              )}
+
+              {/* Preview */}
+              <div className="mt-3 ml-6 text-xs text-gray-500 dark:text-gray-400 italic">
+                {t('settings.displayNamePreview', {
+                  name:
+                    getUserDisplayName(
+                      user,
+                      displayNamePreference,
+                      customDisplayName,
+                    ) || 'User',
+                })}
               </div>
             </div>
           </div>
