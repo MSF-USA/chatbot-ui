@@ -1011,6 +1011,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Model Claude ràpid i econòmic optimitzat per a tasques àgils. Ideal per a consultes senzilles, resums i aplicacions d'alt volum.",
       "knowledgeCutoff": "gener 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "El model més avançat d'OpenAI, excel·leix en raonament complex, generació de codi i resolució de problemes tècnics. Ideal per a tasques analítiques, reptes de programació, recerca i explicacions detallades. Permet ajustar l'esforç de raonament i la quantitat de detall en les respostes.",
+      "knowledgeCutoff": "des. 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variant especialitzada de GPT-5.2 optimitzada per a converses i intel·ligència emocional. Excel·leix en la comunicació empàtica, suport en salut mental, escriptura creativa, generació d'idees i diàlegs naturals. Recomanada per a converses informals, escenaris de suport i tasques que requereixen consciència emocional.",
+      "knowledgeCutoff": "des. 2025"
     }
   },
   "searchMode": {
@@ -1126,5 +1136,94 @@
       "item": "element",
       "items": "elements"
     }
-  }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Benvingut/da a l'AI Assistant V2",
+    "whatsNew": "Novetats",
+    "whatsNewQuestion": "Quines són les novetats?"
+  },
+  "welcomeV2": {
+    "backToChat": "Tornar al xat",
+    "title": "Benvingut/da a l'AI Assistant V2",
+    "subtitle": "Un redisseny complet amb noves funcionalitats potents",
+    "webSearch": {
+      "title": "Mode de cerca web",
+      "description": "Permet que l'IA accedeixi a cerques web en temps real amb opcions centrades en la privacitat",
+      "quickAccess": "Accés ràpid:",
+      "quickAccessInstructions": "Fes clic al botó + al costat de l'entrada del xat → Selecciona \"Web Search\"",
+      "setAsDefault": "Establir com a predeterminat:",
+      "setAsDefaultInstructions": "Obre la configuració del model i activa el commutador de Mode de cerca web. Tria entre:",
+      "privacyFocused": "Orientat a la privacitat (predeterminat)",
+      "privacyFocusedDescription": "Només la consulta de cerca s'envia externament",
+      "azureAIFoundry": "Mode Azure AI Foundry",
+      "azureAIFoundryDescription": "Més ràpid, però tota la conversa s'emmagatzema externament",
+      "learnMore": "Més informació sobre els modes de cerca →"
+    },
+    "tones": {
+      "title": "Tons (Perfils de veu)",
+      "description": "Controla l'estil d'escriptura, la formalitat i la personalitat de l'IA",
+      "createTones": "1. Crea tons:",
+      "createTonesInstructions": "Accions ràpides a la barra lateral → Pestanya Tons",
+      "useTones": "2. Utilitza tons:",
+      "useTonesInstructions": "Fes clic al desplegable de to al costat de l'entrada del xat",
+      "exampleProfessionalDesc": "To formal i empresarial",
+      "exampleCasualDesc": "Amistós i conversacional"
+    },
+    "aiAssist": {
+      "title": "Assistència IA per a Prompts i Tons",
+      "description": "Deixa que l'IA t'ajudi a crear millors prompts i tons més ràpid",
+      "step1": "Obre les Accions ràpides a la barra lateral",
+      "step2": "Ves a la pestanya {prompts} o {tones}",
+      "step3": "Busca el panell de l'AI Assistant",
+      "getSuggestions": "Obtén suggeriments",
+      "getSuggestionsDesc": "L'IA analitza el teu esborrany i proposa millores",
+      "buildFromFiles": "Genera des d'arxius",
+      "buildFromFilesDesc": "Carrega documents per generar prompts/tons",
+      "testBeforeSaving": "Prova abans de desar",
+      "testBeforeSavingDesc": "Prova prompts/tons en una vista prèvia de xat en directe",
+      "step2Prefix": "Ves a",
+      "step2Suffix": "pestanya"
+    },
+    "customAgents": {
+      "title": "Agents personalitzats",
+      "advancedBadge": "ADVANÇAT",
+      "description": "Agents d'IA especialitzats amb funcions ampliades com cerca web i interpretació de codi",
+      "advancedFeature": "Funció avançada",
+      "advancedFeatureDesc": "Els Agents personalitzats funcionen a Azure AI Foundry amb eines especialitzades. Cal coordinar-se amb l'equip tècnic de l'AI Assistant per crear identificadors d'agent.",
+      "howToAccess": "Com accedir-hi:",
+      "howToAccessInstructions": "Configuració → Models → Pestanya Agents",
+      "whatYouCanDo": "Què pots fer:",
+      "configureAgents": "Configura agents amb funcionalitats especialitzades",
+      "importExport": "Importa/exporta configuracions d'agents",
+      "selectFromDropdown": "Selecciona agents personalitzats des del desplegable del model"
+    },
+    "audioTranslation": {
+      "title": "Transcripció d'àudio amb traducció",
+      "description": "Traducció automàtica de transcripcions d'àudio a més de 13 idiomes",
+      "howToUse": "Com utilitzar-ho:",
+      "step1": "Carregueu un fitxer d'àudio o vídeo",
+      "step2": "Feu clic al desplegable d'idioma a la interfície de transcripció",
+      "step3": "Seleccioneu l'idioma de destinació",
+      "availableLanguages": "Idiomes disponibles:",
+      "moreLanguages": "+7 més"
+    },
+    "pwa": {
+      "title": "Instal·la com a aplicació mòbil",
+      "description": "Aplicació web progressiva amb experiència nativa",
+      "installTip": "Consell: Instal·leu després d'iniciar la sessió per conservar l'autenticació i obtenir la millor experiència.",
+      "howToInstall": "Com instal·lar-ho:",
+      "step1": "Inicieu sessió al vostre compte",
+      "step2": "Obriu Paràmetres → Aplicació mòbil per a instruccions detallades",
+      "step3": "Al mòbil: Toqueu el menú del navegador (⋮ o ⚙️)",
+      "step4": "Cerqueu \"Afegeix a la pantalla d'inici\" o \"Instal·la l'aplicació\"",
+      "step5": "Seguiu les indicacions per instal·lar",
+      "benefits": "Beneficis:",
+      "benefit1": "Llanceu-la com una aplicació des de la pantalla d'inici",
+      "benefit2": "Pantalla completa sense la interfície del navegador",
+      "benefit3": "Accés fora de línia a les converses desades"
+    }
+  },
+  "Professional": "Professional",
+  "Casual": "Informal"
 }
