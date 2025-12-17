@@ -1073,7 +1073,8 @@
       "storageSpaceWarning": "Your data requires more space than is currently available. We recommend using incremental migration mode.",
       "pleaseWait": "Please wait while we update your data...",
       "dataIsSafe": "Your original data is safe. You can try again or skip for now.",
-      "itemsTooLarge": "These items are too large to fit in storage. You can export them, free up space, or continue without them."
+      "itemsTooLarge": "These items are too large to fit in storage. You can export them, free up space, or continue without them.",
+      "settingsUpdated": "Your settings have been updated."
     },
     "benefits": {
       "title": "Benefits",
