@@ -1009,6 +1009,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Rychlý a nákladově efektivní model Claude optimalizovaný pro rychlé úkoly. Skvělý pro jednoduché dotazy, shrnutí a aplikace s vysokým objemem.",
       "knowledgeCutoff": "Leden 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Nejvyspělejší model OpenAI, vynikající v komplexním uvažování, generování kódu a řešení technických problémů. Nejlepší pro analytické úkoly, programátorské výzvy, výzkum a podrobné vysvětlení. Podporuje nastavitelnou úroveň uvažování a délku odpovědí.",
+      "knowledgeCutoff": "Prosinec 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Speciální varianta GPT-5.2 optimalizovaná pro konverzační interakce a emoční inteligenci. Vyniká v empatické komunikaci, podpoře duševního zdraví, kreativním psaní, brainstormingu a přirozeném dialogu. Nejvhodnější pro neformální konverzace, poradenské situace a úkoly vyžadující emoční vnímavost.",
+      "knowledgeCutoff": "Prosinec 2025"
     }
   },
   "searchMode": {
@@ -1124,5 +1134,94 @@
       "item": "položka",
       "items": "položky"
     }
-  }
+  },
+  "languageSwahili": "Svahilština",
+  "welcomeBanner": {
+    "title": "Vítejte v AI Assistant V2",
+    "whatsNew": "Co je nového",
+    "whatsNewQuestion": "Co je nového?"
+  },
+  "welcomeV2": {
+    "backToChat": "Zpět do chatu",
+    "title": "Vítejte v AI Assistant V2",
+    "subtitle": "Kompletně přepracované s výkonnými novými funkcemi",
+    "webSearch": {
+      "title": "Režim webového vyhledávání",
+      "description": "Umožněte AI přístup k vyhledávání na webu v reálném čase s ochranou soukromí",
+      "quickAccess": "Rychlý přístup:",
+      "quickAccessInstructions": "Klikněte na tlačítko + vedle vstupu do chatu → Vyberte \"Web Search\"",
+      "setAsDefault": "Nastavit jako výchozí:",
+      "setAsDefaultInstructions": "Otevřete nastavení modelu a zapněte přepínač Režim webového vyhledávání. Vyberte mezi:",
+      "privacyFocused": "Ochrana soukromí (výchozí)",
+      "privacyFocusedDescription": "Externě odesílán pouze vyhledávací dotaz",
+      "azureAIFoundry": "Režim Azure AI Foundry",
+      "azureAIFoundryDescription": "Rychlejší, ale celá konverzace je ukládána externě",
+      "learnMore": "Více o režimech vyhledávání →"
+    },
+    "tones": {
+      "title": "Tóny (hlasové profily)",
+      "description": "Ovládejte styl psaní, formálnost a osobnost AI",
+      "createTones": "1. Vytvoření tónů:",
+      "createTonesInstructions": "Rychlé akce v postranním panelu → záložka Tóny",
+      "useTones": "2. Použití tónů:",
+      "useTonesInstructions": "Klikněte na rozbalovací nabídku tónů vedle vstupu do chatu",
+      "exampleProfessionalDesc": "Formální, byznys tón",
+      "exampleCasualDesc": "Přátelský, konverzační"
+    },
+    "aiAssist": {
+      "title": "AI asistence pro prompty a tóny",
+      "description": "Nechte AI pomoci s rychlejší tvorbou lepších promptů a tónů",
+      "step1": "Otevřete Rychlé akce v postranním panelu",
+      "step2": "Přejděte na kartu {prompts} nebo {tones}",
+      "step3": "Vyhledejte panel AI Assistenta",
+      "getSuggestions": "Získat návrhy",
+      "getSuggestionsDesc": "AI analyzuje váš návrh a nabídne zlepšení",
+      "buildFromFiles": "Vytvořit ze souborů",
+      "buildFromFilesDesc": "Nahrajte dokumenty pro generování promptů/tónů",
+      "testBeforeSaving": "Otestovat před uložením",
+      "testBeforeSavingDesc": "Vyzkoušejte prompty/tóny v živém chatu",
+      "step2Prefix": "Přejděte na",
+      "step2Suffix": "záložku"
+    },
+    "customAgents": {
+      "title": "Vlastní agenti",
+      "advancedBadge": "POKROČILÉ",
+      "description": "Specializovaní AI agenti s pokročilými funkcemi, jako je webové vyhledávání a interpretace kódu",
+      "advancedFeature": "Pokročilá funkce",
+      "advancedFeatureDesc": "Vlastní agenti běží na Azure AI Foundry se specializovanými nástroji. Vyžaduje spolupráci s technickým týmem AI Assistant pro vytvoření ID agenta.",
+      "howToAccess": "Jak získat přístup:",
+      "howToAccessInstructions": "Nastavení → Modely → záložka Agentů",
+      "whatYouCanDo": "Co můžete dělat:",
+      "configureAgents": "Konfigurovat agenty se specializovanými schopnostmi",
+      "importExport": "Import/export konfigurací agentů",
+      "selectFromDropdown": "Vyberte vlastní agenty z rozbalovací nabídky modelu"
+    },
+    "audioTranslation": {
+      "title": "Přepis audia s překladem",
+      "description": "Automatický překlad přepisů audia do více než 13 jazyků",
+      "howToUse": "Jak používat:",
+      "step1": "Nahrajte audio nebo video soubor",
+      "step2": "Klikněte na rozbalovací nabídku jazyků v rozhraní přepisu",
+      "step3": "Vyberte cílový jazyk",
+      "availableLanguages": "Dostupné jazyky:",
+      "moreLanguages": "+7 dalších"
+    },
+    "pwa": {
+      "title": "Instalace jako mobilní aplikace",
+      "description": "Progresivní webová aplikace s nativním zážitkem",
+      "installTip": "Tip: Nainstalujte po přihlášení, abyste zachovali své ověření a měli nejlepší zážitek.",
+      "howToInstall": "Jak nainstalovat:",
+      "step1": "Přihlaste se ke svému účtu",
+      "step2": "Otevřete Nastavení → Mobilní aplikace pro podrobné pokyny",
+      "step3": "Na mobilu: Klepněte na menu prohlížeče (⋮ nebo ⚙️)",
+      "step4": "Hledejte „Přidat na plochu“ nebo „Nainstalovat aplikaci“",
+      "step5": "Postupujte podle pokynů k instalaci",
+      "benefits": "Výhody:",
+      "benefit1": "Spouštění jako nativní aplikace z plochy",
+      "benefit2": "Celá obrazovka bez rozhraní prohlížeče",
+      "benefit3": "Offline přístup k uloženým konverzacím"
+    }
+  },
+  "Professional": "Profesionální",
+  "Casual": "Neformální"
 }
