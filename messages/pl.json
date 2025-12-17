@@ -1011,6 +1011,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Szybki i ekonomiczny model Claude zoptymalizowany do szybkich zadań. Idealny do prostych zapytań, streszczeń i zastosowań wymagających dużej wydajności.",
       "knowledgeCutoff": "styczeń 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Najbardziej zaawansowany model OpenAI, doskonały w złożonym rozumowaniu, generowaniu kodu i rozwiązywaniu problemów technicznych. Najlepszy do zadań analitycznych, wyzwań programistycznych, badań i szczegółowych wyjaśnień. Obsługuje regulację poziomu rozumowania i obszerności odpowiedzi.",
+      "knowledgeCutoff": "grudzień 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Specjalna wersja GPT-5.2 zoptymalizowana do rozmów i inteligencji emocjonalnej. Znakomita w empatycznej komunikacji, wsparciu zdrowia psychicznego, kreatywnym pisaniu, burzy mózgów oraz naturalnych dialogach. Najlepsza do rozmów nieformalnych, scenariuszy doradczych i zadań wymagających świadomości emocjonalnej.",
+      "knowledgeCutoff": "grudzień 2025"
     }
   },
   "searchMode": {
@@ -1126,5 +1136,94 @@
       "item": "pozycja",
       "items": "pozycje"
     }
-  }
+  },
+  "languageSwahili": "Suahili",
+  "welcomeBanner": {
+    "title": "Witamy w AI Assistant V2",
+    "whatsNew": "Co nowego",
+    "whatsNewQuestion": "Co nowego?"
+  },
+  "welcomeV2": {
+    "backToChat": "Powrót do czatu",
+    "title": "Witamy w AI Assistant V2",
+    "subtitle": "Całkowicie nowy wygląd i nowe, zaawansowane funkcje",
+    "webSearch": {
+      "title": "Tryb wyszukiwania w sieci",
+      "description": "Daj AI dostęp do wyszukiwania w internecie w czasie rzeczywistym z opcjami prywatności",
+      "quickAccess": "Szybki dostęp:",
+      "quickAccessInstructions": "Kliknij przycisk + obok pola czatu → Wybierz \"Wyszukiwanie w sieci\"",
+      "setAsDefault": "Ustaw jako domyślne:",
+      "setAsDefaultInstructions": "Otwórz ustawienia modelu i włącz przełącznik Trybu wyszukiwania w sieci. Wybierz spośród:",
+      "privacyFocused": "Tryb prywatny (domyślny)",
+      "privacyFocusedDescription": "Tylko zapytanie jest wysyłane na zewnątrz",
+      "azureAIFoundry": "Tryb Azure AI Foundry",
+      "azureAIFoundryDescription": "Szybszy, ale cała rozmowa jest przechowywana zewnętrznie",
+      "learnMore": "Dowiedz się więcej o trybach wyszukiwania →"
+    },
+    "tones": {
+      "title": "Tonalności (Profile głosu)",
+      "description": "Kontroluj styl, formalność i osobowość pisania AI",
+      "createTones": "1. Utwórz tonalności:",
+      "createTonesInstructions": "Szybkie działania w panelu bocznym → zakładka Tonalności",
+      "useTones": "2. Używaj tonalności:",
+      "useTonesInstructions": "Kliknij rozwijaną listę tonalności obok pola czatu",
+      "exampleProfessionalDesc": "Formalny, biznesowy ton",
+      "exampleCasualDesc": "Przyjazny, rozmowny"
+    },
+    "aiAssist": {
+      "title": "AI Assist do promptów i tonalności",
+      "description": "Pozwól AI szybciej przygotować lepsze prompt'y i tonalności",
+      "step1": "Otwórz Szybkie działania w panelu bocznym",
+      "step2": "Przejdź do zakładki {prompts} lub {tones}",
+      "step3": "Znajdź panel AI Assistant",
+      "getSuggestions": "Pobierz sugestie",
+      "getSuggestionsDesc": "AI analizuje szkic i proponuje ulepszenia",
+      "buildFromFiles": "Utwórz na podstawie plików",
+      "buildFromFilesDesc": "Prześlij dokumenty, aby wygenerować prompt'y/tonalności",
+      "testBeforeSaving": "Testuj przed zapisaniem",
+      "testBeforeSavingDesc": "Wypróbuj prompt'y/tonalności w podglądzie czatu na żywo",
+      "step2Prefix": "Przejdź do",
+      "step2Suffix": "zakładki"
+    },
+    "customAgents": {
+      "title": "Własne agenty",
+      "advancedBadge": "ZAAWANSOWANE",
+      "description": "Wyspecjalizowane agenty AI z zaawansowanymi możliwościami, takimi jak wyszukiwanie w internecie i interpretacja kodu",
+      "advancedFeature": "Funkcja zaawansowana",
+      "advancedFeatureDesc": "Własne agenty działają na Azure AI Foundry ze specjalistycznymi narzędziami. Wymaga współpracy z zespołem technicznym AI Assistant w celu utworzenia identyfikatorów agentów.",
+      "howToAccess": "Jak uzyskać dostęp:",
+      "howToAccessInstructions": "Ustawienia → Modele → zakładka Agenci",
+      "whatYouCanDo": "Co możesz zrobić:",
+      "configureAgents": "Konfiguruj agentów ze specjalistycznymi funkcjami",
+      "importExport": "Importuj/eksportuj konfiguracje agentów",
+      "selectFromDropdown": "Wybierz własne agenty z listy modeli"
+    },
+    "audioTranslation": {
+      "title": "Transkrypcja audio z tłumaczeniem",
+      "description": "Automatyczne tłumaczenie transkrypcji audio na ponad 13 języków",
+      "howToUse": "Jak korzystać:",
+      "step1": "Prześlij plik audio lub wideo",
+      "step2": "Kliknij rozwijane menu języka w interfejsie transkrypcji",
+      "step3": "Wybierz język docelowy",
+      "availableLanguages": "Dostępne języki:",
+      "moreLanguages": "+7 więcej"
+    },
+    "pwa": {
+      "title": "Zainstaluj jako aplikację mobilną",
+      "description": "Progressive Web App z natywnym doświadczeniem",
+      "installTip": "Wskazówka: Zainstaluj po zalogowaniu, aby zachować uwierzytelnienie i uzyskać najlepsze doświadczenie.",
+      "howToInstall": "Jak zainstalować:",
+      "step1": "Zaloguj się na swoje konto",
+      "step2": "Otwórz Ustawienia → Aplikacja mobilna, aby zobaczyć szczegółowe instrukcje",
+      "step3": "Na urządzeniu mobilnym: stuknij menu przeglądarki (⋮ lub ⚙️)",
+      "step4": "Wyszukaj „Dodaj do ekranu głównego” lub „Zainstaluj aplikację”",
+      "step5": "Postępuj zgodnie z instrukcjami instalacji",
+      "benefits": "Korzyści:",
+      "benefit1": "Uruchamiaj jak natywną aplikację z ekranu głównego",
+      "benefit2": "Pełny ekran bez interfejsu przeglądarki",
+      "benefit3": "Dostęp offline do zapisanych rozmów"
+    }
+  },
+  "Professional": "Profesjonalny",
+  "Casual": "Nieformalny"
 }
