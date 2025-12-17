@@ -1056,5 +1056,77 @@
     "footerNote": "Both modes store your conversation locally in your browser. You can switch modes anytime in the model settings.",
     "note": "Note:",
     "loadingDiagram": "Loading diagram..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Checking Storage",
+      "analyzingData": "Analyzing your data...",
+      "updateAvailable": "Update Available",
+      "storageSpaceLimited": "Storage Space Limited",
+      "migratingData": "Migrating Data",
+      "migrationComplete": "Migration Complete",
+      "partiallyComplete": "Partially Complete",
+      "migrationFailed": "Migration Failed"
+    },
+    "descriptions": {
+      "foundLegacyData": "We found data from a previous version. Would you like to migrate it to work with the improved system?",
+      "storageSpaceWarning": "Your data requires more space than is currently available. We recommend using incremental migration mode.",
+      "pleaseWait": "Please wait while we update your data...",
+      "dataIsSafe": "Your original data is safe. You can try again or skip for now.",
+      "itemsTooLarge": "These items are too large to fit in storage. You can export them, free up space, or continue without them."
+    },
+    "benefits": {
+      "title": "Benefits",
+      "fasterPerformance": "Faster performance",
+      "betterReliability": "Better reliability",
+      "dataPreserved": "Your data is preserved"
+    },
+    "options": {
+      "advancedOptions": "Advanced options",
+      "useIncrementalMode": "Use incremental mode",
+      "slowerButSafer": "slower but safer",
+      "recommended": "recommended",
+      "deleteLegacyData": "Delete legacy data after migration",
+      "freesUpSpace": "frees up storage space"
+    },
+    "actions": {
+      "skip": "Skip",
+      "migrateData": "Migrate Data",
+      "migrateAnyway": "Migrate Anyway",
+      "continue": "Continue",
+      "retry": "Retry",
+      "exportBackupFirst": "Export Backup First",
+      "exportSkippedItems": "Export Skipped Items"
+    },
+    "quota": {
+      "availableSpace": "Available space",
+      "dataToMigrate": "Data to migrate",
+      "additionalSpaceNeeded": "Additional space needed"
+    },
+    "progress": {
+      "migratingConversations": "Migrating conversations",
+      "migratingPrompts": "Migrating prompts",
+      "migratingAgents": "Migrating agents",
+      "finishingUp": "Finishing up"
+    },
+    "results": {
+      "successfullyMigrated": "Successfully migrated",
+      "notes": "Notes",
+      "couldNotMigrate": "Could not migrate",
+      "legacyDataDeleted": "Legacy data deleted",
+      "freed": "freed"
+    },
+    "units": {
+      "conversation": "conversation",
+      "conversations": "conversations",
+      "folder": "folder",
+      "folders": "folders",
+      "prompt": "prompt",
+      "prompts": "prompts",
+      "customAgent": "custom agent",
+      "customAgents": "custom agents",
+      "item": "item",
+      "items": "items"
+    }
   }
 }
