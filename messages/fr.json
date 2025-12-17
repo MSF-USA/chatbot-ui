@@ -1009,6 +1009,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Modèle Claude rapide et économique optimisé pour les tâches rapides. Excellent pour les requêtes simples, le résumé et les applications à haut volume.",
       "knowledgeCutoff": "Janvier 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Modèle le plus avancé d’OpenAI, excellent pour le raisonnement complexe, la génération de code et la résolution technique de problèmes. Idéal pour les tâches analytiques, les défis de programmation, la recherche et les explications détaillées. Permet d’ajuster l’effort de raisonnement et la longueur des réponses.",
+      "knowledgeCutoff": "Déc. 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variante spécialisée de GPT-5.2 optimisée pour les interactions conversationnelles et l’intelligence émotionnelle. Excellente pour la communication empathique, le soutien en santé mentale, l’écriture créative, le brainstorming et le dialogue naturel. Idéale pour les conversations informelles, les contextes de conseil et les tâches nécessitant une conscience émotionnelle.",
+      "knowledgeCutoff": "Déc. 2025"
     }
   },
   "searchMode": {
@@ -1124,5 +1134,94 @@
       "item": "élément",
       "items": "éléments"
     }
-  }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Bienvenue sur l’Assistant IA V2",
+    "whatsNew": "Nouveautés",
+    "whatsNewQuestion": "Quelles sont les nouveautés ?"
+  },
+  "welcomeV2": {
+    "backToChat": "Retour au chat",
+    "title": "Bienvenue sur l’Assistant IA V2",
+    "subtitle": "Une refonte complète avec de nouvelles fonctionnalités puissantes",
+    "webSearch": {
+      "title": "Mode Recherche Web",
+      "description": "Donnez à l’IA un accès à la recherche web en temps réel avec des options axées sur la confidentialité",
+      "quickAccess": "Accès rapide :",
+      "quickAccessInstructions": "Cliquez sur le bouton + à côté de la zone de saisie → Sélectionnez « Recherche Web »",
+      "setAsDefault": "Définir par défaut :",
+      "setAsDefaultInstructions": "Ouvrez les paramètres du modèle et activez l’option Mode Recherche Web. Choisissez parmi :",
+      "privacyFocused": "Axé sur la confidentialité (par défaut)",
+      "privacyFocusedDescription": "Seule la requête de recherche est envoyée en externe",
+      "azureAIFoundry": "Mode Azure AI Foundry",
+      "azureAIFoundryDescription": "Plus rapide, mais l’intégralité de la conversation est stockée en externe",
+      "learnMore": "En savoir plus sur les modes de recherche →"
+    },
+    "tones": {
+      "title": "Tons (profils vocaux)",
+      "description": "Contrôlez le style d’écriture, le niveau de formalité et la personnalité de l’IA",
+      "createTones": "1. Créez des tons :",
+      "createTonesInstructions": "Actions rapides dans la barre latérale → Onglet Tons",
+      "useTones": "2. Utilisez des tons :",
+      "useTonesInstructions": "Cliquez sur le menu des tons à côté de la zone de saisie",
+      "exampleProfessionalDesc": "Ton formel, professionnel",
+      "exampleCasualDesc": "Amical, conversationnel"
+    },
+    "aiAssist": {
+      "title": "Assistance IA pour prompts et tons",
+      "description": "Laissez l’IA vous aider à créer de meilleurs prompts et tons plus rapidement",
+      "step1": "Ouvrez les Actions rapides dans la barre latérale",
+      "step2": "Allez dans l’onglet {prompts} ou {tones}",
+      "step3": "Trouvez le panneau Assistant IA",
+      "getSuggestions": "Obtenir des suggestions",
+      "getSuggestionsDesc": "L’IA analyse votre brouillon et propose des améliorations",
+      "buildFromFiles": "Créer à partir de fichiers",
+      "buildFromFilesDesc": "Téléchargez des documents pour générer des prompts/tons",
+      "testBeforeSaving": "Tester avant d’enregistrer",
+      "testBeforeSavingDesc": "Essayez vos prompts/tons en aperçu de chat en direct",
+      "step2Prefix": "Accédez à",
+      "step2Suffix": "l’onglet"
+    },
+    "customAgents": {
+      "title": "Agents personnalisés",
+      "advancedBadge": "AVANCÉ",
+      "description": "Agents IA spécialisés avec des fonctionnalités avancées comme la recherche web et l’interprétation de code",
+      "advancedFeature": "Fonctionnalité avancée",
+      "advancedFeatureDesc": "Les agents personnalisés fonctionnent sur Azure AI Foundry avec des outils spécialisés. Nécessite une coordination avec l’équipe technique de l’Assistant IA pour créer des identifiants d’agent.",
+      "howToAccess": "Comment y accéder :",
+      "howToAccessInstructions": "Paramètres → Modèles → Onglet Agents",
+      "whatYouCanDo": "Vous pouvez faire :",
+      "configureAgents": "Configurer des agents avec des capacités spécialisées",
+      "importExport": "Importer/exporter les configurations d’agent",
+      "selectFromDropdown": "Sélectionnez des agents personnalisés dans le menu déroulant du modèle"
+    },
+    "audioTranslation": {
+      "title": "Transcription audio avec traduction",
+      "description": "Traduisez automatiquement les transcriptions audio en plus de 13 langues",
+      "howToUse": "Comment utiliser :",
+      "step1": "Téléversez un fichier audio ou vidéo",
+      "step2": "Cliquez sur le menu déroulant des langues dans l'interface de transcription",
+      "step3": "Sélectionnez votre langue cible",
+      "availableLanguages": "Langues disponibles :",
+      "moreLanguages": "+7 de plus"
+    },
+    "pwa": {
+      "title": "Installer comme application mobile",
+      "description": "Application Web progressive avec expérience native",
+      "installTip": "Astuce : installez l'application après vous être connecté afin de conserver votre authentification et bénéficier de la meilleure expérience.",
+      "howToInstall": "Comment installer :",
+      "step1": "Connectez-vous à votre compte",
+      "step2": "Ouvrez Paramètres → Application mobile pour des instructions détaillées",
+      "step3": "Sur mobile : touchez le menu du navigateur (⋮ ou ⚙️)",
+      "step4": "Recherchez « Ajouter à l'écran d'accueil » ou « Installer l’application »",
+      "step5": "Suivez les instructions pour installer",
+      "benefits": "Avantages :",
+      "benefit1": "Lancez comme une application native depuis l'écran d'accueil",
+      "benefit2": "Plein écran sans interface de navigateur",
+      "benefit3": "Accès hors ligne aux conversations enregistrées"
+    }
+  },
+  "Professional": "Professionnel",
+  "Casual": "Décontracté"
 }
