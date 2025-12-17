@@ -85,7 +85,8 @@ const serverEnvSchema = z.object({
   NEXT_PUBLIC_EMAIL: z.string().email().optional(),
 
   // System Prompt Configuration
-  NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(),
+  BASE_SYSTEM_PROMPT: z.string().optional(), // Overrides the default base system prompt
+  NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(), // Legacy: user's default prompt
   NEXT_PUBLIC_DEFAULT_TEMPERATURE: z.string().default('0.5'),
 
   // Application Environment
