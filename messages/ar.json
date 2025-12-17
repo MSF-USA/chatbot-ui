@@ -254,7 +254,7 @@
   "Options": "خيارات",
   "Are you sure you want to delete this folder?": "هل أنت متأكد أنك تريد حذف هذا المجلد؟",
   "New Prompt": "مطالبة جديدة",
-  "Edit Prompt": "تعديل المطالبة",
+  "Edit Prompt": "تحرير الموجه",
   "Prompt name": "اسم المطالبة",
   "Prompt content": "محتوى المطالبة",
   "Are you sure you want to delete this prompt?": "هل أنت متأكد أنك تريد حذف هذه المطالبة؟",
@@ -339,7 +339,19 @@
   "Team Templates": "قوالب الفريق",
   "selected": "محدد",
   "folders": "مجلدات",
-  "agents": "وكلاء",
+  "agents": {
+    "exportAgent": "تصدير الوكيل",
+    "editAgent": "تحرير الوكيل",
+    "agentName": "اسم الوكيل",
+    "myResearchAssistant": "مساعد البحث الخاص بي",
+    "agentId": "معرّف الوكيل",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "الوصف (اختياري)",
+    "descriptionPlaceholder": "وكيل متخصص لمهام البحث...",
+    "baseModel": "النموذج الأساسي",
+    "formatDescription": "التنسيق: asst_xxxxx (من MSF AI Assistant Foundry)",
+    "importantInfo": "سيحصل هذا الوكيل على إمكانية الوصول إلى سياق المحادثة ويمكنه استخدام نفس الأدوات كنماذج قياسية. تأكد من أن معرّف الوكيل صحيح حيث لا يمكن تغييره لاحقاً."
+  },
   "Quick Actions": "إجراءات سريعة",
   "Type / in chat to access your prompts": "اكتب / في الدردشة للوصول إلى مطالباتك",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "اكتب / في الدردشة، اختر مطالبتك، واملأ المتغيرات عندما يُطلب منك",
@@ -386,7 +398,6 @@
   "Custom Agents": "وكلاء مخصصون",
   "Delete template and all its items": "حذف القالب وجميع عناصره",
   "Description (Optional)": "الوصف (اختياري)",
-  "Edit Prompt": "تحرير الموجه",
   "Edit Tone": "تحرير النبرة",
   "Email Response Template": "قالب الرد على البريد الإلكتروني",
   "Example Prompt": "مثال على الموجه",
@@ -446,7 +457,6 @@
   "msf_logo_alt": "شعار MSF",
   "collapse_sidebar": "طي الشريط الجانبي",
   "expand_sidebar": "توسيع الشريط الجانبي",
-  "Voice Guidelines": "إرشادات الصوت",
   "Please upload some content or describe the tone you want": "الرجاء تحميل بعض المحتوى أو وصف النبرة التي تريدها",
   "Untitled Tone": "نبرة بدون عنوان",
   "Failed to analyze tone": "فشل في تحليل النبرة",
@@ -556,19 +566,6 @@
     "expandSidebar": "توسيع الشريط الجانبي",
     "quickActionsTitle": "الإجراءات السريعة",
     "quickActions": "الإجراءات السريعة"
-  },
-  "agents": {
-    "exportAgent": "تصدير الوكيل",
-    "editAgent": "تحرير الوكيل",
-    "agentName": "اسم الوكيل",
-    "myResearchAssistant": "مساعد البحث الخاص بي",
-    "agentId": "معرّف الوكيل",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "الوصف (اختياري)",
-    "descriptionPlaceholder": "وكيل متخصص لمهام البحث...",
-    "baseModel": "النموذج الأساسي",
-    "formatDescription": "التنسيق: asst_xxxxx (من MSF AI Assistant Foundry)",
-    "importantInfo": "سيحصل هذا الوكيل على إمكانية الوصول إلى سياق المحادثة ويمكنه استخدام نفس الأدوات كنماذج قياسية. تأكد من أن معرّف الوكيل صحيح حيث لا يمكن تغييره لاحقاً."
   },
   "prompts": {
     "buildReusablePrompts": "بناء موجهات قابلة لإعادة الاستخدام بمساعدة الذكاء الاصطناعي",
@@ -772,7 +769,6 @@
     "Legacy data deleted": "تم حذف البيانات القديمة",
     "freed": "محرر",
     "Conversations": "المحادثات",
-    "Settings": "الإعدادات",
     "Legacy": "قديم",
     "Other": "أخرى",
     "Loading": "جارٍ التحميل",
@@ -1055,5 +1051,78 @@
     "footerNote": "كلا الوضعين يخزنان محادثتك محليًا في متصفحك. يمكنك تبديل الأوضاع في أي وقت في إعدادات النموذج.",
     "note": "ملاحظة:",
     "loadingDiagram": "جارٍ تحميل المخطط..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "جارٍ فحص التخزين",
+      "analyzingData": "جارٍ تحليل بياناتك...",
+      "updateAvailable": "تحديث متوفر",
+      "storageSpaceLimited": "المساحة التخزينية محدودة",
+      "migratingData": "جارٍ ترحيل البيانات",
+      "migrationComplete": "اكتمل الترحيل",
+      "partiallyComplete": "اكتمل جزئيًا",
+      "migrationFailed": "فشل الترحيل"
+    },
+    "descriptions": {
+      "foundLegacyData": "عثرنا على بيانات من إصدار سابق. هل ترغب في ترحيلها للعمل مع النظام المحسن؟",
+      "storageSpaceWarning": "بياناتك تحتاج إلى مساحة أكبر من المتوفرة حاليًا. نوصي باستخدام وضع الترحيل التدريجي.",
+      "pleaseWait": "يرجى الانتظار أثناء تحديث بياناتك...",
+      "dataIsSafe": "بياناتك الأصلية محفوظة. يمكنك المحاولة مرة أخرى أو التخطي الآن.",
+      "itemsTooLarge": "هذه العناصر كبيرة جدًا ولا تتسع في التخزين. يمكنك تصديرها أو تحرير مساحة أو المتابعة بدونها.",
+      "settingsUpdated": "تم تحديث إعداداتك."
+    },
+    "benefits": {
+      "title": "الفوائد",
+      "fasterPerformance": "أداء أسرع",
+      "betterReliability": "موثوقية أعلى",
+      "dataPreserved": "تم الحفاظ على بياناتك"
+    },
+    "options": {
+      "advancedOptions": "خيارات متقدمة",
+      "useIncrementalMode": "استخدام الوضع التدريجي",
+      "slowerButSafer": "أبطأ ولكن أكثر أمانًا",
+      "recommended": "موصى به",
+      "deleteLegacyData": "حذف البيانات القديمة بعد الترحيل",
+      "freesUpSpace": "يحرر مساحة تخزينية"
+    },
+    "actions": {
+      "skip": "تخطي",
+      "migrateData": "ترحيل البيانات",
+      "migrateAnyway": "الترحيل رغم ذلك",
+      "continue": "متابعة",
+      "retry": "إعادة المحاولة",
+      "exportBackupFirst": "تصدير نسخة احتياطية أولاً",
+      "exportSkippedItems": "تصدير العناصر المتخطاة"
+    },
+    "quota": {
+      "availableSpace": "المساحة المتوفرة",
+      "dataToMigrate": "البيانات المراد ترحيلها",
+      "additionalSpaceNeeded": "المساحة الإضافية المطلوبة"
+    },
+    "progress": {
+      "migratingConversations": "جارٍ ترحيل المحادثات",
+      "migratingPrompts": "جارٍ ترحيل الرسائل التوضيحية",
+      "migratingAgents": "جارٍ ترحيل الوكلاء",
+      "finishingUp": "جارٍ إنهاء العملية"
+    },
+    "results": {
+      "successfullyMigrated": "تم الترحيل بنجاح",
+      "notes": "ملاحظات",
+      "couldNotMigrate": "تعذر الترحيل",
+      "legacyDataDeleted": "تم حذف البيانات القديمة",
+      "freed": "تم تحرير"
+    },
+    "units": {
+      "conversation": "محادثة",
+      "conversations": "محادثات",
+      "folder": "مجلد",
+      "folders": "مجلدات",
+      "prompt": "رسالة توضيحية",
+      "prompts": "رسائل توضيحية",
+      "customAgent": "وكيل مخصص",
+      "customAgents": "وكلاء مخصصون",
+      "item": "عنصر",
+      "items": "عناصر"
+    }
   }
 }
