@@ -1009,6 +1009,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Modelo Claude rápido y rentable optimizado para tareas rápidas. Excelente para consultas simples, resumen y aplicaciones de alto volumen.",
       "knowledgeCutoff": "Enero 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "El modelo más avanzado de OpenAI, excelente en razonamiento complejo, generación de código y resolución de problemas técnicos. Ideal para tareas analíticas, retos de programación, investigación y explicaciones detalladas. Permite ajustar el nivel de razonamiento y la extensión de las respuestas.",
+      "knowledgeCutoff": "Dic 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variante especializada de GPT-5.2 optimizada para interacciones conversacionales e inteligencia emocional. Destaca en comunicación empática, apoyo en salud mental, escritura creativa, lluvia de ideas y diálogo natural. Ideal para conversaciones informales, escenarios de asesoramiento y tareas que requieren conciencia emocional.",
+      "knowledgeCutoff": "Dic 2025"
     }
   },
   "searchMode": {
@@ -1124,5 +1134,94 @@
       "item": "elemento",
       "items": "elementos"
     }
-  }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Bienvenido/a a AI Assistant V2",
+    "whatsNew": "Novedades",
+    "whatsNewQuestion": "¿Qué hay de nuevo?"
+  },
+  "welcomeV2": {
+    "backToChat": "Volver al chat",
+    "title": "Bienvenido/a a AI Assistant V2",
+    "subtitle": "Rediseño completo con potentes funciones nuevas",
+    "webSearch": {
+      "title": "Modo de búsqueda web",
+      "description": "Da acceso a AI a búsquedas web en tiempo real con opciones centradas en la privacidad",
+      "quickAccess": "Acceso rápido:",
+      "quickAccessInstructions": "Haz clic en el botón + junto al campo de chat → Selecciona \"Búsqueda web\"",
+      "setAsDefault": "Establecer como predeterminado:",
+      "setAsDefaultInstructions": "Abre la configuración del modelo y activa el modo de búsqueda web. Elige entre:",
+      "privacyFocused": "Enfoque en la privacidad (predeterminado)",
+      "privacyFocusedDescription": "Solo la consulta de búsqueda se envía externamente",
+      "azureAIFoundry": "Modo Azure AI Foundry",
+      "azureAIFoundryDescription": "Más rápido, pero toda la conversación se almacena externamente",
+      "learnMore": "Más información sobre los modos de búsqueda →"
+    },
+    "tones": {
+      "title": "Tonos (Perfiles de voz)",
+      "description": "Controla el estilo de escritura, formalidad y personalidad de la IA",
+      "createTones": "1. Crear tonos:",
+      "createTonesInstructions": "Acciones rápidas en la barra lateral → Pestaña Tonos",
+      "useTones": "2. Usar tonos:",
+      "useTonesInstructions": "Haz clic en el menú desplegable de tono junto al campo de chat",
+      "exampleProfessionalDesc": "Tono formal, empresarial",
+      "exampleCasualDesc": "Amistoso, conversacional"
+    },
+    "aiAssist": {
+      "title": "Asistencia de IA para prompts y tonos",
+      "description": "Deja que la IA te ayude a crear prompts y tonos mejores y más rápido",
+      "step1": "Abre acciones rápidas en la barra lateral",
+      "step2": "Navega a la pestaña {prompts} o {tones}",
+      "step3": "Busca el panel de AI Assistant",
+      "getSuggestions": "Obtener sugerencias",
+      "getSuggestionsDesc": "La IA analiza tu borrador y ofrece mejoras",
+      "buildFromFiles": "Crear desde archivos",
+      "buildFromFilesDesc": "Sube documentos para generar prompts/tonos",
+      "testBeforeSaving": "Probar antes de guardar",
+      "testBeforeSavingDesc": "Prueba prompts/tonos en una vista previa del chat",
+      "step2Prefix": "Navegue a",
+      "step2Suffix": "pestaña"
+    },
+    "customAgents": {
+      "title": "Agentes personalizables",
+      "advancedBadge": "AVANZADO",
+      "description": "Agentes de IA especializados con capacidades mejoradas como búsqueda web e interpretación de código",
+      "advancedFeature": "Función avanzada",
+      "advancedFeatureDesc": "Los agentes personalizables funcionan en Azure AI Foundry con herramientas especializadas. Requiere coordinación con el equipo técnico de AI Assistant para crear los ID de agentes.",
+      "howToAccess": "Cómo acceder:",
+      "howToAccessInstructions": "Configuración → Modelos → Pestaña Agentes",
+      "whatYouCanDo": "Qué puedes hacer:",
+      "configureAgents": "Configurar agentes con capacidades especializadas",
+      "importExport": "Importar/exportar configuraciones de agentes",
+      "selectFromDropdown": "Selecciona agentes personalizables en el menú desplegable de modelos"
+    },
+    "audioTranslation": {
+      "title": "Transcripción de audio con traducción",
+      "description": "Traduce automáticamente transcripciones de audio a más de 13 idiomas",
+      "howToUse": "Cómo usar:",
+      "step1": "Suba un archivo de audio o video",
+      "step2": "Haga clic en el menú desplegable de idiomas en la interfaz de transcripción",
+      "step3": "Seleccione su idioma de destino",
+      "availableLanguages": "Idiomas disponibles:",
+      "moreLanguages": "+7 más"
+    },
+    "pwa": {
+      "title": "Instalar como aplicación móvil",
+      "description": "Aplicación web progresiva con experiencia nativa",
+      "installTip": "Consejo: Instale después de iniciar sesión para mantener su autenticación y obtener la mejor experiencia.",
+      "howToInstall": "Cómo instalar:",
+      "step1": "Inicie sesión en su cuenta",
+      "step2": "Abra Configuración → Aplicación móvil para ver instrucciones detalladas",
+      "step3": "En el móvil: Toque el menú del navegador (⋮ o ⚙️)",
+      "step4": "Busque \"Agregar a pantalla de inicio\" o \"Instalar aplicación\"",
+      "step5": "Siga las indicaciones para instalar",
+      "benefits": "Beneficios:",
+      "benefit1": "Láncelo como una app nativa desde la pantalla de inicio",
+      "benefit2": "Pantalla completa sin la interfaz del navegador",
+      "benefit3": "Acceso sin conexión a conversaciones guardadas"
+    }
+  },
+  "Professional": "Profesional",
+  "Casual": "Informal"
 }
