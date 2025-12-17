@@ -1011,6 +1011,16 @@
       "name": "Claude Haiku 4.5",
       "description": "تیز Claude ماڈل۔",
       "knowledgeCutoff": "جنوری 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI کا جدید ترین ماڈل، پیچیدہ تدبر، کوڈ جنریشن، اور فنی مسائل کے حل میں بہترین۔ تجزیاتی کاموں، پروگرامنگ چیلنجز، تحقیق اور تفصیلی وضاحتوں کے لیے بہترین۔ زیادہ تدبر اور جواب کی تفصیل کو حسب ضرورت ایڈجسٹ کیا جا سکتا ہے۔",
+      "knowledgeCutoff": "دسمبر 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 چیٹ",
+      "description": "GPT-5.2 کا خصوصی ورژن جو مکالماتی تعامل اور جذباتی فہم کے لیے بہتر بنایا گیا ہے۔ ہمدردانہ گفتگو، ذہنی صحت میں معاونت، تخلیقی تحریر، آئیڈیاز کی تلاش، اور قدرتی مکالمے میں بہترین۔ غیر رسمی بات چیت، رہنمائی، اور اُن کاموں کے لیے بہترین جہاں جذباتی آگاہی درکار ہو۔",
+      "knowledgeCutoff": "دسمبر 2025"
     }
   },
   "searchMode": {
@@ -1053,5 +1063,167 @@
     "whyTheseOptions": "یہ اختیارات کیوں؟",
     "whyTheseOptionsText1": "یہ دستیاب تلاش کے نفاذ ہیں Azure کے Bing Search API کو بند کرنے کے بعد۔",
     "whyTheseOptionsText2": "ٹیم فعال طور پر زیادہ رازداری پر مرکوز تلاش کے متبادل تلاش کر رہی ہے۔"
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "اسٹوریج چیک کی جا رہی ہے",
+      "analyzingData": "آپ کے ڈیٹا کا تجزیہ کیا جا رہا ہے...",
+      "updateAvailable": "اپ ڈیٹ دستیاب ہے",
+      "storageSpaceLimited": "اسٹوریج کی جگہ محدود ہے",
+      "migratingData": "ڈیٹا منتقل کیا جا رہا ہے",
+      "migrationComplete": "منتقلی مکمل",
+      "partiallyComplete": "جزوی طور پر مکمل",
+      "migrationFailed": "منتقلی ناکام ہوگئی"
+    },
+    "descriptions": {
+      "foundLegacyData": "ہمیں پچھلے ورژن کا ڈیٹا ملا ہے۔ کیا آپ اسے بہتر نظام پر منتقل کرنا چاہتے ہیں؟",
+      "storageSpaceWarning": "آپ کے ڈیٹا کو دستیاب جگہ سے زیادہ اسٹوریج درکار ہے۔ ہم انکریمنٹل مائیگریشن موڈ کے استعمال کی تجویز دیتے ہیں۔",
+      "pleaseWait": "براہ کرم انتظار کریں، آپ کا ڈیٹا اپ ڈیٹ کیا جا رہا ہے...",
+      "dataIsSafe": "آپ کا اصل ڈیٹا محفوظ ہے۔ آپ دوبارہ کوشش کر سکتے ہیں یا فی الحال اس کو نظرانداز کر سکتے ہیں۔",
+      "itemsTooLarge": "یہ آئٹمز اسٹوریج میں آنے کے لیے بہت بڑی ہیں۔ آپ انہیں ایکسپورٹ کر سکتے ہیں، جگہ خالی کریں، یا بغیر ان کے آگے بڑھیں۔",
+      "settingsUpdated": "آپ کی سیٹنگز اپ ڈیٹ کر دی گئی ہیں۔"
+    },
+    "benefits": {
+      "title": "فوائد",
+      "fasterPerformance": "تیز تر کارکردگی",
+      "betterReliability": "بہتر اعتبار",
+      "dataPreserved": "آپ کا ڈیٹا محفوظ ہے"
+    },
+    "options": {
+      "advancedOptions": "ایڈوانسڈ آپشنز",
+      "useIncrementalMode": "انکریمنٹل موڈ استعمال کریں",
+      "slowerButSafer": "آہستہ لیکن محفوظ",
+      "recommended": "تجویز کردہ",
+      "deleteLegacyData": "منتقلی کے بعد پرانا ڈیٹا حذف کریں",
+      "freesUpSpace": "اسٹوریج کی جگہ خالی ہوتی ہے"
+    },
+    "actions": {
+      "skip": "نظرانداز کریں",
+      "migrateData": "ڈیٹا منتقل کریں",
+      "migrateAnyway": "بہرحال منتقل کریں",
+      "continue": "جاری رکھیں",
+      "retry": "دوبارہ کوشش کریں",
+      "exportBackupFirst": "پہلے بیک اپ ایکسپورٹ کریں",
+      "exportSkippedItems": "نظرانداز شدہ آئٹمز ایکسپورٹ کریں"
+    },
+    "quota": {
+      "availableSpace": "دستیاب جگہ",
+      "dataToMigrate": "منتقل کرنے کے لیے ڈیٹا",
+      "additionalSpaceNeeded": "مزید جگہ درکار"
+    },
+    "progress": {
+      "migratingConversations": "گفتگوئیں منتقل کی جا رہی ہیں",
+      "migratingPrompts": "پرومٹس منتقل کی جا رہی ہیں",
+      "migratingAgents": "ایجنٹس منتقل کیے جا رہے ہیں",
+      "finishingUp": "آخری مراحل"
+    },
+    "results": {
+      "successfullyMigrated": "کامیابی سے منتقل ہو گیا",
+      "notes": "نوٹس",
+      "couldNotMigrate": "منتقل نہیں ہو سکا",
+      "legacyDataDeleted": "پرانا ڈیٹا حذف کر دیا گیا",
+      "freed": "خالی کی گئی"
+    },
+    "units": {
+      "conversation": "گفتگو",
+      "conversations": "گفتگوئیں",
+      "folder": "فولڈر",
+      "folders": "فولڈرز",
+      "prompt": "پرومپٹ",
+      "prompts": "پرومٹس",
+      "customAgent": "کسٹم ایجنٹ",
+      "customAgents": "کسٹم ایجنٹس",
+      "item": "آئٹم",
+      "items": "آئٹمز"
+    }
+  },
+  "languageSwahili": "سواحلی",
+  "welcomeBanner": {
+    "title": "AI Assistant V2 میں خوش آمدید",
+    "whatsNew": "نیا کیا ہے",
+    "whatsNewQuestion": "نیا کیا ہے؟"
+  },
+  "welcomeV2": {
+    "backToChat": "چیٹ پر واپس جائیں",
+    "title": "AI Assistant V2 میں خوش آمدید",
+    "subtitle": "مکمل طور پر نیا ڈیزائن اور طاقتور خصوصیات کے ساتھ",
+    "webSearch": {
+      "title": "ویب تلاش موڈ",
+      "description": "AI کو حقیقی وقت کی ویب تلاش تک رسائی دیں، پرائیویسی پر مبنی اختیارات کے ساتھ",
+      "quickAccess": "فوری رسائی:",
+      "quickAccessInstructions": "چیٹ ان پٹ کے ساتھ + بٹن پر کلک کریں → \"Web Search\" منتخب کریں",
+      "setAsDefault": "بطور طے شدہ منتخب کریں:",
+      "setAsDefaultInstructions": "ماڈل سیٹنگز کھولیں اور Web Search Mode ٹوگل فعال کریں۔ انتخاب کریں:",
+      "privacyFocused": "پرائیویسی پر مبنی (طے شدہ)",
+      "privacyFocusedDescription": "صرف تلاش کی عبارت بیرونی طور پر بھیجی جاتی ہے",
+      "azureAIFoundry": "Azure AI Foundry موڈ",
+      "azureAIFoundryDescription": "تیز تر، لیکن مکمل گفتگو بیرونی طور پر محفوظ ہوتی ہے",
+      "learnMore": "سرچ موڈز کے بارے میں مزید جانیں →"
+    },
+    "tones": {
+      "title": "ٹونز (وائس پروفائلز)",
+      "description": "AI کی لکھائی کا انداز، رسمی سطح اور شخصیت کنٹرول کریں",
+      "createTones": "1. ٹونز تخلیق کریں:",
+      "createTonesInstructions": "سائیڈبار میں Quick Actions → ٹونز ٹیب",
+      "useTones": "2. ٹونز استعمال کریں:",
+      "useTonesInstructions": "چیٹ ان پٹ کے ساتھ ٹون ڈراپ ڈاؤن پر کلک کریں",
+      "exampleProfessionalDesc": "رسمی، کاروباری انداز",
+      "exampleCasualDesc": "دوستانہ، مکالماتی"
+    },
+    "aiAssist": {
+      "title": "پرومپٹس اور ٹونز کے لیے AI اسسٹ",
+      "description": "AI کو بہتر پرومپٹس اور ٹونز تیزی سے تیار کرنے میں مدد دیں",
+      "step1": "سائیڈبار میں Quick Actions کھولیں",
+      "step2": "{prompts} یا {tones} ٹیب پر جائیں",
+      "step3": "AI Assistant پینل تلاش کریں",
+      "getSuggestions": "تجاویز حاصل کریں",
+      "getSuggestionsDesc": "AI آپ کے مسودے کا تجزیہ کرتا ہے اور بہتری کی تجاویز دیتا ہے",
+      "buildFromFiles": "فائلز سے تیار کریں",
+      "buildFromFilesDesc": "دستاویزات اپ لوڈ کریں تاکہ پرومپٹس/ٹونز بن سکیں",
+      "testBeforeSaving": "محفوظ کرنے سے پہلے آزمائیں",
+      "testBeforeSavingDesc": "پرومپٹس/ٹونز کو لائیو چیٹ پریویو میں آزمائیں",
+      "step2Prefix": "تشریف لے جائیں",
+      "step2Suffix": "ٹیب"
+    },
+    "customAgents": {
+      "title": "کسٹم ایجنٹس",
+      "advancedBadge": "ایڈوانسڈ",
+      "description": "خصوصی AI ایجنٹس، بہتر صلاحیتوں جیسے ویب تلاش اور کوڈ معلومات کے ساتھ",
+      "advancedFeature": "اعلی فیچر",
+      "advancedFeatureDesc": "کسٹم ایجنٹس Azure AI Foundry پر خصوصی ٹولز کے ساتھ چلتے ہیں۔ ایجنٹ IDs بنانے کے لیے AI Assistant تکنیکی ٹیم سےرابطہ ضروری ہے۔",
+      "howToAccess": "کیسے رسائی حاصل کریں:",
+      "howToAccessInstructions": "سیٹنگز → ماڈلز → ایجنٹس ٹیب",
+      "whatYouCanDo": "آپ کیا کر سکتے ہیں:",
+      "configureAgents": "ایجنٹس کو خصوصی صلاحیتوں کے ساتھ ترتیب دیں",
+      "importExport": "ایجنٹ کنفیگریشنز امپورٹ/ایکسپورٹ کریں",
+      "selectFromDropdown": "ماڈل ڈراپ ڈاؤن سے کسٹم ایجنٹس منتخب کریں"
+    },
+    "audioTranslation": {
+      "title": "آڈیو ٹرانسکرپشن و ترجمہ",
+      "description": "آڈیو ٹرانسکرپٹس کو خودکار طور پر 13+ زبانوں میں ترجمہ کریں",
+      "howToUse": "استعمال کا طریقہ:",
+      "step1": "آڈیو یا ویڈیو فائل اپ لوڈ کریں",
+      "step2": "ٹرانسکرپشن انٹرفیس میں زبان کا ڈراپ ڈاؤن منتخب کریں",
+      "step3": "اپنی مطلوبہ زبان منتخب کریں",
+      "availableLanguages": "دستیاب زبانیں:",
+      "moreLanguages": "+7 مزید"
+    },
+    "pwa": {
+      "title": "موبائل ایپ کے طور پر انسٹال کریں",
+      "description": "ایسا Progressive Web App جو بالکل ایپ جیسا تجربہ فراہم کرے",
+      "installTip": "مشورہ: سائن ان کرنے کے بعد انسٹال کریں تاکہ آپ کی توثیق برقرار رہے اور بہترین تجربہ ملے۔",
+      "howToInstall": "انسٹال کرنے کا طریقہ:",
+      "step1": "اپنے اکاؤنٹ میں سائن ان کریں",
+      "step2": "تفصیلی ہدایات کے لیے سیٹنگز → موبائل ایپ کھولیں",
+      "step3": "موبائل پر: براؤزر مینو پر ٹیپ کریں (⋮ یا ⚙️)",
+      "step4": "\"Add to Home Screen\" یا \"Install App\" تلاش کریں",
+      "step5": "انسٹالیشن کے مراحل پر عمل کریں",
+      "benefits": "فوائد:",
+      "benefit1": "ہوم اسکرین سے نیٹو ایپ کی طرح لانچ کریں",
+      "benefit2": "براؤزر UI کے بغیر مکمل اسکرین",
+      "benefit3": "محفوظ کردہ گفتگو کو آف لائن بھی استعمال کریں"
+    }
+  },
+  "Professional": "پیشہ ورانہ",
+  "Casual": "غیر رسمی"
 }
