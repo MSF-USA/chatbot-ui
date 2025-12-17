@@ -105,7 +105,7 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-gray-900 dark:text-white truncate">
-                        Welcome to AI Assistant V2
+                        {t('welcomeBanner.title')}
                       </p>
                     </div>
                   </div>
@@ -116,8 +116,12 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
                       onClick={handleView}
                       className="px-2 md:px-2.5 py-0.5 md:py-1 text-[10px] md:text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded transition-colors whitespace-nowrap shadow-[0_2px_12px_rgba(220,38,38,0.45)] hover:shadow-[0_2px_16px_rgba(220,38,38,0.55)] dark:shadow-[0_2px_12px_rgba(248,113,113,0.4)] dark:hover:shadow-[0_2px_16px_rgba(248,113,113,0.5)] ring-1 ring-red-400/30 dark:ring-red-400/50"
                     >
-                      <span className="md:hidden">What's New</span>
-                      <span className="hidden md:inline">What's New?</span>
+                      <span className="md:hidden">
+                        {t('welcomeBanner.whatsNew')}
+                      </span>
+                      <span className="hidden md:inline">
+                        {t('welcomeBanner.whatsNewQuestion')}
+                      </span>
                     </Link>
                     <button
                       onClick={handleDismiss}
