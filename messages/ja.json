@@ -336,7 +336,19 @@
   "Team Templates": "チームテンプレート",
   "selected": "選択済み",
   "folders": "フォルダ",
-  "agents": "エージェント",
+  "agents": {
+    "exportAgent": "エージェントをエクスポート",
+    "editAgent": "エージェントを編集",
+    "agentName": "エージェント名",
+    "myResearchAssistant": "私の研究アシスタント",
+    "agentId": "エージェントID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "説明（オプション）",
+    "descriptionPlaceholder": "研究タスクに特化したエージェント...",
+    "baseModel": "ベースモデル",
+    "formatDescription": "形式：asst_xxxxx（MSF AI Assistant Foundryより）",
+    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。"
+  },
   "Quick Actions": "クイックアクション",
   "Type / in chat to access your prompts": "チャットで / を入力してプロンプトにアクセス",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "チャットで / を入力し、プロンプトを選択して、求められたら変数を入力してください",
@@ -383,7 +395,6 @@
   "Custom Agents": "カスタムエージェント",
   "Delete template and all its items": "テンプレートとすべてのアイテムを削除",
   "Description (Optional)": "説明（オプション）",
-  "Edit Prompt": "プロンプトを編集",
   "Edit Tone": "トーンを編集",
   "Email Response Template": "メール返信テンプレート",
   "Example Prompt": "プロンプト例",
@@ -443,7 +454,6 @@
   "msf_logo_alt": "MSFロゴ",
   "collapse_sidebar": "サイドバーを折りたたむ",
   "expand_sidebar": "サイドバーを展開",
-  "Voice Guidelines": "音声ガイドライン",
   "Please upload some content or describe the tone you want": "コンテンツをアップロードするか、希望するトーンを説明してください",
   "Untitled Tone": "無題のトーン",
   "Failed to analyze tone": "トーンの分析に失敗しました",
@@ -601,19 +611,6 @@
     "expandSidebar": "サイドバーを展開",
     "quickActionsTitle": "クイックアクション",
     "quickActions": "クイックアクション"
-  },
-  "agents": {
-    "exportAgent": "エージェントをエクスポート",
-    "editAgent": "エージェントを編集",
-    "agentName": "エージェント名",
-    "myResearchAssistant": "私の研究アシスタント",
-    "agentId": "エージェントID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "説明（オプション）",
-    "descriptionPlaceholder": "研究タスクに特化したエージェント...",
-    "baseModel": "ベースモデル",
-    "formatDescription": "形式：asst_xxxxx（MSF AI Assistant Foundryより）",
-    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。"
   },
   "prompts": {
     "buildReusablePrompts": "AIの支援で再利用可能なプロンプトを構築",
@@ -1009,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "迅速なタスクに最適化された高速でコスト効率の良いClaudeモデル。シンプルなクエリ、要約、大量のアプリケーションに最適です。",
       "knowledgeCutoff": "2025年1月"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAIの最先端モデルで、複雑な推論、コード生成、技術的な問題解決に優れています。分析作業、プログラミング課題、研究、詳細な説明に最適です。推論の深さや応答の詳細度を調整できます。",
+      "knowledgeCutoff": "2025年12月"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "会話と感情知能に最適化されたGPT-5.2の特化バージョンです。共感的なコミュニケーション、メンタルヘルスサポート、クリエイティブライティング、ブレインストーミング、自然な対話に優れています。カジュアルな会話やカウンセリング、感情認識が必要なタスクに最適です。",
+      "knowledgeCutoff": "2025年12月"
     }
   },
   "transcription": {
@@ -1056,5 +1063,167 @@
     "footerNote": "両方のモードは、会話をブラウザにローカルに保存します。モデル設定でいつでもモードを切り替えることができます。",
     "note": "注意：",
     "loadingDiagram": "ダイアグラムを読み込み中..."
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "ストレージを確認中",
+      "analyzingData": "データを分析中...",
+      "updateAvailable": "アップデート利用可能",
+      "storageSpaceLimited": "ストレージ容量が不足しています",
+      "migratingData": "データを移行中",
+      "migrationComplete": "移行完了",
+      "partiallyComplete": "一部完了",
+      "migrationFailed": "移行失敗"
+    },
+    "descriptions": {
+      "foundLegacyData": "以前のバージョンのデータが見つかりました。改善されたシステムで利用できるように移行しますか？",
+      "storageSpaceWarning": "現在の空き容量ではデータの保存ができません。段階的な移行モードの使用を推奨します。",
+      "pleaseWait": "データを更新しています。しばらくお待ちください...",
+      "dataIsSafe": "元のデータは安全です。再試行するか、今はスキップできます。",
+      "itemsTooLarge": "これらの項目はストレージに収まりきりません。エクスポートするか、空き容量を増やすか、それらを除外して続行できます。",
+      "settingsUpdated": "設定が更新されました。"
+    },
+    "benefits": {
+      "title": "利点",
+      "fasterPerformance": "高速なパフォーマンス",
+      "betterReliability": "高い信頼性",
+      "dataPreserved": "データが保護されます"
+    },
+    "options": {
+      "advancedOptions": "詳細オプション",
+      "useIncrementalMode": "段階的モードを使用",
+      "slowerButSafer": "遅いが安全",
+      "recommended": "推奨",
+      "deleteLegacyData": "移行後に旧データを削除",
+      "freesUpSpace": "ストレージ容量を確保"
+    },
+    "actions": {
+      "skip": "スキップ",
+      "migrateData": "データを移行",
+      "migrateAnyway": "強制的に移行",
+      "continue": "続行",
+      "retry": "再試行",
+      "exportBackupFirst": "先にバックアップをエクスポート",
+      "exportSkippedItems": "スキップした項目をエクスポート"
+    },
+    "quota": {
+      "availableSpace": "利用可能容量",
+      "dataToMigrate": "移行するデータ",
+      "additionalSpaceNeeded": "追加で必要な容量"
+    },
+    "progress": {
+      "migratingConversations": "会話を移行中",
+      "migratingPrompts": "プロンプトを移行中",
+      "migratingAgents": "エージェントを移行中",
+      "finishingUp": "仕上げ中"
+    },
+    "results": {
+      "successfullyMigrated": "移行に成功しました",
+      "notes": "メモ",
+      "couldNotMigrate": "移行できませんでした",
+      "legacyDataDeleted": "旧データが削除されました",
+      "freed": "解放済み"
+    },
+    "units": {
+      "conversation": "会話",
+      "conversations": "会話",
+      "folder": "フォルダ",
+      "folders": "フォルダ",
+      "prompt": "プロンプト",
+      "prompts": "プロンプト",
+      "customAgent": "カスタムエージェント",
+      "customAgents": "カスタムエージェント",
+      "item": "アイテム",
+      "items": "アイテム"
+    }
+  },
+  "languageSwahili": "スワヒリ語",
+  "welcomeBanner": {
+    "title": "AIアシスタント V2へようこそ",
+    "whatsNew": "新機能",
+    "whatsNewQuestion": "新機能は？"
+  },
+  "welcomeV2": {
+    "backToChat": "チャットに戻る",
+    "title": "AIアシスタント V2へようこそ",
+    "subtitle": "強力な新機能を備えた全面リニューアル",
+    "webSearch": {
+      "title": "ウェブ検索モード",
+      "description": "AIにリアルタイムのウェブ検索機能をプライバシー重視のオプション付きで提供",
+      "quickAccess": "クイックアクセス:",
+      "quickAccessInstructions": "チャット入力の横にある+ボタンをクリック → 「ウェブ検索」を選択",
+      "setAsDefault": "デフォルトに設定:",
+      "setAsDefaultInstructions": "モデル設定を開き、ウェブ検索モードのトグルを有効化。次から選択:",
+      "privacyFocused": "プライバシー重視（デフォルト）",
+      "privacyFocusedDescription": "検索クエリのみ外部送信",
+      "azureAIFoundry": "Azure AI Foundryモード",
+      "azureAIFoundryDescription": "高速ですが、会話全体が外部保存されます",
+      "learnMore": "検索モードの詳細はこちら →"
+    },
+    "tones": {
+      "title": "トーン（ボイスプロファイル）",
+      "description": "AIの文章スタイル、フォーマリティ、個性をコントロール",
+      "createTones": "1. トーンを作成:",
+      "createTonesInstructions": "サイドバーのクイックアクション → トーンタブ",
+      "useTones": "2. トーンを使用:",
+      "useTonesInstructions": "チャット入力の横のトーンドロップダウンをクリック",
+      "exampleProfessionalDesc": "フォーマル・ビジネストーン",
+      "exampleCasualDesc": "フレンドリー・会話調"
+    },
+    "aiAssist": {
+      "title": "プロンプト＆トーン作成のAI支援",
+      "description": "AIがより良いプロンプトやトーンの作成をサポート",
+      "step1": "サイドバーのクイックアクションを開く",
+      "step2": "{prompts}または{tones}タブに移動",
+      "step3": "AIアシスタントのパネルを探す",
+      "getSuggestions": "AIの提案を受け取る",
+      "getSuggestionsDesc": "AIが下書きを分析し改善案を提案",
+      "buildFromFiles": "ファイルから作成",
+      "buildFromFilesDesc": "ドキュメントをアップロードしてプロンプト／トーンを生成",
+      "testBeforeSaving": "保存前にテスト",
+      "testBeforeSavingDesc": "ライブチャットプレビューでプロンプト／トーンを試す",
+      "step2Prefix": "移動先:",
+      "step2Suffix": "タブ"
+    },
+    "customAgents": {
+      "title": "カスタムエージェント",
+      "advancedBadge": "ADVANCED",
+      "description": "ウェブ検索やコード解釈などの強化機能を持つ専門AIエージェント",
+      "advancedFeature": "高度な機能",
+      "advancedFeatureDesc": "カスタムエージェントは専門ツール付きAzure AI Foundry上で稼働。エージェントID作成にはAIアシスタント技術チームとの連携が必要です。",
+      "howToAccess": "アクセス方法:",
+      "howToAccessInstructions": "設定 → モデル → エージェントタブ",
+      "whatYouCanDo": "できること:",
+      "configureAgents": "専門機能付きエージェントの設定",
+      "importExport": "エージェント設定のインポート／エクスポート",
+      "selectFromDropdown": "モデルのドロップダウンからカスタムエージェントを選択"
+    },
+    "audioTranslation": {
+      "title": "翻訳付き音声文字起こし",
+      "description": "音声書き起こしを自動で13言語以上に翻訳",
+      "howToUse": "使い方:",
+      "step1": "音声または動画ファイルをアップロード",
+      "step2": "文字起こし画面で言語のドロップダウンをクリック",
+      "step3": "対象言語を選択",
+      "availableLanguages": "対応言語:",
+      "moreLanguages": "他7言語"
+    },
+    "pwa": {
+      "title": "モバイルアプリとしてインストール",
+      "description": "ネイティブな使い心地のProgressive Web App",
+      "installTip": "ヒント: サインイン後にインストールすると認証情報が保持され、最適な体験ができます。",
+      "howToInstall": "インストール方法:",
+      "step1": "アカウントにサインイン",
+      "step2": "設定 → モバイルアプリを開き、詳細な手順を確認",
+      "step3": "モバイルの場合: ブラウザメニュー（⋮または⚙️）をタップ",
+      "step4": "「ホーム画面に追加」または「アプリをインストール」を探す",
+      "step5": "ガイドに従ってインストール",
+      "benefits": "メリット:",
+      "benefit1": "ホーム画面からネイティブアプリのように起動",
+      "benefit2": "ブラウザ表示なしの全画面モード",
+      "benefit3": "保存済み会話へのオフラインアクセス"
+    }
+  },
+  "Professional": "プロフェッショナル",
+  "Casual": "カジュアル"
 }
