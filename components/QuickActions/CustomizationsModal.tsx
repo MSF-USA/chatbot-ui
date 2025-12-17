@@ -70,7 +70,7 @@ export function CustomizationsModal({
                 id: 'prompts',
                 label: (
                   <>
-                    <span className="hidden sm:inline">Prompts</span>
+                    <span className="hidden sm:inline">{t('Prompts')}</span>
                     <span className="sm:hidden">
                       <IconSparkles size={16} />
                     </span>
@@ -84,7 +84,7 @@ export function CustomizationsModal({
                 id: 'tones',
                 label: (
                   <>
-                    <span className="hidden sm:inline">Tones</span>
+                    <span className="hidden sm:inline">{t('Tones')}</span>
                     <span className="sm:hidden">
                       <IconVolume size={16} />
                     </span>
