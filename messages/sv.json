@@ -336,7 +336,19 @@
   "Team Templates": "Teammallar",
   "selected": "vald",
   "folders": "mappar",
-  "agents": "agenter",
+  "agents": {
+    "exportAgent": "Exportera agent",
+    "editAgent": "Redigera agent",
+    "agentName": "Agentnamn",
+    "myResearchAssistant": "Min forskningsassistent",
+    "agentId": "Agent-ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Beskrivning (valfritt)",
+    "descriptionPlaceholder": "Agent specialiserad på forskningsuppgifter...",
+    "baseModel": "Basmodell",
+    "formatDescription": "Format: asst_xxxxx (från MSF AI Assistant Foundry)",
+    "importantInfo": "Denna agent kommer att ha tillgång till konversationskontexten och kan använda samma verktyg som standardmodeller. Se till att agent-ID:t är korrekt eftersom det inte kan ändras senare."
+  },
   "Quick Actions": "Snabbåtgärder",
   "Type / in chat to access your prompts": "Skriv / i chatten för att komma åt dina prompter",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Skriv / i chatten, välj din prompt och fyll i variablerna när du uppmanas",
@@ -383,7 +395,6 @@
   "Custom Agents": "Anpassade agenter",
   "Delete template and all its items": "Ta bort mall och alla dess objekt",
   "Description (Optional)": "Beskrivning (valfritt)",
-  "Edit Prompt": "Redigera prompt",
   "Edit Tone": "Redigera ton",
   "Email Response Template": "Mall för e-postsvar",
   "Example Prompt": "Exempelprompt",
@@ -443,7 +454,6 @@
   "msf_logo_alt": "MSF-logotyp",
   "collapse_sidebar": "Fäll ihop sidofält",
   "expand_sidebar": "Expandera sidofält",
-  "Voice Guidelines": "Röstriktlinjer",
   "Please upload some content or describe the tone you want": "Vänligen ladda upp innehåll eller beskriv den ton du vill ha",
   "Untitled Tone": "Namnlös ton",
   "Failed to analyze tone": "Kunde inte analysera ton",
@@ -601,19 +611,6 @@
     "expandSidebar": "Expandera sidofält",
     "quickActionsTitle": "Snabbåtgärder",
     "quickActions": "Snabbåtgärder"
-  },
-  "agents": {
-    "exportAgent": "Exportera agent",
-    "editAgent": "Redigera agent",
-    "agentName": "Agentnamn",
-    "myResearchAssistant": "Min forskningsassistent",
-    "agentId": "Agent-ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Beskrivning (valfritt)",
-    "descriptionPlaceholder": "Agent specialiserad på forskningsuppgifter...",
-    "baseModel": "Basmodell",
-    "formatDescription": "Format: asst_xxxxx (från MSF AI Assistant Foundry)",
-    "importantInfo": "Denna agent kommer att ha tillgång till konversationskontexten och kan använda samma verktyg som standardmodeller. Se till att agent-ID:t är korrekt eftersom det inte kan ändras senare."
   },
   "prompts": {
     "buildReusablePrompts": "Bygg återanvändbara prompter med AI-assistans",
@@ -1009,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "En snabb och kostnadseffektiv Claude-modell optimerad för snabba uppgifter. Idealisk för enkla frågor, sammanfattningar och massapplikationer.",
       "knowledgeCutoff": "Januari 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAIs mest avancerade modell, utmärker sig inom komplex problemlösning, kodgenerering och teknisk problemlösning. Bäst för analytiska uppgifter, programmeringsutmaningar, forskning och detaljerade förklaringar. Stöder justerbar resonemangsnivå och svarslängd.",
+      "knowledgeCutoff": "Dec 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Specialversion av GPT-5.2 optimerad för konversationsinteraktioner och emotionell intelligens. Utmärker sig i empatisk kommunikation, stöd för mental hälsa, kreativt skrivande, idégenerering och naturlig dialog. Bäst för vardagliga samtal, rådgivningssituationer och uppgifter som kräver emotionell medvetenhet.",
+      "knowledgeCutoff": "Dec 2025"
     }
   },
   "searchMode": {
@@ -1056,5 +1063,167 @@
     "transcribesOnSend": "Transkriberar vid sändning",
     "addInstructions": "Lägg till instruktioner",
     "instructionsPlaceholder": "Kontext för att förbättra noggrannheten (t.ex. namn, termer)"
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Kontrollerar lagring",
+      "analyzingData": "Analyserar dina data...",
+      "updateAvailable": "Uppdatering tillgänglig",
+      "storageSpaceLimited": "Begränsat lagringsutrymme",
+      "migratingData": "Migrerar data",
+      "migrationComplete": "Migrering slutförd",
+      "partiallyComplete": "Delvis slutförd",
+      "migrationFailed": "Migreringen misslyckades"
+    },
+    "descriptions": {
+      "foundLegacyData": "Vi har hittat data från en tidigare version. Vill du migrera dem till det förbättrade systemet?",
+      "storageSpaceWarning": "Dina data kräver mer utrymme än vad som finns tillgängligt. Vi rekommenderar inkrementell migrering.",
+      "pleaseWait": "Vänligen vänta medan vi uppdaterar dina data...",
+      "dataIsSafe": "Dina originaldata är säkra. Du kan försöka igen eller hoppa över för tillfället.",
+      "itemsTooLarge": "Dessa objekt är för stora för att rymmas i lagringen. Du kan exportera dem, frigöra utrymme eller fortsätta utan dem.",
+      "settingsUpdated": "Dina inställningar har uppdaterats."
+    },
+    "benefits": {
+      "title": "Fördelar",
+      "fasterPerformance": "Snabbare prestanda",
+      "betterReliability": "Bättre tillförlitlighet",
+      "dataPreserved": "Dina data bevaras"
+    },
+    "options": {
+      "advancedOptions": "Avancerade alternativ",
+      "useIncrementalMode": "Använd inkrementellt läge",
+      "slowerButSafer": "långsammare men säkrare",
+      "recommended": "rekommenderas",
+      "deleteLegacyData": "Radera äldre data efter migrering",
+      "freesUpSpace": "frigör lagringsutrymme"
+    },
+    "actions": {
+      "skip": "Hoppa över",
+      "migrateData": "Migrera data",
+      "migrateAnyway": "Migrera ändå",
+      "continue": "Fortsätt",
+      "retry": "Försök igen",
+      "exportBackupFirst": "Exportera säkerhetskopia först",
+      "exportSkippedItems": "Exportera överhoppade objekt"
+    },
+    "quota": {
+      "availableSpace": "Tillgängligt utrymme",
+      "dataToMigrate": "Data att migrera",
+      "additionalSpaceNeeded": "Ytterligare utrymme krävs"
+    },
+    "progress": {
+      "migratingConversations": "Migrerar konversationer",
+      "migratingPrompts": "Migrerar uppmaningar",
+      "migratingAgents": "Migrerar agenter",
+      "finishingUp": "Avslutar"
+    },
+    "results": {
+      "successfullyMigrated": "Migrering lyckades",
+      "notes": "Anteckningar",
+      "couldNotMigrate": "Kunde inte migrera",
+      "legacyDataDeleted": "Äldre data raderade",
+      "freed": "frigjorde"
+    },
+    "units": {
+      "conversation": "konversation",
+      "conversations": "konversationer",
+      "folder": "mapp",
+      "folders": "mappar",
+      "prompt": "uppmaning",
+      "prompts": "uppmaningar",
+      "customAgent": "anpassad agent",
+      "customAgents": "anpassade agenter",
+      "item": "post",
+      "items": "poster"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Välkommen till AI Assistant V2",
+    "whatsNew": "Nyheter",
+    "whatsNewQuestion": "Vad är nytt?"
+  },
+  "welcomeV2": {
+    "backToChat": "Tillbaka till chatten",
+    "title": "Välkommen till AI Assistant V2",
+    "subtitle": "En helt ny design med kraftfulla nya funktioner",
+    "webSearch": {
+      "title": "Webbsökningsläge",
+      "description": "Ge AI tillgång till webbsökning i realtid med integritetsfokuserade alternativ",
+      "quickAccess": "Snabbåtkomst:",
+      "quickAccessInstructions": "Klicka på + bredvid chattfältet → Välj \"Webbsökning\"",
+      "setAsDefault": "Ställ in som standard:",
+      "setAsDefaultInstructions": "Öppna modellinställningar och aktivera Webbsökningsläge. Välj mellan:",
+      "privacyFocused": "Integritetsfokuserat (standard)",
+      "privacyFocusedDescription": "Endast sökfrågan skickas externt",
+      "azureAIFoundry": "Azure AI Foundry-läge",
+      "azureAIFoundryDescription": "Snabbare, men hela samtalet lagras externt",
+      "learnMore": "Läs mer om söklägen →"
+    },
+    "tones": {
+      "title": "Toner (röstprofiler)",
+      "description": "Styr AI:s skrivstil, formalitet och personlighet",
+      "createTones": "1. Skapa toner:",
+      "createTonesInstructions": "Snabbåtgärder i sidfältet → Toner-fliken",
+      "useTones": "2. Använd toner:",
+      "useTonesInstructions": "Klicka på ton-rullgardinsmenyn bredvid chattfältet",
+      "exampleProfessionalDesc": "Formell, affärsinriktad ton",
+      "exampleCasualDesc": "Vänlig, samtalston"
+    },
+    "aiAssist": {
+      "title": "AI-hjälp för promptar & toner",
+      "description": "Låt AI hjälpa dig skapa bättre promptar och toner snabbare",
+      "step1": "Öppna Snabbåtgärder i sidfältet",
+      "step2": "Navigera till fliken {prompts} eller {tones}",
+      "step3": "Leta efter AI Assistant-panelen",
+      "getSuggestions": "Få förslag",
+      "getSuggestionsDesc": "AI analyserar ditt utkast och föreslår förbättringar",
+      "buildFromFiles": "Skapa från filer",
+      "buildFromFilesDesc": "Ladda upp dokument för att skapa promptar/toner",
+      "testBeforeSaving": "Testa innan du sparar",
+      "testBeforeSavingDesc": "Prova promptar/toner i en live-chattförhandsvisning",
+      "step2Prefix": "Navigera till",
+      "step2Suffix": "flik"
+    },
+    "customAgents": {
+      "title": "Anpassade agenter",
+      "advancedBadge": "AVANCERAT",
+      "description": "Specialiserade AI-agenter med avancerade funktioner som webbsökning och kodtolkning",
+      "advancedFeature": "Avancerad funktion",
+      "advancedFeatureDesc": "Anpassade agenter körs på Azure AI Foundry med specialiserade verktyg. Kräver samordning med AI Assistant-teknikteamet för att skapa agent-ID:n.",
+      "howToAccess": "Så här får du åtkomst:",
+      "howToAccessInstructions": "Inställningar → Modeller → Fliken Agenter",
+      "whatYouCanDo": "Vad du kan göra:",
+      "configureAgents": "Konfigurera agenter med specialiserade funktioner",
+      "importExport": "Importera/exportera agentinställningar",
+      "selectFromDropdown": "Välj anpassade agenter från modelrullgardinsmenyn"
+    },
+    "audioTranslation": {
+      "title": "Ljudtranskription med översättning",
+      "description": "Översätt automatiskt ljudtranskriptioner till 13+ språk",
+      "howToUse": "Så här använder du:",
+      "step1": "Ladda upp en ljud- eller videofil",
+      "step2": "Klicka på språklistan i transkriptionsgränssnittet",
+      "step3": "Välj målspråk",
+      "availableLanguages": "Tillgängliga språk:",
+      "moreLanguages": "+7 till"
+    },
+    "pwa": {
+      "title": "Installera som mobilapp",
+      "description": "Progressive Web App med en upplevelse likt en inbyggd app",
+      "installTip": "Tips: Installera efter inloggning för att behålla din autentisering och få bästa möjliga upplevelse.",
+      "howToInstall": "Så här installerar du:",
+      "step1": "Logga in på ditt konto",
+      "step2": "Öppna Inställningar → Mobilapp för detaljerade instruktioner",
+      "step3": "På mobil: Tryck på webbläsarmenyn (⋮ eller ⚙️)",
+      "step4": "Leta efter \"Lägg till på startskärmen\" eller \"Installera app\"",
+      "step5": "Följ anvisningarna för att installera",
+      "benefits": "Fördelar:",
+      "benefit1": "Starta från hemskärmen som en äkta app",
+      "benefit2": "Helskärm utan webbläsargränssnitt",
+      "benefit3": "Offlineåtkomst till sparade konversationer"
+    }
+  },
+  "Professional": "Professionell",
+  "Casual": "Ledig"
 }
