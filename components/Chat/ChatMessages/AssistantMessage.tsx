@@ -96,6 +96,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [showTranslationDropdown, setShowTranslationDropdown] = useState(false);
   const translateButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Detect if embedded content is present (e.g., TranscriptViewer)
+  // When children is provided, content-specific actions should be disabled
+  // since the child component handles its own actions
+  const hasEmbeddedContent = !!children;
+
   // Detect dark mode
   useEffect(() => {
     const updateTheme = () => {
@@ -501,9 +506,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
               {/* Copy button */}
               <button
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                onClick={handleCopy}
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={hasEmbeddedContent ? undefined : handleCopy}
+                disabled={hasEmbeddedContent}
                 aria-label={messageCopied ? 'Copied' : 'Copy message'}
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : undefined
+                }
               >
                 {messageCopied ? (
                   <IconCheck size={18} />
@@ -526,18 +541,31 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               {/* Listen button */}
               <button
                 className={`transition-colors ${
-                  isGeneratingAudio
-                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : isGeneratingAudio
+                      ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
-                onClick={audioUrl ? handleCloseAudio : handleTTS}
-                disabled={isGeneratingAudio}
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : audioUrl
+                      ? handleCloseAudio
+                      : handleTTS
+                }
+                disabled={hasEmbeddedContent || isGeneratingAudio}
                 aria-label={
                   audioUrl
                     ? 'Stop audio'
                     : isGeneratingAudio
                       ? 'Generating audio...'
                       : 'Listen'
+                }
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : undefined
                 }
               >
                 {isGeneratingAudio ? (
@@ -553,18 +581,26 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               <button
                 ref={translateButtonRef}
                 className={`transition-colors ${
-                  translationState.isTranslating
-                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    : translationState.currentLocale
-                      ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
-                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : translationState.isTranslating
+                      ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : translationState.currentLocale
+                        ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
-                onClick={() =>
-                  setShowTranslationDropdown(!showTranslationDropdown)
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : () => setShowTranslationDropdown(!showTranslationDropdown)
                 }
-                disabled={translationState.isTranslating}
+                disabled={hasEmbeddedContent || translationState.isTranslating}
                 aria-label={t('chat.translateMessage')}
-                title={t('chat.translateMessage')}
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : t('chat.translateMessage')
+                }
               >
                 {translationState.isTranslating ? (
                   <IconLoader2 size={18} className="animate-spin" />
@@ -575,17 +611,30 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
               {/* Open as document button */}
               <button
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                onClick={() => {
-                  openDocument(
-                    displayedContent,
-                    'md',
-                    'message.md',
-                    'document',
-                  );
-                }}
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : () => {
+                        openDocument(
+                          displayedContent,
+                          'md',
+                          'message.md',
+                          'document',
+                        );
+                      }
+                }
+                disabled={hasEmbeddedContent}
                 aria-label="Open as document"
-                title="Open as document"
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : 'Open as document'
+                }
               >
                 <IconFileText size={18} />
               </button>
