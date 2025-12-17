@@ -406,7 +406,7 @@
   "enterTagsPlaceholder": "برچسب‌ها را اضافه کنید (Enter را فشار دهید)",
   "enterPromptNamePlaceholder": "مثلاً، پاسخ ایمیل",
   "enterPromptDescriptionPlaceholder": "این دستور برای چیست؟",
-  "enterPromptContentPlaceholder": "دستور خود را اینجا بنویسید. از {{variable}} برای محتوای پویا استفاده کنید.",
+  "enterPromptContentPlaceholder": "دستور خود را اینجا بنویسید. از '{{variable}}' برای محتوای پویا استفاده کنید.",
   "common": {
     "contact": "تماس",
     "close": "بستن",
@@ -555,7 +555,7 @@
     "userMustProvide": "کاربر باید مقدار را وارد کند",
     "userCanProvide": "کاربر می‌تواند مقدار وارد کند یا مقدار پیش‌فرض استفاده می‌شود",
     "example": "مثال:",
-    "variableExampleText": "یک ایمیل {{tone:professional}} به {{recipient}} درباره {{topic}} به زبان {{language:English}} بنویس",
+    "variableExampleText": "یک ایمیل '{{tone:professional}}' به '{{recipient}}' درباره '{{topic}}' به زبان '{{language:English}}' بنویس",
     "detectedVariables": "متغیرهای شناسایی‌شده",
     "required": "اجباری",
     "aiAssistant": "دستیار هوش مصنوعی",
@@ -753,7 +753,8 @@
     "deleteLegacyConfirm": "آیا مطمئن هستید که می‌خواهید همه داده‌های قدیمی را حذف کنید؟ این اقدام قابل بازگشت نیست.",
     "Deleting": "در حال حذف",
     "Confirm Delete": "تأیید حذف",
-    "Cancel": "لغو"
+    "Cancel": "لغو",
+    "Custom Instructions": "دستورالعمل‌های سفارشی"
   },
   "notFound": {
     "lostDog": "سگ گمشده"
@@ -788,7 +789,11 @@
   "OpenAI API Key Required": "نیاز به کلید OpenAI API",
   "Please enter a message": "لطفاً یک پیام وارد کنید",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
-  "Prompt limit is {{maxLength}} characters": "محدودیت پرامپت {{maxLength}} کاراکتر است",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "حداکثر تعداد کاراکترها {{maxLength}} است. شما {{valueLength}} کاراکتر وارد کرده‌اید."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
   "Regenerate response": "تولید مجدد پاسخ",
   "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "حرفه‌ای",
-  "Casual": "غیررسمی"
+  "Casual": "غیررسمی",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "یک درخواست وارد کنید یا «/» را برای انتخاب درخواست بنویسید..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "دستورالعمل‌های شخصی خود را برای سفارشی‌سازی پاسخ‌های هوش مصنوعی اضافه کنید. این دستورالعمل‌ها همراه با راهنمایی‌های اصلی برای اطمینان از پاسخ‌های مفید، دقیق و امن ترکیب می‌شوند."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "نکته: «/» را تایپ کنید تا از قالب‌های ذخیره‌شده درخواست انتخاب کنید."
+  },
+  "fileUpload": {
+    "uploading": "در حال بارگذاری...",
+    "transcribing": "در حال تبدیل گفتار به نوشتار...",
+    "complete": "تکمیل شد",
+    "failed": "ناموفق",
+    "uploadFiles": "فایل‌ها را بارگذاری کنید (صوتی، تصویری یا متنی)"
+  }
 }

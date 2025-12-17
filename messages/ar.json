@@ -21,7 +21,11 @@
   "Invalid folder file": "ملف مجلد غير صالح",
   "New conversation": "محادثة جديدة",
   "No prompts found": "لم يتم العثور على موجهات",
-  "Prompt limit is {{maxLength}} characters": "حرفًا {{maxLength}} حد المطالبة هو",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "الحد الأقصى للمدخلات هو {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "حد الموجه {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا.",
   "System Prompt": "مطالبة النظام",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "أنت شات جبت نموذج لغة كبير تم تدريبه بواسطة أوبن أيه أي. اتبع تعليمات المستخدم بعناية. الرد باستخدام الماركداون",
@@ -156,7 +160,7 @@
   "Description": "الوصف",
   "A description for your prompt_": "وصف لمطلبك",
   "Prompt": "موجه",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطلب. استخدم {{}} للإشارة إلى متغير. مثال: {{الاسم}} هي {{صفة}} {{اسم}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطلب. استخدم '{{}}' للإشارة إلى متغير. مثال: {{الاسم}} هي {{صفة}} {{اسم}}",
   "Save": "حفظ",
   "A name for your prompt_": "اسم للموجه الخاص بك.",
   "New chat": "محادثة جديدة",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "أضف علامات (اضغط Enter)",
   "enterPromptNamePlaceholder": "على سبيل المثال، الرد على البريد الإلكتروني",
   "enterPromptDescriptionPlaceholder": "ما الغرض من هذا الموجه؟",
-  "enterPromptContentPlaceholder": "اكتب موجهك هنا. استخدم {{variable}} للمحتوى الديناميكي.",
+  "enterPromptContentPlaceholder": "اكتب موجهك هنا. استخدم '{{variable}}' للمحتوى الديناميكي.",
   "common": {
     "close": "إغلاق",
     "remove": "إزالة",
@@ -585,7 +589,7 @@
     "userMustProvide": "يجب على المستخدم تقديم قيمة",
     "userCanProvide": "يمكن للمستخدم تقديم قيمة، أو يتم استخدام القيمة الافتراضية",
     "example": "مثال:",
-    "variableExampleText": "اكتب بريدًا إلكترونيًا {{tone:احترافي}} إلى {{recipient}} حول {{topic}} بـ {{language:العربية}}",
+    "variableExampleText": "اكتب بريدًا إلكترونيًا '{{tone:احترافي}}' إلى '{{recipient}}' حول '{{topic}}' بـ '{{language:العربية}}'",
     "detectedVariables": "المتغيرات المكتشفة",
     "required": "مطلوب",
     "aiAssistant": "مساعد الذكاء الاصطناعي",
@@ -783,7 +787,8 @@
     "deleteLegacyConfirm": "هل أنت متأكد من حذف جميع البيانات القديمة؟ لا يمكن التراجع عن هذا الإجراء.",
     "Deleting": "جارٍ الحذف",
     "Confirm Delete": "تأكيد الحذف",
-    "Cancel": "إلغاء"
+    "Cancel": "إلغاء",
+    "Custom Instructions": "تعليمات مخصصة"
   },
   "notFound": {
     "lostDog": "كلب ضائع"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "رسمي",
-  "Casual": "غير رسمي"
+  "Casual": "غير رسمي",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "أدخل طلبًا أو اكتب \"/\" لاختيار طلب..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "نصيحة: اكتب \"/\" لاختيار من قوالب الطلبات المحفوظة."
+  },
+  "fileUpload": {
+    "uploading": "جارٍ التحميل...",
+    "transcribing": "جارٍ النسخ...",
+    "complete": "اكتمل",
+    "failed": "فشل",
+    "uploadFiles": "ارفع ملفات (صوت، فيديو أو نص)"
+  }
 }

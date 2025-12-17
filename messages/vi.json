@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Yêu cầu nhập API Key từ tài khoản OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vui lòng nhập API Key từ tài khoản OpenAI của bạn vào ô dưới cùng của thanh bên trái.",
   "Stop Generating": "Dừng tạo",
-  "Prompt limit is {{maxLength}} characters": "Giới hạn Prompt là {{maxLength}} ký tự",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Giới hạn số ký tự cho lời nhắc là {{maxLength}} ký tự. Bạn đã nhập {{valueLength}} ký tự."
+    }
+  },
   "System Prompt": "Prompt hệ thống",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Bạn là ChatGPT, một mô hình ngôn ngữ lớn được đào tạo bởi OpenAI. Hãy tuân theo hướng dẫn của người dùng một cách cẩn thận. Phản hồi bằng cách sử dụng định dạng markdown.",
   "Enter a prompt": "Nhập một Prompt",
@@ -128,7 +132,7 @@
   "Description": "Mô tả",
   "A description for your prompt_": "Một mô tả cho Prompt của bạn.",
   "Prompt": "nhắc nhở",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung Prompt. Sử dụng {{}} để biểu thị một biến. Ví dụ: {{name}} là một {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung Prompt. Sử dụng '{{}}' để biểu thị một biến. Ví dụ: '{{name}}' là một '{{adjective}}' '{{noun}}'",
   "Save": "Lưu",
   "A name for your prompt_": "Tên cho lời nhắc của bạn.",
   "New chat": "Tạo hội thoại mới",
@@ -451,7 +455,7 @@
   "enterTagsPlaceholder": "Thêm thẻ (nhấn Enter)",
   "enterPromptNamePlaceholder": "ví dụ: Trả lời Email",
   "enterPromptDescriptionPlaceholder": "Lời nhắc này dùng để làm gì?",
-  "enterPromptContentPlaceholder": "Viết lời nhắc của bạn ở đây. Sử dụng {{variable}} cho nội dung động.",
+  "enterPromptContentPlaceholder": "Viết lời nhắc của bạn ở đây. Sử dụng '{{variable}}' cho nội dung động.",
   "common": {
     "contact": "Liên hệ",
     "close": "Đóng",
@@ -600,7 +604,7 @@
     "userMustProvide": "Người dùng phải cung cấp giá trị",
     "userCanProvide": "Người dùng có thể cung cấp giá trị, hoặc sử dụng giá trị mặc định",
     "example": "Ví dụ:",
-    "variableExampleText": "Viết một email {{tone:professional}} cho {{recipient}} về {{topic}} bằng {{language:English}}",
+    "variableExampleText": "Viết một email '{{tone:professional}}' cho '{{recipient}}' về '{{topic}}' bằng '{{language:English}}'",
     "detectedVariables": "Các biến đã phát hiện",
     "required": "Bắt buộc",
     "aiAssistant": "Trợ lý AI",
@@ -798,7 +802,8 @@
     "deleteLegacyConfirm": "Bạn có chắc chắn muốn xóa toàn bộ dữ liệu cũ? Hành động này không thể hoàn tác.",
     "Deleting": "Đang xóa",
     "Confirm Delete": "Xác nhận xóa",
-    "Cancel": "Hủy bỏ"
+    "Cancel": "Hủy bỏ",
+    "Custom Instructions": "Hướng dẫn tùy chỉnh"
   },
   "notFound": {
     "lostDog": "Chó bị lạc"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Chuyên nghiệp",
-  "Casual": "Thân mật"
+  "Casual": "Thân mật",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Nhập lời nhắc hoặc gõ \"/\" để chọn lời nhắc..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Thêm hướng dẫn cá nhân để tùy chỉnh cách AI phản hồi. Những hướng dẫn này sẽ được kết hợp với các quy định cốt lõi nhằm đảm bảo phản hồi hữu ích, chính xác và an toàn."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Mẹo: Gõ \"/\" để chọn từ các mẫu lời nhắc đã lưu."
+  },
+  "fileUpload": {
+    "uploading": "Đang tải lên...",
+    "transcribing": "Đang chuyển đổi...",
+    "complete": "Hoàn tất",
+    "failed": "Thất bại",
+    "uploadFiles": "Tải lên tệp (âm thanh, video hoặc văn bản)"
+  }
 }

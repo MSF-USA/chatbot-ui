@@ -94,7 +94,11 @@
   "translatorTranslationTypeLabel": "ترجمہ کی قسم",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پیغام کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "OpenAI API Key Required": "OpenAI API کلید درکار ہے",
-  "Prompt limit is {{maxLength}} characters": "پرامپٹ کی حد {{maxLength}} حروف ہے",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "Regenerate response": "جواب دوبارہ تیار کریں",
   "cancelButton": "منسوخ کریں",
@@ -126,7 +130,7 @@
   "Description": "تفصیل",
   "No prompts_": "کوئی پرامپٹس نہیں۔",
   "A description for your prompt_": "آپ کے پرامپٹ کی تفصیل۔",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "پرامپٹ مواد۔ متغیر کو ظاہر کرنے کے لیے {{}} کا استعمال کریں۔ مثال: {{name}} ایک {{adjective}} {{noun}} ہے",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "پرامپٹ مواد۔ متغیر کو ظاہر کرنے کے لیے '{{}}' کا استعمال کریں۔ مثال: '{{name}}' ایک '{{adjective}}' '{{noun}}' ہے",
   "New prompt": "نیا پرامپٹ",
   "Search prompts_ellipsis": "پرامپٹس تلاش کریں...",
   "Prompt": "پرامپٹ",
@@ -480,7 +484,7 @@
   "enterTagsPlaceholder": "ٹیگز شامل کریں (Enter دبائیں)",
   "enterPromptNamePlaceholder": "مثلاً، ای میل جواب",
   "enterPromptDescriptionPlaceholder": "یہ پرامپٹ کس لیے ہے؟",
-  "enterPromptContentPlaceholder": "اپنا پرامپٹ یہاں لکھیں۔ متحرک مواد کے لیے {{variable}} استعمال کریں۔",
+  "enterPromptContentPlaceholder": "اپنا پرامپٹ یہاں لکھیں۔ متحرک مواد کے لیے '{{variable}}' استعمال کریں۔",
   "common": {
     "contact": "رابطہ",
     "close": "بند کریں",
@@ -827,7 +831,8 @@
     "frees up storage space": "اسٹوریج کی جگہ خالی کرتا ہے",
     "legacyDataDescription": "آپ کے پاس {size} پرانا ڈیٹا ہے۔",
     "legacyDeleteError": "پرانا ڈیٹا حذف کرنے میں ناکام۔",
-    "legacyDeleteSuccess": "پرانا ڈیٹا کامیابی سے حذف ہو گیا۔"
+    "legacyDeleteSuccess": "پرانا ڈیٹا کامیابی سے حذف ہو گیا۔",
+    "Custom Instructions": "حسب ضرورت ہدایات"
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "پیشہ ورانہ",
-  "Casual": "غیر رسمی"
+  "Casual": "غیر رسمی",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "پرامپٹ درج کریں یا پرامپٹ منتخب کرنے کے لیے \"/\" ٹائپ کریں..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI کے ردعمل کو اپنی مرضی کے مطابق بنانے کے لیے اپنی ہدایات شامل کریں۔ یہ بنیادی رہنما اصولوں کے ساتھ مل کر مفید، درست اور محفوظ جوابات کو یقینی بناتے ہیں۔"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "ٹپ: محفوظ شدہ پرامپٹ ٹیمپلیٹس منتخب کرنے کے لیے \"/\" ٹائپ کریں۔"
+  },
+  "fileUpload": {
+    "uploading": "اپ لوڈ ہو رہا ہے...",
+    "transcribing": "ٹرانسکرائب ہو رہا ہے...",
+    "complete": "مکمل",
+    "failed": "ناکام",
+    "uploadFiles": "فائلیں اپ لوڈ کریں (آڈیو، ویڈیو یا ٹیکسٹ)"
+  }
 }

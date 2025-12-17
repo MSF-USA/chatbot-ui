@@ -53,7 +53,11 @@
   "Plugin Keys": "Klíče pluginů",
   "Prompt": "Výzva",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte '{{}}' k označení proměnné. Např.: '{{name}}' je '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": "Limit výzvy je {{maxLength}} znaků",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Limit pro zadání je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit výzvy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
   "Regenerate response": "Regenerovat odpověď",
   "Save & Submit": "Uložit a odeslat",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "Přidat štítky (stiskněte Enter)",
   "enterPromptNamePlaceholder": "např. Odpověď na e-mail",
   "enterPromptDescriptionPlaceholder": "K čemu je tato výzva?",
-  "enterPromptContentPlaceholder": "Zde napište svou výzvu. Pro dynamický obsah použijte {{variable}}.",
+  "enterPromptContentPlaceholder": "Zde napište svou výzvu. Pro dynamický obsah použijte '{{variable}}'.",
   "common": {
     "contact": "Kontakt",
     "close": "Zavřít",
@@ -633,7 +637,7 @@
     "userMustProvide": "Uživatel musí zadat hodnotu",
     "userCanProvide": "Uživatel může zadat hodnotu, nebo se použije výchozí",
     "example": "Příklad:",
-    "variableExampleText": "Napište {{tone:profesionální}} e-mail {{recipient}} o {{topic}} v {{language:češtině}}",
+    "variableExampleText": "Napište '{{tone:profesionální}}' e-mail '{{recipient}}' o '{{topic}}' v '{{language:češtině}}'",
     "detectedVariables": "Detekované proměnné",
     "required": "Povinné",
     "aiAssistant": "AI asistent",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "Opravdu chcete smazat všechna starší data? Tuto akci nelze vrátit zpět.",
     "Deleting": "Mazání",
     "Confirm Delete": "Potvrdit smazání",
-    "Cancel": "Zrušit"
+    "Cancel": "Zrušit",
+    "Custom Instructions": "Vlastní pokyny"
   },
   "notFound": {
     "lostDog": "Ztracený pes"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "Profesionální",
-  "Casual": "Neformální"
+  "Casual": "Neformální",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Zadejte prompt nebo napište \"/\" pro výběr promptu..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními pravidly chování, která zajišťují užitečné, přesné a bezpečné odpovědi."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tip: Napište \"/\" pro výběr z uložených šablon promptů."
+  },
+  "fileUpload": {
+    "uploading": "Nahrávám...",
+    "transcribing": "Přepisuji...",
+    "complete": "Hotovo",
+    "failed": "Chyba",
+    "uploadFiles": "Nahrát soubory (audio, video nebo text)"
+  }
 }

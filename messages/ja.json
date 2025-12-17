@@ -27,7 +27,11 @@
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
-  "Prompt limit is {{maxLength}} characters": "プロンプトの文字数は{{maxLength}}文字までです",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "プロンプトの上限は{{maxLength}}文字です。現在{{valueLength}}文字入力されています。"
+    }
+  },
   "System Prompt": "システムのプロンプト",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "あなたはOpenAIによってトレーニングされた大規模言語モデルのChatGPTです。ユーザーの指示には注意深く従ってください。マークダウンを使用して応答してください。",
   "Enter a prompt": "プロンプトを入力してください",
@@ -153,7 +157,7 @@
   "Description": "説明",
   "A description for your prompt_": "プロンプトの説明",
   "Prompt": "プロンプト",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "プロンプトの内容。変数を表すには {{}} を使ってください。 例: {{name}} is a {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "プロンプトの内容。変数を表すには '{{}}' を使ってください。 例: '{{name}}' is a '{{adjective}}' '{{noun}}'",
   "Save": "保存",
   "A name for your prompt_": "プロンプトの名前。",
   "New chat": "新規チャット",
@@ -481,7 +485,7 @@
   "enterTagsPlaceholder": "タグを追加（Enterを押す）",
   "enterPromptNamePlaceholder": "例：メール返信",
   "enterPromptDescriptionPlaceholder": "このプロンプトは何のためですか？",
-  "enterPromptContentPlaceholder": "ここにプロンプトを書いてください。動的コンテンツには{{variable}}を使用します。",
+  "enterPromptContentPlaceholder": "ここにプロンプトを書いてください。動的コンテンツには'{{variable}}'を使用します。",
   "common": {
     "contact": "お問い合わせ",
     "close": "閉じる",
@@ -630,7 +634,7 @@
     "userMustProvide": "ユーザーは値を提供する必要があります",
     "userCanProvide": "ユーザーは値を提供できます。そうでなければデフォルトが使用されます",
     "example": "例：",
-    "variableExampleText": "{{recipient}}宛に{{topic}}について{{tone:プロフェッショナル}}なメールを{{language:日本語}}で書いてください",
+    "variableExampleText": "'{{recipient}}'宛に'{{topic}}'について'{{tone:プロフェッショナル}}'なメールを'{{language:日本語}}'で書いてください",
     "detectedVariables": "検出された変数",
     "required": "必須",
     "aiAssistant": "AIアシスタント",
@@ -828,7 +832,8 @@
     "deleteLegacyConfirm": "すべてのレガシーデータを削除してもよろしいですか？このアクションは元に戻せません。",
     "Deleting": "削除中",
     "Confirm Delete": "削除を確認",
-    "Cancel": "キャンセル"
+    "Cancel": "キャンセル",
+    "Custom Instructions": "カスタム指示"
   },
   "notFound": {
     "lostDog": "迷子の犬"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "プロフェッショナル",
-  "Casual": "カジュアル"
+  "Casual": "カジュアル",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "プロンプトを入力するか、\"/\" を入力してプロンプトを選択してください..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AIの応答をカスタマイズするために個別の指示を追加できます。これらは、役立ち・正確・安全な応答を保証する基本ガイドラインと組み合わされます。"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "ヒント：\"/\" を入力すると保存済みプロンプトテンプレートから選択できます。"
+  },
+  "fileUpload": {
+    "uploading": "アップロード中...",
+    "transcribing": "書き起こし中...",
+    "complete": "完了",
+    "failed": "失敗しました",
+    "uploadFiles": "ファイルのアップロード（音声、動画、またはテキスト）"
+  }
 }

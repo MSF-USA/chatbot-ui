@@ -21,7 +21,11 @@
   "Invalid folder file": "Недопустимый файл папки",
   "New conversation": "Новый разговор",
   "No prompts found": "Подсказки не найдены",
-  "Prompt limit is {{maxLength}} characters": "Лимит сообщения на символы: {{maxLength}} символов",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Лимит для запроса — {{maxLength}} символов. Вы ввели {{valueLength}} символов."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Лимит сообщения: {{maxLength}} символов. Вы ввели {{valueLength}} символов.",
   "System Prompt": "Системное сообщение",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Вы ChatGPT, большая языковая модель, созданная компанией OpenAI. Следуйте инструкциям пользователя. Отвечайте на сообщения, используя Markdown",
@@ -156,7 +160,7 @@
   "Description": "Описание",
   "A description for your prompt_": "Описание для вашего запроса.",
   "Prompt": "подсказка",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Содержимое подсказки. Используйте {{}} для обозначения переменной. Пример: {{name}} — это {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Содержимое подсказки. Используйте '{{}}' для обозначения переменной. Пример: '{{name}}' — это '{{adjective}}' '{{noun}}'",
   "Save": "Сохранить",
   "A name for your prompt_": "Имя для вашего запроса.",
   "New chat": "Новый чат",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "Добавить теги (нажмите Enter)",
   "enterPromptNamePlaceholder": "напр., Ответ на email",
   "enterPromptDescriptionPlaceholder": "Для чего эта подсказка?",
-  "enterPromptContentPlaceholder": "Напишите свою подсказку здесь. Используйте {{variable}} для динамического содержимого.",
+  "enterPromptContentPlaceholder": "Напишите свою подсказку здесь. Используйте '{{variable}}' для динамического содержимого.",
   "common": {
     "close": "Закрыть",
     "remove": "Удалить",
@@ -633,7 +637,7 @@
     "userMustProvide": "Пользователь должен указать значение",
     "userCanProvide": "Пользователь может указать значение или используется значение по умолчанию",
     "example": "Пример:",
-    "variableExampleText": "Напишите {{tone:профессиональное}} письмо для {{recipient}} о {{topic}} на {{language:русском}}",
+    "variableExampleText": "Напишите '{{tone:профессиональное}}' письмо для '{{recipient}}' о '{{topic}}' на '{{language:русском}}'",
     "detectedVariables": "Обнаруженные переменные",
     "required": "Обязательно",
     "aiAssistant": "ИИ-ассистент",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "Вы уверены, что хотите удалить все устаревшие данные? Это действие нельзя отменить.",
     "Deleting": "Удаление",
     "Confirm Delete": "Подтвердить удаление",
-    "Cancel": "Отмена"
+    "Cancel": "Отмена",
+    "Custom Instructions": "Персональные инструкции"
   },
   "notFound": {
     "lostDog": "Потерянная собака"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "Профессиональный",
-  "Casual": "Неформальный"
+  "Casual": "Неформальный",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Введите запрос или наберите \"/\" для выбора шаблона запроса..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Добавьте личные инструкции, чтобы настроить ответы ИИ. Они будут объединены с основными правилами поведения для обеспечения полезных, точных и безопасных ответов."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Совет: наберите \"/\" для выбора сохранённого шаблона запроса."
+  },
+  "fileUpload": {
+    "uploading": "Загрузка...",
+    "transcribing": "Расшифровка...",
+    "complete": "Готово",
+    "failed": "Ошибка",
+    "uploadFiles": "Загрузить файлы (аудио, видео или текст)"
+  }
 }

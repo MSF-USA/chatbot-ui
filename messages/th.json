@@ -398,7 +398,7 @@
   "enterTagsPlaceholder": "เพิ่มแท็ก (กด Enter)",
   "enterPromptNamePlaceholder": "เช่น การตอบอีเมล",
   "enterPromptDescriptionPlaceholder": "พร้อมท์นี้ใช้ทำอะไร?",
-  "enterPromptContentPlaceholder": "เขียนพร้อมท์ของคุณที่นี่ ใช้ {{variable}} สำหรับเนื้อหาแบบไดนามิก",
+  "enterPromptContentPlaceholder": "เขียนพร้อมท์ของคุณที่นี่ ใช้ '{{variable}}' สำหรับเนื้อหาแบบไดนามิก",
   "common": {
     "contact": "ติดต่อ",
     "close": "ปิด",
@@ -547,7 +547,7 @@
     "userMustProvide": "ผู้ใช้ต้องระบุค่า",
     "userCanProvide": "ผู้ใช้สามารถระบุค่าหรือใช้ค่าเริ่มต้น",
     "example": "ตัวอย่าง:",
-    "variableExampleText": "เขียนอีเมล {{tone:professional}} ถึง {{recipient}} เรื่อง {{topic}} เป็น {{language:English}}",
+    "variableExampleText": "เขียนอีเมล '{{tone:professional}}' ถึง '{{recipient}}' เรื่อง '{{topic}}' เป็น '{{language:English}}'",
     "detectedVariables": "ตัวแปรที่ตรวจพบ",
     "required": "จำเป็น",
     "aiAssistant": "ผู้ช่วย AI",
@@ -745,7 +745,8 @@
     "deleteLegacyConfirm": "คุณแน่ใจหรือว่าต้องการลบข้อมูลเดิมทั้งหมด? การดำเนินการนี้ไม่สามารถย้อนกลับได้",
     "Deleting": "กำลังลบ",
     "Confirm Delete": "ยืนยันการลบ",
-    "Cancel": "ยกเลิก"
+    "Cancel": "ยกเลิก",
+    "Custom Instructions": "คำแนะนำส่วนตัว"
   },
   "notFound": {
     "lostDog": "สุนัขหาย"
@@ -780,7 +781,11 @@
   "OpenAI API Key Required": "ต้องใช้ OpenAI API Key",
   "Please enter a message": "กรุณาป้อนข้อความ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "โปรดตั้งค่า OpenAI API key ที่มุมล่างซ้ายของแถบด้านข้าง",
-  "Prompt limit is {{maxLength}} characters": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "จำกัดจำนวนอักขระที่ {{maxLength}} ตัว คุณได้ป้อนแล้ว {{valueLength}} ตัวอักขระ"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร คุณป้อนแล้ว {{valueLength}} ตัวอักษร",
   "Regenerate response": "สร้างคำตอบใหม่",
   "Run Typewriter Intro": "เริ่มต้นแนะนำแบบพิมพ์ดีด",
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "ทางการ",
-  "Casual": "ไม่เป็นทางการ"
+  "Casual": "ไม่เป็นทางการ",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "กรอกข้อความหรือพิมพ์ \"/\" เพื่อเลือกข้อความที่บันทึกไว้..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "เพิ่มคำแนะนำส่วนตัวของคุณเพื่อปรับแต่งการตอบสนองของ AI คำแนะนำเหล่านี้จะถูกรวมกับแนวทางปฏิบัติหลักเพื่อรับประกันคำตอบที่เป็นประโยชน์ ถูกต้อง และปลอดภัย"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "เคล็ดลับ: พิมพ์ \"/\" เพื่อเลือกจากเทมเพลตข้อความที่บันทึกไว้"
+  },
+  "fileUpload": {
+    "uploading": "กำลังอัปโหลด...",
+    "transcribing": "กำลังถอดความ...",
+    "complete": "เสร็จสิ้น",
+    "failed": "ล้มเหลว",
+    "uploadFiles": "อัปโหลดไฟล์ (เสียง วิดีโอ หรือข้อความ)"
+  }
 }

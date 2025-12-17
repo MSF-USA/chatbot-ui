@@ -4,7 +4,11 @@
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
-  "Prompt limit is {{maxLength}} characters": "İstem sınırı {{maxLength}} karakterdir",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "İleti sınırı {{maxLength}} karakterdir. {{valueLength}} karakter girdiniz."
+    }
+  },
   "System Prompt": "Sistem İstemi",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Siz ChatGPT'siniz, OpenAI tarafından eğitilmiş büyük bir dil modelisiniz. Kullanıcının talimatlarını dikkatlice izleyin. Markdown kullanarak yanıt verin.",
   "Enter a prompt": "Bir istem girin",
@@ -130,7 +134,7 @@
   "Description": "Açıklama",
   "A description for your prompt_": "İsteminiz için bir açıklama.",
   "Prompt": "İstem",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "İstem içeriği. Değişken belirtmek için {{}} kullanın. Örn: {{isim}} bir {{sıfat}} {{isim}}dir",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "İstem içeriği. Değişken belirtmek için '{{}}' kullanın. Örn: {{isim}} bir {{sıfat}} {{isim}}dir",
   "Save": "Kaydet",
   "A name for your prompt_": "İsteminiz için bir isim.",
   "New chat": "Yeni sohbet",
@@ -481,7 +485,7 @@
   "enterTagsPlaceholder": "Etiket ekle (Enter'a basın)",
   "enterPromptNamePlaceholder": "örn., E-posta Yanıtı",
   "enterPromptDescriptionPlaceholder": "Bu istem ne için?",
-  "enterPromptContentPlaceholder": "İsteminizi buraya yazın. Dinamik içerik için {{variable}} kullanın.",
+  "enterPromptContentPlaceholder": "İsteminizi buraya yazın. Dinamik içerik için '{{variable}}' kullanın.",
   "common": {
     "contact": "İletişim",
     "close": "Kapat",
@@ -630,7 +634,7 @@
     "userMustProvide": "Kullanıcı bir değer sağlamalıdır",
     "userCanProvide": "Kullanıcı bir değer sağlayabilir veya varsayılan kullanılır",
     "example": "Örnek:",
-    "variableExampleText": "{{alıcı}} kişisine {{konu}} hakkında {{ton:profesyonel}} bir e-posta {{dil:Türkçe}} olarak yaz",
+    "variableExampleText": "'{{alıcı}}' kişisine '{{konu}}' hakkında '{{ton:profesyonel}}' bir e-posta '{{dil:Türkçe}}' olarak yaz",
     "detectedVariables": "Algılanan değişkenler",
     "required": "Gerekli",
     "aiAssistant": "AI Asistan",
@@ -828,7 +832,8 @@
     "deleteLegacyConfirm": "Tüm eski verileri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "Deleting": "Siliniyor",
     "Confirm Delete": "Silmeyi Onayla",
-    "Cancel": "İptal"
+    "Cancel": "İptal",
+    "Custom Instructions": "Özel Talimatlar"
   },
   "notFound": {
     "lostDog": "Kayıp köpek"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Profesyonel",
-  "Casual": "Gündelik"
+  "Casual": "Gündelik",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Bir ileti girin veya bir ileti seçmek için \"/\" yazın..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Yapay zekanın nasıl yanıt vereceğini kişiselleştirmek için kendi talimatlarınızı ekleyin. Bunlar, yardımcı, doğru ve güvenli yanıtlar sağlamak için temel davranış yönergeleriyle birleştirilir."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "İpucu: Kayıtlı ileti şablonlarından seçmek için \"/\" yazın."
+  },
+  "fileUpload": {
+    "uploading": "Yükleniyor...",
+    "transcribing": "Çözümleniyor...",
+    "complete": "Tamamlandı",
+    "failed": "Başarısız",
+    "uploadFiles": "Dosyaları yükle (ses, video veya metin)"
+  }
 }

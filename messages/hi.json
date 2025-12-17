@@ -121,7 +121,11 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट सीमा {{maxLength}} अक्षर है",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "प्रॉम्प्ट सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।"
+    }
+  },
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -152,7 +156,7 @@
   "Description": "विवरण",
   "No prompts_": "कोई प्रॉम्प्ट नहीं।",
   "A description for your prompt_": "आपके प्रॉम्प्ट का विवरण।",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "प्रॉम्प्ट सामग्री। चर को दर्शाने के लिए {{}} का उपयोग करें। उदा: {{name}} एक {{adjective}} {{noun}} है",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "प्रॉम्प्ट सामग्री। चर को दर्शाने के लिए '{{}}' का उपयोग करें। उदा: '{{name}}' एक '{{adjective}}' '{{noun}}' है",
   "New prompt": "नया प्रॉम्प्ट",
   "Search prompts_ellipsis": "प्रॉम्प्ट खोजें...",
   "Prompt": "प्रॉम्प्ट",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "टैग जोड़ें (Enter दबाएं)",
   "enterPromptNamePlaceholder": "उदा., ईमेल प्रतिक्रिया",
   "enterPromptDescriptionPlaceholder": "यह प्रॉम्प्ट किसके लिए है?",
-  "enterPromptContentPlaceholder": "यहां अपना प्रॉम्प्ट लिखें। डायनामिक कंटेंट के लिए {{variable}} का उपयोग करें।",
+  "enterPromptContentPlaceholder": "यहां अपना प्रॉम्प्ट लिखें। डायनामिक कंटेंट के लिए '{{variable}}' का उपयोग करें।",
   "common": {
     "contact": "संपर्क करें",
     "close": "बंद करें",
@@ -633,7 +637,7 @@
     "userMustProvide": "उपयोगकर्ता को एक मान प्रदान करना होगा",
     "userCanProvide": "उपयोगकर्ता मान प्रदान कर सकता है, या डिफ़ॉल्ट का उपयोग किया जाता है",
     "example": "उदाहरण:",
-    "variableExampleText": "{{recipient}} को {{topic}} के बारे में {{tone:पेशेवर}} ईमेल {{language:हिंदी}} में लिखें",
+    "variableExampleText": "'{{recipient}}' को '{{topic}}' के बारे में '{{tone:पेशेवर}}' ईमेल '{{language:हिंदी}}' में लिखें",
     "detectedVariables": "पहचाने गए वेरिएबल",
     "required": "आवश्यक",
     "aiAssistant": "AI सहायक",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "क्या आप वाकई सभी पुराना डेटा हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
     "Deleting": "हटाया जा रहा है",
     "Confirm Delete": "हटाने की पुष्टि करें",
-    "Cancel": "रद्द करें"
+    "Cancel": "रद्द करें",
+    "Custom Instructions": "कस्टम निर्देश"
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "व्यावसायिक",
-  "Casual": "अनौपचारिक"
+  "Casual": "अनौपचारिक",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "कोई प्रॉम्प्ट दर्ज करें या प्रॉम्प्ट चुनने के लिए \"/\" टाइप करें..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI के उत्तरों को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। ये मुख्य व्यवहार दिशानिर्देशों के साथ मिलाकर उपयोगी, सटीक और सुरक्षित उत्तर सुनिश्चित करते हैं।"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "सुझाव: सेव की गई प्रॉम्प्ट टेम्प्लेट्स में से चुनने के लिए \"/\" टाइप करें।"
+  },
+  "fileUpload": {
+    "uploading": "अपलोड हो रहा है...",
+    "transcribing": "लिप्यांतरित किया जा रहा है...",
+    "complete": "पूर्ण",
+    "failed": "विफल",
+    "uploadFiles": "फाइलें अपलोड करें (ऑडियो, वीडियो या टेक्स्ट)"
+  }
 }

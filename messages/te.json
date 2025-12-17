@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "ఒపెన్ ఎయి ఐ API కీ అవసరం",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "దయచేసి మీ OpenAI API కీని సైడ్ బార్ యొక్క దిగువ ఎడమ భాగంలో సెట్ చేయండి.",
   "Stop Generating": "జెనరేట్ చేస్తున్న ప్రక్రియ నిలిపేయి",
-  "Prompt limit is {{maxLength}} characters": "ప్రాంప్ట్(సంకేతం) పరిమితి {{maxLength}} అక్షరాలు మాత్రమే",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "ప్రాంప్ట్ పరిమితం {{maxLength}} అక్షరాలు. మీరు ఇప్పటికే {{valueLength}} అక్షరాలు నమోదు చేశారు."
+    }
+  },
   "System Prompt": "సిస్టమ్ ప్రాంప్ట్",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "మీరు ChatGPT, ఒక పెద్ద భాషా మోడల్ ఓపెన్‌ఏఐ ద్వారా ట్రైన్ చేయబడింది. యూజర్ ఇన్స్ట్రక్షన్స్ కనుగొనండి. మార్క్‌డౌన్ ఉపయోగించి సమాధానం ఇవ్వండి.",
   "Enter a prompt": "ఒక ప్రాంప్ట్(సంకేతం) నమోదు చేయండి",
@@ -136,7 +140,7 @@
   "Description": "వివరణ",
   "A description for your prompt_": "మీ ప్రాంప్ట్ కోసం వివరణ.",
   "Prompt": "ప్రాంప్ట్",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "ప్రాంప్ట్ కంటెంట్. ఒక వేరియబుల్ సూచించడానికి {{}} ను ఉపయోగించండి. ఉదా: {{name}} ఒక {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "ప్రాంప్ట్ కంటెంట్. ఒక వేరియబుల్ సూచించడానికి '{{}}' ను ఉపయోగించండి. ఉదా: '{{name}}' ఒక '{{adjective}}' '{{noun}}'",
   "Save": "సేవ్",
   "A name for your prompt_": "మీ ప్రాంప్ట్‌కు పేరు.",
   "New chat": "కొత్త చాట్",
@@ -479,7 +483,7 @@
   "enterTagsPlaceholder": "ట్యాగ్‌లను జోడించండి (Enter నొక్కండి)",
   "enterPromptNamePlaceholder": "ఉదా., ఇమెయిల్ ప్రతిస్పందన",
   "enterPromptDescriptionPlaceholder": "ఈ ప్రాంప్ట్ దేనికి?",
-  "enterPromptContentPlaceholder": "మీ ప్రాంప్ట్‌ను ఇక్కడ వ్రాయండి. డైనమిక్ కంటెంట్ కోసం {{variable}} ఉపయోగించండి.",
+  "enterPromptContentPlaceholder": "మీ ప్రాంప్ట్‌ను ఇక్కడ వ్రాయండి. డైనమిక్ కంటెంట్ కోసం '{{variable}}' ఉపయోగించండి.",
   "common": {
     "contact": "సంప్రదించండి",
     "close": "మూచండి",
@@ -628,7 +632,7 @@
     "userMustProvide": "వినియోగదారు వ్యవస్థ తప్పనిసరిగా విలువ ఇవ్వాలి",
     "userCanProvide": "వినియోగదారు విలువ ఇవ్వవచ్చును, లేకపోతే డిఫాల్ట్ ఉపయోగించబడుతుంది",
     "example": "ఉదాహరణ:",
-    "variableExampleText": "{{tone:professional}} టోన్‌లో {{recipient}}కి {{topic}} గురించి {{language:English}}లో ఇమెయిల్ రాయండి",
+    "variableExampleText": "'{{tone:professional}}' టోన్‌లో '{{recipient}}'కి '{{topic}}' గురించి '{{language:English}}'లో ఇమెయిల్ రాయండి",
     "detectedVariables": "పరిచయమైన వేరియబుల్స్",
     "required": "అవసరం",
     "aiAssistant": "AI అసిస్టెంట్",
@@ -826,7 +830,8 @@
     "deleteLegacyConfirm": "మీలో ఉన్న మొత్తం పాత డేటాను తొలగించాలా? ఈ చర్యను రద్దు చేయలేరు.",
     "Deleting": "తొలగిస్తోంది",
     "Confirm Delete": "తొలగింపును నిర్ధారించండి",
-    "Cancel": "రద్దు చేయండి"
+    "Cancel": "రద్దు చేయండి",
+    "Custom Instructions": "అనుకూల సూచనలు"
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "వృత్తిపరమైన",
-  "Casual": "సాధారణ"
+  "Casual": "సాధారణ",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "ప్రాంప్ట్‌ను నమోదు చేయండి లేదా ప్రాంప్ట్ను ఎంచుకోవడానికి \"/\" టైప్ చేయండి..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI స్పందనను అనుకూలీకరించేందుకు మీ వ్యక్తిగత సూచనలను జోడించండి. ఇవి సహాయప్రదమైన, ఖచ్చితమైన, మరియు సురక్షితమైన స్పందనలను నిర్ధారించే ప్రాథమిక ప్రవర్తనా మార్గదర్శకాలతో కలిపి ఉపయోగించబడతాయి."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "సూచన: సేవ్ చేసిన ప్రాంప్ట్ టెంప్లేట్ల నుండి ఎంచుకోవడానికి \"/\" టైప్ చేయండి."
+  },
+  "fileUpload": {
+    "uploading": "అప్‌లోడ్ జరుగుతోంది...",
+    "transcribing": "ట్రాన్స్‌క్రైబ్ చేస్తోంది...",
+    "complete": "పూర్తి",
+    "failed": "విఫలమైంది",
+    "uploadFiles": "ఫైళ్లను అప్‌లోడ్ చేయండి (ఆడియో, వీడియో లేదా వచనం)"
+  }
 }

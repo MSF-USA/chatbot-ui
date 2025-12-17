@@ -21,7 +21,11 @@
   "Please enter a message": "Voer een bericht in",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Stel je OpenAI API-sleutel in de linkeronderhoek van de zijbalk in.",
   "Precise": "Nauwkeurig",
-  "Prompt limit is {{maxLength}} characters": "Promptlimiet is {{maxLength}} tekens",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "De limiet voor de prompt is {{maxLength}} tekens. U heeft {{valueLength}} tekens ingevoerd."
+    }
+  },
   "Regenerate response": "Antwoord opnieuw genereren",
   "Save & Submit": "Opslaan & Verzenden",
   "Search_ellipsis": "Zoeken...",
@@ -128,7 +132,7 @@
   "Description": "Beschrijving",
   "A description for your prompt_": "Een beschrijving voor je prompt.",
   "Prompt": "Prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt inhoud. Gebruik {{}} om een variabele aan te duiden. Bijv: {{naam}} is een {{bijvoeglijk naamwoord}} {{zelfstandig naamwoord}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt inhoud. Gebruik '{{}}' om een variabele aan te duiden. Bijv: {{naam}} is een {{bijvoeglijk naamwoord}} {{zelfstandig naamwoord}}",
   "Save": "Opslaan",
   "A name for your prompt_": "Een naam voor je prompt.",
   "Settings": "Instellingen",
@@ -446,7 +450,7 @@
   "enterTagsPlaceholder": "Voeg tags toe (druk op Enter)",
   "enterPromptNamePlaceholder": "bijv. E-mailreactie",
   "enterPromptDescriptionPlaceholder": "Waarvoor is deze prompt?",
-  "enterPromptContentPlaceholder": "Schrijf hier uw prompt. Gebruik {{variable}} voor dynamische inhoud.",
+  "enterPromptContentPlaceholder": "Schrijf hier uw prompt. Gebruik '{{variable}}' voor dynamische inhoud.",
   "common": {
     "close": "Sluiten",
     "remove": "Verwijderen",
@@ -595,7 +599,7 @@
     "userMustProvide": "Gebruiker moet een waarde opgeven",
     "userCanProvide": "Gebruiker kan een waarde opgeven, of standaard wordt gebruikt",
     "example": "Voorbeeld:",
-    "variableExampleText": "Schrijf een {{tone:professionele}} e-mail naar {{recipient}} over {{topic}} in {{language:Nederlands}}",
+    "variableExampleText": "Schrijf een '{{tone:professionele}}' e-mail naar '{{recipient}}' over '{{topic}}' in '{{language:Nederlands}}'",
     "detectedVariables": "Gedetecteerde variabelen",
     "required": "Vereist",
     "aiAssistant": "AI-assistent",
@@ -793,7 +797,8 @@
     "deleteLegacyConfirm": "Weet u zeker dat u alle oude gegevens wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
     "Deleting": "Verwijderen",
     "Confirm Delete": "Verwijderen bevestigen",
-    "Cancel": "Annuleren"
+    "Cancel": "Annuleren",
+    "Custom Instructions": "Aangepaste instructies"
   },
   "notFound": {
     "lostDog": "Verloren hond"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Professioneel",
-  "Casual": "Informeel"
+  "Casual": "Informeel",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Voer een prompt in of typ \"/\" om een prompt te selecteren..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Voeg uw persoonlijke instructies toe om het antwoordgedrag van de AI aan te passen. Deze worden gecombineerd met kernrichtlijnen om behulpzame, nauwkeurige en veilige antwoorden te garanderen."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tip: Typ \"/\" om te kiezen uit opgeslagen promptsjablonen."
+  },
+  "fileUpload": {
+    "uploading": "Uploaden...",
+    "transcribing": "Transcriberen...",
+    "complete": "Voltooid",
+    "failed": "Mislukt",
+    "uploadFiles": "Bestanden uploaden (audio, video of tekst)"
+  }
 }

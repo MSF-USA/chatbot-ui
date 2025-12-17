@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Memerlukan Kunci API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Silakan atur kunci API OpenAI Anda di bagian kiri bawah bilah sisi.",
   "Stop Generating": "Berhenti Menghasilkan",
-  "Prompt limit is {{maxLength}} characters": "Batas karakter untuk prompt adalah {{maxLength}} karakter",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Batas prompt adalah {{maxLength}} karakter. Anda telah memasukkan {{valueLength}} karakter."
+    }
+  },
   "System Prompt": "Prompt Sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Anda adalah ChatGPT, model bahasa besar yang dilatih oleh OpenAI. Ikuti instruksi pengguna dengan hati-hati. Balas menggunakan markdown.",
   "Enter a prompt": "Masukkan sebuah prompt",
@@ -128,7 +132,7 @@
   "Description": "Deskripsi",
   "A description for your prompt_": "Deskripsi untuk prompt Anda.",
   "Prompt": "prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Isi prompt. Gunakan {{}} untuk menunjukkan variabel. Contoh: {{name}} adalah {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Isi prompt. Gunakan '{{}}' untuk menunjukkan variabel. Contoh: '{{name}}' adalah '{{adjective}}' '{{noun}}'",
   "Save": "Simpan",
   "A name for your prompt_": "Nama untuk prompt Anda.",
   "New chat": "Percakapan baru",
@@ -448,7 +452,7 @@
   "enterTagsPlaceholder": "Tambahkan tag (tekan Enter)",
   "enterPromptNamePlaceholder": "mis., Respons Email",
   "enterPromptDescriptionPlaceholder": "Untuk apa prompt ini?",
-  "enterPromptContentPlaceholder": "Tulis prompt Anda di sini. Gunakan {{variable}} untuk konten dinamis.",
+  "enterPromptContentPlaceholder": "Tulis prompt Anda di sini. Gunakan '{{variable}}' untuk konten dinamis.",
   "common": {
     "contact": "Kontak",
     "close": "Tutup",
@@ -795,7 +799,8 @@
     "frees up storage space": "membebaskan ruang penyimpanan",
     "legacyDataDescription": "Anda memiliki {size} data lama.",
     "legacyDeleteError": "Gagal menghapus data lama.",
-    "legacyDeleteSuccess": "Data lama berhasil dihapus."
+    "legacyDeleteSuccess": "Data lama berhasil dihapus.",
+    "Custom Instructions": "Instruksi Khusus"
   },
   "notFound": {
     "lostDog": "Anjing hilang"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Profesional",
-  "Casual": "Santai"
+  "Casual": "Santai",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Masukkan prompt atau ketik \"/\" untuk memilih prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Tambahkan instruksi pribadi Anda untuk menyesuaikan respons AI. Instruksi ini digabungkan dengan pedoman perilaku inti yang memastikan respons yang membantu, akurat, dan aman."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tip: Ketik \"/\" untuk memilih dari template prompt yang tersimpan."
+  },
+  "fileUpload": {
+    "uploading": "Mengunggah...",
+    "transcribing": "Mentranskripsi...",
+    "complete": "Selesai",
+    "failed": "Gagal",
+    "uploadFiles": "Unggah berkas (audio, video, atau teks)"
+  }
 }

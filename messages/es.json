@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Se requiere la clave de API de OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Por favor, ingrese su clave de API de OpenAI en la esquina inferior izquierda de la barra lateral.",
   "Stop Generating": "Dejar de generar",
-  "Prompt limit is {{maxLength}} characters": "El límite del mensaje es de {{maxLength}} caracteres",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "El límite de caracteres es {{maxLength}}. Ha introducido {{valueLength}} caracteres."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "El límite de la instrucción es de {{maxLength}} caracteres. Has ingresado {{valueLength}} caracteres.",
   "System Prompt": "Mensaje del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Eres ChatGPT, un modelo de lenguaje grande entrenado por OpenAI. Sigue las instrucciones del usuario cuidadosamente. Responde usando markdown.",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "Agregar etiquetas (presiona Enter)",
   "enterPromptNamePlaceholder": "ej., Respuesta de correo electrónico",
   "enterPromptDescriptionPlaceholder": "¿Para qué es esta instrucción?",
-  "enterPromptContentPlaceholder": "Escribe tu instrucción aquí. Usa {{variable}} para contenido dinámico.",
+  "enterPromptContentPlaceholder": "Escribe tu instrucción aquí. Usa '{{variable}}' para contenido dinámico.",
   "common": {
     "close": "Cerrar",
     "remove": "Eliminar",
@@ -599,7 +603,7 @@
     "userMustProvide": "El usuario debe proporcionar un valor",
     "userCanProvide": "El usuario puede proporcionar un valor, o se usa el predeterminado",
     "example": "Ejemplo:",
-    "variableExampleText": "Escribe un correo {{tone:profesional}} a {{recipient}} sobre {{topic}} en {{language:Español}}",
+    "variableExampleText": "Escribe un correo '{{tone:profesional}}' a '{{recipient}}' sobre '{{topic}}' en '{{language:Español}}'",
     "detectedVariables": "Variables detectadas",
     "required": "Requerido",
     "aiAssistant": "Asistente de IA",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "¿Estás seguro de que deseas eliminar todos los datos heredados? Esta acción no se puede deshacer.",
     "Deleting": "Eliminando",
     "Confirm Delete": "Confirmar eliminación",
-    "Cancel": "Cancelar"
+    "Cancel": "Cancelar",
+    "Custom Instructions": "Instrucciones personalizadas"
   },
   "notFound": {
     "lostDog": "Perro perdido"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "Profesional",
-  "Casual": "Informal"
+  "Casual": "Informal",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Introduzca un prompt o escriba \"/\" para seleccionar uno..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Agregue sus indicaciones personales para personalizar cómo responde la IA. Estas se combinan con las pautas principales para garantizar respuestas útiles, precisas y seguras."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Consejo: Escriba \"/\" para seleccionar entre las plantillas de prompts guardadas."
+  },
+  "fileUpload": {
+    "uploading": "Cargando...",
+    "transcribing": "Transcribiendo...",
+    "complete": "Completado",
+    "failed": "Error",
+    "uploadFiles": "Subir archivos (audio, video o texto)"
+  }
 }

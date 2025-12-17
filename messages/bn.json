@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "OpenAI API key বাধ্যতামূলক",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "দয়া করে আপনার OpenAI API key বামে সাইডবারের নিচের দিকে সেট করুন।",
   "Stop Generating": "বার্তা জেনারেট করা বন্ধ করুন",
-  "Prompt limit is {{maxLength}} characters": "নির্দেশনা (বার্তা) সীমা সর্বোচ্চ {{maxLength}} অক্ষর",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "প্রম্পটের সীমা {{maxLength}} অক্ষর। আপনি {{valueLength}} অক্ষর প্রবেশ করিয়েছেন।"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "প্রম্পট সীমা {{maxLength}} অক্ষর। আপনি {{valueLength}} অক্ষর লিখেছেন।",
   "System Prompt": "সিস্টেম নির্দেশনা (বার্তা)",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "তুমি ChatGPT, OpenAI দ্বারা প্রশিক্ষিত একটি বড় ভাষা মডেল। সাবধানে ব্যবহারকারীর নির্দেশাবলী অনুসরণ করুন. মার্কডাউন ব্যবহার করে উত্তর দিন।",
@@ -131,7 +135,7 @@
   "Description": "বর্ণনা",
   "A description for your prompt_": "আপনার Prompt জন্য একটি বিবরণ লিখুন.",
   "Prompt": "প্রম্পট",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt content. Use '{{}}' to denote a variable. Ex: '{{name}}' is a '{{adjective}}' '{{noun}}'",
   "Save": "সংরক্ষণ করুন",
   "A name for your prompt_": "আপনার প্রম্পটের জন্য একটি নাম।",
   "New chat": "নতুন আড্ডা",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "ট্যাগ যোগ করুন (Enter চাপুন)",
   "enterPromptNamePlaceholder": "যেমন, ইমেইল প্রতিক্রিয়া",
   "enterPromptDescriptionPlaceholder": "এই প্রম্পট কিসের জন্য?",
-  "enterPromptContentPlaceholder": "এখানে আপনার প্রম্পট লিখুন। ডায়নামিক কন্টেন্টের জন্য {{variable}} ব্যবহার করুন।",
+  "enterPromptContentPlaceholder": "এখানে আপনার প্রম্পট লিখুন। ডায়নামিক কন্টেন্টের জন্য '{{variable}}' ব্যবহার করুন।",
   "common": {
     "close": "বন্ধ করুন",
     "remove": "সরান",
@@ -585,7 +589,7 @@
     "userMustProvide": "ব্যবহারকারীকে একটি মান প্রদান করতে হবে",
     "userCanProvide": "ব্যবহারকারী একটি মান প্রদান করতে পারে বা ডিফল্ট ব্যবহার করা হয়",
     "example": "উদাহরণ:",
-    "variableExampleText": "{{recipient}}-কে {{topic}} সম্পর্কে {{tone:পেশাদার}} ইমেইল {{language:বাংলা}}-তে লিখুন",
+    "variableExampleText": "'{{recipient}}'-কে '{{topic}}' সম্পর্কে '{{tone:পেশাদার}}' ইমেইল '{{language:বাংলা}}'-তে লিখুন",
     "detectedVariables": "সনাক্ত করা ভেরিয়েবল",
     "required": "প্রয়োজনীয়",
     "aiAssistant": "AI সহায়ক",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "আপনি কি নিশ্চিত যে আপনি সমস্ত পুরানো ডেটা মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।",
     "Deleting": "মুছে ফেলা হচ্ছে",
     "Confirm Delete": "মুছে ফেলা নিশ্চিত করুন",
-    "Cancel": "বাতিল করুন"
+    "Cancel": "বাতিল করুন",
+    "Custom Instructions": "কাস্টম নির্দেশনা"
   },
   "notFound": {
     "lostDog": "হারানো কুকুর"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "প্রফেশনাল",
-  "Casual": "ক্যাজুয়াল"
+  "Casual": "ক্যাজুয়াল",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "একটি প্রম্পট লিখুন অথবা একটি প্রম্পট নির্বাচন করতে \"/\" টাইপ করুন..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "এআই-এর প্রতিক্রিয়া কাস্টমাইজ করতে আপনার নিজস্ব নির্দেশনা যোগ করুন। এগুলো মূল আচরণবিধির সঙ্গে সংযোজিত হয়, যা সহায়ক, সঠিক এবং নিরাপদ উত্তর নিশ্চিতে সহায়তা করে।"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "পরামর্শ: সংরক্ষিত প্রম্পট টেমপ্লেট থেকে বাছাই করতে \"/\" টাইপ করুন।"
+  },
+  "fileUpload": {
+    "uploading": "আপলোড হচ্ছে...",
+    "transcribing": "ট্রান্সক্রাইব হচ্ছে...",
+    "complete": "সম্পন্ন",
+    "failed": "ব্যর্থ হয়েছে",
+    "uploadFiles": "ফাইল আপলোড করুন (অডিও, ভিডিও, অথবা টেক্সট)"
+  }
 }

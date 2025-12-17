@@ -27,7 +27,11 @@
   "Please enter a message": "ကျေးဇူးပြု၍ စာတစ်စောင် ရိုက်ထည့်ပါ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "ကျေးဇူးပြု၍ သင့် OpenAI API သော့ကို ဘယ်ဘက်အောက်ခြေ ဘေးတန်းတွင် သတ်မှတ်ပါ။",
   "Precise": "တိကျသော",
-  "Prompt limit is {{maxLength}} characters": "ညွှန်ကြားချက် ကန့်သတ်ချက်သည် စာလုံး {{maxLength}} ဖြစ်သည်",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Prompt အတွင်းစာလုံးအရေအတွက် အမြင့်ဆုံး {{maxLength}} ဖြစ်သည်။ သင်ထည့်ထားသည့်စာလုံးအရေအတွက်မှာ {{valueLength}} ဖြစ်ပါသည်။"
+    }
+  },
   "Regenerate response": "တုံ့ပြန်မှုကို ပြန်လည်ထုတ်လုပ်ရန်",
   "Save & Submit": "သိမ်းဆည်း & တင်သွင်းရန်",
   "Search_ellipsis": "ရှာဖွေရန်...",
@@ -124,7 +128,7 @@
   "Description": "ဖော်ပြချက်",
   "No prompts_": "စာသား မရှိပါ။",
   "A description for your prompt_": "သင့်စာသားအတွက် ဖော်ပြချက်တစ်ခု။",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "စာသား အကြောင်းအရာ။ {{}} ကို အသုံးပြုပြီး ကိန်းရှင်တစ်ခု သတ်မှတ်ပါ။ ဥပမာ - {{name}} သည် {{adjective}} {{noun}} ဖြစ်သည်",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "စာသား အကြောင်းအရာ။ '{{}}' ကို အသုံးပြုပြီး ကိန်းရှင်တစ်ခု သတ်မှတ်ပါ။ ဥပမာ - '{{name}}' သည် '{{adjective}}' '{{noun}}' ဖြစ်သည်",
   "New prompt": "စာသားအသစ်",
   "Search prompts_ellipsis": "စာသားများကို ရှာဖွေပါ...",
   "Prompt": "စာသား",
@@ -456,7 +460,7 @@
   "enterTagsPlaceholder": "တဂ်များ ထည့်ပါ (Enter နှိပ်ပါ)",
   "enterPromptNamePlaceholder": "ဥပမာ၊ အီးမေးလ် တုံ့ပြန်ချက်",
   "enterPromptDescriptionPlaceholder": "ဤအညွှန်းသည် ဘာအတွက်နည်း?",
-  "enterPromptContentPlaceholder": "သင့်အညွှန်းကို ဤနေရာတွင် ရေးပါ။ ပြောင်းလဲနိုင်သော အကြောင်းအရာအတွက် {{variable}} ကို သုံးပါ။",
+  "enterPromptContentPlaceholder": "သင့်အညွှန်းကို ဤနေရာတွင် ရေးပါ။ ပြောင်းလဲနိုင်သော အကြောင်းအရာအတွက် '{{variable}}' ကို သုံးပါ။",
   "common": {
     "contact": "ဆက်သွယ်ရန်",
     "close": "ပိတ်ပါ",
@@ -605,7 +609,7 @@
     "userMustProvide": "အသုံးပြုသူသည် တန်ဖိုးထည့်ရန်လိုအပ်သည်",
     "userCanProvide": "အသုံးပြုသူသည် တန်ဖိုးထည့်နိုင်သည်၊ မထည့်လျှင် နောက်ခံတန်ဖိုးအသုံးပြုမည်",
     "example": "ဥပမာ-",
-    "variableExampleText": "{{tone:professional}} အသုံးအနှုန်းဖြင့် {{language:English}} ဖြင့် {{topic}} အကြောင်း {{recipient}} ထံသို့ အီးမေးလ်ရေးပါ",
+    "variableExampleText": "'{{tone:professional}}' အသုံးအနှုန်းဖြင့် '{{language:English}}' ဖြင့် '{{topic}}' အကြောင်း '{{recipient}}' ထံသို့ အီးမေးလ်ရေးပါ",
     "detectedVariables": "တွေ့ရှိထားသော Variable များ",
     "required": "လိုအပ်သည်",
     "aiAssistant": "AI အကူအညီ",
@@ -803,7 +807,8 @@
     "deleteLegacyConfirm": "အဟောင်းဒေတာအားလုံးကို ဖျက်ရန် သေချာပါသလား။ ဤလုပ်ဆောင်မှုကို နောက်ပြန်ပြင်ပေးလို့မရပါ။",
     "Deleting": "ဖျက်နေသည်",
     "Confirm Delete": "ဖျက်ရန် အတည်ပြုပါ",
-    "Cancel": "ပယ်ဖျက်ရန်"
+    "Cancel": "ပယ်ဖျက်ရန်",
+    "Custom Instructions": "ကိုယ်ပိုင်ညွှန်ကြားချက်များ"
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "ပရော်ဖက်ရှင်နယ်",
-  "Casual": "ပုံမှန်"
+  "Casual": "ပုံမှန်",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Prompt ဖြည့်လိုက်ပါ၊ ဒါမှမဟုတ် \"/\" နှိပ်၍ prompt ရွေးချယ်ပါ..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI ၏ တုံပြန်မှုကို သင်ကြိုက်သလို ချိန်ညှိရန် သင့်ကိုယ်ပိုင်ညွှန်ကြားချက်များ ထည့်သွင်းပါ။ ၎င်းအားလုံးကို အဓိကကျတဲ့ လုပ်ဆောင်မှုလမ်းညွှန်များနှင့် ပေါင်းစပ်၍ အထောက်အကူဖြစ်ပြီး မှန်ကန်အတိအကျ၊ လုံခြုံမှုရှိသော တုံ့ပြန်မှုများရရှိစေသည်။"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "အကြံပြုချက်- \"/\" ဖြင့် သိမ်းထားသော prompt ပုံစံများကို ရွေးချယ်နိုင်သည်။"
+  },
+  "fileUpload": {
+    "uploading": "တင်ပို့နေသည်...",
+    "transcribing": "စာပေါင်းနေသည်...",
+    "complete": "ပြီးမြောက်ပါသည်",
+    "failed": "မအောင်မြင်ပါ",
+    "uploadFiles": "ဖိုင်များတင်ပို့ပါ (audio, video သို့မဟုတ် text)"
+  }
 }

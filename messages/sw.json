@@ -398,7 +398,7 @@
   "enterTagsPlaceholder": "Ongeza lebo (bonyeza Enter)",
   "enterPromptNamePlaceholder": "mfano, Majibu ya Barua pepe",
   "enterPromptDescriptionPlaceholder": "Kidokezo hiki ni cha nini?",
-  "enterPromptContentPlaceholder": "Andika kidokezo chako hapa. Tumia {{variable}} kwa maudhui yanayobadilika.",
+  "enterPromptContentPlaceholder": "Andika kidokezo chako hapa. Tumia '{{variable}}' kwa maudhui yanayobadilika.",
   "A description for your prompt_": "Maelezo ya kidokezo chako.",
   "A name for your prompt_": "Jina la kidokezo chako.",
   "AI": "AI",
@@ -457,7 +457,11 @@
   "Privacy Policy": "Sera ya Faragha",
   "Prompt": "Kidokezo",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": "Kikomo cha kidokezo ni herufi {{maxLength}}",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Kikomo cha herufi ni {{maxLength}}. Umeingiza herufi {{valueLength}}."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
   "Regenerate response": "Tengeneza jibu upya",
   "Retry": "Jaribu tena",
@@ -630,7 +634,7 @@
     "userMustProvide": "Mtumiaji lazima atoe thamani",
     "userCanProvide": "Mtumiaji anaweza kutoa thamani, au chaguo-msingi inatumika",
     "example": "Mfano:",
-    "variableExampleText": "Andika barua pepe ya {{tone:professional}} kwa {{recipient}} kuhusu {{topic}} kwa {{language:English}}",
+    "variableExampleText": "Andika barua pepe ya '{{tone:professional}}' kwa '{{recipient}}' kuhusu '{{topic}}' kwa '{{language:English}}'",
     "detectedVariables": "Vigezo Vilivyogunduliwa",
     "required": "Inahitajika",
     "aiAssistant": "Msaidizi wa AI",
@@ -828,7 +832,8 @@
     "deleteLegacyConfirm": "Una uhakika unataka kufuta data yote ya zamani? Kitendo hiki hakiwezi kufutwa.",
     "Deleting": "Inafuta",
     "Confirm Delete": "Thibitisha Kufuta",
-    "Cancel": "Ghairi"
+    "Cancel": "Ghairi",
+    "Custom Instructions": "Maelekezo Binafsi"
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Kitaalamu",
-  "Casual": "Kawaida"
+  "Casual": "Kawaida",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Andika maelekezo au bonyeza \"/\" kuchagua maelekezo..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Ongeza maelekezo yako binafsi kubinafsisha jinsi AI inavyojibu. Yataunganishwa na mwongozo wa msingi kuhakikisha majibu ni yenye msaada, sahihi, na salama."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Kidokezo: Andika \"/\" kuchagua kutoka kwa templeti za maelekezo zilizohifadhiwa."
+  },
+  "fileUpload": {
+    "uploading": "Inapakia...",
+    "transcribing": "Inanakili...",
+    "complete": "Imekamilika",
+    "failed": "Imeshindikana",
+    "uploadFiles": "Pakia faili (sauti, video, au maandishi)"
+  }
 }

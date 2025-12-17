@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "E' richiesta la chiave API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Per favore, inserisci la tua Chiave API OpenAI in basso a sinistra nella barra laterale",
   "Stop Generating": "Interrompi la generazione",
-  "Prompt limit is {{maxLength}} characters": "Il limite del messaggio è di {{maxLength}} caratteri",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Il limite è di {{maxLength}} caratteri. Ne hai inseriti {{valueLength}}."
+    }
+  },
   "System Prompt": "Prompt del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sei ChatGPT, un grande modello di linguaggio addestrato da OpenAI. Segui attentamente le istruzioni dell'utente. Rispondi usando il markdown.",
   "Enter a prompt": "Inserisci un prompt",
@@ -128,7 +132,7 @@
   "Description": "Descrizione",
   "A description for your prompt_": "Descrizione del tuo prompt.",
   "Prompt": "prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contenuto del prompt. Utilizza {{}} per indicare una variabile. Per esempio: {{nome}} è un {{aggettivo}} {{sostantivo}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contenuto del prompt. Utilizza '{{}}' per indicare una variabile. Per esempio: {{nome}} è un {{aggettivo}} {{sostantivo}}",
   "Save": "Salva",
   "A name for your prompt_": "Un nome per il tuo prompt.",
   "New chat": "Nuova conversazione",
@@ -456,7 +460,7 @@
   "enterTagsPlaceholder": "Aggiungi tag (premi Invio)",
   "enterPromptNamePlaceholder": "ad es., Risposta email",
   "enterPromptDescriptionPlaceholder": "A cosa serve questo prompt?",
-  "enterPromptContentPlaceholder": "Scrivi il tuo prompt qui. Usa {{variable}} per contenuto dinamico.",
+  "enterPromptContentPlaceholder": "Scrivi il tuo prompt qui. Usa '{{variable}}' per contenuto dinamico.",
   "common": {
     "close": "Chiudi",
     "remove": "Rimuovi",
@@ -571,7 +575,7 @@
     "userMustProvide": "L’utente deve fornire un valore",
     "userCanProvide": "L’utente può fornire un valore, oppure viene usato quello predefinito",
     "example": "Esempio:",
-    "variableExampleText": "Scrivi una email {{tone:professional}} a {{recipient}} su {{topic}} in {{language:English}}",
+    "variableExampleText": "Scrivi una email '{{tone:professional}}' a '{{recipient}}' su '{{topic}}' in '{{language:English}}'",
     "detectedVariables": "Variabili rilevate",
     "required": "Obbligatorio",
     "aiAssistant": "Assistente AI",
@@ -803,7 +807,8 @@
     "deleteLegacyConfirm": "Sei sicuro di voler eliminare tutti i dati legacy? Questa azione non può essere annullata.",
     "Deleting": "Eliminazione in corso",
     "Confirm Delete": "Conferma eliminazione",
-    "Cancel": "Annulla"
+    "Cancel": "Annulla",
+    "Custom Instructions": "Istruzioni personalizzate"
   },
   "notFound": {
     "lostDog": "Cane smarrito"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Professionale",
-  "Casual": "Informale"
+  "Casual": "Informale",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Inserisci un prompt o digita \"/\" per selezionare un prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Aggiungi istruzioni personali per personalizzare le risposte dell'IA. Queste saranno combinate con le linee guida principali per garantire risposte utili, accurate e sicure."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Suggerimento: digita \"/\" per selezionare tra i template di prompt salvati."
+  },
+  "fileUpload": {
+    "uploading": "Caricamento in corso...",
+    "transcribing": "Trascrizione in corso...",
+    "complete": "Completato",
+    "failed": "Errore",
+    "uploadFiles": "Carica file (audio, video o testo)"
+  }
 }

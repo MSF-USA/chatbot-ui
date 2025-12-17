@@ -27,7 +27,11 @@
   "OpenAI API Key Required": "OpenAI API-Schlüssel erforderlich",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Bitte trage deinen OpenAI API-Schlüssel in der linken unteren Ecke der Seitenleiste ein.",
   "Stop Generating": "Generieren stoppen",
-  "Prompt limit is {{maxLength}} characters": "Das Eingabelimit liegt bei {{maxLength}} Zeichen",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Das Limit für den Prompt beträgt {{maxLength}} Zeichen. Sie haben {{valueLength}} Zeichen eingegeben."
+    }
+  },
   "System Prompt": "Systemaufforderung",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du bist ChatGPT, ein großes Sprachmodell, das von OpenAI trainiert wurde. Befolge die Anweisungen des Benutzers sorgfältig. Antworte in Markdown-Format.",
   "Enter a prompt": "Gib eine Anweisung ein",
@@ -153,7 +157,7 @@
   "Description": "Beschreibung",
   "A description for your prompt_": "Eine Beschreibung für Ihre Eingabeaufforderung.",
   "Prompt": "Aufforderung",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Inhalt des Prompts. Verwenden Sie {{}} zur Kennzeichnung einer Variable. Beispiel: {{name}} ist ein {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Inhalt des Prompts. Verwenden Sie '{{}}' zur Kennzeichnung einer Variable. Beispiel: '{{name}}' ist ein '{{adjective}}' '{{noun}}'",
   "Save": "Speichern",
   "A name for your prompt_": "Ein Name für Ihren Prompt.",
   "New chat": "Neue Konversation",
@@ -481,7 +485,7 @@
   "enterTagsPlaceholder": "Tags hinzufügen (Enter drücken)",
   "enterPromptNamePlaceholder": "z.B. E-Mail-Antwort",
   "enterPromptDescriptionPlaceholder": "Wofür ist diese Eingabeaufforderung?",
-  "enterPromptContentPlaceholder": "Schreiben Sie hier Ihre Eingabeaufforderung. Verwenden Sie {{variable}} für dynamische Inhalte.",
+  "enterPromptContentPlaceholder": "Schreiben Sie hier Ihre Eingabeaufforderung. Verwenden Sie '{{variable}}' für dynamische Inhalte.",
   "common": {
     "close": "Schließen",
     "remove": "Entfernen",
@@ -596,7 +600,7 @@
     "userMustProvide": "Benutzer muss einen Wert angeben",
     "userCanProvide": "Benutzer kann einen Wert angeben, sonst wird der Standard verwendet",
     "example": "Beispiel:",
-    "variableExampleText": "Schreiben Sie eine {{tone:professionelle}} E-Mail an {{recipient}} über {{topic}} auf {{language:Deutsch}}",
+    "variableExampleText": "Schreiben Sie eine '{{tone:professionelle}}' E-Mail an '{{recipient}}' über '{{topic}}' auf '{{language:Deutsch}}'",
     "detectedVariables": "Erkannte Variablen",
     "required": "Erforderlich",
     "aiAssistant": "KI-Assistent",
@@ -828,7 +832,8 @@
     "deleteLegacyConfirm": "Möchten Sie wirklich alle Legacy-Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "Deleting": "Löschen",
     "Confirm Delete": "Löschen bestätigen",
-    "Cancel": "Abbrechen"
+    "Cancel": "Abbrechen",
+    "Custom Instructions": "Eigene Anweisungen"
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Professionell",
-  "Casual": "Locker"
+  "Casual": "Locker",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Geben Sie einen Prompt ein oder tippen Sie \"/\", um einen Prompt auszuwählen..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Fügen Sie persönliche Anweisungen hinzu, um das Antwortverhalten der KI anzupassen. Diese werden mit grundlegenden Verhaltensrichtlinien kombiniert, um hilfreiche, genaue und sichere Antworten zu gewährleisten."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tipp: Tippen Sie \"/\", um aus gespeicherten Prompt-Vorlagen auszuwählen."
+  },
+  "fileUpload": {
+    "uploading": "Wird hochgeladen...",
+    "transcribing": "Wird transkribiert...",
+    "complete": "Abgeschlossen",
+    "failed": "Fehlgeschlagen",
+    "uploadFiles": "Dateien hochladen (Audio, Video oder Text)"
+  }
 }

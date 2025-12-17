@@ -99,7 +99,11 @@
   "OpenAI API Key Required": "Clé API OpenAI requise",
   "Please enter a message": "Veuillez entrer un message",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Veuillez définir votre clé API OpenAI en bas à gauche de la barre latérale.",
-  "Prompt limit is {{maxLength}} characters": "La limite d'invite est de {{maxLength}} caractères",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "La limite du prompt est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "La limite d'invite est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères.",
   "Regenerate response": "Régénérer la réponse",
   "Run Typewriter Intro": "Exécuter l'intro machine à écrire",
@@ -224,7 +228,7 @@
   "Are you sure you want to delete this folder?": "Êtes-vous sûr de vouloir supprimer ce dossier ?",
   "No prompts_": "Aucune invite.",
   "Prompt": "Invite",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contenu de l'invite. Utilisez {{}} pour désigner une variable. Ex : {{nom}} est un {{adjectif}} {{nom}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contenu de l'invite. Utilisez '{{}}' pour désigner une variable. Ex : {{nom}} est un {{adjectif}} {{nom}}",
   "A name for your prompt_": "Un nom pour votre invite.",
   "New Prompt": "Nouvelle invite",
   "Edit Prompt": "Modifier l'instruction",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "Ajouter des étiquettes (appuyez sur Entrée)",
   "enterPromptNamePlaceholder": "par ex., Réponse par e-mail",
   "enterPromptDescriptionPlaceholder": "À quoi sert cette instruction?",
-  "enterPromptContentPlaceholder": "Écrivez votre instruction ici. Utilisez {{variable}} pour le contenu dynamique.",
+  "enterPromptContentPlaceholder": "Écrivez votre instruction ici. Utilisez '{{variable}}' pour le contenu dynamique.",
   "common": {
     "close": "Fermer",
     "remove": "Supprimer",
@@ -599,7 +603,7 @@
     "userMustProvide": "L'utilisateur doit fournir une valeur",
     "userCanProvide": "L'utilisateur peut fournir une valeur, ou la valeur par défaut est utilisée",
     "example": "Exemple:",
-    "variableExampleText": "Rédigez un e-mail {{tone:professionnel}} à {{recipient}} concernant {{topic}} en {{language:Français}}",
+    "variableExampleText": "Rédigez un e-mail '{{tone:professionnel}}' à '{{recipient}}' concernant '{{topic}}' en '{{language:Français}}'",
     "detectedVariables": "Variables détectées",
     "required": "Requis",
     "aiAssistant": "Assistant IA",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "Êtes-vous sûr de vouloir supprimer toutes les données héritées ? Cette action est irréversible.",
     "Deleting": "Suppression en cours",
     "Confirm Delete": "Confirmer la suppression",
-    "Cancel": "Annuler"
+    "Cancel": "Annuler",
+    "Custom Instructions": "Instructions personnalisées"
   },
   "notFound": {
     "lostDog": "Chien perdu"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "Professionnel",
-  "Casual": "Décontracté"
+  "Casual": "Décontracté",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Saisissez un prompt ou tapez « / » pour sélectionner un prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Ajoutez vos instructions personnelles pour personnaliser la façon dont l’IA répond. Celles-ci sont combinées avec les directives de base afin de garantir des réponses utiles, précises et sécurisées."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Astuce : tapez « / » pour sélectionner un modèle de prompt enregistré."
+  },
+  "fileUpload": {
+    "uploading": "Téléversement en cours...",
+    "transcribing": "Transcription en cours...",
+    "complete": "Terminé",
+    "failed": "Échec",
+    "uploadFiles": "Téléverser des fichiers (audio, vidéo ou texte)"
+  }
 }

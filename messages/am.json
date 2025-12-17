@@ -145,7 +145,11 @@
   "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
   "Please enter a message": "እባኮትን መልእክት ያስገቡ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
-  "Prompt limit is {{maxLength}} characters": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "የፕሮምፕት መጠን {{maxLength}} ቁምፊዎች ነው። እርስዎ {{valueLength}} ቁምፊዎችን አስገብተዋል።"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
   "Regenerate response": "ምላሽ እንደገና አመንጭ",
   "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
@@ -481,7 +485,7 @@
   "enterTagsPlaceholder": "መለያዎችን ያክሉ (Enter ይጫኑ)",
   "enterPromptNamePlaceholder": "ለምሳሌ፣ የኢሜይል ምላሽ",
   "enterPromptDescriptionPlaceholder": "ይህ ጥያቄ ለምን ነው?",
-  "enterPromptContentPlaceholder": "ጥያቄዎን እዚህ ይጻፉ። ለተለዋዋጭ ይዘት {{variable}} ይጠቀሙ።",
+  "enterPromptContentPlaceholder": "ጥያቄዎን እዚህ ይጻፉ። ለተለዋዋጭ ይዘት '{{variable}}' ይጠቀሙ።",
   "common": {
     "close": "ዝጋ",
     "remove": "አስወግድ",
@@ -582,7 +586,7 @@
     "userMustProvide": "ተጠቃሚ እሴት መስጠት አለበት",
     "userCanProvide": "ተጠቃሚ እሴት መስጠት ይችላል፣ ወይም ነባሪ ይጠቀማል",
     "example": "ምሳሌ:",
-    "variableExampleText": "ለ{{recipient}} ስለ {{topic}} {{tone:professional}} ኢሜይል በ{{language:English}} ጻፍ",
+    "variableExampleText": "ለ'{{recipient}}' ስለ '{{topic}}' '{{tone:professional}}' ኢሜይል በ'{{language:English}}' ጻፍ",
     "detectedVariables": "የተገኙ ተለዋዋጮች",
     "required": "አስፈላጊ",
     "aiAssistant": "የAI አስስታንት",
@@ -780,7 +784,8 @@
     "deleteLegacyConfirm": "እርግጠኛ ነዎት ሁሉንም የድሮ ውሂብ መሰረዝ ይፈልጋሉ? ይህ ድርጊት መልሰው መመለስ አይቻልም።",
     "Deleting": "በመሰረዝ ላይ",
     "Confirm Delete": "መሰረዝን አረጋግጥ",
-    "Cancel": "ሰርዝ"
+    "Cancel": "ሰርዝ",
+    "Custom Instructions": "ብጁ መመሪያዎች"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "የባለሙያ",
-  "Casual": "የተወሰነ"
+  "Casual": "የተወሰነ",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "ፕሮምፕት ያስገቡ ወይም \"/\" በማጻፍ ፕሮምፕት ይምረጡ..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "በAI ምላሽ እንዴት እንደሚሆን የእርስዎን የግል መመሪያዎች ያክሉ። እነዚህ ጥቅም ላይ ሊውሉ የሚችሉ የመሠረት አመራር መመሪያዎች ጋር ይዋሃዳሉ፤ ይህም አገልግሎታዊ፣ ትክክለኛ እና ደህንነታዊ ምላሾችን ያረጋግጣል።"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "ምክር፡ \"/\" በማጻፍ የተቀመጡ የፕሮምፕት አብነቶችን ይምረጡ።"
+  },
+  "fileUpload": {
+    "uploading": "በማስገባት ላይ...",
+    "transcribing": "በተረጎመ...",
+    "complete": "ተጠናቋል",
+    "failed": "አልተሳካም",
+    "uploadFiles": "ፋይሎች ይስቀሉ (ድምጽ፣ ቪዲዮ ወይም ጽሑፍ)"
+  }
 }

@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "OpenAI API-avain tarvitaan",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Ole hyvä ja aseta OpenAI API-avaimesi sivupalkin vasemmassa alareunassa.",
   "Stop Generating": "Lopeta generointi",
-  "Prompt limit is {{maxLength}} characters": "Promptin maksimipituus on {{maxLength}} merkkiä",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Kehotteen enimmäispituus on {{maxLength}} merkkiä. Olet syöttänyt {{valueLength}} merkkiä."
+    }
+  },
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sinä olet ChatGPT, OpenAI:n opettama laaja kielimalli. Seuraa käyttäjän ohjeita tarkasti. Vastaa käyttäen markdownia.",
   "Enter a prompt": "Syötä prompti",
@@ -128,7 +132,7 @@
   "Description": "Kuvaus",
   "A description for your prompt_": "Promptisi kuvaus.",
   "Prompt": "kehotus",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Promptin sisältö. Käytä {{}} muuttujien merkitsemiseen. Esim: {{nimi}} on {{adjektiivi}} {{substantiivi}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Promptin sisältö. Käytä '{{}}' muuttujien merkitsemiseen. Esim: {{nimi}} on {{adjektiivi}} {{substantiivi}}",
   "Save": "Tallenna",
   "A name for your prompt_": "Nimi kehotteellesi.",
   "New chat": "Uusi keskustelu",
@@ -456,7 +460,7 @@
   "enterTagsPlaceholder": "Lisää tunnisteita (paina Enter)",
   "enterPromptNamePlaceholder": "esim. Sähköpostivastaus",
   "enterPromptDescriptionPlaceholder": "Mihin tämä kehote on tarkoitettu?",
-  "enterPromptContentPlaceholder": "Kirjoita kehotteesi tähän. Käytä {{variable}} dynaamiseen sisältöön.",
+  "enterPromptContentPlaceholder": "Kirjoita kehotteesi tähän. Käytä '{{variable}}' dynaamiseen sisältöön.",
   "common": {
     "contact": "Ota yhteyttä",
     "close": "Sulje",
@@ -605,7 +609,7 @@
     "userMustProvide": "Käyttäjän on annettava arvo",
     "userCanProvide": "Käyttäjä voi antaa arvon tai käytetään oletusta",
     "example": "Esimerkki:",
-    "variableExampleText": "Kirjoita {{tone:professional}} sähköposti vastaanottajalle {{recipient}} aiheesta {{topic}} kielellä {{language:English}}",
+    "variableExampleText": "Kirjoita '{{tone:professional}}' sähköposti vastaanottajalle '{{recipient}}' aiheesta '{{topic}}' kielellä '{{language:English}}'",
     "detectedVariables": "Tunnistetut muuttujat",
     "required": "Pakollinen",
     "aiAssistant": "AI-avustaja",
@@ -803,7 +807,8 @@
     "deleteLegacyConfirm": "Haluatko varmasti poistaa kaikki vanhat tiedot? Tätä toimintoa ei voi peruuttaa.",
     "Deleting": "Poistetaan",
     "Confirm Delete": "Vahvista poisto",
-    "Cancel": "Peruuta"
+    "Cancel": "Peruuta",
+    "Custom Instructions": "Mukautetut ohjeet"
   },
   "notFound": {
     "lostDog": "Kadonnut koira"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Ammatillinen",
-  "Casual": "Vapaa"
+  "Casual": "Vapaa",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Syötä kehotus tai kirjoita \"/\" valitaksesi kehote..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Lisää omat ohjeesi räätälöidäksesi, miten tekoäly vastaa. Näitä yhdistetään keskeisiin ohjeistuksiin, jotka takaavat hyödylliset, tarkat ja turvalliset vastaukset."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Vinkki: Kirjoita \"/\" valitaksesi tallennetuista kehotepohjista."
+  },
+  "fileUpload": {
+    "uploading": "Lähetetään...",
+    "transcribing": "Puhtaaksikirjoitetaan...",
+    "complete": "Valmis",
+    "failed": "Epäonnistui",
+    "uploadFiles": "Lähetä tiedostoja (ääni, video tai teksti)"
+  }
 }

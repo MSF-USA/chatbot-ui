@@ -8,7 +8,11 @@
   "Default System Prompt": "默认系统提示",
   "Edit": "编辑",
   "Email": "电子邮件",
-  "Prompt limit is {{maxLength}} characters": "提示字数限制为 {{maxLength}} 个字符",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "提示字数上限为{{maxLength}}个字符。您已输入{{valueLength}}个字符。"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
   "New conversation": "新对话",
   "New Conversation": "新的聊天",
@@ -157,7 +161,7 @@
   "Description": "描述",
   "A description for your prompt_": "提示词描述",
   "Prompt": "提示",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用 {{}} 表示一个变量。例如：{{name}} 是一个 {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用 '{{}}' 表示一个变量。例如：'{{name}}' 是一个 '{{adjective}}' '{{noun}}'",
   "Save": "保存",
   "New chat": "新建聊天",
   "No conversations_": "无对话",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "添加标签（按Enter）",
   "enterPromptNamePlaceholder": "例如，电子邮件回复",
   "enterPromptDescriptionPlaceholder": "此提示用于什么？",
-  "enterPromptContentPlaceholder": "在此处编写您的提示。使用 {{variable}} 表示动态内容。",
+  "enterPromptContentPlaceholder": "在此处编写您的提示。使用 '{{variable}}' 表示动态内容。",
   "common": {
     "contact": "联系",
     "close": "关闭",
@@ -633,7 +637,7 @@
     "userMustProvide": "用户必须提供一个值",
     "userCanProvide": "用户可以提供一个值，或使用默认值",
     "example": "示例：",
-    "variableExampleText": "写一封 {{tone:专业的}} 电子邮件给 {{recipient}} 关于 {{topic}} 用 {{language:中文}}",
+    "variableExampleText": "写一封 '{{tone:专业的}}' 电子邮件给 '{{recipient}}' 关于 '{{topic}}' 用 '{{language:中文}}'",
     "detectedVariables": "检测到的变量",
     "required": "必需",
     "aiAssistant": "AI 助手",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "您确定要删除所有旧数据吗？此操作无法撤消。",
     "Deleting": "正在删除",
     "Confirm Delete": "确认删除",
-    "Cancel": "取消"
+    "Cancel": "取消",
+    "Custom Instructions": "自定义指令"
   },
   "notFound": {
     "lostDog": "迷路的狗"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "专业",
-  "Casual": "休闲"
+  "Casual": "休闲",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "请输入提示，或输入“/”以选择一个提示..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "添加您的个性化指令以定制AI的回应方式。这些指令将与核心行为指南结合，以确保回应有用、准确且安全。"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "提示：输入“/”可选择已保存的提示模板。"
+  },
+  "fileUpload": {
+    "uploading": "上传中...",
+    "transcribing": "正在转录...",
+    "complete": "已完成",
+    "failed": "上传失败",
+    "uploadFiles": "上传文件（音频、视频或文本）"
+  }
 }

@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Este necesară cheia API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Introduceți cheia API OpenAI în partea stângă jos a barei laterale",
   "Stop Generating": "Nu mai generați",
-  "Prompt limit is {{maxLength}} characters": "Limita mesajelor este de {{maxLength}} caractere",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Limita de caractere pentru prompt este {{maxLength}}. Ați introdus {{valueLength}} caractere."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limita mesajelor este de {{maxLength}} caractere. Ați introdus {{valueLength}} caractere.",
   "System Prompt": "Solicitări de sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sunteți ChatGPT, un model de limbă mare antrenat de OpenAI. Urmați cu atenție instrucțiunile de utilizare. Vă rugăm să răspundeți folosind markdown.",
@@ -129,7 +133,7 @@
   "Description": "Descriere",
   "A description for your prompt_": "Descrierea solicitării prompt.",
   "Prompt": "prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați {{}} pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați '{{}}' pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
   "Save": "Salvează",
   "A name for your prompt_": "Un nume pentru promptul tău.",
   "New conversation": "Conversație nouă",
@@ -479,7 +483,7 @@
   "enterTagsPlaceholder": "Adaugă etichete (apasă Enter)",
   "enterPromptNamePlaceholder": "de ex., Răspuns email",
   "enterPromptDescriptionPlaceholder": "Pentru ce este acest prompt?",
-  "enterPromptContentPlaceholder": "Scrie promptul tău aici. Folosește {{variable}} pentru conținut dinamic.",
+  "enterPromptContentPlaceholder": "Scrie promptul tău aici. Folosește '{{variable}}' pentru conținut dinamic.",
   "common": {
     "contact": "Contact",
     "close": "Închide",
@@ -628,7 +632,7 @@
     "userMustProvide": "Utilizatorul trebuie să furnizeze o valoare",
     "userCanProvide": "Utilizatorul poate furniza o valoare sau se utilizează valoarea implicită",
     "example": "Exemplu:",
-    "variableExampleText": "Scrie un email {{tone:profesional}} către {{recipient}} despre {{topic}} în {{language:English}}",
+    "variableExampleText": "Scrie un email '{{tone:profesional}}' către '{{recipient}}' despre '{{topic}}' în '{{language:English}}'",
     "detectedVariables": "Variabile detectate",
     "required": "Necesar",
     "aiAssistant": "Asistent AI",
@@ -826,7 +830,8 @@
     "deleteLegacyConfirm": "Sigur doriți să ștergeți toate datele vechi? Această acțiune nu poate fi anulată.",
     "Deleting": "Se șterge",
     "Confirm Delete": "Confirmă ștergerea",
-    "Cancel": "Anulează"
+    "Cancel": "Anulează",
+    "Custom Instructions": "Instrucțiuni personalizate"
   },
   "notFound": {
     "lostDog": "Câine pierdut"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Profesional",
-  "Casual": "Lejer"
+  "Casual": "Lejer",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Introduceți un prompt sau tastați \"/\" pentru a selecta un prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Adăugați instrucțiuni personale pentru a personaliza modul în care răspunde AI-ul. Acestea sunt combinate cu ghiduri de comportament de bază care asigură răspunsuri utile, corecte și sigure."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate."
+  },
+  "fileUpload": {
+    "uploading": "Se încarcă...",
+    "transcribing": "Se transcrie...",
+    "complete": "Complet",
+    "failed": "Eșuat",
+    "uploadFiles": "Încărcați fișiere (audio, video sau text)"
+  }
 }

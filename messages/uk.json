@@ -398,7 +398,7 @@
   "enterTagsPlaceholder": "Додати теги (натисніть Enter)",
   "enterPromptNamePlaceholder": "напр., Відповідь на email",
   "enterPromptDescriptionPlaceholder": "Для чого цей запит?",
-  "enterPromptContentPlaceholder": "Напишіть свій запит тут. Використовуйте {{variable}} для динамічного вмісту.",
+  "enterPromptContentPlaceholder": "Напишіть свій запит тут. Використовуйте '{{variable}}' для динамічного вмісту.",
   "common": {
     "contact": "Контакт",
     "close": "Закрити",
@@ -547,7 +547,7 @@
     "userMustProvide": "Користувач повинен вказати значення",
     "userCanProvide": "Користувач може вказати значення, або буде використано типове",
     "example": "Приклад:",
-    "variableExampleText": "Напишіть {{tone:professional}} листа для {{recipient}} щодо {{topic}} українською мовою ({{language:English}})",
+    "variableExampleText": "Напишіть '{{tone:professional}}' листа для '{{recipient}}' щодо '{{topic}}' українською мовою ('{{language:English}}')",
     "detectedVariables": "Виявлені змінні",
     "required": "Обовʼязково",
     "aiAssistant": "AI-асистент",
@@ -745,7 +745,8 @@
     "deleteLegacyConfirm": "Ви впевнені, що бажаєте видалити всі застарілі дані? Цю дію не можна буде скасувати.",
     "Deleting": "Видалення",
     "Confirm Delete": "Підтвердити видалення",
-    "Cancel": "Скасувати"
+    "Cancel": "Скасувати",
+    "Custom Instructions": "Користувацькі інструкції"
   },
   "notFound": {
     "lostDog": "Загублений пес"
@@ -780,7 +781,11 @@
   "OpenAI API Key Required": "Потрібен ключ OpenAI API",
   "Please enter a message": "Будь ласка, введіть повідомлення",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Будь ласка, задайте ваш OpenAI API ключ у нижньому лівому куті бічної панелі.",
-  "Prompt limit is {{maxLength}} characters": "Обмеження підказки — {{maxLength}} символів",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Ліміт підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
   "Regenerate response": "Згенерувати відповідь знову",
   "Run Typewriter Intro": "Запустити Typewriter Intro",
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Професійний",
-  "Casual": "Неформальний"
+  "Casual": "Неформальний",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Введіть підказку або введіть \"/\", щоб вибрати підказку..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Додайте власні інструкції, щоб налаштувати відповіді ШІ. Вони поєднуються з основними правилами, що гарантують корисні, точні та безпечні відповіді."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Порада: введіть \"/\", щоб вибрати зі збережених шаблонів підказок."
+  },
+  "fileUpload": {
+    "uploading": "Вивантаження...",
+    "transcribing": "Транскрибування...",
+    "complete": "Завершено",
+    "failed": "Помилка",
+    "uploadFiles": "Завантажте файли (аудіо, відео або текст)"
+  }
 }

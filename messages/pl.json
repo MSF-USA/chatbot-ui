@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Klucz do OpenAI API jest wymagany",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Proszę wprowadzić swój klucz do OpenAI API na pasku bocznym w lewym dolnym rogu",
   "Stop Generating": "Zatrzymaj generowanie",
-  "Prompt limit is {{maxLength}} characters": "Limit prompta wynosi {{maxLength}} znaków",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Limit długości polecenia to {{maxLength}} znaków. Wpisałeś(aś) {{valueLength}} znaków."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit prompta wynosi {{maxLength}} znaków. Wprowadziłeś {{valueLength}} znaków.",
   "System Prompt": "Prompt systemowy",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Jesteś ChatGPT, duży model językowy wytrenowany przez OpenAI. Postępuj zgodnie z instrukcjami użytkownika. Odpowiedz za pomocą formatu markdown.",
@@ -137,7 +141,7 @@
   "Description": "Opis",
   "A description for your prompt_": "Opis Twojego prompta.",
   "Prompt": "monit",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Zawartość prompta. Użyj {{}} żeby oznaczyć zmienną. Np.: {{nazwa}} jest {{przymiotnik}} {{rzeczownik}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Zawartość prompta. Użyj '{{}}' żeby oznaczyć zmienną. Np.: {{nazwa}} jest {{przymiotnik}} {{rzeczownik}}",
   "Save": "Zapisz",
   "A name for your prompt_": "Nazwa dla Twojej podpowiedzi.",
   "New chat": "Nowy chat",
@@ -478,7 +482,7 @@
   "enterTagsPlaceholder": "Dodaj tagi (naciśnij Enter)",
   "enterPromptNamePlaceholder": "np. Odpowiedź e-mail",
   "enterPromptDescriptionPlaceholder": "Do czego służy ten prompt?",
-  "enterPromptContentPlaceholder": "Napisz swój prompt tutaj. Użyj {{variable}} dla treści dynamicznych.",
+  "enterPromptContentPlaceholder": "Napisz swój prompt tutaj. Użyj '{{variable}}' dla treści dynamicznych.",
   "common": {
     "contact": "Kontakt",
     "close": "Zamknij",
@@ -627,7 +631,7 @@
     "userMustProvide": "Użytkownik musi podać wartość",
     "userCanProvide": "Użytkownik może podać wartość lub zostanie użyta domyślna",
     "example": "Przykład:",
-    "variableExampleText": "Napisz {{tone:professional}} email do {{recipient}} o {{topic}} w {{language:English}}",
+    "variableExampleText": "Napisz '{{tone:professional}}' email do '{{recipient}}' o '{{topic}}' w '{{language:English}}'",
     "detectedVariables": "Wykryte zmienne",
     "required": "Wymagane",
     "aiAssistant": "Asystent AI",
@@ -825,7 +829,8 @@
     "deleteLegacyConfirm": "Czy na pewno chcesz usunąć wszystkie dane dziedziczone? Tej operacji nie można cofnąć.",
     "Deleting": "Usuwanie",
     "Confirm Delete": "Potwierdź usunięcie",
-    "Cancel": "Anuluj"
+    "Cancel": "Anuluj",
+    "Custom Instructions": "Własne instrukcje"
   },
   "notFound": {
     "lostDog": "Zagubiony pies"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Profesjonalny",
-  "Casual": "Nieformalny"
+  "Casual": "Nieformalny",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Wpisz polecenie lub wpisz \"/\", aby wybrać polecenie..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Dodaj własne instrukcje, aby dostosować odpowiedzi AI. Zostaną one połączone z podstawowymi wytycznymi zapewniającymi pomocne, dokładne i bezpieczne odpowiedzi."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Porada: wpisz \"/\", aby wybrać spośród zapisanych szablonów poleceń."
+  },
+  "fileUpload": {
+    "uploading": "Przesyłanie...",
+    "transcribing": "Transkrypcja...",
+    "complete": "Zakończono",
+    "failed": "Niepowodzenie",
+    "uploadFiles": "Prześlij pliki (audio, wideo lub tekst)"
+  }
 }

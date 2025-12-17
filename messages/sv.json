@@ -35,7 +35,11 @@
   "OpenAI API Key Required": "OpenAI API-nyckel krävs",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vänligen ange din OpenAI API-nyckel längst ner till vänster i sidofältet.",
   "Stop Generating": "Sluta generera",
-  "Prompt limit is {{maxLength}} characters": "Din prompt kan inte ha fler än {{maxLength}} tecken",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Gränsen för prompten är {{maxLength}} tecken. Du har angett {{valueLength}} tecken."
+    }
+  },
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du är ChatGPT, en stor språkmodell tränad av OpenAI. Följ användarens instruktioner noggrant. Svara genom att använda markdown.",
   "Enter a prompt": "Ange en prompt",
@@ -161,7 +165,7 @@
   "Description": "Beskrivning",
   "A description for your prompt_": "En beskrivning för din prompt.",
   "Prompt": "uppmaning",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt-innehåll. Använd {{}} för att beteckna en variabel. Ex: {{namn}} är ett {{adjektiv}} {{substantiv}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt-innehåll. Använd '{{}}' för att beteckna en variabel. Ex: {{namn}} är ett {{adjektiv}} {{substantiv}}",
   "Save": "Spara",
   "A name for your prompt_": "Ett namn för din uppmaning.",
   "New chat": "Ny chatt",
@@ -481,7 +485,7 @@
   "enterTagsPlaceholder": "Lägg till taggar (tryck Enter)",
   "enterPromptNamePlaceholder": "t.ex. E-postsvar",
   "enterPromptDescriptionPlaceholder": "Vad är denna prompt till för?",
-  "enterPromptContentPlaceholder": "Skriv din prompt här. Använd {{variable}} för dynamiskt innehåll.",
+  "enterPromptContentPlaceholder": "Skriv din prompt här. Använd '{{variable}}' för dynamiskt innehåll.",
   "common": {
     "contact": "Kontakt",
     "close": "Stäng",
@@ -630,7 +634,7 @@
     "userMustProvide": "Användaren måste ange ett värde",
     "userCanProvide": "Användaren kan ange ett värde, eller så används standardvärdet",
     "example": "Exempel:",
-    "variableExampleText": "Skriv ett {{ton:professionellt}} e-postmeddelande till {{mottagare}} om {{ämne}} på {{språk:svenska}}",
+    "variableExampleText": "Skriv ett '{{ton:professionellt}}' e-postmeddelande till '{{mottagare}}' om '{{ämne}}' på '{{språk:svenska}}'",
     "detectedVariables": "Upptäckta variabler",
     "required": "Obligatorisk",
     "aiAssistant": "AI-assistent",
@@ -828,7 +832,8 @@
     "deleteLegacyConfirm": "Är du säker på att du vill ta bort all äldre data? Denna åtgärd kan inte ångras.",
     "Deleting": "Tar bort",
     "Confirm Delete": "Bekräfta borttagning",
-    "Cancel": "Avbryt"
+    "Cancel": "Avbryt",
+    "Custom Instructions": "Anpassade instruktioner"
   },
   "notFound": {
     "lostDog": "Förlorad hund"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Professionell",
-  "Casual": "Ledig"
+  "Casual": "Ledig",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Ange en prompt eller skriv \"/\" för att välja en prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Lägg till personliga instruktioner för att anpassa hur AI:n svarar. Dessa kombineras med grundläggande riktlinjer som säkerställer hjälpsamma, korrekta och säkra svar."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tips: Skriv \"/\" för att välja bland sparade promptmallar."
+  },
+  "fileUpload": {
+    "uploading": "Laddar upp...",
+    "transcribing": "Transkriberar...",
+    "complete": "Färdig",
+    "failed": "Misslyckades",
+    "uploadFiles": "Ladda upp filer (ljud, video eller text)"
+  }
 }

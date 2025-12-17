@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "OpenAI API යතුර අවශ්‍යයි",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "කරුණාකර ඔබේ OpenAI API යතුර පැති තීරුවේ පහළ වම්පසින් සකසන්න.",
   "Stop Generating": "උත්පාදනය නවත්වන්න",
-  "Prompt limit is {{maxLength}} characters": "වචන සීමාව අනුලකුණු {{maxLength}} කි",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "ප්‍රමිති සීමාව අකුරු {{maxLength}}ක් වේ. ඔබ ඇතුළත් කර ඇති අකුරු ගණන {{valueLength}}කි."
+    }
+  },
   "System Prompt": "පද්ධති ඉඟිය",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "ඔබ ChatGPT, OpenAI විසින් පුහුණු කරන ලද විශාල භාෂා ආකෘතියකි. පරිශීලක උපදෙස් ප්රවේශමෙන් අනුගමනය කරන්න. මාර්ක්ඩවුන් භාවිතයෙන් ප්‍රතිචාර දක්වන්න.",
   "Enter a prompt": "ප්‍රේරකයක් ඇතුළු කරන්න",
@@ -128,7 +132,7 @@
   "Description": "විස්තර",
   "A description for your prompt_": "ඔබේ ප්‍රොම්ප්ට් එක සඳහා විස්තරයක්.",
   "Prompt": "ප්‍රම්පටය",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "ප්‍රොම්ප්ට් අන්තර්ගතය. විචල්‍යයක් සනිටුහන් කිරීමට {{}} භාවිතා කරන්න. උදාහරණය: {{name}} යනු {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "ප්‍රොම්ප්ට් අන්තර්ගතය. විචල්‍යයක් සනිටුහන් කිරීමට '{{}}' භාවිතා කරන්න. උදාහරණය: '{{name}}' යනු '{{adjective}}' '{{noun}}'",
   "Save": "සුරකින්න",
   "A name for your prompt_": "ඔබේ ප්‍රෂ්ණය සඳහා නමක්.",
   "New chat": "නව සංවාදයක්",
@@ -448,7 +452,7 @@
   "enterTagsPlaceholder": "ටැග් එක් කරන්න (Enter ඔබන්න)",
   "enterPromptNamePlaceholder": "උදා., විද්‍යුත් තැපැල් ප්‍රතිචාරය",
   "enterPromptDescriptionPlaceholder": "මෙම ප්‍රේරකය කුමක් සඳහාද?",
-  "enterPromptContentPlaceholder": "ඔබේ ප්‍රේරකය මෙහි ලියන්න. ගතික අන්තර්ගතය සඳහා {{variable}} භාවිතා කරන්න.",
+  "enterPromptContentPlaceholder": "ඔබේ ප්‍රේරකය මෙහි ලියන්න. ගතික අන්තර්ගතය සඳහා '{{variable}}' භාවිතා කරන්න.",
   "common": {
     "contact": "සම්බන්ධ වන්න",
     "close": "වසන්න",
@@ -597,7 +601,7 @@
     "userMustProvide": "පරිශීලකයා වටිනාකමක් ලබාදිය යුතුය",
     "userCanProvide": "පරිශීලකයා වටිනාකමක් ලබාදිය හැක, නැතහොත් පෙරනිමිය භාවිතා වේ",
     "example": "උදාහරණය:",
-    "variableExampleText": "{{tone:professional}} ලෙස {{recipient}} වෙත {{topic}} ගැන {{language:English}} භාෂාවෙන් ඊ-මේල් එකක් සකස් කරන්න",
+    "variableExampleText": "'{{tone:professional}}' ලෙස '{{recipient}}' වෙත '{{topic}}' ගැන '{{language:English}}' භාෂාවෙන් ඊ-මේල් එකක් සකස් කරන්න",
     "detectedVariables": "හඳුනාගත් වරියන්",
     "required": "අවශ්‍යයි",
     "aiAssistant": "AI උපකාරක",
@@ -795,7 +799,8 @@
     "deleteLegacyConfirm": "ඔබට සියලු හිස් තොරතුරු මකා දැමීමට විශ්වාසද? මෙම ක්‍රියාව ආපසු ලබාගැනිය නොහැක.",
     "Deleting": "මකමින් පවතියි",
     "Confirm Delete": "මකා දැමීම තහවුරු කරන්න",
-    "Cancel": "අවලංගු කරන්න"
+    "Cancel": "අවලංගු කරන්න",
+    "Custom Instructions": "අභිරුචි උපදෙස්"
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "වෘත්තීයමය",
-  "Casual": "අනෛතික"
+  "Casual": "අනෛතික",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "ප්‍රශ්නයක් ඇතුළත් කරන්න හෝ \"/\" ටයිප් කර ප්‍රශ්න එකක් තෝරන්න..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI ප්‍රතිචාර ලබා දීමට උපදෙස් අභිරුචි යාවත්කාලීන කිරීමට ඔබේ පුද්ගලික උපදෙස් එක් කරන්න. මෙය උපකාරී, නිවැරදි හා ආරක්ෂිත ප්‍රතිචාර ලබා ගැනීම සඳහා මූලික ක්‍රියා මාර්ගෝපදේශ සමඟ එක් වේ."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "උපදෙස්: සුරක්ෂිත කළ ප්‍රශ්න සැකිලිවලින් තේරීමට \"/\" ටයිප් කරන්න."
+  },
+  "fileUpload": {
+    "uploading": "උඩුගත වෙමින්...",
+    "transcribing": "පෙළට පරිවර්තනය වෙමින්...",
+    "complete": "සම්පූර්ණයි",
+    "failed": "අසාර්ථකයි",
+    "uploadFiles": "ගොනු උඩුගත කරන්න (ශ්‍රව්‍ය, දෘශ්‍ය, හෝ පෙළ)"
+  }
 }

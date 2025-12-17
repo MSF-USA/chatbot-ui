@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "מפתח openAI API",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "עליך להזין את המפתח האישי שלך בצידו השמאלי התחתון של תפריט הניווט.",
   "Stop Generating": "עצור תהליך הפקת התשובה",
-  "Prompt limit is {{maxLength}} characters": "אורך התשובה מוגבל ל {{maxLength}} תווים",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "מגבלת ההנחיה היא {{maxLength}} תווים. הכנסת {{valueLength}} תווים."
+    }
+  },
   "System Prompt": "הגדרת בסיס לכל תשובה של המערכת",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "You are Hebrew speaking ChatGPT, a large language model trained by OpenAI which responds in Hebrew to any question or User comment. Follow the user's instructions carefully. Respond in Hebrew using markdown.",
   "Enter a prompt": "הקלד הודעה",
@@ -128,7 +132,7 @@
   "Description": "תיאור",
   "A description for your prompt_": "תיאור שורת הפקודה למכונה",
   "Prompt": "הנחיה",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "תיאור הפקודה. השתמש {{}} להגדרת משתנים. לדוגמא {{שם משתנה}} הוא {{תואר}} {{שם עצם}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "תיאור הפקודה. השתמש '{{}}' להגדרת משתנים. לדוגמא {{שם משתנה}} הוא {{תואר}} {{שם עצם}}",
   "Save": "שמור",
   "A name for your prompt_": "שם להנחיה שלך.",
   "New chat": "שיחה חדשה",
@@ -456,7 +460,7 @@
   "enterTagsPlaceholder": "הוסף תגיות (לחץ Enter)",
   "enterPromptNamePlaceholder": "למשל, תגובה לאימייל",
   "enterPromptDescriptionPlaceholder": "למה ההנחיה הזו?",
-  "enterPromptContentPlaceholder": "כתוב את ההנחיה שלך כאן. השתמש ב-{{variable}} לתוכן דינמי.",
+  "enterPromptContentPlaceholder": "כתוב את ההנחיה שלך כאן. השתמש ב-'{{variable}}' לתוכן דינמי.",
   "common": {
     "contact": "צור קשר",
     "close": "סגור",
@@ -605,7 +609,7 @@
     "userMustProvide": "המשתמש חייב לספק ערך",
     "userCanProvide": "המשתמש יכול לספק ערך, או שתשמש ברירת המחדל",
     "example": "דוגמה:",
-    "variableExampleText": "כתוב {{tone:professional}} מייל ל-{{recipient}} על {{topic}} ב-{{language:English}}",
+    "variableExampleText": "כתוב '{{tone:professional}}' מייל ל-'{{recipient}}' על '{{topic}}' ב-'{{language:English}}'",
     "detectedVariables": "משתנים מזוהים",
     "required": "נדרש",
     "aiAssistant": "עוזר AI",
@@ -803,7 +807,8 @@
     "deleteLegacyConfirm": "האם אתה בטוח שברצונך למחוק את כל הנתונים הישנים? לא ניתן לבטל פעולה זו.",
     "Deleting": "מוחק",
     "Confirm Delete": "אשר מחיקה",
-    "Cancel": "ביטול"
+    "Cancel": "ביטול",
+    "Custom Instructions": "הוראות מותאמות אישית"
   },
   "notFound": {
     "lostDog": "כלב אבוד"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "מקצועי",
-  "Casual": "לא פורמלי"
+  "Casual": "לא פורמלי",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "הזן הנחיה או הקלד \"/\" כדי לבחור הנחיה..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "הוסף הוראות אישיות כדי להתאים את תגובת הבינה המלאכותית. ההוראות משולבות עם כללי התנהלות עיקריים להבטחת תגובות מועילות, מדויקות ובטוחות."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "עצה: הקלד \"/\" כדי לבחור מתוך תבניות הנחיה שמורות."
+  },
+  "fileUpload": {
+    "uploading": "מעלה קבצים...",
+    "transcribing": "מעתיק...",
+    "complete": "הושלם",
+    "failed": "נכשל",
+    "uploadFiles": "העלה קבצים (אודיו, וידאו או טקסט)"
+  }
 }

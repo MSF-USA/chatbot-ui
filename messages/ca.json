@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Cal la clau d'API d'OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Si us plau, introdueix la teva clau d'API d'OpenAI a la cantonada inferior esquerra de la barra lateral.",
   "Stop Generating": "Parar de generar",
-  "Prompt limit is {{maxLength}} characters": "El límit del missatge és de {{maxLength}} caràcters",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "El límit del prompt és de {{maxLength}} caràcters. N'heu introduït {{valueLength}}."
+    }
+  },
   "System Prompt": "Missatge del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ets ChatGPT, un model de llenguatge gran entrenat per OpenAI. Segueix les instruccions de l'usuari amb cura. Respon utilitzant markdown.",
   "Enter a prompt": "Introdueix un missatge",
@@ -128,7 +132,7 @@
   "Description": "Descripció",
   "A description for your prompt_": "Descripció del teu prompt.",
   "Prompt": "missatge",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza {{}} per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza '{{}}' per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
   "Save": "Desa",
   "A name for your prompt_": "Un nom per al teu suggeriment.",
   "New chat": "Nova conversa",
@@ -456,7 +460,7 @@
   "enterTagsPlaceholder": "Afegeix etiquetes (prem Enter)",
   "enterPromptNamePlaceholder": "p. ex., Resposta de correu electrònic",
   "enterPromptDescriptionPlaceholder": "Per a què és aquest avís?",
-  "enterPromptContentPlaceholder": "Escriu el teu avís aquí. Utilitza {{variable}} per al contingut dinàmic.",
+  "enterPromptContentPlaceholder": "Escriu el teu avís aquí. Utilitza '{{variable}}' per al contingut dinàmic.",
   "common": {
     "contact": "Contacte",
     "close": "Tanca",
@@ -605,7 +609,7 @@
     "userMustProvide": "L'usuari ha de proporcionar un valor",
     "userCanProvide": "L'usuari pot proporcionar un valor o s'utilitza el valor per defecte",
     "example": "Exemple:",
-    "variableExampleText": "Escriu un correu electrònic {{tone:professional}} a {{recipient}} sobre {{topic}} en {{language:English}}",
+    "variableExampleText": "Escriu un correu electrònic '{{tone:professional}}' a '{{recipient}}' sobre '{{topic}}' en '{{language:English}}'",
     "detectedVariables": "Variables detectades",
     "required": "Requerit",
     "aiAssistant": "Assistant d’IA",
@@ -803,7 +807,8 @@
     "deleteLegacyConfirm": "Segur que vols eliminar totes les dades antigues? Aquesta acció no es pot desfer.",
     "Deleting": "Eliminant",
     "Confirm Delete": "Confirma l'eliminació",
-    "Cancel": "Cancel·la"
+    "Cancel": "Cancel·la",
+    "Custom Instructions": "Instruccions personalitzades"
   },
   "notFound": {
     "lostDog": "Gos perdut"
@@ -1225,5 +1230,27 @@
     }
   },
   "Professional": "Professional",
-  "Casual": "Informal"
+  "Casual": "Informal",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Introduïu un prompt o escriviu \"/\" per seleccionar-ne un..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Afegiu instruccions personals per personalitzar la resposta de la IA. Es combinaran amb les directrius bàsiques per garantir respostes útils, precises i segures."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Consell: Escriviu \"/\" per triar entre plantilles de prompt desades."
+  },
+  "fileUpload": {
+    "uploading": "Pujant...",
+    "transcribing": "Transcrivint...",
+    "complete": "Completat",
+    "failed": "Error",
+    "uploadFiles": "Carregueu fitxers (àudio, vídeo o text)"
+  }
 }

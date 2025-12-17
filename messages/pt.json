@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "A API Key da OpenAI é necessária",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Por favor, insira sua API Key da OpenAI no canto inferior esquerdo da barra lateral.",
   "Stop Generating": "Parar de gerar",
-  "Prompt limit is {{maxLength}} characters": "O limite da mensagem é de {{maxLength}} caracteres",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "O limite do prompt é de {{maxLength}} caracteres. Você inseriu {{valueLength}} caracteres."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "O limite do prompt é de {{maxLength}} caracteres. Você inseriu {{valueLength}} caracteres.",
   "System Prompt": "Mensagem do sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Você é o ChatGPT, um grande modelo de linguagem treinado pela OpenAI. Siga as instruções do usuário cuidadosamente. Responda usando markdown.",
@@ -131,7 +135,7 @@
   "Description": "Descrição",
   "A description for your prompt_": "Uma descrição para o seu prompt.",
   "Prompt": "prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conteúdo do prompt. Use {{}} para indicar uma variável. Ex: {{name}} é um(a) {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conteúdo do prompt. Use '{{}}' para indicar uma variável. Ex: '{{name}}' é um(a) '{{adjective}}' '{{noun}}'",
   "Save": "Salvar",
   "A name for your prompt_": "Um nome para o seu prompt.",
   "New chat": "Novo chat",
@@ -484,7 +488,7 @@
   "enterTagsPlaceholder": "Adicionar tags (pressione Enter)",
   "enterPromptNamePlaceholder": "ex., Resposta de e-mail",
   "enterPromptDescriptionPlaceholder": "Para que serve este prompt?",
-  "enterPromptContentPlaceholder": "Escreva seu prompt aqui. Use {{variable}} para conteúdo dinâmico.",
+  "enterPromptContentPlaceholder": "Escreva seu prompt aqui. Use '{{variable}}' para conteúdo dinâmico.",
   "common": {
     "close": "Fechar",
     "remove": "Remover",
@@ -599,7 +603,7 @@
     "userMustProvide": "Usuário deve fornecer um valor",
     "userCanProvide": "Usuário pode fornecer um valor ou o padrão é usado",
     "example": "Exemplo:",
-    "variableExampleText": "Escreva um e-mail {{tone:profissional}} para {{recipient}} sobre {{topic}} em {{language:Português}}",
+    "variableExampleText": "Escreva um e-mail '{{tone:profissional}}' para '{{recipient}}' sobre '{{topic}}' em '{{language:Português}}'",
     "detectedVariables": "Variáveis detectadas",
     "required": "Obrigatório",
     "aiAssistant": "Assistente de IA",
@@ -831,7 +835,8 @@
     "deleteLegacyConfirm": "Tem certeza de que deseja excluir todos os dados legados? Esta ação não pode ser desfeita.",
     "Deleting": "Excluindo",
     "Confirm Delete": "Confirmar exclusão",
-    "Cancel": "Cancelar"
+    "Cancel": "Cancelar",
+    "Custom Instructions": "Instruções Personalizadas"
   },
   "notFound": {
     "lostDog": "Cão perdido"
@@ -1223,5 +1228,27 @@
     }
   },
   "Professional": "Profissional",
-  "Casual": "Casual"
+  "Casual": "Casual",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Digite um prompt ou pressione \"/\" para selecionar um prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Adicione suas instruções pessoais para personalizar como a IA responde. Elas são combinadas com as diretrizes principais de comportamento para garantir respostas úteis, precisas e seguras."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Dica: Digite \"/\" para selecionar entre modelos de prompt salvos."
+  },
+  "fileUpload": {
+    "uploading": "Enviando...",
+    "transcribing": "Transcrevendo...",
+    "complete": "Concluído",
+    "failed": "Falha",
+    "uploadFiles": "Enviar arquivos (áudio, vídeo ou texto)"
+  }
 }
