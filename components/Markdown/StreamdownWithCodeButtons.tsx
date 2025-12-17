@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { useArtifactStore } from '@/client/stores/artifactStore';
 
 interface CodeBlockWrapperProps {
@@ -17,6 +19,8 @@ export const StreamdownWithCodeButtons: React.FC<CodeBlockWrapperProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { openArtifact } = useArtifactStore();
+  const t = useTranslations();
+  const openInEditorText = t('codeBlock.openInEditor');
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -50,13 +54,13 @@ export const StreamdownWithCodeButtons: React.FC<CodeBlockWrapperProps> = ({
         button.setAttribute('data-open-editor', 'true');
         button.className =
           'flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded transition-colors';
-        button.title = 'Open in editor';
+        button.title = openInEditorText;
         button.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="16 18 22 12 16 6"></polyline>
             <polyline points="8 6 2 12 8 18"></polyline>
           </svg>
-          <span>Open in editor</span>
+          <span>${openInEditorText}</span>
         `;
         button.onclick = (e) => {
           e.preventDefault();
@@ -97,7 +101,7 @@ export const StreamdownWithCodeButtons: React.FC<CodeBlockWrapperProps> = ({
       clearTimeout(timeoutId);
       observer.disconnect();
     };
-  }, [children, openArtifact]);
+  }, [children, openArtifact, openInEditorText]);
 
   return <div ref={containerRef}>{children}</div>;
 };
