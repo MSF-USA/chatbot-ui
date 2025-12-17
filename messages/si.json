@@ -303,7 +303,19 @@
   "Team Templates": "කණ්ඩායම් සැකිලි",
   "selected": "තෝරාගත්",
   "folders": "ෆෝල්ඩර",
-  "agents": "නියෝජිතයින්",
+  "agents": {
+    "exportAgent": "නියෝජිතයා නිර්යාත කරන්න",
+    "editAgent": "නියෝජිතයා සංස්කරණය කරන්න",
+    "agentName": "නියෝජිත නාමය",
+    "myResearchAssistant": "මගේ පර්යේෂණ සහායක",
+    "agentId": "නියෝජිත හැඳුනුම්පත",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "විස්තරය (විකල්ප)",
+    "descriptionPlaceholder": "පර්යේෂණ කාර්යයන් සඳහා විශේෂ ized නියෝජිතයෙක්...",
+    "baseModel": "මූලික ආකෘතිය",
+    "formatDescription": "ආකෘතිය: asst_xxxxx (MSF AI Assistant Foundry වෙතින්)",
+    "importantInfo": "මෙම නියෝජිතයාට සංවාද සන්දර්භයට ප්‍රවේශය ඇති අතර සම්මත ආකෘති මෙන් එකම මෙවලම් භාවිතා කළ හැක. නියෝජිත හැඳුනුම්පත නිවැරදි බව සහතික කරන්න මන්ද එය පසුව වෙනස් කළ නොහැක."
+  },
   "Quick Actions": "ඉක්මන් ක්‍රියා",
   "Type / in chat to access your prompts": "ඔබේ ප්‍රේරක වෙත ප්‍රවේශ වීමට චැට් එකේ / ටයිප් කරන්න",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "චැට් එකේ / ටයිප් කරන්න, ඔබේ ප්‍රේරකය තෝරන්න සහ ඉල්ලා සිටින විට විචල්‍යයන් පුරවන්න",
@@ -438,13 +450,41 @@
   "enterPromptDescriptionPlaceholder": "මෙම ප්‍රේරකය කුමක් සඳහාද?",
   "enterPromptContentPlaceholder": "ඔබේ ප්‍රේරකය මෙහි ලියන්න. ගතික අන්තර්ගතය සඳහා {{variable}} භාවිතා කරන්න.",
   "common": {
-    "contact": "සම්බන්ධ වන්න"
+    "contact": "සම්බන්ධ වන්න",
+    "close": "වසන්න",
+    "remove": "ඉවත් කරන්න",
+    "tryAgain": "නැවත උත්සාහ කරන්න",
+    "menu": "මෙනුව",
+    "copyToClipboard": "පසුරු පුවරුවට පිටපත් කරන්න",
+    "toggleDropdownMenu": "ද්‍රොප්-ඩවුන් මෙනු යාවත්කාලීන කරන්න",
+    "toggleMenu": "මෙනුව යාවත්කාලීන කරන්න",
+    "closeModal": "මාඡු වසන්න",
+    "dismissBanner": "බැනර් ඉවත් කරන්න",
+    "searchEllipsis": "සොයන්න...",
+    "addTagEllipsis": "ටැගයක් එක් කරන්න...",
+    "msfLogo": "MSF ද්‍රව්‍ය ලාංඡනය",
+    "importantInformation": " වැදගත් තොරතුරු",
+    "noResults": "ප්‍රතිඵලයක් නැත",
+    "confirm": "තහවුරු කරන්න",
+    "cancel": "අවලංගු කරන්න",
+    "discard": "තැබිය දෙන්න",
+    "keepEditing": "සැකසුම දිගටම කරයි",
+    "yes": "ඔව්",
+    "no": "නැහැ"
   },
   "errors": {
     "unexpectedErrorOccurred": "අනපේක්ෂිත දෝෂයක් සිදු විය",
     "criticalErrorReload": "විවේචනාත්මක දෝෂයක් සිදු විය. කරුණාකර පිටුව නැවත පූරණය කරන්න.",
     "reloadPage": "පිටුව නැවත පූරණය කරන්න",
-    "persistContactSupport": "මෙම ගැටලුව දිගටම පවතී නම්, කරුණාකර සහාය අමතන්න"
+    "persistContactSupport": "මෙම ගැටලුව දිගටම පවතී නම්, කරුණාකර සහාය අමතන්න",
+    "somethingWentWrong": "කිසියම් දෝෂයක් ඇතිවී ඇත",
+    "anErrorOccurred": "දෝෂයක් ඇතිවිය",
+    "copyErrorMessage": "දෝෂ පණිවිඩය පිටපත් කරන්න",
+    "contactSupport": "මෙම ගැටලුව පවතිනවා නම්, කරුණාකර සහාය ලබාගන්න:",
+    "dismissError": "දෝෂය ඉවත් කරන්න",
+    "applicationError": "යෙදුම් දෝෂය",
+    "chatLoadError": "සංවාදය ලොඩ් කරමින් දෝෂයක් ඇතිවිය",
+    "anErrorOccurredTryAgain": "දෝෂයක් ඇතිවිය. කරුණාකර නැවත උත්සාහ කරන්න."
   },
   "auth": {
     "authenticationError": "සත්‍යාපන දෝෂය",
@@ -513,7 +553,25 @@
     "fullSizePreview": "සම්පූර්ණ ප්‍රමාණයේ පෙරදසුන",
     "enterSearchQueryPlaceholder": "ඔබේ සෙවුම් විමසුම හෝ ප්‍රශ්නය ඇතුළත් කරන්න...",
     "errorFetchingUrl": "URL අන්තර්ගතය ලබා ගැනීමේ දී දෝෂයක් සිදු විය",
-    "errorInitiatingSearch": "වෙබ් සෙවීම ආරම්භ කිරීමේ දී දෝෂයක් සිදු විය"
+    "errorInitiatingSearch": "වෙබ් සෙවීම ආරම්භ කිරීමේ දී දෝෂයක් සිදු විය",
+    "regenerate": "නැවත ජනනය කරන්න",
+    "modelSwitchPrompt": "{original} අසාර්ථක වුණත් {fallback} සාර්ථකයි. ඔබට ආකෘතිය මාරු කිරීමට අවශ්‍යද?",
+    "keepOriginalModel": "{model} තබා ගන්න",
+    "switchToModel": "{model} වෙත මාරු වෙන්න",
+    "alwaysSwitchToModel": "සැමවිටම ස්වයංක්‍රීයව මාරු කරන්න",
+    "translateMessage": "පණිවිඩය පරිවර්තනය කරන්න",
+    "translating": "පරිවර්තනය වෙමින්...",
+    "translationError": "පරිවර්තනය අසාර්ථක විය",
+    "showOriginal": "මුල් එක පෙන්වන්න",
+    "translatedTo": "{language} ලෙස පරිවර්තනය විය",
+    "searchLanguages": "භාෂා සෙවීම...",
+    "selectLanguage": "භාෂාව තෝරන්න",
+    "audioFromOriginal": "ශ්‍රව්‍යය මුල් පෙළෙන් උගත්ය",
+    "audioFromTranslation": "ශ්‍රව්‍යය {language} පරිවර්තනයෙන් දෙනු ලැබේ",
+    "thinking": "සිතමින්...",
+    "viewReasoningProcess": "යානිකරණ ක්‍රියාවලිය පෙන්වන්න",
+    "collapseThinking": "සිතීම හකුලා හරින්න",
+    "expandThinking": "සිතීම විහිදන්න"
   },
   "sidebar": {
     "collapseSidebar": "පැති තීරුව හකුළන්න",
@@ -521,29 +579,135 @@
     "quickActionsTitle": "ඉක්මන් ක්‍රියාමාර්ග",
     "quickActions": "ඉක්මන් ක්‍රියාමාර්ග"
   },
-  "agents": {
-    "exportAgent": "නියෝජිතයා නිර්යාත කරන්න",
-    "editAgent": "නියෝජිතයා සංස්කරණය කරන්න",
-    "agentName": "නියෝජිත නාමය",
-    "myResearchAssistant": "මගේ පර්යේෂණ සහායක",
-    "agentId": "නියෝජිත හැඳුනුම්පත",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "විස්තරය (විකල්ප)",
-    "descriptionPlaceholder": "පර්යේෂණ කාර්යයන් සඳහා විශේෂ ized නියෝජිතයෙක්...",
-    "baseModel": "මූලික ආකෘතිය",
-    "formatDescription": "ආකෘතිය: asst_xxxxx (MSF AI Assistant Foundry වෙතින්)",
-    "importantInfo": "මෙම නියෝජිතයාට සංවාද සන්දර්භයට ප්‍රවේශය ඇති අතර සම්මත ආකෘති මෙන් එකම මෙවලම් භාවිතා කළ හැක. නියෝජිත හැඳුනුම්පත නිවැරදි බව සහතික කරන්න මන්ද එය පසුව වෙනස් කළ නොහැක."
-  },
   "prompts": {
-    "buildReusablePrompts": "AI සහාය ඇතිව නැවත භාවිතා කළ හැකි විමසීම් තනන්න"
+    "buildReusablePrompts": "AI සහාය ඇතිව නැවත භාවිතා කළ හැකි විමසීම් තනන්න",
+    "noToneDefault": "කිසිදු ස්වරය නැත (පෙරනිමි භාවිතා කරන්න)",
+    "tagHelp": "ටැග් උදව්",
+    "tagHelpContent": "ඔබගේ ප්‍රොම්ප්ට් නායකයන් විසින් වර්ගීකරණය කර ඉක්මනින් සෙවීම සඳහා ටැග් භාවිතා කරන්න. උදාහරණ:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "technical",
+      "customerSupport": "customer-support"
+    },
+    "variableHelp": "වරිය උදව්",
+    "variableHelpIntro": "ඔබේ ප්‍රොම්ප්ට් ත්‍රිවිධයකර ගැනීමට වරියන් භාවිතා කරන්න:",
+    "requiredVariables": "අවශ්‍ය වරියන් (පෙරනිමි නැත):",
+    "optionalVariables": "විකල්ප වරියන් (පෙරනිමි සමඟ):",
+    "userMustProvide": "පරිශීලකයා වටිනාකමක් ලබාදිය යුතුය",
+    "userCanProvide": "පරිශීලකයා වටිනාකමක් ලබාදිය හැක, නැතහොත් පෙරනිමිය භාවිතා වේ",
+    "example": "උදාහරණය:",
+    "variableExampleText": "{{tone:professional}} ලෙස {{recipient}} වෙත {{topic}} ගැන {{language:English}} භාෂාවෙන් ඊ-මේල් එකක් සකස් කරන්න",
+    "detectedVariables": "හඳුනාගත් වරියන්",
+    "required": "අවශ්‍යයි",
+    "aiAssistant": "AI උපකාරක",
+    "whatToImprove": "ඔබට යාවත්කාලීන කළ යුත්තේ කුමක්ද?",
+    "whatShouldPromptDo": "මෙම ප්‍රෑප්ට් එකෙන් ඔබට වැඩිදියුණු කිරීමට අවශ්‍ය දේ කුමක්ද?",
+    "improvePlaceholder": "උදා: වෘත්තීයමය කරන්න, උදාහරණ එකතු කරන්න, පැහැදිලි බව වැඩි කරන්න...",
+    "generatePlaceholder": "උදා: ලබන්නා සහ විෂය සඳහා variable සහිත වෘත්තීය විද්‍යුත් තැපැල් ටැම්ප්ලේටුවක් ජනන කරන්න...",
+    "addContextOptional": "ප්‍රසංගය එක් කරන්න (ඇවැසි නම්)",
+    "revising": "යාවත්කාලීන කරමින්...",
+    "generating": "ජනනය කරමින්...",
+    "reviseWithAI": "AI සමඟ යාවත්කාලීන කරන්න",
+    "generatePrompt": "ප්‍රෑප්ට් එක ජනනය කරන්න",
+    "revisionComplete": "යාවත්කාලීනය නිමායි",
+    "generationComplete": "ජනනය කිරීම නිමායි",
+    "revisedPrompt": "යාවත්කාලීන කළ ප්‍රෑප්ට් එක:",
+    "generatedPrompt": "ජනනය කළ ප්‍රෑප්ට් එක:",
+    "applyRevision": "මෙම යාවත්කාලීනය යෙදවන්න",
+    "useThisPrompt": "මෙම ප්‍රෑප්ට් එක භාවිතා කරන්න",
+    "improvementsMade": "කළ හැකි යාවත්කාලීන කිරීම්:",
+    "tips": "උදව්:",
+    "howAICanHelp": "AI සහාය",
+    "helpItems": {
+      "improveClarity": "පැහැදිළිත්වය සහ ව්යුහය වැඩි කරන්න",
+      "suggestVariables": "ප්‍රයෝජනවත් variable නිර්දේශ කරන්න",
+      "addContext": "ප්‍රසංගය සහ උදාහරණ එක් කරන්න",
+      "optimize": "වඩා හොඳ ප්‍රතිඵල සඳහා යෝජිත කරන්න"
+    },
+    "savePrompt": "ප්‍රෑප්ට් එක සුරකින්න",
+    "add": "ඇතුළත් කරන්න"
   },
   "tones": {
     "createCustomVoiceProfile": "AI සහාය ඇතිව අභිරුචි හඬ පැතිකඩක් සාදන්න",
-    "examplePlaceholder": "උදා., වෘත්තීය නමුත් මිත්‍රශීලී පාරිභෝගික සේවා ස්වරයක් සාදන්න..."
+    "examplePlaceholder": "උදා., වෘත්තීය නමුත් මිත්‍රශීලී පාරිභෝගික සේවා ස්වරයක් සාදන්න...",
+    "tagHelp": "ටැග් උදව්",
+    "tagHelpContent": "ඔබේ රවටම් විභාග හා ඉක්මනින් සෙවීම සඳහා ටැග් භාවිතා කරන්න. උදාහරණ:",
+    "tagExamples": {
+      "professional": "වෘත්තීයමය",
+      "casual": "අනියම",
+      "technical": "තාක්ෂණික",
+      "marketing": "අලෙවිකරණ"
+    },
+    "add": "ඇතුළත් කරන්න",
+    "aiToneAnalyzer": "AI රවටම් විශ්ලේෂකය",
+    "describeToneToCreate": "ඔබ සෑදීමට ඇහැකි රවටම විස්තර කරන්න",
+    "uploadContentSamples": "අන්තර්ගත උදාහරණ උඩුගත කරන්න",
+    "analyzing": "විශ්ලේෂණය වෙමින්...",
+    "analyzeToneWithAI": "AI සමඟ රවටම විශ්ලේෂණය කරන්න",
+    "analysisComplete": "විශ්ලේෂණය නිමාවට පත්",
+    "generatedVoiceGuidelines": "ජනනය කළ හඬ උපදෙස්:",
+    "examplePhrases": "උදාහරණ වාක්‍යাংশ:",
+    "suggestedTags": "නිර්දේශිත ටැග්:",
+    "applyThisAnalysis": "මෙම විශ්ලේෂණය යෙදවන්න",
+    "detectedCharacteristics": "හදුනාගත් ලක්ෂණ:",
+    "howAICanHelp": "AI සහාය",
+    "helpItems": {
+      "transcribe": "ශබ්ද/වීඩියෝ අන්තර්ගතය ලියවීම",
+      "analyzeContent": "ඔබගේ අන්තර්ගත උදාහරණ විශ්ලේෂණය",
+      "extractPatterns": "රවටම සහ පුරුදු රටා අනාවරණය",
+      "generateGuidelines": "හඬ උපදෙස් ජනනය කරන්න",
+      "suggestTags": "ආශ්‍රිත ටැග් නිර්දේශ කරන්න"
+    },
+    "saveTone": "රවටම සුරකින්න"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "තාක්ෂණික ප්‍රවාහ රූප සටහන බලන්න"
+    "viewTechnicalFlowDiagram": "තාක්ෂණික ප්‍රවාහ රූප සටහන බලන්න",
+    "backToChat": "චැට් වෙත ආපසු",
+    "title": "උදව් මධ්‍යස්ථානය",
+    "subtitle": "පිළිතුරු සොයන්න, ගුණාත්මකභාවය පිළිබඳ जानන්න, සහ සහය ලබාගන්න",
+    "faq": {
+      "title": "නිතර අසන ප්‍රශ්න",
+      "description": "AI අධිකාරියා භාවිතා කිරීම පිළිබඳ පොදු ප්‍රශ්නවලට පිළිතුරු සොයන්න",
+      "articles": "කට්ටල",
+      "searchPlaceholder": "FAQ සෙවීම...",
+      "noResults": "ඔබේ සෙවුමට ගැළපෙන FAQ නැත",
+      "noResultsHint": "වෙනස් සෙවුම් පදයක් භාවිතා කරන්න"
+    },
+    "privacy": {
+      "title": "පෞද්ගලිකත්වය සහ දත්ත",
+      "description": "ඔබේ දත්ත සුරක්ෂිතව හා ආරක්ෂිතව තබා ගැනීම කල හැක්කේ කෙසේදැයි අධ්‍යයනය කරන්න",
+      "topics": "ප්‍රස්ථා වගුව",
+      "searchPlaceholder": "පෞද්ගලිකත්ව ප්‍රස්ථා සෙවීම...",
+      "noResults": "ඔබේ සෙවුමට ගැළපෙන පෞද්ගලිකත්ව විෂයයන් නැත",
+      "noResultsHint": "වෙනස් සෙව්ම් පදයක් උත්සාහ කරන්න",
+      "bannerTitle": "ඔබගේ පෞද්ගලිකත්වය වැදගත්ය",
+      "bannerDescription": "සියලු කතාබස් ඔබගේ උපාංගයේ පමණක් දේශීයව සුරකිනු ලැබේ. දත්ත සැකසුම MSF පද්ධති තුළ Azure ව්‍යුහය භාවිතයෙන් සිදු වේ.",
+      "localStorageOnly": "දේශීය තැන්පත් පමණි",
+      "msfControlled": "MSF පාලනයේ",
+      "noPersonalData": "පෞද්ගලික දත්ත නොමැත",
+      "noSensitiveOps": "සංවේදී මෙහෙයුම් නොමැත"
+    },
+    "contact": {
+      "title": "සම්බන්ධතා සහ සම්පත්",
+      "description": "අපගේ කණ්ඩායම සමඟ සම්බන්ධ වීමට හා ප්‍රයෝජනවත් සබැඳි මෙතැනින්",
+      "supportAvailable": "සහාය ලබාගැනීම සූදානම්",
+      "submitRequest": "සහාය ඉල්ලීමක් ඉදිරිපත් කරන්න",
+      "getHelp": "අපගේ කණ්ඩායමෙන් උදව් ලබාගන්න",
+      "requestDescription": "උදව් අවශ්‍යද නැත්නම් ප්‍රතිචාර ලබාදීමට කැමතිද? පහතින් අපගේ සහාය පෝරමය විවෘත කරන්න.",
+      "openSupportForm": "සහාය පෝරමය විවෘත කරන්න",
+      "otherWays": "අප අමතන්න වෙනත් ක්‍රම",
+      "emailSupport": "ඊමේල් සහාය",
+      "emailDescription": "ප්‍රශ්න, ප්‍රතිචාර, හෝ තාක්‍ෂණික ගැටළු සඳහා අපට ඊ-තැපැලක් යවන්න"
+    },
+    "resources": {
+      "title": "අමතර සම්පත්",
+      "portalTitle": "AI Accelerator Portal",
+      "portalDescription": "ලේඛන, ව්‍යාපෘති යාවත්කාලීන හා පුහුණු ද්‍රව්‍ය",
+      "githubTitle": "වෙහෙසුණු මූලාශ්‍ර ගබඩාව",
+      "githubDescription": "කේතය බලන්න, ගැටළු වාර්තා කරන්න, සහ GitHub මත දායක වන්න"
+    }
   },
   "settings": {
     "Settings": "සැකසුම්",
@@ -611,9 +775,455 @@
     "FAQs, privacy policy, and guides": "නිති අසන ප්‍රශ්න, පුද්ගලිකත්ව ප්‍රතිපත්තිය සහ මාර්ගෝපදේශ",
     "Contact Support": "සහාය අමතන්න",
     "Popular Questions": "ජනප්‍රිය ප්‍රශ්න",
-    "View all FAQs": "සියලු නිති අසන ප්‍රශ්න බලන්න"
+    "View all FAQs": "සියලු නිති අසන ප්‍රශ්න බලන්න",
+    "Delete legacy data after migration": "ප්‍රවාහනයෙන් පසු පැරණි දත්ත ඉවත් කරන්න",
+    "frees up storage space": "සංඛ්‍යාත තැන්පත ඉවත් කරයි",
+    "Legacy data deleted": "පැරණි දත්ත ඉවත් කරන ලදී",
+    "freed": "මුදා හරින්න",
+    "Conversations": "කතාබස්",
+    "Legacy": "පැරණි",
+    "Other": "අනිත්",
+    "Loading": "පූරණය වෙමින් පවතී",
+    "Legacy Data Detected": "පැරණි දත්ත අනාවරණය විය",
+    "legacyDataDescription": "ඔබ සතුව පසුගිය අනුවාදයක සිට ඇති {size} දත්ත ඇත. මෙය ප්‍රවේශනය, අපනයන හෝ ඉවත් කිරීමෙන් හිස් ඉඩක් ලබා ගත හැක.",
+    "legacyDeleteSuccess": "පැරණි දත්ත සාර්ථකව ඉවත් කර {size} මුදා හැරිය.",
+    "legacyDeleteError": "පැරණි දත්ත ඉවත් කිරීමට අපොහොසත් විය. කරුණාකර යළි උත්සාහ කරන්න.",
+    "Explore solutions": "විවිධ විසඳුම් සොයන්න",
+    "Migrate to Current Format": "වත්මන් ආකෘතියට ප්‍රවාහනය කරන්න",
+    "Export Legacy Data": "පැරණි දත්ත අපනයනය කරන්න",
+    "Delete Legacy Data": "හිස් තොරතුරු මකන්න",
+    "deleteLegacyConfirm": "ඔබට සියලු හිස් තොරතුරු මකා දැමීමට විශ්වාසද? මෙම ක්‍රියාව ආපසු ලබාගැනිය නොහැක.",
+    "Deleting": "මකමින් පවතියි",
+    "Confirm Delete": "මකා දැමීම තහවුරු කරන්න",
+    "Cancel": "අවලංගු කරන්න"
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"
-  }
+  },
+  "Saved Prompts": "සුරක්ෂිත ප්‍රේරණ",
+  "New conversation": "නව සංවාදය",
+  "Edit": "සංස්කරණය",
+  "Chat Settings": "සංවාද සැකසුම්",
+  "Default System Prompt": "පෙරනිමි පද්ධති ප්‍රේරණය",
+  "Email": "ඊ-මේල්",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "ප්‍රේරණයේ සීමාව අකුරු {{maxLength}} කි. ඔබ ඇතුළත් කර ඇත්තේ අකුරු {{valueLength}} ක්.",
+  "Run Typewriter Intro": "Typewriter හැඳින්වීම ක්‍රියාත්මක කරන්න",
+  "Terms and Conditions": "නියමයන් හා කොන්දේසි",
+  "Loading terms and conditions_ellipsis": "නියමයන් හා කොන්දේසි පූරණය වෙමින්...",
+  "Retry": "නැවත උත්සාහ කරන්න",
+  "Terms of Service": "සේවා නියමයන්",
+  "Privacy Policy": "පුද්ගලීයත්ව ප්‍රතිපත්ති",
+  "Version": " අනුවාදය",
+  "I accept the": "මට පිළිගන්නායේ",
+  "Accept and Continue": "පිළිගන්න හා දිගටම යන්න",
+  "Conversation exported successfully": "සංවාදය සාර්ථකව අපනයනය විය",
+  "Failed to export conversation": "සංවාද අපනයනය කිරීමට අසමත් විය",
+  "Conversation imported successfully": "සංවාදය සාර්ථකව ආනයනය විය",
+  "Failed to import conversation": "සංවාදය ආනයනය කිරීමට අසමත් විය",
+  "Invalid conversation file": "වලංගු නොවන සංවාද ගොනුව",
+  "Folder exported with {count} conversations": "ෆෝල්ඩරය සංවාද {count} ක් සමඟ අපනයනය විය",
+  "Failed to export folder": "ෆෝල්ඩරය අපනයනය කිරීමට අසමත් විය",
+  "Folder not found": "ෆෝල්ඩරය හමු නොවිණි",
+  "Folder imported with {count} conversations": "ෆෝල්ඩරය සංවාද {count} ක් සමඟ ආනයනය විය",
+  "Invalid folder file": "වලංගු නොවන ෆෝල්ඩර එවේ",
+  "Failed to import file": "ගොනුව ආනයනය කිරීමට අසමත් විය",
+  "Unrecognized file format": "හඳුනාගත නොහැකි ගොනු ආකෘතිය",
+  "transcription": {
+    "transcribesOnSend": "යැවීමේදී ප්‍රතිලේඛනය කරයි",
+    "addInstructions": "ඉඟි එක් කරන්න",
+    "instructionsPlaceholder": "නිරවද්‍යතාව වැඩිදියුණු කිරීමට සන්දර්භය (උදා. නාම, පද)"
+  },
+  "transcriptionComplete": "ප්‍රතිලේඛනය සම්පූර්ණයි! පෙළ සංවාදයට එක් වී ඇත.",
+  "No prompts found": "ප්‍රේරණ කිසිවක් හමු නොවිණි",
+  "Select a prompt to view details": "විස්තර දැකීමට ප්‍රේරණයක් තෝරන්න",
+  "Content": "අන්තර්ගතය",
+  "importBackupParseError": "උපස්ථ ගොනුව විග්‍රහ කිරීමට අසමත් විය. එය වලංගු JSON එකක්දැයි තහවුරු කරන්න.",
+  "emptyState": {
+    "greeting": "මම ඔබට කෙසේ උදව් කළ හැකිද?",
+    "greetingWithName": "මම ඔබට කෙසේ උදව් කළ හැක්කේද, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "ඉලක්ක තැටි සාදන්න",
+        "prompt": "ඔබට ඉලක්ක තැටි සහ ප්‍රවාහ රූප සෑදිය හැක්කේ කෙසේද කියලා මට පෙන්වන්න. කුමන සැලසුම්, ප්‍රවාහය, හෝ පද්ධති ඔබ මට දැක්විය හැකිද? උදාහරණ කිහිපයක් දෙන්න."
+      },
+      "draftContent": {
+        "title": "වෘත්තීය දෘශ්‍ය ලියවිලි කෙටුම්පත් කරන්න",
+        "prompt": "මට වෘත්තීය ලේඛන - විද්‍යුත් තැපැල්, වාර්තා, සාරාංශ ලිවීමට උදව් අවශ්‍යයි. ව්‍යාපාරික ලිවීමේ විවිධ ආකාරවල ඔබ උදව් කළ හැකි ආකාරයේ උදාහරණ මට පෙන්වන්න."
+      },
+      "analyzeInformation": {
+        "title": "දත්ත විශ්ලේෂණය කරන්න",
+        "prompt": "ඔබට මට දත්ත හෝ තොරතුරු විශ්ලේෂණය කිරීමට කෙසේ උදව් කළ හැක්ද? ඉලක්කම් විභාග කිරීම, රටා සෙවීම, හෝ ලේඛන හෝ දත්ත සමුදාවලින් දත්ත ලබා ගැනීමේ විවිධ ක්‍රම දක්වන්න."
+      },
+      "planOrganize": {
+        "title": "පියවර සැලසුම් හා සංවිධානය",
+        "prompt": "ඔබට ව්‍යාපෘති සැලසුම් කිරීම හෝ වැඩ සංවිධානය කිරීමට උදව් කළ හැකිද? විවිධ රටාවන් සහිත කාලසටහන්, නිලපොත් හෝ ව්‍යාපෘති සැලසුම් සැකසීමේ උදාහරණ දෙන්න."
+      },
+      "brainstormIdeas": {
+        "title": "අදහස් නිර්මාණය කරන්න",
+        "prompt": "මට ගැටලුවක් සඳහා විසඳුම් අදහස් කරගැනීමට අවශ්‍යයි. ඔබ නිර්මාණාත්මක අදහස් ලබා ගැනීමේ ක්‍රියාවලිය කෙසේ සිදු කරනවාද සහ හොඳ අදහස් සොයා ගැනීමේදී ඔබ කවර ප්‍රශ්න අසනවාද කියලා පෙන්වන්න."
+      },
+      "buildPresentations": {
+        "title": "ඉදිරිපත් කිරීම් සකසන්න",
+        "prompt": "ඔබට මට ඉදිරිපත් කිරීම් සකසා ගැනීමට උදව් කළ හැකිද? විවිධ ඉදිරිපත් කිරීමේ ආකෘති, දෘශ්‍ය යෝජනා හා විවිධ දර්ශකයන් සඳහා තොරතුරු සංවිධානය කරන ආකාරයේ උදාහරණ පෙන්වන්න."
+      },
+      "workWithCode": {
+        "title": "Code සමඟ වැඩ කරන්න",
+        "prompt": "ඔබට කේතීකරණය හෝ ක්‍රමලේඛ සමඟ උදව් කළ හැකිද? උදාහරණ පෙන්වන්න - නව කේතයක් ලිවීම, දෝෂ නිවැරදි කිරීම, හෝ පියවරෙන් පියවර කෙරෙන ක්‍රියාවලි විස්තර කිරීම වගේ."
+      },
+      "decisionSupport": {
+        "title": "තීරණ සහාය",
+        "prompt": "මට තීරණයක් ගැනීමට තියනවා, නමුත් විකල්ප විමසා බැලීමේ අයුරේ 확실이 නැහැ. ඔබ භාවිතා කරන විවිධ ව්‍යුහයයන් හෝ මාර්ගෝපදේශන ක්‍රම මට පෙන්වන්න."
+      },
+      "summarizeSynthesize": {
+        "title": "සාරාංශ කිරීම සහ ඒකාබද්ධ කිරීම",
+        "prompt": "දිගු ලේඛන සාරාංශ කිරීම හෝ බහු මූලාශ්‍ර වලින් තොරතුරු ඒකාබද්ධ කිරීම සඳහා ඔබ උදව් කරන ආකාරය කුමක්ද? විවිධ සාරාංශ ආකාර සහ විස්තර මට්ටම්වල උදාහරණ පෙන්වන්න."
+      },
+      "explainTopics": {
+        "title": "සංකීර්ණ විෂයයන් විස්තර කරන්න",
+        "prompt": "ඔබට අපහසු සංකල්ප සරලව විස්තර කළ හැකිද? සංකීර්ණ අදහස් උදාහරණයන් හරහා බෙදා හරින ආකාරය, උපමා ඉදිරිපත් කිරීම, සහ විවිධ දැනුම් මට්ටම් සඳහා හැඩගැස්වීම පෙන්වන්න."
+      },
+      "createSchedules": {
+        "title": "කාලසටහන් සකසන්න",
+        "prompt": "මට කාලය සංවිධානය කිරීම සහ කාලසටහන් සෑදීම සඳහා උදව් අවශ්‍යයි. දිනපෝත්, දින දර්ශන හෝ කාලාධාර සැලසුම් සැකසීමේ විවිධ ආකාරයන් උදාහරණවලින් පෙන්වන්න."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "මාදිලි",
+      "agents": "එජන්ට්"
+    },
+    "sections": {
+      "baseModels": "මූලික මාදිලි"
+    },
+    "agents": {
+      "advancedFeatureBadge": "උසස් විශේෂාංගය",
+      "description": "විශේෂිත හැකියාවන් සහිත අභිරුචි AI එජන්ට් සාදන්න හා කළමණාකරණය කරන්න. මෙම එජන්ට් MSF AI Assistant Foundry instance මත ක්‍රියා කරයි.",
+      "advancedFeatureTitle": "උසස් විශේෂාංගය - AI Assistant තාක්ෂණික කණ්ඩායම සමඟ කටයුතු අවශ්‍යයි",
+      "advancedFeatureWarning": "අභිරුචි එජන්ට් MSF AI Assistant Foundry instance හී පමණක් ක්‍රියා කරයි. Agent ID AI Assistant තාක්ෂණික කණ්ඩායම විසින් මෙම instance තුළ නිර්මාණය කළ යුතු අතර ඔබ සමඟ පෙර කටයුතු කළ යුතුය.",
+      "createNewAgent": "නව අභිරුචි එජන්ට් එකක් සාදන්න",
+      "noAgentsTitle": "තවම අභිරුචි එජන්ට් නැත",
+      "noAgentsDescription": "විශේෂිත මෙවලම් හා හැසිරීම් සමඟ AI හැකියාවන් විස්තාරය කිරීමට ඔබේ පළමු අභිරුචි එජන්ට් එක සාදන්න."
+    },
+    "advancedOptions": {
+      "title": "උසස් විකල්ප",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "සටහන: මෙම මාදිලිය ස්ථිර temperature අගයන් භාවිතා කරයි ස්ථායී කාර්ය සාධනය සඳහා.",
+      "reasoningEffort": "තර්ක ක්‍රියාවලිය",
+      "minimal": "අවම",
+      "low": "අඩු",
+      "medium": "මධ්‍යම",
+      "high": "අධික",
+      "verbosity": "පිරිසැලසුම"
+    },
+    "searchMode": {
+      "title": "සෙවුම් ප්‍රකාරය",
+      "subtitle": "අවශ්‍ය විට වෙබ් සෙවුම භාවිතා කරයි",
+      "routingLabel": "සෙවීමේ මාර්ගය:",
+      "whatsDifference": "වෙනස කුමක්ද?",
+      "privacyFocused": "පෞද්ගලිකත්වය අවධානයේ (පෙරනිමිය)",
+      "privacyFocusedDescription": "පිටියෙන් අඩු වේ, නමුත් වැඩි පෞද්ගලිකත්වයක් ඇත",
+      "azureAgentMode": "Azure AI නියෝජිත ප්‍රකාරය",
+      "azureAgentModeDescription": "ඉක්මන් නමුත් කතාබස් දත්ත වලාකුළේ සුරක්ෂිත වේ",
+      "privacyInfoTitle": "වැදගත් පෞද්ගලිකත්ව තොරතුරු",
+      "privacyInfoDescription": "ඔබගේ සම්පූර්ණ කතාබස් Azure AI Foundry නියෝජිතයා වෙත යවනු ලැබේ.",
+      "learnMoreDataStorage": "දත්ත සංරක්ෂණය ගැන වැඩිදුර දැනගන්න"
+    },
+    "customAgent": {
+      "label": "අභිරුචි නියෝජිතයා:",
+      "description": "මෙම නියෝජිතයා ක්‍රියාත්මක වන්නේ MSF AI Assistant Foundry instance එක මතය, මෙවලම් හැමවිටම සක්‍රියව ඇත.",
+      "webSearch": "ප්‍රාණවත් වෙබ් සෙවීම",
+      "codeInterpreter": "Code interpreter හා ගොනු විශ්ලේෂණය"
+    },
+    "header": {
+      "backToModels": "ආපසු මාදිලිවලට",
+      "knowledgeCutoff": "දැනුම් සීමාව: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "ප්‍රාථමික",
+      "omni": "omni",
+      "reasoning": "යුක්ති ව reasoning",
+      "agent": "නියෝජිතයා"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "GPT-4.1 බලගන්වන AI මාදිලිය Bing හරහා ප්‍රාණවත් වෙබ් සෙවීම සමඟ. නවතම තොරතුරු, කරුණු පරීක්ෂාව සහ වත්මන් සිදුවීම් පිළිබඳ දැනුවත් කිරීම ලබා දේ. අලුත්ම තොරතුරු අවශ්‍ය පර්යේෂණ, පුවත් විශ්ලේෂණය සහ කරුණු තහවුරු කිරීමට උචිතයි.",
+      "knowledgeCutoff": "ප්‍රාණවත් වෙබ් සෙවීම"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI හි අති නුගමන මට්ටමේ මාදිලිය, සංකීර්ණ යුක්තීහරණය, කේත ජනනය සහ තාක්ෂණික ගැටලු විසඳීමේදී විශිෂ්ටයි. විශ්ලේෂණාත්මක කාර්ය, වැඩසටහන් අභියෝග, පර්යේෂණ සහ විස්තරාත්මක පැහැදිලි කිරීම සඳහා වඩාත් සුදුසුයි. යුක්තීහරණය සහ ප්‍රතිචාර සවිස්තර බව සකසිය හැක.",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 හි ඉක්මන් සහ පිරිවැය අඩු අනුවාදය, වේගය සඳහා උපරිම කළ විශිෂ්ට ගුණාත්මකත්වය රඳවා ගනි. දිනපතා කාර්ය, එඩිතර ප්‍රශ්න, මෙවලම් මඟ යැවීම සහ ඉක්මන් ප්‍රතිචාර අවශ්‍ය අයදුම් සඳහා ඉතාමත් සුදුසුය. කාර්යක්ෂමතාවය සහ කාර්ය සාධනය අතර හොඳ සමුලුවන්.",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "කතාබස් සහ මානසික බුද්ධිය සඳහා විශේෂීකෘත කර ඇති GPT-5 හි විශේෂ අනුවාදයකි. අවගාතකාරී සන්නිවේදනය, මානසික සනීපාරක්ෂාව, සෘජු ලිවීම, අදහස් ලබාදීම සහ ස්වභාවික සංවාදයන්හි විශිෂ්ටයි. සාමාන්‍ය සංවාද, උපදේශන අවස්ථා සහ මානසික සිත් ඇගයීම් අවශ්‍ය කාර්ය සඳහා හොඳයි.",
+      "knowledgeCutoff": "Oct 1, 2025 8:00 PM"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI හි නවතම යුක්ති විනිශ්චය මාදිලිය, අභියෝගාත්මක ගැටලු විසඳීමේ හැකියාවන්ගෙන් යුතුයි. සංකීර්ණ ගණිතය, විද්‍යාත්මක යුක්තිය, කේත අභියෝග සහ බහු අදියර ලොජික් කාර්යයන්හි විශිෂ්ටයි. දිගු 200K context window එකක් සහ reasoning control එකක් ඇත.",
+      "knowledgeCutoff": "Apr 8, 2025 8:00 PM"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta වෙතින් ක්‍රියාත්මක වන ඉක්මන් හා පිරිවැය නියම මාදිලියකි. ලිවීම, සංක්ෂේපනය සහ මූලික කේත අධාරය වැනි දෛනික කාර්ය සඳහා සුදුසුයි. නිතර කාර්ය සඳහා වේගය සහ ගුණාත්මකත්වය අතර හොඳ සමතුලිතතාවයක් ඇත.",
+      "knowledgeCutoff": "May 7, 2025 7:11 AM"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "හැම අදාළ අදියරක්ම පෙන්වන reasoning විශේෂඥයකි. ගණිත ගැටලු, තර්ක ප්‍රහේලිකා සහ සංකීර්ණ අදහස් අවබෝධය සඳහා උපරිමයි. එය ගැටලු විසඳන ආකාරය සජීවීව දැකිය හැක.",
+      "knowledgeCutoff": "Jan 20, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "සියලූ කාර්යයන් සඳහා ශක්තිමත් මට්ටමින් කේතනය සහ තාක්ෂණික ලිවීමේදී විශිෂ්ටයි. කේත දෝෂ නිරාකරණය, ලේඛන ලිවීම සහ තාක්ෂණික අදහස් පැහැදිලි කිරීම සඳහා ඉතා හොඳයි. සංවර්ධන කාර්ය සඳහා ඉක්මන් සහ විශ්වාසදායකයි.",
+      "knowledgeCutoff": "Apr 16, 2025 12:45 AM"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI වෙතින් බහුපරිහරණයට අපූරු ප්‍රතිචාර ලබාදෙන මාදිලියකි. විවෘත සංවාද, සෘජු කතා සහ සංකීර්ණ ගැටලු භාගත කිරීමට සුදුසුය.",
+      "knowledgeCutoff": "May 13, 2025 12:16 AM"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic වෙතින් තිබෙන අති විශිෂ්ට හැකියාවන්ගෙන් යුත් reasoning, coding, හා නිර්මාණාත්මක කටයුතු සඳහා සුදුසුතම මට්ටමේ මාදිලියකි. සංකීර්ණ විශ්ලේෂණ, පර්යේෂණ හා ගැඹුරු අවබෝධය අවශ්‍ය කාර්ය සඳහා උපරිමය.",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "කේතනය, විශ්ලේෂණය සහ සෘජු නිර්මාණාත්මක කාර්යයන් සඳහා විශිෂ්ට කාර්ය සාධනයක් යෝජනා කරන සන්තुलිත Claude ආදර්ශය. ශීඝ්‍ර ප්‍රතිචාර වේගය සහිත නිතර භාවිතයට සුදුසුය.",
+      "knowledgeCutoff": "ජනවාරි 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "පෙර පරමපුරේ Claude Opus ආදර්ශයයි. සංකීර්ණ කේතන කාර්යයන්, සවිස්තරාත්මක විශ්ලේෂණය සහ සුක්ෂම අවබෝධය සඳහා විශිෂ්ටයි.",
+      "knowledgeCutoff": "ජනවාරි 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "කෙටි කාලීන කාර්යයන් සඳහා උපරිම වේගයෙන් හා අඩු වියදමෙන් ක්‍රියා කරන Claude ආදර්ශය. සරල ප්‍රශ්න, සාරාංශ කිරීම සහ වැඩි පරිමාණ යෙදුම් සඳහා සුදුසුය.",
+      "knowledgeCutoff": "ජනවාරි 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI හි අති නවීනතම ආදර්ශය, සංකීර්ණ තර්ක කිරීම, කේත නිර්මාණය සහ තාක්ෂණික ගැටළු විසඳීම සඳහා ඉතා ශක්තිමත් ය. විශ්ලාෂණාත්මක කාර්යයන්, ක්‍රමලේඛන අභියෝග, පර්යේෂණ සහ විස්තරාත්මක පැහැදිලි කිරීම් සඳහා සුදුසුයි. වෙනස් කළ හැකි තර්ක කිරීමේ උත්සාහය සහ ප්‍රතිචාර විස්තරාත්මක බව සහය දක්වයි.",
+      "knowledgeCutoff": "දෙසැම්බර් 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 චැට්",
+      "description": "GPT-5.2 හි කථන සහ සංවේදී බුද්ධිය සඳහා විශේෂිතව සුදුසාන ආදර්ශයක්. සංවේදී සන්නිවේදනය, මානසික සෞඛ්‍ය සහාය, නිර්මාණාත්මක සටහන් ලිවීම, අදහස් නැඟීම සහ ස්වභාවික සංවාද සඳහා ඉහළින් ක්‍රියා කරයි. අනියම් කතා බහ, උපදේශන අවස්ථා සහ සංවේදීතාවය අවශ්‍ය කාර්යයන් සඳහා විශේෂයෙන් සුදුසුයි.",
+      "knowledgeCutoff": "දෙසැම්බර් 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "කතාබහට ආපසු",
+    "title": "සෙවුම් ප්‍රකාරය විස්තර කරයි",
+    "subtitle": "ඔබේ සෙවුම් විකල්ප හා දත්ත සුරකින්නේ කොහෙදැයි තේරීම",
+    "quickComparison": "ඉක්මන් සැසදීම",
+    "noSearch": "සෙවුමක් නැත",
+    "privacyFocused": "රහස්‍යතා කැඳවා",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "ප්‍රතිචාර වේගය",
+    "fastest": "ඉතා වේගවත්",
+    "slowerMultiStep": "පමණක් මන්දගාමී (බහු අදියර)",
+    "fasterDirect": "වේගවත් (සෘජු)",
+    "fullConversationStored": "මුළු කතාබහම ක්ලවුඩ්හි සුරැකි‌ණි",
+    "whatsStoredInAzure": "Azure තුළ සුරකින දේ",
+    "nothingStateless": "කිසිවක් නැත (stateless පමණි)",
+    "searchQueriesOnly": "සෙවුම් විමසීම් පමණි",
+    "fullConversationHistory": "සම්පූර්ණ කතාබහ ඉතිහාසය",
+    "modelAvailability": "ආදර්ශ ලබාගත හැකියාව",
+    "allModels": "සියළු ආදර්ශ",
+    "gpt41Only": "GPT-4.1 පමණි",
+    "searchTurnedOff": "සෙවුම අක්‍රියයි",
+    "noSearchDescription": "වෙබ් සෙවුම් හැකියාව නොමැතිව ඉතා වේගවත් ප්‍රතිචාර. ඔබේ මුළු කතාබහම ඔබේ බ්‍රවුසරයේ පමණක් සිටී - ක්ලවුඩ්හි කිසිවක් සුරකින්නේ නැත.",
+    "viewDetailsBelow": "වැඩි විස්තර සඳහා පහත තිබෙන තාක්ෂණික වැඩපිළිවෙළ බලන්න.",
+    "viewTechnicalFlowDiagram": "තාක්ෂණික උසස් වැඩපිළිවෙළ රූපය බලන්න",
+    "legend": "පිළිවෙත්:",
+    "legendNoSearch": "ඔබේ බ්‍රවුසරය (ස්ථානීය සුරක්ෂිතය) | AI Assistant Server | Azure OpenAI (stateless)",
+    "privacyFocusedMode": "රහස්‍යතා කැඳවා ප්‍රකාරය",
+    "default": "පෙරනිමිය",
+    "privacyDescription": "අවශ්‍ය විට වෙබ් සෙවුම් භාවිතා කරන අතර, අදියර වැඩි නිසා මන්දගාමී වේ. Azure තුළ සුරැකෙන්නේ සෙවුම් විමසීම් පමණි – ඔබේ මුළු කතාබහම ඔබේ බ්‍රවුසර්‍‍යේ පමණක් තබාගනී.",
+    "legendPrivacy": "ඔබේ බ්‍රවුසරය (ස්ථානීය සුරක්ෂිතය) | AI Assistant Server | Azure AI Foundry (සෙවුම් විමසීම් පමණි) | Azure OpenAI (stateless)",
+    "azureAIFoundryMode": "Azure AI Foundry ප්‍රකාරය",
+    "foundryDescription": "වෙබ් සෙවුම් හැකියාව සමඟ ඉක්මන් ප්‍රතිචාර. ඔබේ මුළු කතාබහ Azure AI Foundry දත්ත ගබඩාවේ සුරකිවේ, ඔබේ බ්‍රවුසරයේ පමණක් නොවේ.",
+    "legendFoundry": "ඔබේ බ්‍රවුසරය (ස්ථානීය සුරක්ෂිතය) | AI Assistant Server | Azure AI Foundry Agent (මුළු කතාබහ සුරැකීම)",
+    "whyTheseOptions": "මෙම විකල්ප ඇයි?",
+    "whyTheseOptionsText1": "Azure විසින් ඔවුන්ගේ Bing Search API අවලංගු කළ අනතුරුව ඇති සෙවුම් ක්‍රියාත්මක කිරීම් මෙවලීන්ය. මුල් AI Assistant API එක එයම මත යැපුණි.",
+    "whyTheseOptionsText2": "කණ්ඩායම සක්‍රීයව තවදුරටත් රහස්‍යතාවය වැඩි සෙවුම් විකල්ප සොයයි. වත්මන් විකල්ප දෙකම Azure AI Foundry සෙවුම් හැකියාව භාවිතා කරයි, නමුත් කතාබහ දත්ත කොපමණක් බෙදාගන්නා බව වෙනස්වේ.",
+    "azureDeprecatedBingApi": "Azure විසින් ඔවුන්ගේ Bing Search API අවලංගු කළාය",
+    "footerNote": "දෙපාර්ශවම ඔබේ කතාබහ ඔබේ බ්‍රවුසරය තුළ ස්ථානීයව සුරකිනු ලබයි. ආදර්ශ සැකසුම් වලින් ඕනෑම මොහොතක ප්‍රකාරය මාරු කළ හැකිය.",
+    "note": "සටහන:",
+    "loadingDiagram": "රූපය පූරණය වෙමින්..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "ගබඩා පරීක්ෂා කරමින්",
+      "analyzingData": "ඔබේ දත්ත විශ්ලේෂණය කරමින්...",
+      "updateAvailable": "යාවත්කාලීන කිරීම ලබාගත හැක",
+      "storageSpaceLimited": "ගබඩා අවකාශය සීමිතයි",
+      "migratingData": "දත්ත මාරු කරමින්",
+      "migrationComplete": "දත්ත මාරු කිරීම සම්පූර්ණයි",
+      "partiallyComplete": "අර්ධ වශයෙන් සම්පූර්ණයි",
+      "migrationFailed": "දත්ත මාරු කිරීම අසාර්ථකයි"
+    },
+    "descriptions": {
+      "foundLegacyData": "පෙර අනුවාදයක දත්ත අපි හමු කර ඇත. ඔබට එය නවීන පද්ධතියට මාරු කිරීමට ඇවැසිද?",
+      "storageSpaceWarning": "ඔබගේ දත්ත සඳහා දැනට තිබෙනවාට වඩා වැඩි අවකාශයක් අවශ්‍ය වේ. සෘජු මාරු කිරීමේ ප්‍රකාරය භාවිතය නිර්දේශ කරමු.",
+      "pleaseWait": "ඔබගේ දත්ත යාවත්කාලීන වන තුරු කරුණාකර රැඳී සිටින්න...",
+      "dataIsSafe": "ඔබගේ මුල් දත්ත ආරක්ෂිතයි. ඔබට නැවත උත්සාහ කළ හැකියි හෝ තාවකාලිකව මග හැරිය හැකියි.",
+      "itemsTooLarge": "මෙම අයිතම ගබඩාවට ඔපකර ගැනීමට බොහෝ විශාලය. ඔබට ඒවා කටයුතු කළ හැක්කේ අපනයනය කිරීම, අවකාශයෙන් ඉවත් කිරීම හෝ ඒවා නොමැතිව ඉදිරියට යාමයි.",
+      "settingsUpdated": "ඔබගේ සැකසුම් යාවත්කාලීන කරන ලදී."
+    },
+    "benefits": {
+      "title": "ලාභ",
+      "fasterPerformance": "වේගවත් කාර්ය සාධනය",
+      "betterReliability": "වඩා විශ්වාසනීයත්වය",
+      "dataPreserved": "ඔබගේ දත්ත රැකගනී"
+    },
+    "options": {
+      "advancedOptions": "උසස් අභිරුචි",
+      "useIncrementalMode": "ඉන්ක්‍රිමෙන්ටල් ප්‍රකාරය භාවිතා කරන්න",
+      "slowerButSafer": "සෙමෙවින් නමුත් ආරක්ෂිතයි",
+      "recommended": "නිර්දේශිත",
+      "deleteLegacyData": "මාරු කිරීමෙන් පසුව පරණ දත්ත මකාදමන්න",
+      "freesUpSpace": "ගබඩා අවකාශය මුදාහැරීම"
+    },
+    "actions": {
+      "skip": "මඟහරින්න",
+      "migrateData": "දත්ත මාරු කරන්න",
+      "migrateAnyway": "කෙසේනම් මාරු කරන්න",
+      "continue": "තවදුරටත් යන්න",
+      "retry": "යළි උත්සාහ කරන්න",
+      "exportBackupFirst": "මුලින්ම උපස්ථයක අපනයනය කරන්න",
+      "exportSkippedItems": "ඉවතලූ අයිතම අපනයනය කරන්න"
+    },
+    "quota": {
+      "availableSpace": "පවතින අවකාශය",
+      "dataToMigrate": "මාරු කිරීමට දත්ත",
+      "additionalSpaceNeeded": "අමතර අවකාශය අවශ්‍යයි"
+    },
+    "progress": {
+      "migratingConversations": "සංවාද මාරු කරමින්",
+      "migratingPrompts": "ප්‍රේරණ මාරු කරමින්",
+      "migratingAgents": "Agent මාරු කරමින්",
+      "finishingUp": "අවසන් කරමින්"
+    },
+    "results": {
+      "successfullyMigrated": "සාර්ථකව මාරු වීම",
+      "notes": "සටහන්",
+      "couldNotMigrate": "මාරු කල නොහැකි විය",
+      "legacyDataDeleted": "පරණ දත්ත මකාදැමිනි",
+      "freed": "මුදාහරිණි"
+    },
+    "units": {
+      "conversation": "සංවාදය",
+      "conversations": "සංවාද",
+      "folder": "ෆෝල්ඩරය",
+      "folders": "ෆෝල්ඩර",
+      "prompt": "ප්‍රේරකය",
+      "prompts": "ප්‍රේරක",
+      "customAgent": "අභිරුචි agent",
+      "customAgents": "අභිරුචි agents",
+      "item": "අයිතමය",
+      "items": "අයිතම"
+    }
+  },
+  "languageSwahili": "ස්වාහිලි",
+  "welcomeBanner": {
+    "title": "AI Assistant V2 වෙත සාදරයෙන් පිළිගනිමු",
+    "whatsNew": "අළුත් දේවල්",
+    "whatsNewQuestion": "අළුත් දේවල් මොනවාද?"
+  },
+  "welcomeV2": {
+    "backToChat": "චැට් වෙත ආපසු",
+    "title": "AI Assistant V2 වෙත සාදරයෙන් පිළිගනිමු",
+    "subtitle": "නව වෙනස්කම් සහිත නවීන අංග රැසක්",
+    "webSearch": {
+      "title": "වෙබ් සෙවුම් ප්‍රකාරය",
+      "description": "පෞද්ගලිකතාවය රැකීම සඳහා විකල්ප සමඟ AI ට නිරන්තර වෙබ් සෙවුම් අවසර දෙන්න",
+      "quickAccess": "ක්ෂණික පිවිසුම:",
+      "quickAccessInstructions": "චැට් උත්ප්‍රේරකය අසළ ඇති + බොත්තම ඔබන්න → \"Web Search\" තෝරන්න",
+      "setAsDefault": "පෙරනිමිය ලෙස සකසන්න:",
+      "setAsDefaultInstructions": "මොඩැල් සැකසුම් විවෘත කර Web Search Mode toggle සක්‍රිය කරන්න. තෝරාගැනීම:",
+      "privacyFocused": "පෞද්ගලිකතාවය විශ්වාසයට (පෙරනිමිය)",
+      "privacyFocusedDescription": "සෙවුම් ප්‍රශ්න පමණක් පිටතට යවයි",
+      "azureAIFoundry": "Azure AI Foundry ප්‍රකාරය",
+      "azureAIFoundryDescription": "වේගවත්, නමුත් සම්පූර්ණ සංවාදය පිටතට සුරකින්නා",
+      "learnMore": "සෙවුම් ප්‍රකාර ගැන වැඩිදුර දැනගන්න →"
+    },
+    "tones": {
+      "title": "ශබ්දSW (Voice Profiles)",
+      "description": "AI සිතුවම් රීති, නිබන්ධනය සහ පෞද්ගලිකත්වය පාලනය කරන්න",
+      "createTones": "1. ශබ්දSW නිර්මාණය කරන්න:",
+      "createTonesInstructions": "ඉවුනු පැති තීරුවේ Quick Actions → Tones ටැබය",
+      "useTones": "2. ශබ්දSW භාවිතා කරන්න:",
+      "useTonesInstructions": "චැට් උත්ප්‍රේරකය අසළ tone dropdown එක ඔබන්න",
+      "exampleProfessionalDesc": "නිල, වෘත්තීය ස්වරය",
+      "exampleCasualDesc": "හිතකාමී, සාකච්ඡා ආකාරය"
+    },
+    "aiAssist": {
+      "title": "ප්‍රේරණ සහ ශබ්දSW සඳහා AI උදව්",
+      "description": "AI ඔබට වඩා හොඳ ප්‍රේරණ සහ ශබ්දSW වේගයෙන් නිර්මාණයට උපකාරී වේ",
+      "step1": "ඉවුණු පැති තීරුවේ Quick Actions විවෘත කරන්න",
+      "step2": "{prompts} හෝ {tones} ටැබය වෙත යන්න",
+      "step3": "AI Assistant පැනලය සොයන්න",
+      "getSuggestions": "පිළිවෙලින් ඉඟි ලබාගන්න",
+      "getSuggestionsDesc": "AI ඔබේ සැපයුම් විශ්ලේෂණය කර වැඩි දියුණු කිරීම් යෝජනා කරයි",
+      "buildFromFiles": "ගොනු වලින් සාදන්න",
+      "buildFromFilesDesc": "ප්‍රේරණ/ශබ්දSW සාදන්න ඔස්සේ ලේඛන උඩුගත කරන්න",
+      "testBeforeSaving": "සුරැකිමට පූර්ව පරීක්ෂා කරන්න",
+      "testBeforeSavingDesc": "සජීවී චැට් පෙරදැක්වීමකදී ප්‍රේරණ/ශබ්දSW උත්සාහ කරන්න",
+      "step2Prefix": "යාත්‍රා කරන්න",
+      "step2Suffix": "ටැබය"
+    },
+    "customAgents": {
+      "title": "රිසිකෘත නියෝජිතයන්",
+      "advancedBadge": "උසස්",
+      "description": "වෙබ් සෙවීම සහ කේත විවාචනය වැනි වැඩි හැකියාවන් සහිත විශේෂ AI නියෝජිතයින්",
+      "advancedFeature": "උසස් විශේෂාංගය",
+      "advancedFeatureDesc": "Custom Agents, Azure AI Foundry හි විශේෂිත මෙවලම් සමඟ ධාවනය වේ. නියෝජිත හැඳුනුම්පත් නිර්මාණය සඳහා AI Assistant තාක්ෂණික කණ්ඩායම සමඟ සහයෝගිතාව අවශ්‍ය වේ.",
+      "howToAccess": "පිවිසීමේ ක්‍රමය:",
+      "howToAccessInstructions": "සැකසුම් → Models → Agents ටැබය",
+      "whatYouCanDo": "ඔබට කළහැකි දේ:",
+      "configureAgents": "විශේෂිත හැකියාවන් සහිත නියෝජිතයන් සැකසීම",
+      "importExport": "Agent සැකසුම් ආයාත/නිර්යාත කිරීම",
+      "selectFromDropdown": "මාදිලි dropdown එකෙන් රිසිකෘත නියෝජිතයින් තෝරන්න"
+    },
+    "audioTranslation": {
+      "title": "පරිවර්තනය සහිත ශ්‍රව්‍ය පරිවර්තනය",
+      "description": "ශ්‍රව්‍ය පරිවර්තන ස්වයංක්‍රීයව භාෂා 13කට හැරවීම",
+      "howToUse": "පරිහරණයට උපදෙස්:",
+      "step1": "ශ්‍රව්‍ය හෝ දෘශ්‍ය ගොනුවක් උඩුගත කරන්න",
+      "step2": "ප්‍රතිලේඛන අතුරු මුහුණතේ භාෂා මෙනුව ක්ලික් කරන්න",
+      "step3": "ඔබේ ඉලක්ෂ භාෂාව තෝරන්න",
+      "availableLanguages": "භාවිත කළ හැකි භාෂා:",
+      "moreLanguages": "+7 තව"
+    },
+    "pwa": {
+      "title": "ජංගම යෙදුමක් ලෙස ස්ථාපනය කරන්න",
+      "description": "දේශීය අත්දැකීමකි සහිත ප්‍රගතිශීලී වෙබ් යෙදුම",
+      "installTip": "උපදෙස: ඔබේ අනන්‍යතා තබා ගැනීම සහ හොඳම පළපුරුද්ද සඳහා ලොග් වීමෙන් පසු ස්ථාපනය කරන්න.",
+      "howToInstall": "ස්ථාපනය කරන ආකාරය:",
+      "step1": "ඔබේ ගිණුමට පුරනය වන්න",
+      "step2": "සවිස්තරාත්මක උපදෙස් සඳහා සැකසුම් → ජංගම යෙදුම් විවෘත කරන්න",
+      "step3": "ජංගමයේ: වෙබ් බ්‍රවුසරයේ මෙනුව (⋮ හෝ ⚙️) තට්ටු කරන්න",
+      "step4": "\"Home Screen එකට එකතු කරන්න\" හෝ \"යෙදුම ස්ථාපනය කරන්න\" බලන්න",
+      "step5": "ස්ථාපනය සඳහා ඉඟි අනුව පිටවන්න",
+      "benefits": "ප්‍රතිලාභ:",
+      "benefit1": "මුල් තිරයෙන් දේශීය යෙදුමක් වගේ ක්‍රියාත්මක කිරීම",
+      "benefit2": "වෙබ් බ්‍රවුසරයේ අතුරුමුහුණතක් නොමැතිව පූර්ණ තිරය",
+      "benefit3": "සුරකිසි සංවාද අවහිරව පිවිසිය හැකියි"
+    }
+  },
+  "Professional": "වෘත්තීයමය",
+  "Casual": "අනෛතික"
 }
