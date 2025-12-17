@@ -311,7 +311,19 @@
   "Team Templates": "Tiimimallit",
   "selected": "valittu",
   "folders": "kansiot",
-  "agents": "agentit",
+  "agents": {
+    "exportAgent": "Vie agentti",
+    "editAgent": "Muokkaa agenttia",
+    "agentName": "Agentin nimi",
+    "myResearchAssistant": "Tutkimusavustajani",
+    "agentId": "Agentti-ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Kuvaus (valinnainen)",
+    "descriptionPlaceholder": "Tutkimustehtäviin erikoistunut agentti...",
+    "baseModel": "Perusmalli",
+    "formatDescription": "Muoto: asst_xxxxx (MSF AI Assistant Foundrysta)",
+    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin."
+  },
   "Quick Actions": "Pikatoiminnot",
   "Type / in chat to access your prompts": "Kirjoita / keskustelussa päästäksesi kehotteisiisi",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Kirjoita / keskustelussa, valitse kehote ja täytä muuttujat pyydettäessä",
@@ -358,7 +370,6 @@
   "Custom Agents": "Mukautetut agentit",
   "Delete template and all its items": "Poista mallipohja ja kaikki sen kohteet",
   "Description (Optional)": "Kuvaus (valinnainen)",
-  "Edit Prompt": "Muokkaa kehotetta",
   "Edit Tone": "Muokkaa sävyä",
   "Email Response Template": "Sähköpostivastausmalli",
   "Example Prompt": "Esimerkkikehote",
@@ -418,7 +429,6 @@
   "msf_logo_alt": "MSF-logo",
   "collapse_sidebar": "Pienennä sivupalkki",
   "expand_sidebar": "Laajenna sivupalkki",
-  "Voice Guidelines": "Äänen ohjeet",
   "Please upload some content or describe the tone you want": "Lataa sisältöä tai kuvaile haluamasi sävy",
   "Untitled Tone": "Nimetön sävy",
   "Failed to analyze tone": "Sävyn analyysi epäonnistui",
@@ -448,13 +458,41 @@
   "enterPromptDescriptionPlaceholder": "Mihin tämä kehote on tarkoitettu?",
   "enterPromptContentPlaceholder": "Kirjoita kehotteesi tähän. Käytä {{variable}} dynaamiseen sisältöön.",
   "common": {
-    "contact": "Ota yhteyttä"
+    "contact": "Ota yhteyttä",
+    "close": "Sulje",
+    "remove": "Poista",
+    "tryAgain": "Yritä uudelleen",
+    "menu": "Valikko",
+    "copyToClipboard": "Kopioi leikepöydälle",
+    "toggleDropdownMenu": "Vaihda avattavaa valikkoa",
+    "toggleMenu": "Vaihda valikkoa",
+    "closeModal": "Sulje modal-ikkuna",
+    "dismissBanner": "Sulje banneri",
+    "searchEllipsis": "Hae...",
+    "addTagEllipsis": "Lisää tunniste...",
+    "msfLogo": "MSF-logo",
+    "importantInformation": "Tärkeä tieto",
+    "noResults": "Tuloksia ei löytynyt",
+    "confirm": "Vahvista",
+    "cancel": "Peruuta",
+    "discard": "Hylkää",
+    "keepEditing": "Jatka muokkaamista",
+    "yes": "Kyllä",
+    "no": "Ei"
   },
   "errors": {
     "unexpectedErrorOccurred": "Odottamaton virhe tapahtui",
     "criticalErrorReload": "Kriittinen virhe tapahtui. Lataa sivu uudelleen.",
     "reloadPage": "Lataa sivu uudelleen",
-    "persistContactSupport": "Jos tämä ongelma jatkuu, ota yhteyttä tukeen"
+    "persistContactSupport": "Jos tämä ongelma jatkuu, ota yhteyttä tukeen",
+    "somethingWentWrong": "Jotain meni pieleen",
+    "anErrorOccurred": "Tapahtui virhe",
+    "copyErrorMessage": "Kopioi virheilmoitus",
+    "contactSupport": "Jos ongelma jatkuu, ota yhteyttä tukeen osoitteessa",
+    "dismissError": "Sulje virhe",
+    "applicationError": "Sovellusvirhe",
+    "chatLoadError": "Tapahtui virhe ladattaessa keskustelua",
+    "anErrorOccurredTryAgain": "Tapahtui virhe. Yritä uudelleen."
   },
   "auth": {
     "authenticationError": "Todennusvirhe",
@@ -523,7 +561,25 @@
     "fullSizePreview": "Täysikokoinen esikatselu",
     "enterSearchQueryPlaceholder": "Kirjoita hakukyselysi tai kysymyksesi...",
     "errorFetchingUrl": "Virhe URL-sisällön hakemisessa",
-    "errorInitiatingSearch": "Virhe verkkohaun aloittamisessa"
+    "errorInitiatingSearch": "Virhe verkkohaun aloittamisessa",
+    "regenerate": "Luo uudelleen",
+    "modelSwitchPrompt": "{original} epäonnistui, mutta {fallback} onnistui. Haluatko vaihtaa mallia?",
+    "keepOriginalModel": "Pidä {model}",
+    "switchToModel": "Vaihda malliin {model}",
+    "alwaysSwitchToModel": "Vaihda aina automaattisesti",
+    "translateMessage": "Käännä viesti",
+    "translating": "Käännetään...",
+    "translationError": "Käännös epäonnistui",
+    "showOriginal": "Näytä alkuperäinen",
+    "translatedTo": "Käännetty kielelle {language}",
+    "searchLanguages": "Etsi kieliä...",
+    "selectLanguage": "Valitse kieli",
+    "audioFromOriginal": "Ääni alkuperäisestä tekstistä",
+    "audioFromTranslation": "Ääni {language}-käännöksestä",
+    "thinking": "Ajatellaan...",
+    "viewReasoningProcess": "Näytä päättelyprosessi",
+    "collapseThinking": "Piilota ajattelu",
+    "expandThinking": "Laajenna ajattelu"
   },
   "sidebar": {
     "collapseSidebar": "Tiivistä sivupalkki",
@@ -531,29 +587,135 @@
     "quickActionsTitle": "Pikatoiminnot",
     "quickActions": "Pikatoiminnot"
   },
-  "agents": {
-    "exportAgent": "Vie agentti",
-    "editAgent": "Muokkaa agenttia",
-    "agentName": "Agentin nimi",
-    "myResearchAssistant": "Tutkimusavustajani",
-    "agentId": "Agentti-ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Kuvaus (valinnainen)",
-    "descriptionPlaceholder": "Tutkimustehtäviin erikoistunut agentti...",
-    "baseModel": "Perusmalli",
-    "formatDescription": "Muoto: asst_xxxxx (MSF AI Assistant Foundrysta)",
-    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin."
-  },
   "prompts": {
-    "buildReusablePrompts": "Rakenna uudelleenkäytettäviä kehotteita tekoälyn avulla"
+    "buildReusablePrompts": "Rakenna uudelleenkäytettäviä kehotteita tekoälyn avulla",
+    "noToneDefault": "Ei tyyliä (käytä oletusta)",
+    "tagHelp": "Tunnisteohje",
+    "tagHelpContent": "Käytä tunnisteita jäsennelläksesi ja löytääksesi kehotteet nopeasti. Esimerkkejä:",
+    "tagExamples": {
+      "email": "sähköposti",
+      "marketing": "markkinointi",
+      "technical": "tekninen",
+      "customerSupport": "asiakastuki"
+    },
+    "variableHelp": "Muuttujaohje",
+    "variableHelpIntro": "Käytä muuttujia tehdäksesi kehotteista dynaamisia:",
+    "requiredVariables": "Vaaditut muuttujat (ei oletusta):",
+    "optionalVariables": "Valinnaiset muuttujat (oletusarvolla):",
+    "userMustProvide": "Käyttäjän on annettava arvo",
+    "userCanProvide": "Käyttäjä voi antaa arvon tai käytetään oletusta",
+    "example": "Esimerkki:",
+    "variableExampleText": "Kirjoita {{tone:professional}} sähköposti vastaanottajalle {{recipient}} aiheesta {{topic}} kielellä {{language:English}}",
+    "detectedVariables": "Tunnistetut muuttujat",
+    "required": "Pakollinen",
+    "aiAssistant": "AI-avustaja",
+    "whatToImprove": "Mitä haluaisit parantaa?",
+    "whatShouldPromptDo": "Mitä tämän kehotteen pitäisi tehdä?",
+    "improvePlaceholder": "esim. Tee siitä ammattimaisempi, lisää esimerkkejä, paranna selkeyttä...",
+    "generatePlaceholder": "esim. Luo ammattimainen sähköpostipohja, jossa on muuttujat vastaanottajalle ja aiheelle...",
+    "addContextOptional": "Lisää konteksti (valinnainen)",
+    "revising": "Muokataan...",
+    "generating": "Luodaan...",
+    "reviseWithAI": "Muokkaa AI:n avulla",
+    "generatePrompt": "Luo kehotus",
+    "revisionComplete": "Muokkaus valmis",
+    "generationComplete": "Luonti valmis",
+    "revisedPrompt": "Muokattu kehotus:",
+    "generatedPrompt": "Luotu kehotus:",
+    "applyRevision": "Hyväksy tämä muokkaus",
+    "useThisPrompt": "Käytä tätä kehotusta",
+    "improvementsMade": "Tehdyt parannukset:",
+    "tips": "Vinkit:",
+    "howAICanHelp": "Miten tekoäly voi auttaa",
+    "helpItems": {
+      "improveClarity": "Paranna selkeyttä ja rakennetta",
+      "suggestVariables": "Ehdota hyödyllisiä muuttujia",
+      "addContext": "Lisää kontekstia ja esimerkkejä",
+      "optimize": "Optimoi parempiin tuloksiin"
+    },
+    "savePrompt": "Tallenna kehotus",
+    "add": "Lisää"
   },
   "tones": {
     "createCustomVoiceProfile": "Luo mukautettu ääniprofiili tekoälyn avulla",
-    "examplePlaceholder": "esim. Luo ammattimainen mutta ystävällinen asiakaspalvelun sävy..."
+    "examplePlaceholder": "esim. Luo ammattimainen mutta ystävällinen asiakaspalvelun sävy...",
+    "tagHelp": "Tunnisteohje",
+    "tagHelpContent": "Käytä tunnisteita luokitellaksesi ja löytääksesi sävyjä nopeasti. Esimerkkejä:",
+    "tagExamples": {
+      "professional": "ammatillinen",
+      "casual": "rento",
+      "technical": "tekninen",
+      "marketing": "markkinointi"
+    },
+    "add": "Lisää",
+    "aiToneAnalyzer": "Tekoälyn sävyanalysaattori",
+    "describeToneToCreate": "Kuvaile sävy, jonka haluat luoda",
+    "uploadContentSamples": "Lataa sisältönäytteet",
+    "analyzing": "Analysoidaan...",
+    "analyzeToneWithAI": "Analysoi sävy tekoälyllä",
+    "analysisComplete": "Analyysi valmis",
+    "generatedVoiceGuidelines": "Luodut ääniohjeet:",
+    "examplePhrases": "Esimerkkilauseet:",
+    "suggestedTags": "Ehdotetut tunnisteet:",
+    "applyThisAnalysis": "Hyväksy tämä analyysi",
+    "detectedCharacteristics": "Havaitut ominaisuudet:",
+    "howAICanHelp": "Miten tekoäly voi auttaa",
+    "helpItems": {
+      "transcribe": "Transkriboi ääni-/videosisältö",
+      "analyzeContent": "Analysoi sisältönäytteesi",
+      "extractPatterns": "Tunnista sävyn ja tyylin kaavat",
+      "generateGuidelines": "Luo ääniohjeet",
+      "suggestTags": "Ehdota sopivia tunnisteita"
+    },
+    "saveTone": "Tallenna sävy"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Näytä tekninen vuokaavio"
+    "viewTechnicalFlowDiagram": "Näytä tekninen vuokaavio",
+    "backToChat": "Takaisin keskusteluun",
+    "title": "Ohjekeskus",
+    "subtitle": "Löydä vastaukset, lue tietosuojaohjeet ja saa tukea",
+    "faq": {
+      "title": "Usein kysytyt kysymykset",
+      "description": "Löydä vastauksia yleisiin kysymyksiin AI Assistantin käytöstä",
+      "articles": "artikkelit",
+      "searchPlaceholder": "Etsi usein kysyttyjä...",
+      "noResults": "Hakusi ei tuottanut osumia",
+      "noResultsHint": "Kokeile toista hakusanaa"
+    },
+    "privacy": {
+      "title": "Yksityisyys ja tiedot",
+      "description": "Lue, miten tietosi tallennetaan ja suojataan",
+      "topics": "aiheet",
+      "searchPlaceholder": "Etsi yksityisyysaiheita...",
+      "noResults": "Hakusi ei vastaa yhtään yksityisyysaihetta",
+      "noResultsHint": "Kokeile toista hakutermiä",
+      "bannerTitle": "Yksityisyytesi on tärkeää",
+      "bannerDescription": "Kaikki keskustelut tallennetaan laitteellesi paikallisesti. Tietojen käsittely tapahtuu MSF-järjestelmissä Azure-infrastruktuurilla.",
+      "localStorageOnly": "Vain paikallinen tallennus",
+      "msfControlled": "MSF:n hallinnoima",
+      "noPersonalData": "Ei henkilötietoja",
+      "noSensitiveOps": "Ei arkaluonteisia toimintoja"
+    },
+    "contact": {
+      "title": "Yhteydenotto ja resurssit",
+      "description": "Ota yhteyttä tiimiimme ja löydä hyödyllisiä linkkejä",
+      "supportAvailable": "Tuki saatavilla",
+      "submitRequest": "Lähetä tukipyyntö",
+      "getHelp": "Saat apua tiimiltämme",
+      "requestDescription": "Tarvitsetko apua tai haluatko antaa palautetta? Avaa tukilomake alta.",
+      "openSupportForm": "Avaa tukilomake",
+      "otherWays": "Muut yhteydenottotavat",
+      "emailSupport": "Sähköpostituki",
+      "emailDescription": "Lähetä meille sähköpostia kysymyksissä, palautteessa tai teknisissä ongelmissa"
+    },
+    "resources": {
+      "title": "Lisäresurssit",
+      "portalTitle": "AI Accelerator -portaali",
+      "portalDescription": "Dokumentaatio, projektipäivitykset ja koulutusmateriaali",
+      "githubTitle": "Avoimen lähdekoodin arkisto",
+      "githubDescription": "Katso koodi, ilmoita ongelmista ja osallistu GitHubissa"
+    }
   },
   "settings": {
     "Settings": "Asetukset",
@@ -621,9 +783,447 @@
     "FAQs, privacy policy, and guides": "UKK, tietosuojakäytäntö ja oppaat",
     "Contact Support": "Ota yhteyttä tukeen",
     "Popular Questions": "Suosittuja kysymyksiä",
-    "View all FAQs": "Näytä kaikki UKK"
+    "View all FAQs": "Näytä kaikki UKK",
+    "Delete legacy data after migration": "Poista vanhat tiedot siirron jälkeen",
+    "frees up storage space": "vapauttaa tallennustilaa",
+    "Legacy data deleted": "Vanhat tiedot poistettu",
+    "freed": "vapautettu",
+    "Conversations": "Keskustelut",
+    "Legacy": "Vanha",
+    "Other": "Muu",
+    "Loading": "Ladataan",
+    "Legacy Data Detected": "Vanhat tiedot havaittu",
+    "legacyDataDescription": "Sinulla on {size} aiemman version tietoja. Nämä voidaan siirtää, viedä tai poistaa tallennustilan vapauttamiseksi.",
+    "legacyDeleteSuccess": "Vanhat tiedot poistettiin onnistuneesti ja {size} vapautettiin.",
+    "legacyDeleteError": "Vanhojen tietojen poistaminen epäonnistui. Yritä uudelleen.",
+    "Explore solutions": "Tutustu ratkaisuihin",
+    "Migrate to Current Format": "Siirrä nykyiseen muotoon",
+    "Export Legacy Data": "Vie vanhat tiedot",
+    "Delete Legacy Data": "Poista vanhat tiedot",
+    "deleteLegacyConfirm": "Haluatko varmasti poistaa kaikki vanhat tiedot? Tätä toimintoa ei voi peruuttaa.",
+    "Deleting": "Poistetaan",
+    "Confirm Delete": "Vahvista poisto",
+    "Cancel": "Peruuta"
   },
   "notFound": {
     "lostDog": "Kadonnut koira"
-  }
+  },
+  "Saved Prompts": "Tallennetut kehotteet",
+  "New conversation": "Uusi keskustelu",
+  "Edit": "Muokkaa",
+  "Chat Settings": "Keskustelun asetukset",
+  "Default System Prompt": "Järjestelmän oletuskehote",
+  "Email": "Sähköposti",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kehotteen enimmäispituus on {{maxLength}} merkkiä. Olet syöttänyt {{valueLength}} merkkiä.",
+  "Run Typewriter Intro": "Käynnistä kirjoituskoneintro",
+  "Conversation exported successfully": "Keskustelu vietiin onnistuneesti",
+  "Failed to export conversation": "Keskustelun vienti epäonnistui",
+  "Conversation imported successfully": "Keskustelu tuotiin onnistuneesti",
+  "Failed to import conversation": "Keskustelun tuonti epäonnistui",
+  "Invalid conversation file": "Virheellinen keskustelutiedosto",
+  "Folder exported with {count} conversations": "Kansio viety, sisältää {count} keskustelua",
+  "Failed to export folder": "Kansion vienti epäonnistui",
+  "Folder not found": "Kansiota ei löytynyt",
+  "Folder imported with {count} conversations": "Kansio tuotu, sisältää {count} keskustelua",
+  "Invalid folder file": "Virheellinen kansion tiedosto",
+  "Failed to import file": "Tiedoston tuonti epäonnistui",
+  "Unrecognized file format": "Tiedostomuotoa ei tunnistettu",
+  "transcription": {
+    "transcribesOnSend": "Puhtaaksikirjoitus lähetettäessä",
+    "addInstructions": "Lisää ohjeita",
+    "instructionsPlaceholder": "Konteksti parantaa tarkkuutta (esim. nimet, termit)"
+  },
+  "transcriptionComplete": "Puhtaaksikirjoitus valmis! Teksti lisätty keskusteluun.",
+  "No prompts found": "Kehotteita ei löytynyt",
+  "Select a prompt to view details": "Valitse kehote nähdäksesi tiedot",
+  "Content": "Sisältö",
+  "importBackupParseError": "Varmuuskopiotiedoston jäsentäminen epäonnistui. Varmista, että se on kelvollinen JSON.",
+  "emptyState": {
+    "greeting": "Miten voin auttaa?",
+    "greetingWithName": "Miten voin auttaa, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Luo kaavioita",
+        "prompt": "Näytä, miten voit luoda kaavioita ja vuokaavioita. Millaisia prosesseja, työnkulkuja tai järjestelmiä voit auttaa visualisoimaan? Anna esimerkkejä."
+      },
+      "draftContent": {
+        "title": "Laadi ammatillista sisältöä",
+        "prompt": "Tarvitsen apua ammatillisten asiakirjojen, kuten sähköpostien, raporttien ja tiivistelmien, kirjoittamisessa. Voitko näyttää esimerkkejä siitä, miten autat erilaisissa liikekirjoitustilanteissa?"
+      },
+      "analyzeInformation": {
+        "title": "Analysoi tietoa",
+        "prompt": "Miten voit auttaa tiedon tai datan analysoinnissa? Näytä eri tapoja hajottaa lukuja, löytää kaavoja tai etsiä oivalluksia asiakirjoista tai tietoaineistoista."
+      },
+      "planOrganize": {
+        "title": "Suunnittele ja organisoi",
+        "prompt": "Voitko auttaa projektien suunnittelussa tai työn organisoinnissa? Anna esimerkkejä, kuinka voit laatia aikatauluja, agendoja tai projektisuunnitelmia eri rakenteilla."
+      },
+      "brainstormIdeas": {
+        "title": "Ideoi ratkaisuja",
+        "prompt": "Haluan ideoida ratkaisuja ongelmaan. Näytä, miten lähestyt luovaa ajattelua ja ideointia – millaisia kysymyksiä esität ja miten tutkit vaihtoehtoja?"
+      },
+      "buildPresentations": {
+        "title": "Laadi esityksiä",
+        "prompt": "Miten voit auttaa esitysten luomisessa? Näytä esimerkkejä erilaisista esitysstruktuureista, visuaalisista ehdotuksista ja siitä, miten järjestät tietoa eri kohderyhmille."
+      },
+      "workWithCode": {
+        "title": "Työskentele koodin kanssa",
+        "prompt": "Voitko auttaa koodauksessa tai skripteissä? Näytä esimerkkejä – kuten uuden koodin kirjoittaminen, virheiden korjaus tai toiminnan vaiheittainen selittäminen."
+      },
+      "decisionSupport": {
+        "title": "Päätöksenteon tuki",
+        "prompt": "Minun täytyy tehdä päätös, mutta en tiedä, miten arvioida vaihtoehtoja. Voitko näyttää erilaisia kehyksiä tai lähestymistapoja, joiden avulla jäsentää valintoja?"
+      },
+      "summarizeSynthesize": {
+        "title": "Tiivistä ja yhdistä",
+        "prompt": "Kuinka autat pitkien asiakirjojen tiivistämisessä tai tiedon yhdistämisessä useista lähteistä? Näytä esimerkkejä erilaisista tiivistelmämuodoista ja yksityiskohtaisuuden tasoista."
+      },
+      "explainTopics": {
+        "title": "Selitä monimutkaisia aiheita",
+        "prompt": "Voitko selittää monimutkaisia käsitteitä yksinkertaisesti? Näytä, miten hajotat monimutkaiset asiat, käytät vertauksia ja mukautat selityksiä eri tietotasoille."
+      },
+      "createSchedules": {
+        "title": "Luo aikatauluja",
+        "prompt": "Tarvitsen apua ajankäytön järjestämisessä ja aikataulujen luomisessa. Näytä eri tapoja rakentaa agendoja, kalentereita tai aikaperusteisia suunnitelmia esimerkein."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Mallit",
+      "agents": "Agentit"
+    },
+    "sections": {
+      "baseModels": "Perusmallit"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Edistynyt ominaisuus",
+      "description": "Luo ja hallitse räätälöityjä AI-agentteja erikoistoiminnoilla. Nämä agentit toimivat MSF AI Assistant Foundry -instanssissa.",
+      "advancedFeatureTitle": "Edistynyt ominaisuus – vaatii koordinointia AI Assistant -teknisen tiimin kanssa",
+      "advancedFeatureWarning": "Räätälöidyt agentit toimivat vain MSF AI Assistant Foundry -instanssissa. Agentti-ID:t luodaan AI Assistant -teknisen tiimin toimesta tässä tietyssä instanssissa ja koordinoidaan kanssasi ennen käyttöä.",
+      "createNewAgent": "Luo uusi räätälöity agentti",
+      "noAgentsTitle": "Ei vielä räätälöityjä agentteja",
+      "noAgentsDescription": "Luo ensimmäinen räätälöity agenttisi laajentaaksesi AI-ominaisuuksia erikoistyökaluilla ja -toiminnoilla."
+    },
+    "advancedOptions": {
+      "title": "Edistyneet asetukset",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "Huom: Tämä malli käyttää kiinteitä temperature-arvoja yhtenäisen suorituskyvyn takaamiseksi.",
+      "reasoningEffort": "Päättelyteho",
+      "minimal": "Vähäinen",
+      "low": "Matala",
+      "medium": "Keskitaso",
+      "high": "Korkea",
+      "verbosity": "Yksityiskohtaisuus"
+    },
+    "searchMode": {
+      "title": "Hakutila",
+      "subtitle": "Käyttää verkkohakua tarvittaessa",
+      "routingLabel": "Haun reititys:",
+      "whatsDifference": "Mikä ero?",
+      "privacyFocused": "Tietosuojaan keskittyvä (oletus)",
+      "privacyFocusedDescription": "Hitaampi mutta yksityisempi",
+      "azureAgentMode": "Azure AI Agent Mode",
+      "azureAgentModeDescription": "Nopeampi, mutta tallentaa keskustelut pilvipalveluun",
+      "privacyInfoTitle": "Tärkeää tietosuojatietoa",
+      "privacyInfoDescription": "Koko keskustelusi lähetetään Azure AI Foundry -agentille.",
+      "learnMoreDataStorage": "Lue lisää tietojen tallennuksesta"
+    },
+    "customAgent": {
+      "label": "Mukautettu agentti:",
+      "description": "Tämä agentti toimii MSF AI Assistant Foundry -instanssissa, jossa työkalut ovat aina käytössä.",
+      "webSearch": "Reaaliaikainen verkkohaku",
+      "codeInterpreter": "Koodin tulkki ja tiedostoanalyysi"
+    },
+    "header": {
+      "backToModels": "Takaisin malleihin",
+      "knowledgeCutoff": "Tietopäivityksen ajankohta: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "perus",
+      "omni": "omni",
+      "reasoning": "päättely",
+      "agent": "agentti"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "GPT-4.1:llä toimiva AI-malli, jossa on reaaliaikainen verkkohaku Bingin kautta. Tarjoaa ajantasaista tietoa, faktantarkistusta ja tapahtumien seurannan. Paras malleihin, joissa vaaditaan tuoretta tietoa, uutisanalyysiä ja tiedon varmistusta.",
+      "knowledgeCutoff": "Reaaliaikainen verkkohaku"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI:n edistynein malli, joka loistaa monimutkaisessa päättelyssä, koodin tuottamisessa ja teknisten ongelmien ratkaisussa. Paras analyyttisiin tehtäviin, ohjelmointihaasteisiin, tutkimukseen ja perusteellisiin selityksiin. Tukee säädettävää päättelyvoimaa ja vastausten laajuutta.",
+      "knowledgeCutoff": "6.8.2025 klo 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Nopeampi ja kustannustehokkaampi versio GPT-5:stä, optimoitu nopeuteen laadusta tinkimättä. Erinomainen arkisiin tehtäviin, nopeisiin kysymyksiin, työkalujen reititykseen ja sovelluksiin, joissa vaaditaan nopeita vastauksia. Tasapainoinen suorituskyky ja tehokkuus.",
+      "knowledgeCutoff": "6.8.2025 klo 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "GPT-5:n erikoisversio, joka on optimoitu keskusteluihin ja tunneälyyn. Erinomainen empaattisessa viestinnässä, mielenterveyden tukena, luovassa kirjoittamisessa, ideoinnissa ja luontevassa dialogissa. Paras rentoihin keskusteluihin, ohjaustilanteisiin ja tehtäviin, joissa tarvitaan tunneherkkyyttä.",
+      "knowledgeCutoff": "1.10.2025 klo 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI:n edistyksellisin päättelymalli, jossa on läpimurto ongelmanratkaisukyvyssä. Loistaa monimutkaisessa matematiikassa, tieteellisessä päättelyssä, koodaushaasteissa ja vaiheittaisissa loogisissa tehtävissä. Laajennettu 200K kontekstiraja. Tukee päättelyvoiman säätöä.",
+      "knowledgeCutoff": "8.4.2025 klo 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Metan nopea ja kustannustehokas malli. Erinomainen arkipäivän tehtäviin, kuten kirjoittamiseen, tiivistykseen ja peruskoodin avustamiseen. Hyvä tasapaino nopeuden ja laadun välillä rutiinitehtäviin.",
+      "knowledgeCutoff": "7.5.2025 klo 7:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Päättelyyn erikoistunut malli, joka näyttää työskentelynsä vaiheittain. Erinomainen matemaattisiin ongelmiin, logiikkapulmiin ja monimutkaisten käsitteiden ymmärtämiseen. Näet ajattelun etenemisen reaaliajassa.",
+      "knowledgeCutoff": "20.1.2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Monipuolinen malli, erityisesti hyvä koodauksessa ja teknisessä kirjoittamisessa. Erinomainen koodin debuggaamiseen, dokumentaation kirjoittamiseen ja teknisten käsitteiden selittämiseen. Nopea ja luotettava kehitystyössä.",
+      "knowledgeCutoff": "16.4.2025 klo 0:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI:n monipuolinen malli, joka tunnetaan vivahteikkaista vastauksista. Soveltuu hyvin avoimiin keskusteluihin, luoviin projekteihin ja monimutkaisten ongelmien ratkaisuun.",
+      "knowledgeCutoff": "13.5.2025 klo 0:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropicin edistyksellisin malli, jolla on poikkeukselliset päättely-, koodaus- ja luovat kyvyt. Paras monimutkaiseen analyysiin, tutkimukseen ja tehtäviin, jotka vaativat syvällistä ymmärrystä.",
+      "knowledgeCutoff": "tammikuu 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Tasapainoinen Claude-malli, joka tarjoaa erinomaisen suorituskyvyn koodauksessa, analyysissä ja luovissa tehtävissä. Soveltuu hyvin päivittäiseen käyttöön nopeiden vastausten ansiosta.",
+      "knowledgeCutoff": "tammikuu 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Edellisen sukupolven Claude Opus -malli. Erinomainen monimutkaisiin ohjelmointitehtäviin, yksityiskohtaiseen analyysiin ja vivahteikkaaseen ymmärtämiseen.",
+      "knowledgeCutoff": "tammikuu 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Nopea ja kustannustehokas Claude-malli, joka on optimoitu nopeisiin tehtäviin. Erinomainen yksinkertaisiin kysymyksiin, tiivistyksiin ja suuriin volyymeihin.",
+      "knowledgeCutoff": "tammikuu 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI:n edistynein malli, joka on erinomainen monimutkaisessa päättelyssä, koodin luomisessa ja teknisten ongelmien ratkaisussa. Paras analyyttisiin tehtäviin, ohjelmointiin, tutkimukseen ja yksityiskohtaisiin selityksiin. Tukee säädettävää päättelytehoa ja vastausten laajuutta.",
+      "knowledgeCutoff": "joulukuu 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "GPT-5.2:n erikoisversio, joka on optimoitu keskusteluihin ja tunneälyyn. Erinomainen empaattisessa viestinnässä, mielenterveystuessa, luovassa kirjoittamisessa, ideoinnissa ja luonnollisessa dialogissa. Paras vapaamuotoisiin keskusteluihin, neuvontatilanteisiin ja tehtäviin, jotka vaativat tunneälyä.",
+      "knowledgeCutoff": "joulukuu 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Takaisin keskusteluun",
+    "title": "Hakutilan selitys",
+    "subtitle": "Hakuvaihtoehdot ja tietojesi tallennuspaikka",
+    "quickComparison": "Pikavertailu",
+    "noSearch": "Ei hakua",
+    "privacyFocused": "Tietosuojaan keskittynyt",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Vastausnopeus",
+    "fastest": "Nopein",
+    "slowerMultiStep": "Hitaampi (monivaiheinen)",
+    "fasterDirect": "Nopeampi (suora)",
+    "fullConversationStored": "Koko keskustelu tallennetaan pilveen",
+    "whatsStoredInAzure": "Mitä Azureen tallennetaan",
+    "nothingStateless": "Ei mitään (vain tilaton)",
+    "searchQueriesOnly": "Vain hakukyselyt",
+    "fullConversationHistory": "Koko keskusteluhistoria",
+    "modelAvailability": "Mallien saatavuus",
+    "allModels": "Kaikki mallit",
+    "gpt41Only": "Vain GPT-4.1",
+    "searchTurnedOff": "Haku pois päältä",
+    "noSearchDescription": "Nopeimmat vastaukset ilman verkkohakua. Koko keskustelusi pysyy selaimessasi – mitään ei tallenneta pilveen.",
+    "viewDetailsBelow": "Lisätietoja varten katso tekninen työnkulku alla.",
+    "viewTechnicalFlowDiagram": "Näytä tekninen kaavio",
+    "legend": "Selite:",
+    "legendNoSearch": "Selaimesi (paikallinen tallennus) | AI Assistant -palvelin | Azure OpenAI (tilaton)",
+    "privacyFocusedMode": "Tietosuojaan keskittynyt tila",
+    "default": "Oletus",
+    "privacyDescription": "Käyttää verkkohakua tarvittaessa, mutta on hitaampi useamman vaiheen takia. Azureen tallennetaan vain hakukyselyt – koko keskustelusi pysyy selaimessasi.",
+    "legendPrivacy": "Selaimesi (paikallinen tallennus) | AI Assistant -palvelin | Azure AI Foundry (vain hakukyselyt) | Azure OpenAI (tilaton)",
+    "azureAIFoundryMode": "Azure AI Foundry -tila",
+    "foundryDescription": "Nopeammat vastaukset sisäänrakennetulla verkkohakuominaisuudella. Koko keskustelusi tallennetaan Azure AI Foundryn tietokantaan, ei vain selaimeesi.",
+    "legendFoundry": "Selaimesi (paikallinen tallennus) | AI Assistant -palvelin | Azure AI Foundry Agent (tallentaa koko keskustelun)",
+    "whyTheseOptions": "Miksi nämä vaihtoehdot?",
+    "whyTheseOptionsText1": "Nämä ovat käytettävissä olevat hakutoteutukset sen jälkeen, kun Azure poisti käytöstä Bing Search API:n, johon AI Assistant alun perin perustui.",
+    "whyTheseOptionsText2": "Tiimi etsii aktiivisesti lisää tietosuojaan painottuvia hakuvaihtoehtoja. Molemmat nykyiset vaihtoehdot käyttävät Azure AI Foundryn hakutoimintoja, mutta eroavat siinä, kuinka paljon keskustelutietoja jaetaan.",
+    "azureDeprecatedBingApi": "Azure poisti käytöstä Bing Search API:n",
+    "footerNote": "Molemmat tilat tallentavat keskustelusi paikallisesti selaimeesi. Voit vaihtaa tilaa milloin tahansa malliasetuksista.",
+    "note": "Huom:",
+    "loadingDiagram": "Ladataan kaaviota..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Tarkistetaan tallennustila",
+      "analyzingData": "Analysoidaan tietojasi...",
+      "updateAvailable": "Päivitys saatavilla",
+      "storageSpaceLimited": "Tallennustila on rajoitettu",
+      "migratingData": "Siirretään tietoja",
+      "migrationComplete": "Siirto valmis",
+      "partiallyComplete": "Osittain valmis",
+      "migrationFailed": "Siirto epäonnistui"
+    },
+    "descriptions": {
+      "foundLegacyData": "Löysimme tietoja aiemmasta versiosta. Haluatko siirtää ne toimimaan parannetun järjestelmän kanssa?",
+      "storageSpaceWarning": "Tietosi tarvitsevat enemmän tilaa kuin sitä on tällä hetkellä saatavilla. Suosittelemme käyttämään vaiheittaista siirtotilaa.",
+      "pleaseWait": "Odota hetki, päivitämme tietojasi...",
+      "dataIsSafe": "Alkuperäiset tietosi ovat turvassa. Voit yrittää uudelleen tai ohittaa tämän toistaiseksi.",
+      "itemsTooLarge": "Nämä kohteet ovat liian suuria tallennukseen. Voit viedä ne, vapauttaa tilaa tai jatkaa ilman niitä.",
+      "settingsUpdated": "Asetuksesi on päivitetty."
+    },
+    "benefits": {
+      "title": "Hyödyt",
+      "fasterPerformance": "Nopeampi suorituskyky",
+      "betterReliability": "Parempi luotettavuus",
+      "dataPreserved": "Tietosi säilyvät"
+    },
+    "options": {
+      "advancedOptions": "Lisäasetukset",
+      "useIncrementalMode": "Käytä inkrementaalista tilaa",
+      "slowerButSafer": "hitaampi mutta turvallisempi",
+      "recommended": "suositeltu",
+      "deleteLegacyData": "Poista vanhat tiedot siirron jälkeen",
+      "freesUpSpace": "vapauttaa tallennustilaa"
+    },
+    "actions": {
+      "skip": "Ohita",
+      "migrateData": "Siirrä tiedot",
+      "migrateAnyway": "Siirrä silti",
+      "continue": "Jatka",
+      "retry": "Yritä uudelleen",
+      "exportBackupFirst": "Vie varmuuskopio ensin",
+      "exportSkippedItems": "Vie ohitetut kohteet"
+    },
+    "quota": {
+      "availableSpace": "Vapaa tila",
+      "dataToMigrate": "Siirrettävät tiedot",
+      "additionalSpaceNeeded": "Lisätilaa tarvitaan"
+    },
+    "progress": {
+      "migratingConversations": "Siirretään keskusteluja",
+      "migratingPrompts": "Siirretään kehotteita",
+      "migratingAgents": "Siirretään agentteja",
+      "finishingUp": "Viimeistellään"
+    },
+    "results": {
+      "successfullyMigrated": "Siirto onnistui",
+      "notes": "Huomautukset",
+      "couldNotMigrate": "Siirto epäonnistui",
+      "legacyDataDeleted": "Vanhat tiedot poistettu",
+      "freed": "vapautettu"
+    },
+    "units": {
+      "conversation": "keskustelu",
+      "conversations": "keskustelut",
+      "folder": "kansio",
+      "folders": "kansiot",
+      "prompt": "kehote",
+      "prompts": "kehotteet",
+      "customAgent": "mukautettu agentti",
+      "customAgents": "mukautetut agentit",
+      "item": "kohde",
+      "items": "kohteet"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Tervetuloa AI Assistant V2:een",
+    "whatsNew": "Uutta",
+    "whatsNewQuestion": "Mitä uutta?"
+  },
+  "welcomeV2": {
+    "backToChat": "Takaisin keskusteluun",
+    "title": "Tervetuloa AI Assistant V2:een",
+    "subtitle": "Täysin uudistettu käyttöliittymä ja tehokkaita uusia ominaisuuksia",
+    "webSearch": {
+      "title": "Verkkohakutila",
+      "description": "Anna tekoälyn käyttää reaaliaikaista verkkohakua yksityisyyttä korostavilla asetuksilla",
+      "quickAccess": "Pikakäyttö:",
+      "quickAccessInstructions": "Napsauta + -painiketta keskustelukentän vieressä → Valitse \"Verkkohaku\"",
+      "setAsDefault": "Aseta oletukseksi:",
+      "setAsDefaultInstructions": "Avaa malliasetukset ja ota Web Search Mode -kytkin käyttöön. Valitse haluamasi vaihtoehto:",
+      "privacyFocused": "Yksityisyyteen keskittyvä (oletus)",
+      "privacyFocusedDescription": "Vain hakukysely lähetetään ulkoisesti",
+      "azureAIFoundry": "Azure AI Foundry -tila",
+      "azureAIFoundryDescription": "Nopeampi, mutta koko keskustelu tallennetaan ulkoisesti",
+      "learnMore": "Lue lisää hakutiloista →"
+    },
+    "tones": {
+      "title": "Sävyt (ääniprofiilit)",
+      "description": "Hallitse tekoälyn kirjoitustyyliä, muodollisuutta ja persoonaa",
+      "createTones": "1. Luo sävyjä:",
+      "createTonesInstructions": "Pikatoiminnot sivupalkissa → Sävy-välilehti",
+      "useTones": "2. Käytä sävyjä:",
+      "useTonesInstructions": "Napsauta sävy-pudotusvalikkoa keskustelukentän vieressä",
+      "exampleProfessionalDesc": "Muodollinen, asiallinen sävy",
+      "exampleCasualDesc": "Ystävällinen, keskusteleva"
+    },
+    "aiAssist": {
+      "title": "Tekoälyapuri kehotteille ja sävyille",
+      "description": "Anna tekoälyn auttaa laatimaan parempia kehotteita ja sävyjä nopeammin",
+      "step1": "Avaa Pikatoiminnot sivupalkista",
+      "step2": "Siirry {prompts}- tai {tones}-välilehdelle",
+      "step3": "Etsi AI Assistant -osio",
+      "getSuggestions": "Pyydä ehdotuksia",
+      "getSuggestionsDesc": "Tekoäly analysoi luonnoksesi ja ehdottaa parannuksia",
+      "buildFromFiles": "Luo tiedostoista",
+      "buildFromFilesDesc": "Lataa dokumentteja kehotteiden/sävyjen luomiseen",
+      "testBeforeSaving": "Kokeile ennen tallennusta",
+      "testBeforeSavingDesc": "Kokeile kehotteita/sävyjä esikatselukeskustelussa",
+      "step2Prefix": "Siirry kohtaan",
+      "step2Suffix": "välilehti"
+    },
+    "customAgents": {
+      "title": "Mukautetut agentit",
+      "advancedBadge": "EDISTYNYT",
+      "description": "Erikoistuneet tekoälyagentit, joilla on laajennetut ominaisuudet kuten verkkohaku ja koodin tulkinta",
+      "advancedFeature": "Edistynyt ominaisuus",
+      "advancedFeatureDesc": "Mukautetut agentit toimivat Azure AI Foundryssa erikoistyökaluilla. Agenttitunnusten luominen vaatii yhteistyötä AI Assistant -teknisen tiimin kanssa.",
+      "howToAccess": "Näin pääset käyttämään:",
+      "howToAccessInstructions": "Asetukset → Mallit → Agentit-välilehti",
+      "whatYouCanDo": "Mitä voit tehdä:",
+      "configureAgents": "Määritä agentteihin erikoisominaisuuksia",
+      "importExport": "Tuo/vie agenttien määritykset",
+      "selectFromDropdown": "Valitse mukautetut agentit mallin pudotusvalikosta"
+    },
+    "audioTranslation": {
+      "title": "Äänitranskriptio ja käännös",
+      "description": "Käännä puheentunnistus automaattisesti yli 13 kielelle",
+      "howToUse": "Näin käytät:",
+      "step1": "Lataa audio- tai videotiedosto",
+      "step2": "Napsauta kielivalikkoa transkriptiokäyttöliittymässä",
+      "step3": "Valitse kohdekielesi",
+      "availableLanguages": "Saatavilla olevat kielet:",
+      "moreLanguages": "+7 lisää"
+    },
+    "pwa": {
+      "title": "Asenna mobiilisovelluksena",
+      "description": "Progressiivinen verkkosovellus, joka tarjoaa aidon sovelluskokemuksen",
+      "installTip": "Vinkki: Asenna sovellus kirjautumisen jälkeen, jotta todennustietosi säilyvät ja saat parhaan käyttökokemuksen.",
+      "howToInstall": "Asennusohjeet:",
+      "step1": "Kirjaudu tilillesi",
+      "step2": "Avaa Asetukset → Mobiilisovellus saadaksesi yksityiskohtaiset ohjeet",
+      "step3": "Mobiilissa: Napauta selaimen valikkoa (⋮ tai ⚙️)",
+      "step4": "Etsi kohta \"Lisää aloitusnäyttöön\" tai \"Asenna sovellus\"",
+      "step5": "Seuraa asennusohjeita",
+      "benefits": "Edut:",
+      "benefit1": "Käynnistä sovellus kotinäytöltä kuten natiivi sovellus",
+      "benefit2": "Koko näytön tila ilman selaimen käyttöliittymää",
+      "benefit3": "Pääsy tallennettuihin keskusteluihin myös offline-tilassa"
+    }
+  },
+  "Professional": "Ammatillinen",
+  "Casual": "Vapaa"
 }
