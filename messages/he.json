@@ -311,7 +311,19 @@
   "Team Templates": "תבניות צוות",
   "selected": "נבחר",
   "folders": "תיקיות",
-  "agents": "סוכנים",
+  "agents": {
+    "exportAgent": "ייצוא סוכן",
+    "editAgent": "עריכת סוכן",
+    "agentName": "שם סוכן",
+    "myResearchAssistant": "עוזר המחקר שלי",
+    "agentId": "מזהה סוכן",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "תיאור (אופציונלי)",
+    "descriptionPlaceholder": "סוכן המתמחה במשימות מחקר...",
+    "baseModel": "מודל בסיס",
+    "formatDescription": "פורמט: asst_xxxxx (מ-MSF AI Assistant Foundry)",
+    "importantInfo": "לסוכן זה תהיה גישה להקשר השיחה והוא יוכל להשתמש באותם כלים כמו מודלים סטנדרטיים. ודא שמזהה הסוכן נכון מכיוון שלא ניתן לשנות אותו מאוחר יותר."
+  },
   "Quick Actions": "פעולות מהירות",
   "Type / in chat to access your prompts": "הקלד / בצ'אט כדי לגשת להנחיות שלך",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "הקלד / בצ'אט, בחר את ההנחיה שלך ומלא את המשתנים כאשר תתבקש",
@@ -358,7 +370,6 @@
   "Custom Agents": "סוכנים מותאמים אישית",
   "Delete template and all its items": "מחק תבנית וכל הפריטים שלה",
   "Description (Optional)": "תיאור (אופציונלי)",
-  "Edit Prompt": "ערוך הנחיה",
   "Edit Tone": "ערוך טון",
   "Email Response Template": "תבנית תגובה לדוא\"ל",
   "Example Prompt": "הנחיה לדוגמה",
@@ -418,7 +429,6 @@
   "msf_logo_alt": "לוגו MSF",
   "collapse_sidebar": "כווץ סרגל צד",
   "expand_sidebar": "הרחב סרגל צד",
-  "Voice Guidelines": "הנחיות קול",
   "Please upload some content or describe the tone you want": "אנא העלה תוכן או תאר את הטון שאתה רוצה",
   "Untitled Tone": "טון ללא כותרת",
   "Failed to analyze tone": "ניתוח טון נכשל",
@@ -448,13 +458,41 @@
   "enterPromptDescriptionPlaceholder": "למה ההנחיה הזו?",
   "enterPromptContentPlaceholder": "כתוב את ההנחיה שלך כאן. השתמש ב-{{variable}} לתוכן דינמי.",
   "common": {
-    "contact": "צור קשר"
+    "contact": "צור קשר",
+    "close": "סגור",
+    "remove": "הסר",
+    "tryAgain": "נסה שוב",
+    "menu": "תפריט",
+    "copyToClipboard": "העתק ללוח",
+    "toggleDropdownMenu": "הצג או הסתר תפריט נפתח",
+    "toggleMenu": "הצג או הסתר תפריט",
+    "closeModal": "סגור חלון קופץ",
+    "dismissBanner": "הסתר כרזה",
+    "searchEllipsis": "חיפוש...",
+    "addTagEllipsis": "הוסף תג...",
+    "msfLogo": "לוגו MSF",
+    "importantInformation": "מידע חשוב",
+    "noResults": "לא נמצאו תוצאות",
+    "confirm": "אשר",
+    "cancel": "בטל",
+    "discard": "בטל שינויים",
+    "keepEditing": "המשך עריכה",
+    "yes": "כן",
+    "no": "לא"
   },
   "errors": {
     "unexpectedErrorOccurred": "אירעה שגיאה בלתי צפויה",
     "criticalErrorReload": "אירעה שגיאה קריטית. אנא טען מחדש את הדף.",
     "reloadPage": "טען מחדש את הדף",
-    "persistContactSupport": "אם בעיה זו נמשכת, אנא צור קשר עם התמיכה"
+    "persistContactSupport": "אם בעיה זו נמשכת, אנא צור קשר עם התמיכה",
+    "somethingWentWrong": "משהו השתבש",
+    "anErrorOccurred": "אירעה שגיאה",
+    "copyErrorMessage": "העתק הודעת שגיאה",
+    "contactSupport": "אם הבעיה נמשכת, אנא פנה לתמיכה בכתובת",
+    "dismissError": "סגור שגיאה",
+    "applicationError": "שגיאת יישום",
+    "chatLoadError": "אירעה שגיאה בטעינת הצ'אט",
+    "anErrorOccurredTryAgain": "אירעה שגיאה. נסה שוב."
   },
   "auth": {
     "authenticationError": "שגיאת אימות",
@@ -523,7 +561,25 @@
     "fullSizePreview": "תצוגה מקדימה בגודל מלא",
     "enterSearchQueryPlaceholder": "הזן את שאילתת החיפוש או השאלה שלך...",
     "errorFetchingUrl": "אירעה שגיאה באחזור תוכן כתובת האתר",
-    "errorInitiatingSearch": "אירעה שגיאה בהתחלת חיפוש באינטרנט"
+    "errorInitiatingSearch": "אירעה שגיאה בהתחלת חיפוש באינטרנט",
+    "regenerate": "צור מחדש",
+    "modelSwitchPrompt": "‏{original} נכשל אך ‏{fallback} הצליח. האם ברצונך להחליף מודל?",
+    "keepOriginalModel": "השאר את {model}",
+    "switchToModel": "עבור ל-{model}",
+    "alwaysSwitchToModel": "החלף אוטומטית תמיד",
+    "translateMessage": "תרגם הודעה",
+    "translating": "מתרגם...",
+    "translationError": "התרגום נכשל",
+    "showOriginal": "הצג מקור",
+    "translatedTo": "תורגם ל-{language}",
+    "searchLanguages": "חפש שפות...",
+    "selectLanguage": "בחר שפה",
+    "audioFromOriginal": "השמע מתוך הטקסט המקורי",
+    "audioFromTranslation": "השמע מתוך התרגום ל-{language}",
+    "thinking": "חושב...",
+    "viewReasoningProcess": "הצג תהליך חשיבה",
+    "collapseThinking": "כווץ חשיבה",
+    "expandThinking": "הרחב חשיבה"
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",
@@ -531,29 +587,135 @@
     "quickActionsTitle": "פעולות מהירות",
     "quickActions": "פעולות מהירות"
   },
-  "agents": {
-    "exportAgent": "ייצוא סוכן",
-    "editAgent": "עריכת סוכן",
-    "agentName": "שם סוכן",
-    "myResearchAssistant": "עוזר המחקר שלי",
-    "agentId": "מזהה סוכן",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "תיאור (אופציונלי)",
-    "descriptionPlaceholder": "סוכן המתמחה במשימות מחקר...",
-    "baseModel": "מודל בסיס",
-    "formatDescription": "פורמט: asst_xxxxx (מ-MSF AI Assistant Foundry)",
-    "importantInfo": "לסוכן זה תהיה גישה להקשר השיחה והוא יוכל להשתמש באותם כלים כמו מודלים סטנדרטיים. ודא שמזהה הסוכן נכון מכיוון שלא ניתן לשנות אותו מאוחר יותר."
-  },
   "prompts": {
-    "buildReusablePrompts": "בניית הנחיות לשימוש חוזר בעזרת AI"
+    "buildReusablePrompts": "בניית הנחיות לשימוש חוזר בעזרת AI",
+    "noToneDefault": "ללא טון (ברירת מחדל)",
+    "tagHelp": "עזרה בתגיות",
+    "tagHelpContent": "השתמש בתגיות כדי לקטלג ולמצוא במהירות את ההנחיות שלך. דוגמאות:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "technical",
+      "customerSupport": "customer-support"
+    },
+    "variableHelp": "עזרה במשתנים",
+    "variableHelpIntro": "השתמש במשתנים להפיכת ההנחיות לדינמיות:",
+    "requiredVariables": "משתנים נדרשים (ללא ברירת מחדל):",
+    "optionalVariables": "משתנים אופציונליים (עם ברירת מחדל):",
+    "userMustProvide": "המשתמש חייב לספק ערך",
+    "userCanProvide": "המשתמש יכול לספק ערך, או שתשמש ברירת המחדל",
+    "example": "דוגמה:",
+    "variableExampleText": "כתוב {{tone:professional}} מייל ל-{{recipient}} על {{topic}} ב-{{language:English}}",
+    "detectedVariables": "משתנים מזוהים",
+    "required": "נדרש",
+    "aiAssistant": "עוזר AI",
+    "whatToImprove": "מה תרצה לשפר?",
+    "whatShouldPromptDo": "מה ההנחיה צריכה לעשות?",
+    "improvePlaceholder": "לדוגמה, הפוך למקצועי יותר, הוסף דוגמאות, שפר בהירות...",
+    "generatePlaceholder": "לדוגמה, צור תבנית מייל מקצועית עם משתנים עבור נמען ונושא...",
+    "addContextOptional": "הוסף הקשר (אופציונלי)",
+    "revising": "מעדכן...",
+    "generating": "מייצר...",
+    "reviseWithAI": "עדכן עם AI",
+    "generatePrompt": "צור הנחיה",
+    "revisionComplete": "הרוויזיה הושלמה",
+    "generationComplete": "היצירה הושלמה",
+    "revisedPrompt": "הנחיה מתוקנת:",
+    "generatedPrompt": "הנחיה שנוצרה:",
+    "applyRevision": "החל רוויזיה זו",
+    "useThisPrompt": "השתמש בהנחיה זו",
+    "improvementsMade": "שיפורים שבוצעו:",
+    "tips": "טיפים:",
+    "howAICanHelp": "כיצד הבינה המלאכותית יכולה לעזור",
+    "helpItems": {
+      "improveClarity": "שיפור בהירות ומבנה",
+      "suggestVariables": "הצעת משתנים שימושיים",
+      "addContext": "הוספת הקשר ודוגמאות",
+      "optimize": "אופטימיזציה לתוצאות טובות יותר"
+    },
+    "savePrompt": "שמור הנחיה",
+    "add": "הוסף"
   },
   "tones": {
     "createCustomVoiceProfile": "יצירת פרופיל קול מותאם אישית בעזרת AI",
-    "examplePlaceholder": "לדוגמה, צור טון שירות לקוחות מקצועי אך ידידותי..."
+    "examplePlaceholder": "לדוגמה, צור טון שירות לקוחות מקצועי אך ידידותי...",
+    "tagHelp": "עזרה בתגיות",
+    "tagHelpContent": "השתמשו בתגיות כדי לקטלג ולמצוא בקלות את הסגנונות שלכם. דוגמאות:",
+    "tagExamples": {
+      "professional": "מקצועי",
+      "casual": "לא פורמלי",
+      "technical": "טכני",
+      "marketing": "שיווקי"
+    },
+    "add": "הוסף",
+    "aiToneAnalyzer": "מנתח טון AI",
+    "describeToneToCreate": "תארו את הסגנון שתרצו ליצור",
+    "uploadContentSamples": "העלו דוגמאות תוכן",
+    "analyzing": "מנתח...",
+    "analyzeToneWithAI": "נתחו את הסגנון עם AI",
+    "analysisComplete": "הניתוח הושלם",
+    "generatedVoiceGuidelines": "הנחיות סגנון שזוהו:",
+    "examplePhrases": "ביטויים לדוגמה:",
+    "suggestedTags": "תגיות מוצעות:",
+    "applyThisAnalysis": "החל את הניתוח הזה",
+    "detectedCharacteristics": "מאפיינים שזוהו:",
+    "howAICanHelp": "כיצד הבינה המלאכותית יכולה לעזור",
+    "helpItems": {
+      "transcribe": "תמלול תוכן שמע/וידאו",
+      "analyzeContent": "ניתוח דוגמאות התוכן שלך",
+      "extractPatterns": "חילוץ דפוסי סגנון וטון",
+      "generateGuidelines": "יצירת הנחיות סגנון",
+      "suggestTags": "הצעת תגיות רלוונטיות"
+    },
+    "saveTone": "שמור סגנון"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "הצג תרשים זרימה טכני"
+    "viewTechnicalFlowDiagram": "הצג תרשים זרימה טכני",
+    "backToChat": "חזרה לצ'אט",
+    "title": "מרכז העזרה",
+    "subtitle": "מצאו תשובות, למדו על פרטיות, וקבלו תמיכה",
+    "faq": {
+      "title": "שאלות נפוצות",
+      "description": "מצאו תשובות לשאלות נפוצות על שימוש בעוזר ה-AI",
+      "articles": "מאמרים",
+      "searchPlaceholder": "חיפוש בשאלות נפוצות...",
+      "noResults": "לא נמצאו שאלות תואמות לחיפוש",
+      "noResultsHint": "נסו מונח חיפוש אחר"
+    },
+    "privacy": {
+      "title": "פרטיות ונתונים",
+      "description": "למידע על אופן שמירת והגנת הנתונים שלך",
+      "topics": "נושאים",
+      "searchPlaceholder": "חיפוש נושאי פרטיות...",
+      "noResults": "לא נמצאו נושאי פרטיות תואמים לחיפוש שלך",
+      "noResultsHint": "נסה מונח חיפוש אחר",
+      "bannerTitle": "הפרטיות שלך חשובה",
+      "bannerDescription": "כל השיחות נשמרות רק במכשיר שלך. עיבוד הנתונים מתבצע במערכות MSF באמצעות תשתית Azure.",
+      "localStorageOnly": "שמירה מקומית בלבד",
+      "msfControlled": "בשליטת MSF",
+      "noPersonalData": "ללא מידע אישי",
+      "noSensitiveOps": "ללא פעולות רגישות"
+    },
+    "contact": {
+      "title": "צור קשר ומשאבים",
+      "description": "צור קשר עם הצוות שלנו וקבל קישורים שימושיים",
+      "supportAvailable": "תמיכה זמינה",
+      "submitRequest": "שלח בקשת תמיכה",
+      "getHelp": "קבל עזרה מהצוות שלנו",
+      "requestDescription": "צריך עזרה או רוצה לשלוח משוב? לחץ למעבר לטופס התמיכה שלנו.",
+      "openSupportForm": "פתח טופס תמיכה",
+      "otherWays": "דרכים נוספות ליצור קשר",
+      "emailSupport": "תמיכה דרך דוא\"ל",
+      "emailDescription": "שלח לנו דוא\"ל לשאלות, משוב או בעיות טכניות"
+    },
+    "resources": {
+      "title": "משאבים נוספים",
+      "portalTitle": "AI Accelerator Portal",
+      "portalDescription": "תיעוד, עדכוני פרויקטים וחומרי הדרכה",
+      "githubTitle": "מאגר קוד פתוח",
+      "githubDescription": "צפייה בקוד, דיווח תקלות ותרומה ב-GitHub"
+    }
   },
   "settings": {
     "Settings": "הגדרות",
@@ -621,9 +783,447 @@
     "FAQs, privacy policy, and guides": "שאלות נפוצות, מדיניות פרטיות ומדריכים",
     "Contact Support": "צור קשר עם התמיכה",
     "Popular Questions": "שאלות פופולריות",
-    "View all FAQs": "הצג את כל השאלות הנפוצות"
+    "View all FAQs": "הצג את כל השאלות הנפוצות",
+    "Delete legacy data after migration": "מחק נתונים ישנים לאחר ההעברה",
+    "frees up storage space": "משחרר מקום אחסון",
+    "Legacy data deleted": "הנתונים הישנים נמחקו",
+    "freed": "שוחרר",
+    "Conversations": "שיחות",
+    "Legacy": "ישן",
+    "Other": "אחר",
+    "Loading": "טוען",
+    "Legacy Data Detected": "נמצאו נתונים ישנים",
+    "legacyDataDescription": "יש לך {size} נתונים מגירסה קודמת. ניתן להעביר, לייצא או למחוק אותם כדי לפנות מקום.",
+    "legacyDeleteSuccess": "הנתונים הישנים נמחקו בהצלחה ושוחררו {size}.",
+    "legacyDeleteError": "מחיקת הנתונים הישנים נכשלה. נסה שוב.",
+    "Explore solutions": "בדוק פתרונות",
+    "Migrate to Current Format": "העבר לפורמט הנוכחי",
+    "Export Legacy Data": "ייצוא נתונים ישנים",
+    "Delete Legacy Data": "מחיקת נתונים ישנים",
+    "deleteLegacyConfirm": "האם אתה בטוח שברצונך למחוק את כל הנתונים הישנים? לא ניתן לבטל פעולה זו.",
+    "Deleting": "מוחק",
+    "Confirm Delete": "אשר מחיקה",
+    "Cancel": "ביטול"
   },
   "notFound": {
     "lostDog": "כלב אבוד"
-  }
+  },
+  "Saved Prompts": "הנחיות שמורות",
+  "New conversation": "שיחה חדשה",
+  "Edit": "עריכה",
+  "Chat Settings": "הגדרות שיחה",
+  "Default System Prompt": "הנחיית מערכת ברירת מחדל",
+  "Email": "דוא\"ל",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "המגבלה להנחיה היא {{maxLength}} תווים. הזנת {{valueLength}} תווים.",
+  "Run Typewriter Intro": "הרץ מבוא Typewriter",
+  "Conversation exported successfully": "השיחה יוצאה בהצלחה",
+  "Failed to export conversation": "ייצוא השיחה נכשל",
+  "Conversation imported successfully": "השיחה יובאה בהצלחה",
+  "Failed to import conversation": "ייבוא השיחה נכשל",
+  "Invalid conversation file": "קובץ שיחה לא תקין",
+  "Folder exported with {count} conversations": "התיקיה יוצאה עם {count} שיחות",
+  "Failed to export folder": "ייצוא התיקיה נכשל",
+  "Folder not found": "התיקיה לא נמצאה",
+  "Folder imported with {count} conversations": "התיקיה יובאה עם {count} שיחות",
+  "Invalid folder file": "קובץ תיקיה לא תקין",
+  "Failed to import file": "ייבוא הקובץ נכשל",
+  "Unrecognized file format": "פורמט קובץ לא מזוהה",
+  "transcription": {
+    "transcribesOnSend": "תעתוק בעת שליחה",
+    "addInstructions": "הוסף הוראות",
+    "instructionsPlaceholder": "הקשר לשיפור הדיוק (למשל שמות, מונחים)"
+  },
+  "transcriptionComplete": "התעתוק הושלם! הטקסט התווסף לשדה השיחה.",
+  "No prompts found": "לא נמצאו הנחיות",
+  "Select a prompt to view details": "בחר הנחיה לצפייה בפרטים",
+  "Content": "תוכן",
+  "importBackupParseError": "נכשל ניתוח קובץ הגיבוי. נא לבדוק שהוא קובץ JSON תקין.",
+  "emptyState": {
+    "greeting": "כיצד אוכל לעזור?",
+    "greetingWithName": "כיצד אוכל לעזור, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "צור דיאגרמות",
+        "prompt": "הראה לי כיצד אתה יכול ליצור דיאגרמות ותרשימי זרימה. אילו סוגי תהליכים, זרימות עבודה או מערכות תוכל לעזור לי להמחיש? תן לי דוגמאות."
+      },
+      "draftContent": {
+        "title": "טיוטה של תוכן מקצועי",
+        "prompt": "אני צריך עזרה בכתיבת מסמכים מקצועיים – מיילים, דוחות, סיכומים. תוכל להראות לי דוגמאות כיצד תוכל לסייע בסוגי כתיבה עסקית שונים?"
+      },
+      "analyzeInformation": {
+        "title": "נתח מידע",
+        "prompt": "איך תוכל לעזור לי לנתח נתונים או מידע? הראה לי דרכים שונות בהן אתה מפרק מספרים, מזהה תבניות, או מפיק תובנות ממסמכים או מערכי נתונים."
+      },
+      "planOrganize": {
+        "title": "תכנן וארגן",
+        "prompt": "תוכל לעזור לי לתכנן פרויקטים או לארגן משימות? תן דוגמאות כיצד תיצור לוחות זמנים, סדרי יום, או תוכניות פרויקט במבנים שונים."
+      },
+      "brainstormIdeas": {
+        "title": "סיעור מוחות לרעיונות",
+        "prompt": "אני רוצה לעשות סיעור מוחות לפתרון בעיה. הראה לי כיצד אתה ניגש לחשיבה יצירתית והעלאת רעיונות – אילו שאלות היית שואל וכיצד אתה בוחן אפשרויות?"
+      },
+      "buildPresentations": {
+        "title": "בניית מצגות",
+        "prompt": "כיצד תוכל לסייע לי ביצירת מצגות? הראה לי דוגמאות למבני מצגות שונים, רעיונות ויזואליים, ואופן ארגון מידע עבור קהלים שונים."
+      },
+      "workWithCode": {
+        "title": "עבודה עם קוד",
+        "prompt": "אתה יכול לעזור עם קוד או סקריפטים? הראה לי דוגמאות – בין אם זה כתיבת קוד חדש, איתור תקלות או הסבר שלבים של איך משהו עובד."
+      },
+      "decisionSupport": {
+        "title": "תמיכה בהחלטות",
+        "prompt": "אני צריך לקבל החלטה אך איני בטוח כיצד להעריך את האפשרויות שלי. תוכל להראות לי מסגרות או גישות שונות שבהן אתה משתמש כדי לעזור לנתח בחירות?"
+      },
+      "summarizeSynthesize": {
+        "title": "סכם וסנתז",
+        "prompt": "איך אתה מסייע בסיכום מסמכים ארוכים או בסינתזה של מידע ממקורות שונים? הראה לי דוגמאות לפורמטים שונים של סיכומים ורמות פירוט מגוונות."
+      },
+      "explainTopics": {
+        "title": "הסבר נושאים מורכבים",
+        "prompt": "האם אתה יכול להסביר מושגים מסובכים במילים פשוטות? הראה לי איך אתה מפשט רעיונות מורכבים, משתמש באנלוגיות ומתאים הסברים לרמות ידע שונות."
+      },
+      "createSchedules": {
+        "title": "יצירת לוחות זמנים",
+        "prompt": "אני צריך עזרה בארגון זמן ויצירת לוחות זמנים. הראה לי דרכים שונות לבניית סדרי יום, לוחות שנה או תוכניות מבוססות זמן עם דוגמאות."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "מודלים",
+      "agents": "סוכנים"
+    },
+    "sections": {
+      "baseModels": "מודלים בסיסיים"
+    },
+    "agents": {
+      "advancedFeatureBadge": "פונקציה מתקדמת",
+      "description": "יצירה וניהול של סוכני AI מותאמים עם יכולות מתקדמות. סוכנים אלו פועלים על מופע ה־MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "פונקציה מתקדמת – דורש תיאום עם צוות התמיכה הטכנית של ה־AI Assistant",
+      "advancedFeatureWarning": "סוכנים מותאמים פועלים רק במופע MSF AI Assistant Foundry. מזהי סוכנים חייבים להיווצר על ידי הצוות הטכני של ה־AI Assistant ולתאם איתך לפני השימוש.",
+      "createNewAgent": "צור סוכן מותאם חדש",
+      "noAgentsTitle": "אין עדיין סוכנים מותאמים",
+      "noAgentsDescription": "צור את הסוכן המותאם הראשון שלך כדי להרחיב את יכולות ה-AI עם כלים והתנהגויות מיוחדים."
+    },
+    "advancedOptions": {
+      "title": "אפשרויות מתקדמות",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "הערה: מודל זה עושה שימוש בערכי טמפרטורה קבועים לצורך ביצועים עקביים.",
+      "reasoningEffort": "מאמץ הסקת מסקנות",
+      "minimal": "מינימלי",
+      "low": "נמוך",
+      "medium": "בינוני",
+      "high": "גבוה",
+      "verbosity": "רמת פירוט"
+    },
+    "searchMode": {
+      "title": "מצב חיפוש",
+      "subtitle": "ישתמש בחיפוש באינטרנט בעת הצורך",
+      "routingLabel": "ניתוב חיפוש:",
+      "whatsDifference": "מה ההבדל?",
+      "privacyFocused": "התמקדות בפרטיות (ברירת מחדל)",
+      "privacyFocusedDescription": "איטי יותר אך פרטי יותר",
+      "azureAgentMode": "מצב Azure AI Agent",
+      "azureAgentModeDescription": "מהיר יותר אך שומר את נתוני השיחה בענן",
+      "privacyInfoTitle": "מידע חשוב על פרטיות",
+      "privacyInfoDescription": "כל השיחה המלאה תישלח לסוכן Azure AI Foundry.",
+      "learnMoreDataStorage": "למידע נוסף על אחסון נתונים"
+    },
+    "customAgent": {
+      "label": "סוכן מותאם אישית:",
+      "description": "הסוכן פועל בגרסת Foundry של עוזר הבינה המלאכותית של MSF עם כל הכלים זמינים תמיד.",
+      "webSearch": "חיפוש ברשת בזמן אמת",
+      "codeInterpreter": "פענוח קוד וניתוח קבצים"
+    },
+    "header": {
+      "backToModels": "חזרה לדגמים",
+      "knowledgeCutoff": "חיתוך ידע: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "בסיסי",
+      "omni": "אומני",
+      "reasoning": "היגיון",
+      "agent": "סוכן"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "מודל בינה מלאכותית מבוסס GPT-4.1 עם חיפוש ברשת בזמן אמת באמצעות Bing. מספק מידע עדכני, בדיקת עובדות ומודעות לאירועים שוטפים. מתאים במיוחד למחקר שדורש מידע עדכני, ניתוח חדשות ואימות עובדות.",
+      "knowledgeCutoff": "חיפוש ברשת בזמן אמת"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "המודל המתקדם ביותר של OpenAI, מצטיין בהיגיון מורכב, יצירת קוד ופתרון בעיות טכניות. אידיאלי למשימות אנליטיות, אתגרי תכנות, מחקר והסברים מפורטים. מאפשר שליטה במאמץ ההיגיון ובאורך התגובה.",
+      "knowledgeCutoff": "6 באוגוסט 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "גרסה מהירה וחסכונית יותר של GPT-5, מותאמת למהירות תוך שמירה על איכות גבוהה. מושלם למשימות יומיומיות, שאלות מהירות, ניתוב כלים ויישומים הדורשים תגובה מיידית. איזון מצוין בין ביצועים ליעילות.",
+      "knowledgeCutoff": "6 באוגוסט 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "גרסה ייעודית של GPT-5 המותאמת לאינטראקציות שיחה ומודעות רגשית. מצטיינת בתקשורת אמפתית, תמיכה רגשית, כתיבה יוצרת, סיעור מוחות ודיאלוג טבעי. מתאימה לשיחות יומיומיות, ייעוץ ומשימות הדורשות רגישות רגשית.",
+      "knowledgeCutoff": "1 באוקטובר 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "המודל המתקדם ביותר של OpenAI להיגיון, עם יכולות פתרון בעיות פורצות דרך. מצוין במתמטיקה מורכבת, היגיון מדעי, אתגרי קוד ומשימות לוגיות מרובות שלבים. חלון הקשר מורחב 200K. תומך בשליטה במאמץ ההיגיון.",
+      "knowledgeCutoff": "8 באפריל 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "מודל מהיר וחסכוני מבית Meta. מצוין למשימות יומיומיות כמו כתיבה, סיכום וסיוע בסיסי בקוד. איזון טוב בין מהירות לאיכות לעבודה שוטפת.",
+      "knowledgeCutoff": "7 במאי 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "מודל מומחה להיגיון שמציג את דרך החשיבה שלו שלב אחר שלב. מצוין לבעיות מתמטיות, חידות לוגיות ולהבנה של מושגים מורכבים. צפה כיצד הוא פועל בזמן אמת.",
+      "knowledgeCutoff": "20 בינואר 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "מודל חזק ורב-תחומי, במיוחד לתכנות וכתיבה טכנית. מצוין לניפוי באגים, כתיבת תיעוד והסבר מושגים טכניים. מהיר ואמין לעבודה בפיתוח.",
+      "knowledgeCutoff": "16 באפריל 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "מודל רב-שימושי של xAI, ידוע בתגובות מעמיקות. מצוין לדיונים פתוחים, פרויקטים יצירתיים והתמודדות עם בעיות מורכבות.",
+      "knowledgeCutoff": "13 במאי 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "המודל המוביל של Anthropic עם יכולות יוצאות דופן בהיגיון, קידוד ויצירתיות. הטוב ביותר לניתוחים מורכבים, מחקר ומשימות הדורשות הבנה מעמיקה.",
+      "knowledgeCutoff": "ינואר 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "דגם Claude מאוזן, מציע ביצועים מצוינים בקידוד, ניתוח ויצירתיות. מעולה לשימוש יומיומי עם זמני תגובה מהירים.",
+      "knowledgeCutoff": "ינואר 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "הדור הקודם של דגם Claude Opus. מצוין למשימות קידוד מורכבות, ניתוח מעמיק והבנה מרובת רבדים.",
+      "knowledgeCutoff": "ינואר 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "הדגם המהיר והחסכוני של Claude, מותאם למשימות מהירות. מצוין לשאילתות פשוטות, סיכום ויישומים בנפח גבוה.",
+      "knowledgeCutoff": "ינואר 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "המודל המתקדם ביותר של OpenAI, מצטיין בהיגיון מורכב, יצירת קוד ופתרון בעיות טכניות. הטוב ביותר למשימות אנליטיות, אתגרי תכנות, מחקר והסברים מפורטים. תומך בהתאמת רמת ההיגיון ואורך התשובה.",
+      "knowledgeCutoff": "דצמבר 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "וריאנט ייעודי של GPT-5.2, מותאם לאינטראקציות שיח ולמודעות רגשית. מצטיין בתקשורת אמפתית, תמיכה נפשית, כתיבה יצירתית, סיעור מוחות ודיאלוג טבעי. מתאים ביותר לשיחות יומיומיות, תרחישי ייעוץ ומשימות הדורשות מודעות רגשית.",
+      "knowledgeCutoff": "דצמבר 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "חזרה לצ'אט",
+    "title": "הסבר על מצב חיפוש",
+    "subtitle": "הבנת אפשרויות החיפוש שלך ואיפה נשמרים הנתונים",
+    "quickComparison": "השוואה מהירה",
+    "noSearch": "ללא חיפוש",
+    "privacyFocused": "בדגש על פרטיות",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "מהירות תגובה",
+    "fastest": "הכי מהיר",
+    "slowerMultiStep": "איטי יותר (רב-שלבי)",
+    "fasterDirect": "מהיר יותר (ישיר)",
+    "fullConversationStored": "כל השיחה נשמרת בענן",
+    "whatsStoredInAzure": "מה נשמר ב-Azure",
+    "nothingStateless": "שום דבר (ללא שמירת מצב)",
+    "searchQueriesOnly": "רק שאילתות חיפוש",
+    "fullConversationHistory": "היסטוריית שיחה מלאה",
+    "modelAvailability": "זמינות המודלים",
+    "allModels": "כל המודלים",
+    "gpt41Only": "רק GPT-4.1",
+    "searchTurnedOff": "החיפוש כבוי",
+    "noSearchDescription": "התגובות המהירות ביותר ללא אפשרות חיפוש ברשת. כל השיחה נשארת בדפדפן שלך — שום דבר לא נשמר בענן.",
+    "viewDetailsBelow": "למידע נוסף, ראו את תרשים הזרימה הטכנית למטה.",
+    "viewTechnicalFlowDiagram": "הצג תרשים זרימה טכני",
+    "legend": "מקרא:",
+    "legendNoSearch": "הדפדפן שלך (אחסון מקומי) | שרת עוזר AI | Azure OpenAI (ללא שמירת מצב)",
+    "privacyFocusedMode": "מצב בדגש על פרטיות",
+    "default": "ברירת מחדל",
+    "privacyDescription": "משתמש בחיפוש ברשת במידת הצורך אך איטי יותר בשל ריבוי שלבים. רק שאילתות חיפוש נשמרות ב-Azure – כל שאר השיחה נשארת בדפדפן שלך.",
+    "legendPrivacy": "הדפדפן שלך (אחסון מקומי) | שרת עוזר AI | Azure AI Foundry (רק שאילתות חיפוש) | Azure OpenAI (ללא שמירת מצב)",
+    "azureAIFoundryMode": "מצב Azure AI Foundry",
+    "foundryDescription": "תגובות מהירות יותר עם חיפוש ברשת מובנה. כל השיחה שלך נשמרת במאגר הנתונים של Azure AI Foundry, לא רק בדפדפן שלך.",
+    "legendFoundry": "הדפדפן שלך (אחסון מקומי) | שרת עוזר AI | Azure AI Foundry Agent (שומר את כל השיחה)",
+    "whyTheseOptions": "מדוע אפשרויות אלו?",
+    "whyTheseOptionsText1": "אלו הן אפשרויות החיפוש הזמינות לאחר ש-Azure הפסיקה את Bing Search API, עליו הסתמך עוזר ה-AI במקור.",
+    "whyTheseOptionsText2": "הצוות בוחן אפשרויות חיפוש נוספות שממוקדות בפרטיות. שתי האפשרויות הנוכחיות משתמשות בחיפוש של Azure AI Foundry אך נבדלות בכמות הנתונים מהשיחה שמשותפת.",
+    "azureDeprecatedBingApi": "Azure הפסיקה את Bing Search API",
+    "footerNote": "שני המצבים שומרים את השיחה שלך מקומית בדפדפן. תוכל לעבור בין מצבים בכל עת בהגדרות המודל.",
+    "note": "הערה:",
+    "loadingDiagram": "טוען תרשים..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "בודק אחסון",
+      "analyzingData": "מנתח את הנתונים...",
+      "updateAvailable": "עדכון זמין",
+      "storageSpaceLimited": "שטח אחסון מוגבל",
+      "migratingData": "מעתיק נתונים",
+      "migrationComplete": "העברה הושלמה",
+      "partiallyComplete": "הושלם חלקית",
+      "migrationFailed": "העברה נכשלה"
+    },
+    "descriptions": {
+      "foundLegacyData": "מצאנו נתונים מגרסה קודמת. האם ברצונך להמיר אותם כדי שיוכלו לפעול עם המערכת המשופרת?",
+      "storageSpaceWarning": "הנתונים שלך דורשים יותר שטח ממה שזמין כעת. מומלץ להשתמש במצב העברה מדורג.",
+      "pleaseWait": "נא להמתין בזמן שאנו מעדכנים את הנתונים שלך...",
+      "dataIsSafe": "הנתונים המקוריים שלך בטוחים. באפשרותך לנסות שוב או לדלג בשלב זה.",
+      "itemsTooLarge": "פריטים אלה גדולים מדי לאחסון. ניתן לייצא אותם, לפנות מקום או להמשיך בלעדיהם.",
+      "settingsUpdated": "ההגדרות שלך עודכנו."
+    },
+    "benefits": {
+      "title": "יתרונות",
+      "fasterPerformance": "ביצועים מהירים יותר",
+      "betterReliability": "אמינות משופרת",
+      "dataPreserved": "הנתונים שלך נשמרו"
+    },
+    "options": {
+      "advancedOptions": "אפשרויות מתקדמות",
+      "useIncrementalMode": "השתמש במצב הדרגתי",
+      "slowerButSafer": "איטי יותר אך בטוח יותר",
+      "recommended": "מומלץ",
+      "deleteLegacyData": "מחק נתונים ישנים לאחר ההעברה",
+      "freesUpSpace": "פינוי מקום אחסון"
+    },
+    "actions": {
+      "skip": "דלג",
+      "migrateData": "העבר נתונים",
+      "migrateAnyway": "בצע העברה בכל מקרה",
+      "continue": "המשך",
+      "retry": "נסה שוב",
+      "exportBackupFirst": "ייצא גיבוי תחילה",
+      "exportSkippedItems": "ייצא פריטים מדולגים"
+    },
+    "quota": {
+      "availableSpace": "שטח פנוי",
+      "dataToMigrate": "נתונים להעברה",
+      "additionalSpaceNeeded": "נדרש מקום נוסף"
+    },
+    "progress": {
+      "migratingConversations": "מעביר שיחות",
+      "migratingPrompts": "מעביר הנחיות",
+      "migratingAgents": "מעביר סוכנים",
+      "finishingUp": "מסיים"
+    },
+    "results": {
+      "successfullyMigrated": "ההעברה הושלמה בהצלחה",
+      "notes": "הערות",
+      "couldNotMigrate": "לא ניתן היה להעביר",
+      "legacyDataDeleted": "הנתונים הישנים נמחקו",
+      "freed": "פונה"
+    },
+    "units": {
+      "conversation": "שיחה",
+      "conversations": "שיחות",
+      "folder": "תיקיה",
+      "folders": "תיקיות",
+      "prompt": "הנחיה",
+      "prompts": "הנחיות",
+      "customAgent": "סוכן מותאם",
+      "customAgents": "סוכנים מותאמים",
+      "item": "פריט",
+      "items": "פריטים"
+    }
+  },
+  "languageSwahili": "סוואהילי",
+  "welcomeBanner": {
+    "title": "ברוכים הבאים לעוזר ה-AI V2",
+    "whatsNew": "מה חדש",
+    "whatsNewQuestion": "מה חדש?"
+  },
+  "welcomeV2": {
+    "backToChat": "חזרה לצ'אט",
+    "title": "ברוכים הבאים לעוזר ה-AI V2",
+    "subtitle": "עיצוב מחודש עם תכונות חדשות וחזקות",
+    "webSearch": {
+      "title": "מצב חיפוש ברשת",
+      "description": "אפשר ל-AI גישה לחיפוש בזמן אמת ברשת עם אפשרויות ממוקדות פרטיות",
+      "quickAccess": "גישה מהירה:",
+      "quickAccessInstructions": "לחצו על כפתור ה-+ ליד שורת ההקלדה → בחרו \"חיפוש ברשת\"",
+      "setAsDefault": "הגדרה כברירת מחדל:",
+      "setAsDefaultInstructions": "פתחו הגדרות המודל והפעילו את מתג מצב חיפוש ברשת. בחרו בין:",
+      "privacyFocused": "ממוקד פרטיות (ברירת מחדל)",
+      "privacyFocusedDescription": "רק שאילתת חיפוש נשלחת החוצה",
+      "azureAIFoundry": "מצב Azure AI Foundry",
+      "azureAIFoundryDescription": "מהיר יותר, אך כל השיחה נשמרת חיצונית",
+      "learnMore": "למידע נוסף על מצבי החיפוש →"
+    },
+    "tones": {
+      "title": "טונים (פרופילי קול)",
+      "description": "שליטה בסגנון הכתיבה, הפורמליות והאופי של ה-AI",
+      "createTones": "1. צרו טונים:",
+      "createTonesInstructions": "פעולות מהירות בתפריט הצד → לשונית טונים",
+      "useTones": "2. השתמשו בטונים:",
+      "useTonesInstructions": "לחצו על תפריט הטון ליד שורת ההקלדה",
+      "exampleProfessionalDesc": "טון רשמי, עסקי",
+      "exampleCasualDesc": "חברי, שיחתי"
+    },
+    "aiAssist": {
+      "title": "סיוע AI ללחנים וטונים",
+      "description": "אפשרו ל-AI לסייע ליצור טונים ולחנים טובים ומהירים יותר",
+      "step1": "פתחו פעולות מהירות בתפריט הצד",
+      "step2": "עבורו ללשונית {prompts} או {tones}",
+      "step3": "חפשו את פנל העוזר החכם",
+      "getSuggestions": "קבלו הצעות",
+      "getSuggestionsDesc": "ה-AI בוחן את הטיוטה ומציע שיפורים",
+      "buildFromFiles": "יצירה מקבצים",
+      "buildFromFilesDesc": "העלו מסמכים ליצירת לחנים/טונים",
+      "testBeforeSaving": "בדקו לפני שמירה",
+      "testBeforeSavingDesc": "נסו לחנים/טונים בתצוגה מוקדמת בצ'אט חי",
+      "step2Prefix": "נווט אל",
+      "step2Suffix": "לשונית"
+    },
+    "customAgents": {
+      "title": "סוכנים מותאמים",
+      "advancedBadge": "מתקדם",
+      "description": "סוכני AI מתקדמים עם יכולות משופרות כגון חיפוש ברשת ופענוח קוד",
+      "advancedFeature": "תכונה מתקדמת",
+      "advancedFeatureDesc": "סוכנים מותאמים פועלים על Azure AI Foundry עם כלים ייעודיים. נדרש תיאום עם צוות התמיכה הטכני ליצירת מזהי סוכן.",
+      "howToAccess": "כיצד לגשת:",
+      "howToAccessInstructions": "הגדרות → מודלים → לשונית סוכנים",
+      "whatYouCanDo": "מה ניתן לעשות:",
+      "configureAgents": "הגדרת סוכנים עם יכולות ייעודיות",
+      "importExport": "ייבוא/ייצוא הגדרות סוכן",
+      "selectFromDropdown": "בחירת סוכנים מותאמים מרשימת המודלים"
+    },
+    "audioTranslation": {
+      "title": "תמלול אודיו עם תרגום",
+      "description": "תרגום אוטומטי של תמלילי שמע ליותר מ-13 שפות",
+      "howToUse": "איך להשתמש:",
+      "step1": "העלו קובץ שמע או וידאו",
+      "step2": "לחצו על רשימת השפות הנפתחת בממשק התמלול",
+      "step3": "בחרו את שפת היעד שלכם",
+      "availableLanguages": "שפות זמינות:",
+      "moreLanguages": "+7 נוספות"
+    },
+    "pwa": {
+      "title": "התקנה כאפליקציה לנייד",
+      "description": "Progressive Web App עם חוויית שימוש טבעית",
+      "installTip": "טיפ: התקינו לאחר ההתחברות כדי לשמור את האימות וליהנות מהחוויה הטובה ביותר.",
+      "howToInstall": "איך מתקינים:",
+      "step1": "היכנסו לחשבון שלכם",
+      "step2": "פתחו את ההגדרות → אפליקציה לנייד להוראות מפורטות",
+      "step3": "בנייד: לחצו על תפריט הדפדפן (⋮ או ⚙️)",
+      "step4": "חפשו \"הוספה למסך הבית\" או \"התקנת אפליקציה\"",
+      "step5": "עקבו אחר ההנחיות להתקנה",
+      "benefits": "יתרונות:",
+      "benefit1": "הפעלה כמו אפליקציה ישירות ממסך הבית",
+      "benefit2": "מסך מלא ללא ממשק הדפדפן",
+      "benefit3": "גישה לא מקוונת לשיחות ששמרתם"
+    }
+  },
+  "Professional": "מקצועי",
+  "Casual": "לא פורמלי"
 }
