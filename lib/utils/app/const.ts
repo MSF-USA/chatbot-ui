@@ -1,8 +1,11 @@
 import { env } from '@/config/environment';
 
-export const DEFAULT_SYSTEM_PROMPT =
-  env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
-  "You are a helpful AI assistant. Follow the user's instructions carefully. Respond using markdown.";
+// Re-export for backward compatibility
+// The actual implementation is now in systemPrompt.ts
+export {
+  DEFAULT_USER_PROMPT as DEFAULT_SYSTEM_PROMPT,
+  buildSystemPrompt,
+} from './systemPrompt';
 
 export const DEFAULT_TEMPERATURE = parseFloat(
   env.NEXT_PUBLIC_DEFAULT_TEMPERATURE,
