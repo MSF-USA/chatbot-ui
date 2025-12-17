@@ -604,7 +604,8 @@
     "thinking": "Inafikiria...",
     "viewReasoningProcess": "Angalia mchakato wa kufikiri",
     "collapseThinking": "Kunja mawazo",
-    "expandThinking": "Panua mawazo"
+    "expandThinking": "Panua mawazo",
+    "actionsDisabledForEmbed": "Tumia vidhibiti kwenye yaliyomo hapo juu"
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",
@@ -1258,6 +1259,96 @@
     "transcribing": "Inanakili...",
     "complete": "Imekamilika",
     "failed": "Imeshindikana",
-    "uploadFiles": "Pakia faili (sauti, video, au maandishi)"
+    "uploadFiles": "Pakia faili (sauti, video, au maandishi)",
+    "autoDetect": "Tambua kiotomatiki",
+    "fileNotAvailable": "Faili haipatikani kwa uhariri",
+    "failedToOpenInEditor": "Imeshindikana kufungua faili kwenye mhariri wa msimbo. Tafadhali jaribu tena.",
+    "extractingAudio": "Inatoa sauti...",
+    "queuedForTranscription": "Imesubiriwa kutafsiriwa",
+    "transcribed": "Imetafsiriwa",
+    "transcriptionFailed": "Imeshindikana kutafsiri",
+    "extractedFromSmaller": "Imetolewa kutoka {percent}% ndogo",
+    "textExtraction": "Kutoa maandishi",
+    "opening": "Inafunguka...",
+    "openInEditor": "Fungua kwenye Mhariri",
+    "failedToUpload": "Imeshindwa kupakia",
+    "attachment": "kiambatisho",
+    "attachments": "viambatisho"
+  },
+  "transcript": {
+    "originalTranscript": "Mwandiko Asili",
+    "transcript": "Mwandiko",
+    "transcriptionOf": "Mwandiko wa",
+    "translating": "Inatafsiri...",
+    "copied": "Imenakiliwa!",
+    "copy": "Nakili",
+    "download": "Pakua",
+    "translate": "Tafsiri",
+    "collapse": "Fupisha",
+    "expand": "Panua",
+    "expandHint": "Bonyeza \"Panua\" ili kuona mwandiko asili",
+    "listen": "Sikiliza mwandiko",
+    "stopAudio": "Simamisha sauti",
+    "openAsDocument": "Fungua kama hati"
+  },
+  "userMessage": {
+    "open": "Fungua",
+    "showFullMessage": "Onyesha ujumbe wote",
+    "collapse": "Fupisha",
+    "customTone": "Sauti Iliyobinafsishwa"
+  },
+  "codeBlock": {
+    "openInEditor": "Fungua kwenye mhariri"
+  },
+  "artifact": {
+    "noContentToExport": "Hakuna yaliyomo ya kusafirisha",
+    "exportedAsHtml": "Imesafirishwa kama HTML",
+    "exportedAsMarkdown": "Imesafirishwa kama Markdown",
+    "exportedAsText": "Imesafirishwa kama Maandishi",
+    "generatingPdf": "Inaunda PDF...",
+    "exportedAsPdf": "Imesafirishwa kama PDF",
+    "generatingDocx": "Inaunda DOCX...",
+    "exportedAsDocx": "Imesafirishwa kama DOCX",
+    "failedToExportAs": "Imeshindwa kusafirisha kama {format}",
+    "document": "Hati",
+    "switchToCodeEditor": "Badilisha hadi Editor ya Nambari",
+    "exportDocument": "Safirisha Hati",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Maandishi ya Kawaida (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Funga",
+    "editsNotSaved": "Marekebisho hayajahifadhiwa. Tuma kwa ujumbe au pakua ili kuhifadhi mabadiliko.",
+    "fileDownloaded": "Faili imepakuliwa",
+    "failedToDownload": "Imeshindwa kupakua",
+    "switchToDocumentEditor": "Badilisha hadi Editor ya Hati",
+    "download": "Pakua",
+    "fileIncludedWithMessage": "Faili na marekebisho vimejumuishwa kwenye ujumbe",
+    "closeEditor": "Funga kihariri",
+    "closeCodeEditor": "Funga kihariri cha msimbo",
+    "startWriting": "Anza kuandika...",
+    "toolbar": {
+      "bold": "Nene",
+      "italic": "Italiki",
+      "underline": "Piga mstari chini",
+      "strikethrough": "Piga mstari katikati",
+      "heading1": "Kichwa 1",
+      "heading2": "Kichwa 2",
+      "heading3": "Kichwa 3",
+      "bulletList": "Orodha ya nukta",
+      "numberedList": "Orodha ya nambari",
+      "codeBlock": "Kizuizi cha msimbo",
+      "quote": "Nukuu",
+      "insertTable": "Weka jedwali",
+      "table": "Jedwali",
+      "undo": "Rudisha",
+      "redo": "Fanya tena"
+    },
+    "codeEditor": {
+      "startTyping": "Anza kuandika au omba AI itengeneze msimbo",
+      "codeWillSync": "Msimbo utalinganishwa kiotomatiki kutoka kwa ujumbe wa gumzo",
+      "startCoding": "// Anza kuandika msimbo..."
+    }
   }
 }

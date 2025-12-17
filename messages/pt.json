@@ -559,7 +559,8 @@
     "thinking": "Pensando...",
     "viewReasoningProcess": "Ver processo de raciocínio",
     "collapseThinking": "Recolher pensamento",
-    "expandThinking": "Expandir pensamento"
+    "expandThinking": "Expandir pensamento",
+    "actionsDisabledForEmbed": "Use os controles no conteúdo incorporado acima"
   },
   "sidebar": {
     "collapseSidebar": "Recolher barra lateral",
@@ -1256,6 +1257,96 @@
     "transcribing": "Transcrevendo...",
     "complete": "Concluído",
     "failed": "Falha",
-    "uploadFiles": "Enviar arquivos (áudio, vídeo ou texto)"
+    "uploadFiles": "Enviar arquivos (áudio, vídeo ou texto)",
+    "autoDetect": "Detectar automaticamente",
+    "fileNotAvailable": "Arquivo não disponível para edição",
+    "failedToOpenInEditor": "Não foi possível abrir o arquivo no editor de código. Por favor, tente novamente.",
+    "extractingAudio": "Extraindo áudio...",
+    "queuedForTranscription": "Na fila para transcrição",
+    "transcribed": "Transcrito",
+    "transcriptionFailed": "Falha na transcrição",
+    "extractedFromSmaller": "Extraído de {percent}% menor",
+    "textExtraction": "Extração de texto",
+    "opening": "Abrindo...",
+    "openInEditor": "Abrir no Editor",
+    "failedToUpload": "Falha ao fazer upload",
+    "attachment": "anexo",
+    "attachments": "anexos"
+  },
+  "transcript": {
+    "originalTranscript": "Transcrição Original",
+    "transcript": "Transcrição",
+    "transcriptionOf": "Transcrição de",
+    "translating": "Traduzindo...",
+    "copied": "Copiado!",
+    "copy": "Copiar",
+    "download": "Baixar",
+    "translate": "Traduzir",
+    "collapse": "Recolher",
+    "expand": "Expandir",
+    "expandHint": "Clique em \"Expandir\" para ver a transcrição original",
+    "listen": "Ouvir transcrição",
+    "stopAudio": "Parar áudio",
+    "openAsDocument": "Abrir como documento"
+  },
+  "userMessage": {
+    "open": "Abrir",
+    "showFullMessage": "Mostrar mensagem completa",
+    "collapse": "Recolher",
+    "customTone": "Tom personalizado"
+  },
+  "codeBlock": {
+    "openInEditor": "Abrir no editor"
+  },
+  "artifact": {
+    "noContentToExport": "Nenhum conteúdo para exportar",
+    "exportedAsHtml": "Exportado como HTML",
+    "exportedAsMarkdown": "Exportado como Markdown",
+    "exportedAsText": "Exportado como Texto",
+    "generatingPdf": "Gerando PDF...",
+    "exportedAsPdf": "Exportado como PDF",
+    "generatingDocx": "Gerando DOCX...",
+    "exportedAsDocx": "Exportado como DOCX",
+    "failedToExportAs": "Falha ao exportar como {format}",
+    "document": "Documento",
+    "switchToCodeEditor": "Alternar para Editor de Código",
+    "exportDocument": "Exportar Documento",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Texto simples (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Fechar",
+    "editsNotSaved": "As edições não foram salvas. Envie por mensagem ou faça o download para salvar as edições.",
+    "fileDownloaded": "Arquivo baixado",
+    "failedToDownload": "Falha ao baixar",
+    "switchToDocumentEditor": "Alternar para Editor de Documentos",
+    "download": "Baixar",
+    "fileIncludedWithMessage": "Arquivo e edições incluídos na mensagem",
+    "closeEditor": "Fechar editor",
+    "closeCodeEditor": "Fechar editor de código",
+    "startWriting": "Comece a escrever...",
+    "toolbar": {
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "underline": "Sublinhado",
+      "strikethrough": "Tachado",
+      "heading1": "Título 1",
+      "heading2": "Título 2",
+      "heading3": "Título 3",
+      "bulletList": "Lista com marcadores",
+      "numberedList": "Lista numerada",
+      "codeBlock": "Bloco de código",
+      "quote": "Citação",
+      "insertTable": "Inserir tabela",
+      "table": "Tabela",
+      "undo": "Desfazer",
+      "redo": "Refazer"
+    },
+    "codeEditor": {
+      "startTyping": "Comece a digitar ou peça à IA para gerar código",
+      "codeWillSync": "O código será sincronizado automaticamente a partir das mensagens do chat",
+      "startCoding": "// Comece a programar..."
+    }
   }
 }

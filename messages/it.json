@@ -531,7 +531,8 @@
     "thinking": "Sto pensando...",
     "viewReasoningProcess": "Visualizza il processo di ragionamento",
     "collapseThinking": "Comprimi il ragionamento",
-    "expandThinking": "Espandi il ragionamento"
+    "expandThinking": "Espandi il ragionamento",
+    "actionsDisabledForEmbed": "Usa i controlli nel contenuto incorporato sopra"
   },
   "sidebar": {
     "collapseSidebar": "Comprimi barra laterale",
@@ -1258,6 +1259,96 @@
     "transcribing": "Trascrizione in corso...",
     "complete": "Completato",
     "failed": "Errore",
-    "uploadFiles": "Carica file (audio, video o testo)"
+    "uploadFiles": "Carica file (audio, video o testo)",
+    "autoDetect": "Rileva automaticamente",
+    "fileNotAvailable": "File non disponibile per la modifica",
+    "failedToOpenInEditor": "Impossibile aprire il file nell’editor di codice. Riprova.",
+    "extractingAudio": "Estrazione audio in corso...",
+    "queuedForTranscription": "In coda per la trascrizione",
+    "transcribed": "Trascritto",
+    "transcriptionFailed": "Trascrizione non riuscita",
+    "extractedFromSmaller": "Estratto da {percent}% più piccolo",
+    "textExtraction": "Estrazione testo",
+    "opening": "Apertura in corso...",
+    "openInEditor": "Apri nell’Editor",
+    "failedToUpload": "Caricamento non riuscito",
+    "attachment": "allegato",
+    "attachments": "allegati"
+  },
+  "transcript": {
+    "originalTranscript": "Trascrizione originale",
+    "transcript": "Trascrizione",
+    "transcriptionOf": "Trascrizione di",
+    "translating": "Traduzione in corso...",
+    "copied": "Copiato!",
+    "copy": "Copia",
+    "download": "Scarica",
+    "translate": "Traduci",
+    "collapse": "Comprimi",
+    "expand": "Espandi",
+    "expandHint": "Clicca su \"Espandi\" per vedere la trascrizione originale",
+    "listen": "Ascolta la trascrizione",
+    "stopAudio": "Interrompi audio",
+    "openAsDocument": "Apri come documento"
+  },
+  "userMessage": {
+    "open": "Apri",
+    "showFullMessage": "Mostra messaggio completo",
+    "collapse": "Comprimi",
+    "customTone": "Tono personalizzato"
+  },
+  "codeBlock": {
+    "openInEditor": "Apri nell’editor"
+  },
+  "artifact": {
+    "noContentToExport": "Nessun contenuto da esportare",
+    "exportedAsHtml": "Esportato come HTML",
+    "exportedAsMarkdown": "Esportato come Markdown",
+    "exportedAsText": "Esportato come Testo",
+    "generatingPdf": "Generazione PDF in corso...",
+    "exportedAsPdf": "Esportato come PDF",
+    "generatingDocx": "Generazione DOCX in corso...",
+    "exportedAsDocx": "Esportato come DOCX",
+    "failedToExportAs": "Esportazione non riuscita come {format}",
+    "document": "Documento",
+    "switchToCodeEditor": "Passa all'Editor di Codice",
+    "exportDocument": "Esporta Documento",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Testo semplice (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Chiudi",
+    "editsNotSaved": "Le modifiche non sono state salvate. Invia tramite messaggio o scarica per salvare le modifiche.",
+    "fileDownloaded": "File scaricato",
+    "failedToDownload": "Download non riuscito",
+    "switchToDocumentEditor": "Passa all'Editor di Documenti",
+    "download": "Scarica",
+    "fileIncludedWithMessage": "File ed eventuali modifiche inclusi nel messaggio",
+    "closeEditor": "Chiudi editor",
+    "closeCodeEditor": "Chiudi editor di codice",
+    "startWriting": "Inizia a scrivere...",
+    "toolbar": {
+      "bold": "Grassetto",
+      "italic": "Corsivo",
+      "underline": "Sottolineato",
+      "strikethrough": "Barrato",
+      "heading1": "Titolo 1",
+      "heading2": "Titolo 2",
+      "heading3": "Titolo 3",
+      "bulletList": "Elenco puntato",
+      "numberedList": "Elenco numerato",
+      "codeBlock": "Blocco di codice",
+      "quote": "Citazione",
+      "insertTable": "Inserisci tabella",
+      "table": "Tabella",
+      "undo": "Annulla",
+      "redo": "Ripristina"
+    },
+    "codeEditor": {
+      "startTyping": "Inizia a scrivere o chiedi all’AI di generare codice",
+      "codeWillSync": "Il codice si sincronizzerà automaticamente dai messaggi della chat",
+      "startCoding": "// Inizia a programmare..."
+    }
   }
 }

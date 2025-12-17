@@ -521,7 +521,8 @@
     "thinking": "Обробка...",
     "viewReasoningProcess": "Переглянути хід міркування",
     "collapseThinking": "Згорнути хід міркування",
-    "expandThinking": "Розгорнути хід міркування"
+    "expandThinking": "Розгорнути хід міркування",
+    "actionsDisabledForEmbed": "Використовуйте елементи керування у вбудованому вмісті вище"
   },
   "sidebar": {
     "collapseSidebar": "Згорнути бічну панель",
@@ -1258,6 +1259,96 @@
     "transcribing": "Транскрибування...",
     "complete": "Завершено",
     "failed": "Помилка",
-    "uploadFiles": "Завантажте файли (аудіо, відео або текст)"
+    "uploadFiles": "Завантажте файли (аудіо, відео або текст)",
+    "autoDetect": "Автовизначення",
+    "fileNotAvailable": "Файл недоступний для редагування",
+    "failedToOpenInEditor": "Не вдалося відкрити файл у редакторі коду. Спробуйте ще раз.",
+    "extractingAudio": "Витягуємо аудіо...",
+    "queuedForTranscription": "У черзі на транскрипцію",
+    "transcribed": "Транскрибовано",
+    "transcriptionFailed": "Не вдалося транскрибувати",
+    "extractedFromSmaller": "Отримано з {percent}% меншого",
+    "textExtraction": "Витяг тексту",
+    "opening": "Відкривається...",
+    "openInEditor": "Відкрити в редакторі",
+    "failedToUpload": "Не вдалося завантажити",
+    "attachment": "вкладення",
+    "attachments": "вкладення"
+  },
+  "transcript": {
+    "originalTranscript": "Оригінал стенограми",
+    "transcript": "Стенограма",
+    "transcriptionOf": "Стенограма для",
+    "translating": "Перекладається...",
+    "copied": "Скопійовано!",
+    "copy": "Копіювати",
+    "download": "Завантажити",
+    "translate": "Перекласти",
+    "collapse": "Згорнути",
+    "expand": "Розгорнути",
+    "expandHint": "Натисніть «Розгорнути», щоб переглянути оригінал стенограми",
+    "listen": "Прослухати стенограму",
+    "stopAudio": "Зупинити аудіо",
+    "openAsDocument": "Відкрити як документ"
+  },
+  "userMessage": {
+    "open": "Відкрити",
+    "showFullMessage": "Показати повне повідомлення",
+    "collapse": "Згорнути",
+    "customTone": "Власний тон"
+  },
+  "codeBlock": {
+    "openInEditor": "Відкрити в редакторі"
+  },
+  "artifact": {
+    "noContentToExport": "Немає вмісту для експорту",
+    "exportedAsHtml": "Експортовано як HTML",
+    "exportedAsMarkdown": "Експортовано як Markdown",
+    "exportedAsText": "Експортовано як текст",
+    "generatingPdf": "Створення PDF...",
+    "exportedAsPdf": "Експортовано як PDF",
+    "generatingDocx": "Створення DOCX...",
+    "exportedAsDocx": "Експортовано як DOCX",
+    "failedToExportAs": "Не вдалося експортувати у форматі {format}",
+    "document": "Документ",
+    "switchToCodeEditor": "Перейти до редактора коду",
+    "exportDocument": "Експортувати документ",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Текст (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Закрити",
+    "editsNotSaved": "Зміни не збережено. Надішліть через повідомлення або завантажте, щоб зберегти будь-які зміни.",
+    "fileDownloaded": "Файл завантажено",
+    "failedToDownload": "Не вдалося завантажити",
+    "switchToDocumentEditor": "Перейти до редактора документів",
+    "download": "Завантажити",
+    "fileIncludedWithMessage": "Файл і зміни включені до повідомлення",
+    "closeEditor": "Закрити редактор",
+    "closeCodeEditor": "Закрити редактор коду",
+    "startWriting": "Почніть писати...",
+    "toolbar": {
+      "bold": "Жирний",
+      "italic": "Курсив",
+      "underline": "Підкреслення",
+      "strikethrough": "Закреслений",
+      "heading1": "Заголовок 1",
+      "heading2": "Заголовок 2",
+      "heading3": "Заголовок 3",
+      "bulletList": "Маркірований список",
+      "numberedList": "Нумерований список",
+      "codeBlock": "Блок коду",
+      "quote": "Цитата",
+      "insertTable": "Вставити таблицю",
+      "table": "Таблиця",
+      "undo": "Скасувати",
+      "redo": "Повторити"
+    },
+    "codeEditor": {
+      "startTyping": "Почніть вводити або попросіть AI згенерувати код",
+      "codeWillSync": "Код буде автоматично синхронізовано з повідомленнями чату",
+      "startCoding": "// Почніть кодувати..."
+    }
   }
 }

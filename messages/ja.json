@@ -604,7 +604,8 @@
     "thinking": "考え中...",
     "viewReasoningProcess": "推論プロセスを表示",
     "collapseThinking": "思考を折りたたむ",
-    "expandThinking": "思考を展開"
+    "expandThinking": "思考を展開",
+    "actionsDisabledForEmbed": "上部の埋め込みコンテンツのコントロールを使用してください"
   },
   "sidebar": {
     "collapseSidebar": "サイドバーを折りたたむ",
@@ -1258,6 +1259,96 @@
     "transcribing": "書き起こし中...",
     "complete": "完了",
     "failed": "失敗しました",
-    "uploadFiles": "ファイルのアップロード（音声、動画、またはテキスト）"
+    "uploadFiles": "ファイルのアップロード（音声、動画、またはテキスト）",
+    "autoDetect": "自動判別",
+    "fileNotAvailable": "編集できるファイルがありません",
+    "failedToOpenInEditor": "ファイルをコードエディタで開けませんでした。再試行してください。",
+    "extractingAudio": "音声を抽出中...",
+    "queuedForTranscription": "文字起こし待機中",
+    "transcribed": "文字起こし完了",
+    "transcriptionFailed": "文字起こしに失敗しました",
+    "extractedFromSmaller": "{percent}%小さいものから抽出されました",
+    "textExtraction": "テキスト抽出",
+    "opening": "開いています...",
+    "openInEditor": "エディタで開く",
+    "failedToUpload": "アップロードに失敗しました",
+    "attachment": "添付ファイル",
+    "attachments": "添付ファイル"
+  },
+  "transcript": {
+    "originalTranscript": "元の書き起こし",
+    "transcript": "書き起こし",
+    "transcriptionOf": "書き起こし対象",
+    "translating": "翻訳中...",
+    "copied": "コピーしました！",
+    "copy": "コピー",
+    "download": "ダウンロード",
+    "translate": "翻訳",
+    "collapse": "折りたたむ",
+    "expand": "展開",
+    "expandHint": "「展開」をクリックして元の書き起こしを表示",
+    "listen": "書き起こしを再生",
+    "stopAudio": "音声を停止",
+    "openAsDocument": "ドキュメントとして開く"
+  },
+  "userMessage": {
+    "open": "開く",
+    "showFullMessage": "全文を表示",
+    "collapse": "折りたたむ",
+    "customTone": "カスタムトーン"
+  },
+  "codeBlock": {
+    "openInEditor": "エディタで開く"
+  },
+  "artifact": {
+    "noContentToExport": "エクスポートする内容がありません",
+    "exportedAsHtml": "HTMLとしてエクスポートしました",
+    "exportedAsMarkdown": "Markdownとしてエクスポートしました",
+    "exportedAsText": "テキストとしてエクスポートしました",
+    "generatingPdf": "PDFを生成中...",
+    "exportedAsPdf": "PDFとしてエクスポートしました",
+    "generatingDocx": "DOCXを生成中...",
+    "exportedAsDocx": "DOCXとしてエクスポートしました",
+    "failedToExportAs": "{format}でのエクスポートに失敗しました",
+    "document": "ドキュメント",
+    "switchToCodeEditor": "コードエディタに切り替え",
+    "exportDocument": "ドキュメントをエクスポート",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "プレーンテキスト (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "閉じる",
+    "editsNotSaved": "編集内容は保存されていません。保存するにはメッセージで送信するか、ダウンロードしてください。",
+    "fileDownloaded": "ファイルをダウンロードしました",
+    "failedToDownload": "ダウンロードに失敗しました",
+    "switchToDocumentEditor": "ドキュメントエディタに切り替え",
+    "download": "ダウンロード",
+    "fileIncludedWithMessage": "ファイルと編集内容がメッセージに含まれています",
+    "closeEditor": "エディターを閉じる",
+    "closeCodeEditor": "コードエディターを閉じる",
+    "startWriting": "入力を開始...",
+    "toolbar": {
+      "bold": "太字",
+      "italic": "斜体",
+      "underline": "下線",
+      "strikethrough": "取り消し線",
+      "heading1": "見出し1",
+      "heading2": "見出し2",
+      "heading3": "見出し3",
+      "bulletList": "箇条書きリスト",
+      "numberedList": "番号付きリスト",
+      "codeBlock": "コードブロック",
+      "quote": "引用",
+      "insertTable": "表を挿入",
+      "table": "表",
+      "undo": "元に戻す",
+      "redo": "やり直し"
+    },
+    "codeEditor": {
+      "startTyping": "入力を開始するか、AIにコード生成を依頼してください",
+      "codeWillSync": "コードはチャットメッセージから自動で同期されます",
+      "startCoding": "// コーディングを開始..."
+    }
   }
 }

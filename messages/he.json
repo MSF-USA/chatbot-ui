@@ -579,7 +579,8 @@
     "thinking": "חושב...",
     "viewReasoningProcess": "הצג תהליך חשיבה",
     "collapseThinking": "כווץ חשיבה",
-    "expandThinking": "הרחב חשיבה"
+    "expandThinking": "הרחב חשיבה",
+    "actionsDisabledForEmbed": "השתמש/י בכפתורים שבתוכן המשובץ למעלה"
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",
@@ -1258,6 +1259,96 @@
     "transcribing": "מעתיק...",
     "complete": "הושלם",
     "failed": "נכשל",
-    "uploadFiles": "העלה קבצים (אודיו, וידאו או טקסט)"
+    "uploadFiles": "העלה קבצים (אודיו, וידאו או טקסט)",
+    "autoDetect": "זיהוי אוטומטי",
+    "fileNotAvailable": "הקובץ אינו זמין לעריכה",
+    "failedToOpenInEditor": "לא ניתן לפתוח את הקובץ בעורך הקוד. אנא נסו שוב.",
+    "extractingAudio": "מחלץ שמע...",
+    "queuedForTranscription": "בתור לתמלול",
+    "transcribed": "תומלל",
+    "transcriptionFailed": "התמלול נכשל",
+    "extractedFromSmaller": "הופק מתוך קובץ קטן ב-{percent}%‏",
+    "textExtraction": "חילוץ טקסט",
+    "opening": "פותח...",
+    "openInEditor": "פתח בעורך",
+    "failedToUpload": "ההעלאה נכשלה",
+    "attachment": "קובץ מצורף",
+    "attachments": "קבצים מצורפים"
+  },
+  "transcript": {
+    "originalTranscript": "תמליל מקורי",
+    "transcript": "תמליל",
+    "transcriptionOf": "תמלול של",
+    "translating": "מתורגם...",
+    "copied": "הועתק!",
+    "copy": "העתקה",
+    "download": "הורדה",
+    "translate": "תרגום",
+    "collapse": "צמצום",
+    "expand": "הרחבה",
+    "expandHint": "לחץ/י \"הרחבה\" לצפייה בתמליל המקורי",
+    "listen": "האזנה לתמליל",
+    "stopAudio": "עצור שמע",
+    "openAsDocument": "פתח/י כמסמך"
+  },
+  "userMessage": {
+    "open": "פתח",
+    "showFullMessage": "הצג הודעה מלאה",
+    "collapse": "צמצם",
+    "customTone": "טון מותאם אישית"
+  },
+  "codeBlock": {
+    "openInEditor": "פתח בעורך"
+  },
+  "artifact": {
+    "noContentToExport": "אין תוכן לייצוא",
+    "exportedAsHtml": "יוצא כ-HTML",
+    "exportedAsMarkdown": "יוצא כ-Markdown",
+    "exportedAsText": "יוצא כטקסט",
+    "generatingPdf": "יוצר PDF...",
+    "exportedAsPdf": "יוצא כ-PDF",
+    "generatingDocx": "יוצר DOCX...",
+    "exportedAsDocx": "יוצא כ-DOCX",
+    "failedToExportAs": "הייצוא כ-{format} נכשל",
+    "document": "מסמך",
+    "switchToCodeEditor": "מעבר לעורך קוד",
+    "exportDocument": "ייצוא מסמך",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "טקסט רגיל (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "סגור",
+    "editsNotSaved": "השינויים לא נשמרו. יש לשלוח בהודעה או להוריד כדי לשמור את השינויים.",
+    "fileDownloaded": "הקובץ ירד",
+    "failedToDownload": "ההורדה נכשלה",
+    "switchToDocumentEditor": "מעבר לעורך מסמכים",
+    "download": "הורדה",
+    "fileIncludedWithMessage": "קובץ ועריכות צורפו להודעה",
+    "closeEditor": "סגור עורך",
+    "closeCodeEditor": "סגור עורך קוד",
+    "startWriting": "התחילו לכתוב...",
+    "toolbar": {
+      "bold": "מודגש",
+      "italic": "נטוי",
+      "underline": "קו תחתי",
+      "strikethrough": "קו חוצה",
+      "heading1": "כותרת 1",
+      "heading2": "כותרת 2",
+      "heading3": "כותרת 3",
+      "bulletList": "רשימת תבליטים",
+      "numberedList": "רשימה ממוספרת",
+      "codeBlock": "בלוק קוד",
+      "quote": "ציטוט",
+      "insertTable": "הוספת טבלה",
+      "table": "טבלה",
+      "undo": "ביטול",
+      "redo": "ביצוע שוב"
+    },
+    "codeEditor": {
+      "startTyping": "התחילו להקליד או בקשו מה-AI לייצר קוד",
+      "codeWillSync": "הקוד יסונכרן אוטומטית מהודעות הצ'אט",
+      "startCoding": "// התחילו לקודד..."
+    }
   }
 }

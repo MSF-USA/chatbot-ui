@@ -571,7 +571,8 @@
     "keepOriginalModel": "Pertahankan model asli",
     "alwaysSwitchToModel": "Selalu beralih ke model ini",
     "audioFromOriginal": "Audio dari asli",
-    "audioFromTranslation": "Audio dari terjemahan"
+    "audioFromTranslation": "Audio dari terjemahan",
+    "actionsDisabledForEmbed": "Gunakan kontrol pada konten yang tersemat di atas"
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",
@@ -1258,6 +1259,96 @@
     "transcribing": "Mentranskripsi...",
     "complete": "Selesai",
     "failed": "Gagal",
-    "uploadFiles": "Unggah berkas (audio, video, atau teks)"
+    "uploadFiles": "Unggah berkas (audio, video, atau teks)",
+    "autoDetect": "Deteksi otomatis",
+    "fileNotAvailable": "File tidak tersedia untuk diedit",
+    "failedToOpenInEditor": "Gagal membuka file di editor kode. Silakan coba lagi.",
+    "extractingAudio": "Mengambil audio...",
+    "queuedForTranscription": "Antri untuk transkripsi",
+    "transcribed": "Telah ditranskripsi",
+    "transcriptionFailed": "Transkripsi gagal",
+    "extractedFromSmaller": "Diambil dari {percent}% lebih kecil",
+    "textExtraction": "Ekstraksi teks",
+    "opening": "Membuka...",
+    "openInEditor": "Buka di Editor",
+    "failedToUpload": "Gagal mengunggah",
+    "attachment": "lampiran",
+    "attachments": "lampiran"
+  },
+  "transcript": {
+    "originalTranscript": "Transkrip Asli",
+    "transcript": "Transkrip",
+    "transcriptionOf": "Transkripsi dari",
+    "translating": "Menerjemahkan...",
+    "copied": "Tersalin!",
+    "copy": "Salin",
+    "download": "Unduh",
+    "translate": "Terjemahkan",
+    "collapse": "Tutup",
+    "expand": "Perluas",
+    "expandHint": "Klik \"Perluas\" untuk melihat transkrip asli",
+    "listen": "Dengarkan transkrip",
+    "stopAudio": "Hentikan audio",
+    "openAsDocument": "Buka sebagai dokumen"
+  },
+  "userMessage": {
+    "open": "Buka",
+    "showFullMessage": "Tampilkan pesan lengkap",
+    "collapse": "Tutup",
+    "customTone": "Nada Khusus"
+  },
+  "codeBlock": {
+    "openInEditor": "Buka di editor"
+  },
+  "artifact": {
+    "noContentToExport": "Tidak ada konten untuk diekspor",
+    "exportedAsHtml": "Diekspor sebagai HTML",
+    "exportedAsMarkdown": "Diekspor sebagai Markdown",
+    "exportedAsText": "Diekspor sebagai Teks",
+    "generatingPdf": "Membuat PDF...",
+    "exportedAsPdf": "Diekspor sebagai PDF",
+    "generatingDocx": "Membuat DOCX...",
+    "exportedAsDocx": "Diekspor sebagai DOCX",
+    "failedToExportAs": "Gagal mengekspor sebagai {format}",
+    "document": "Dokumen",
+    "switchToCodeEditor": "Beralih ke Code Editor",
+    "exportDocument": "Ekspor Dokumen",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Teks Biasa (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Tutup",
+    "editsNotSaved": "Perubahan belum disimpan. Kirim lewat pesan atau unduh untuk menyimpan perubahan.",
+    "fileDownloaded": "File telah diunduh",
+    "failedToDownload": "Gagal mengunduh",
+    "switchToDocumentEditor": "Beralih ke Document Editor",
+    "download": "Unduh",
+    "fileIncludedWithMessage": "File dan suntingan disertakan dengan pesan",
+    "closeEditor": "Tutup editor",
+    "closeCodeEditor": "Tutup editor kode",
+    "startWriting": "Mulai menulis...",
+    "toolbar": {
+      "bold": "Tebal",
+      "italic": "Miring",
+      "underline": "Garis bawah",
+      "strikethrough": "Coret",
+      "heading1": "Judul 1",
+      "heading2": "Judul 2",
+      "heading3": "Judul 3",
+      "bulletList": "Daftar berpoin",
+      "numberedList": "Daftar bernomor",
+      "codeBlock": "Blok kode",
+      "quote": "Kutipan",
+      "insertTable": "Sisipkan tabel",
+      "table": "Tabel",
+      "undo": "Batalkan",
+      "redo": "Ulangi"
+    },
+    "codeEditor": {
+      "startTyping": "Mulai mengetik atau minta AI untuk membuat kode",
+      "codeWillSync": "Kode akan tersinkronisasi otomatis dari pesan chat",
+      "startCoding": "// Mulai coding..."
+    }
   }
 }

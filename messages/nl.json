@@ -569,7 +569,8 @@
     "thinking": "Nadenken...",
     "viewReasoningProcess": "Redeneerproces bekijken",
     "collapseThinking": "Denken inklappen",
-    "expandThinking": "Denken uitklappen"
+    "expandThinking": "Denken uitklappen",
+    "actionsDisabledForEmbed": "Gebruik de bedieningselementen in de ingesloten inhoud hierboven"
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",
@@ -1258,6 +1259,96 @@
     "transcribing": "Transcriberen...",
     "complete": "Voltooid",
     "failed": "Mislukt",
-    "uploadFiles": "Bestanden uploaden (audio, video of tekst)"
+    "uploadFiles": "Bestanden uploaden (audio, video of tekst)",
+    "autoDetect": "Automatisch detecteren",
+    "fileNotAvailable": "Bestand niet beschikbaar voor bewerken",
+    "failedToOpenInEditor": "Kan bestand niet openen in code-editor. Probeer het opnieuw.",
+    "extractingAudio": "Audio wordt geëxtraheerd...",
+    "queuedForTranscription": "In de wachtrij voor transcriptie",
+    "transcribed": "Getranscribeerd",
+    "transcriptionFailed": "Transcriptie mislukt",
+    "extractedFromSmaller": "Geëxtraheerd uit {percent}% kleiner",
+    "textExtraction": "Tekstextractie",
+    "opening": "Bezig met openen...",
+    "openInEditor": "Openen in editor",
+    "failedToUpload": "Uploaden mislukt",
+    "attachment": "bijlage",
+    "attachments": "bijlagen"
+  },
+  "transcript": {
+    "originalTranscript": "Origineel transcript",
+    "transcript": "Transcript",
+    "transcriptionOf": "Transcriptie van",
+    "translating": "Vertalen...",
+    "copied": "Gekopieerd!",
+    "copy": "Kopiëren",
+    "download": "Downloaden",
+    "translate": "Vertalen",
+    "collapse": "Samenvouwen",
+    "expand": "Uitvouwen",
+    "expandHint": "Klik op \"Uitvouwen\" om het origineel te bekijken",
+    "listen": "Transcript beluisteren",
+    "stopAudio": "Audio stoppen",
+    "openAsDocument": "Openen als document"
+  },
+  "userMessage": {
+    "open": "Openen",
+    "showFullMessage": "Toon volledige bericht",
+    "collapse": "Samenvouwen",
+    "customTone": "Aangepaste toon"
+  },
+  "codeBlock": {
+    "openInEditor": "Openen in editor"
+  },
+  "artifact": {
+    "noContentToExport": "Geen inhoud om te exporteren",
+    "exportedAsHtml": "Geëxporteerd als HTML",
+    "exportedAsMarkdown": "Geëxporteerd als Markdown",
+    "exportedAsText": "Geëxporteerd als Tekst",
+    "generatingPdf": "PDF wordt gegenereerd...",
+    "exportedAsPdf": "Geëxporteerd als PDF",
+    "generatingDocx": "DOCX wordt gegenereerd...",
+    "exportedAsDocx": "Geëxporteerd als DOCX",
+    "failedToExportAs": "Exporteren als {format} mislukt",
+    "document": "Document",
+    "switchToCodeEditor": "Overschakelen naar Code-editor",
+    "exportDocument": "Document exporteren",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Platte tekst (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Sluiten",
+    "editsNotSaved": "Wijzigingen zijn niet opgeslagen. Verstuur een bericht of download om wijzigingen te bewaren.",
+    "fileDownloaded": "Bestand gedownload",
+    "failedToDownload": "Downloaden mislukt",
+    "switchToDocumentEditor": "Overschakelen naar Document-editor",
+    "download": "Downloaden",
+    "fileIncludedWithMessage": "Bestand en wijzigingen bijgevoegd bij bericht",
+    "closeEditor": "Editor sluiten",
+    "closeCodeEditor": "Code-editor sluiten",
+    "startWriting": "Begin met schrijven...",
+    "toolbar": {
+      "bold": "Vet",
+      "italic": "Cursief",
+      "underline": "Onderstrepen",
+      "strikethrough": "Doorhalen",
+      "heading1": "Kop 1",
+      "heading2": "Kop 2",
+      "heading3": "Kop 3",
+      "bulletList": "Opsommingstekens",
+      "numberedList": "Genummerde lijst",
+      "codeBlock": "Codeblok",
+      "quote": "Citaat",
+      "insertTable": "Tabel invoegen",
+      "table": "Tabel",
+      "undo": "Ongedaan maken",
+      "redo": "Opnieuw"
+    },
+    "codeEditor": {
+      "startTyping": "Begin met typen of vraag AI om code te genereren",
+      "codeWillSync": "Code wordt automatisch gesynchroniseerd met chatberichten",
+      "startCoding": "// Begin met coderen..."
+    }
   }
 }

@@ -602,7 +602,8 @@
     "thinking": "చింతిస్తున్నాను...",
     "viewReasoningProcess": "తర్క ప్రాసెస్‌ను చూడండి",
     "collapseThinking": "ఆలోచనను ముడిచేయి",
-    "expandThinking": "ఆలోచనను విస్తరించు"
+    "expandThinking": "ఆలోచనను విస్తరించు",
+    "actionsDisabledForEmbed": "పైన ఇముడిన కంటెంట్‌లోని నియంత్రణలను వినియోగించండి"
   },
   "sidebar": {
     "collapseSidebar": "సైడ్‌బార్‌ను కుదించండి",
@@ -1258,6 +1259,96 @@
     "transcribing": "ట్రాన్స్‌క్రైబ్ చేస్తోంది...",
     "complete": "పూర్తి",
     "failed": "విఫలమైంది",
-    "uploadFiles": "ఫైళ్లను అప్‌లోడ్ చేయండి (ఆడియో, వీడియో లేదా వచనం)"
+    "uploadFiles": "ఫైళ్లను అప్‌లోడ్ చేయండి (ఆడియో, వీడియో లేదా వచనం)",
+    "autoDetect": "స్వయంచాలకంగా గుర్తించండి",
+    "fileNotAvailable": "ఫైల్ సంపాదనకు అందుబాటులో లేదు",
+    "failedToOpenInEditor": "కోడ్ ఎడిటర్‌లో ఫైల్ తెరవడంలో విఫలం. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+    "extractingAudio": "ఆడియోను వెలికితీస్తోంది...",
+    "queuedForTranscription": "ట్రాన్స్‌క్రిప్షన్ కోసం క్యూ చేయబడింది",
+    "transcribed": "ట్రాన్స్‌క్రైబ్ చేయబడింది",
+    "transcriptionFailed": "ట్రాన్స్‌క్రిప్షన్ విఫలమైంది",
+    "extractedFromSmaller": "{percent}% చిన్నదిగా వెలికితీసింది",
+    "textExtraction": "పాఠ్యాన్ని వెలికితీసే పని",
+    "opening": "తెరుస్తోంది...",
+    "openInEditor": "ఎడిటర్‌లో తెరవండి",
+    "failedToUpload": "ఎక్సెల్ లోడ్ చేయడంలో విఫలమైంది",
+    "attachment": "అటాచ్మెంట్",
+    "attachments": "అటాచ్మెంట్లు"
+  },
+  "transcript": {
+    "originalTranscript": "ఒరిజినల్ ట్రాన్స్‌క్రిప్ట్",
+    "transcript": "ట్రాన్స్‌క్రిప్ట్",
+    "transcriptionOf": "దీని ట్రాన్స్క్రిప్షన్",
+    "translating": "అనువదిస్తున్నాము...",
+    "copied": "కాపీ అయింది!",
+    "copy": "కాపీ చేయండి",
+    "download": "డౌన్‌లోడ్",
+    "translate": "అనువదించు",
+    "collapse": "అਕ్రమించు",
+    "expand": "వिस्तరించు",
+    "expandHint": "కొనసాగించడానికి \"విస్తరించు\"పై క్లిక్ చేయండి",
+    "listen": "ట్రాన్స్‌క్రిప్ట్‌ను వినండి",
+    "stopAudio": "ఆడియోని ఆపు",
+    "openAsDocument": "పత్రంగా తెరువండి"
+  },
+  "userMessage": {
+    "open": "తెరవండి",
+    "showFullMessage": "పూర్తి సందేశాన్ని చూపించండి",
+    "collapse": "కుదించండి",
+    "customTone": "అనుకూల టోన్"
+  },
+  "codeBlock": {
+    "openInEditor": "ఎడిటర్‌లో తెరవండి"
+  },
+  "artifact": {
+    "noContentToExport": "ఎగుమతిచేయడానికి కంటెంట్ లేదు",
+    "exportedAsHtml": "HTML‌గా ఎగుమతించబడింది",
+    "exportedAsMarkdown": "Markdown‌గా ఎగుమతించబడింది",
+    "exportedAsText": "టెక్స్ట్‌గా ఎగుమతించబడింది",
+    "generatingPdf": "PDF రూపొందిస్తోంది...",
+    "exportedAsPdf": "PDF‌గా ఎగుమతించబడింది",
+    "generatingDocx": "DOCX రూపొందిస్తోంది...",
+    "exportedAsDocx": "DOCX‌గా ఎగుమతించబడింది",
+    "failedToExportAs": "{format}‌గా ఎగుమతి విఫలమైంది",
+    "document": "పత్రం",
+    "switchToCodeEditor": "కోడ్ ఎడిటర్‌కు మారండి",
+    "exportDocument": "పత్రాన్ని ఎగుమతి చేయండి",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Plain Text (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "మూసివేయండి",
+    "editsNotSaved": "మార్పులు సేవ్ కాలేదు. మార్పులను సేవ్ చేయడానికి సందేశం ద్వారా పంపించండి లేదా డౌన్‌లోడ్ చేసుకోండి.",
+    "fileDownloaded": "ఫైలు డౌన్‌లోడ్ అయింది",
+    "failedToDownload": "డౌన్‌లోడ్ విఫలమైంది",
+    "switchToDocumentEditor": "డాక్యుమెంట్ ఎడిటర్‌కు మారండి",
+    "download": "డౌన్‌లోడ్",
+    "fileIncludedWithMessage": "ఫైల్ మరియు మార్పులు సందేశంతో పంపబడ్డాయి",
+    "closeEditor": "ఎడిటర్‌ను మూసివేయండి",
+    "closeCodeEditor": "కోడ్ ఎడిటర్‌ను మూసివేయండి",
+    "startWriting": "వ్రాయడం ప్రారంభించండి...",
+    "toolbar": {
+      "bold": "బోల్డ్",
+      "italic": "ఇటాలిక్",
+      "underline": "అండర్‌లైన్",
+      "strikethrough": "స్రైక్‌త్రూ",
+      "heading1": "హెడింగ్ 1",
+      "heading2": "హెడింగ్ 2",
+      "heading3": "హెడింగ్ 3",
+      "bulletList": "బులెట్ జాబితా",
+      "numberedList": "సంఖ్యల జాబితా",
+      "codeBlock": "కోడ్ బ్లాక్",
+      "quote": "కోటేషన్",
+      "insertTable": "పట్టికను చేర్చండి",
+      "table": "పట్టిక",
+      "undo": "అన్డూ",
+      "redo": "రీడూ"
+    },
+    "codeEditor": {
+      "startTyping": "టైప్ చేయడం ప్రారంభించండి లేదా AIని కోడ్ రూపొందించమని అడగండి",
+      "codeWillSync": "కోడ్ చాట్ సందేశాల నుండి ఆటోమేటిక్‌గా సింక్ అవుతుంది",
+      "startCoding": "// కోడింగ్ ప్రారంభించండి..."
+    }
   }
 }

@@ -604,7 +604,8 @@
     "thinking": "Tänker...",
     "viewReasoningProcess": "Visa resonemangsprocess",
     "collapseThinking": "Dölj resonemang",
-    "expandThinking": "Expandera resonemang"
+    "expandThinking": "Expandera resonemang",
+    "actionsDisabledForEmbed": "Använd kontrollerna i det inbäddade innehållet ovan"
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",
@@ -1258,6 +1259,96 @@
     "transcribing": "Transkriberar...",
     "complete": "Färdig",
     "failed": "Misslyckades",
-    "uploadFiles": "Ladda upp filer (ljud, video eller text)"
+    "uploadFiles": "Ladda upp filer (ljud, video eller text)",
+    "autoDetect": "Autodetektera",
+    "fileNotAvailable": "Filen är inte tillgänglig för redigering",
+    "failedToOpenInEditor": "Kunde inte öppna filen i kodredigeraren. Försök igen.",
+    "extractingAudio": "Extraherar ljud...",
+    "queuedForTranscription": "Köad för transkribering",
+    "transcribed": "Transkriberad",
+    "transcriptionFailed": "Transkribering misslyckades",
+    "extractedFromSmaller": "Extraherad från {percent}% mindre",
+    "textExtraction": "Textextraktion",
+    "opening": "Öppnar...",
+    "openInEditor": "Öppna i redigerare",
+    "failedToUpload": "Uppladdning misslyckades",
+    "attachment": "bilaga",
+    "attachments": "bilagor"
+  },
+  "transcript": {
+    "originalTranscript": "Originaltranskript",
+    "transcript": "Transkript",
+    "transcriptionOf": "Transkription av",
+    "translating": "Översätter...",
+    "copied": "Kopierat!",
+    "copy": "Kopiera",
+    "download": "Ladda ner",
+    "translate": "Översätt",
+    "collapse": "Dölj",
+    "expand": "Visa mer",
+    "expandHint": "Klicka på \"Visa mer\" för att se originaltranskriptet",
+    "listen": "Lyssna på transkript",
+    "stopAudio": "Stoppa ljud",
+    "openAsDocument": "Öppna som dokument"
+  },
+  "userMessage": {
+    "open": "Öppna",
+    "showFullMessage": "Visa hela meddelandet",
+    "collapse": "Fäll ihop",
+    "customTone": "Anpassad ton"
+  },
+  "codeBlock": {
+    "openInEditor": "Öppna i redigerare"
+  },
+  "artifact": {
+    "noContentToExport": "Inget innehåll att exportera",
+    "exportedAsHtml": "Exporterad som HTML",
+    "exportedAsMarkdown": "Exporterad som Markdown",
+    "exportedAsText": "Exporterad som text",
+    "generatingPdf": "Genererar PDF...",
+    "exportedAsPdf": "Exporterad som PDF",
+    "generatingDocx": "Genererar DOCX...",
+    "exportedAsDocx": "Exporterad som DOCX",
+    "failedToExportAs": "Misslyckades att exportera som {format}",
+    "document": "Dokument",
+    "switchToCodeEditor": "Byt till kodredigerare",
+    "exportDocument": "Exportera dokument",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Oformaterad text (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Stäng",
+    "editsNotSaved": "Ändringar är inte sparade. Skicka via meddelande eller ladda ner för att spara ändringar.",
+    "fileDownloaded": "Filen har laddats ner",
+    "failedToDownload": "Misslyckades att ladda ner",
+    "switchToDocumentEditor": "Byt till dokumentredigerare",
+    "download": "Ladda ner",
+    "fileIncludedWithMessage": "Fil och ändringar bifogas med meddelandet",
+    "closeEditor": "Stäng redigeraren",
+    "closeCodeEditor": "Stäng kodredigeraren",
+    "startWriting": "Börja skriva...",
+    "toolbar": {
+      "bold": "Fetstil",
+      "italic": "Kursiv",
+      "underline": "Understruken",
+      "strikethrough": "Genomstruken",
+      "heading1": "Rubrik 1",
+      "heading2": "Rubrik 2",
+      "heading3": "Rubrik 3",
+      "bulletList": "Punktlista",
+      "numberedList": "Numrerad lista",
+      "codeBlock": "Kodblock",
+      "quote": "Citat",
+      "insertTable": "Infoga tabell",
+      "table": "Tabell",
+      "undo": "Ångra",
+      "redo": "Gör om"
+    },
+    "codeEditor": {
+      "startTyping": "Börja skriva eller be AI generera kod",
+      "codeWillSync": "Kod synkroniseras automatiskt från chattmeddelanden",
+      "startCoding": "// Börja koda..."
+    }
   }
 }

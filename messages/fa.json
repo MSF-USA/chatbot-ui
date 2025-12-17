@@ -529,7 +529,8 @@
     "thinking": "در حال تفکر...",
     "viewReasoningProcess": "مشاهده فرایند استدلال",
     "collapseThinking": "جمع کردن تفکر",
-    "expandThinking": "گسترش تفکر"
+    "expandThinking": "گسترش تفکر",
+    "actionsDisabledForEmbed": "از کنترل‌های موجود در محتوای تعبیه‌شده بالا استفاده کنید"
   },
   "sidebar": {
     "collapseSidebar": "بستن نوار کناری",
@@ -1258,6 +1259,96 @@
     "transcribing": "در حال تبدیل گفتار به نوشتار...",
     "complete": "تکمیل شد",
     "failed": "ناموفق",
-    "uploadFiles": "فایل‌ها را بارگذاری کنید (صوتی، تصویری یا متنی)"
+    "uploadFiles": "فایل‌ها را بارگذاری کنید (صوتی، تصویری یا متنی)",
+    "autoDetect": "تشخیص خودکار",
+    "fileNotAvailable": "فایل برای ویرایش در دسترس نیست",
+    "failedToOpenInEditor": "باز کردن فایل در ویرایشگر کد ناموفق بود. لطفاً دوباره تلاش کنید.",
+    "extractingAudio": "در حال استخراج صدا...",
+    "queuedForTranscription": "در صف تبدیل به متن",
+    "transcribed": "تبدیل به متن شد",
+    "transcriptionFailed": "تبدیل به متن ناموفق بود",
+    "extractedFromSmaller": "از فایل {percent}% کوچکتر استخراج شد",
+    "textExtraction": "استخراج متن",
+    "opening": "در حال باز کردن...",
+    "openInEditor": "باز کردن در ویرایشگر",
+    "failedToUpload": "بارگذاری ناموفق بود",
+    "attachment": "پیوست",
+    "attachments": "پیوست‌ها"
+  },
+  "transcript": {
+    "originalTranscript": "رونویس اصلی",
+    "transcript": "رونویس",
+    "transcriptionOf": "رونویسیِ",
+    "translating": "در حال ترجمه...",
+    "copied": "کپی شد!",
+    "copy": "کپی",
+    "download": "دانلود",
+    "translate": "ترجمه",
+    "collapse": "بستن",
+    "expand": "باز کردن",
+    "expandHint": "برای مشاهده رونویس اصلی روی «باز کردن» کلیک کنید",
+    "listen": "گوش دادن به رونویس",
+    "stopAudio": "توقف صدا",
+    "openAsDocument": "باز کردن به‌صورت سند"
+  },
+  "userMessage": {
+    "open": "باز کردن",
+    "showFullMessage": "نمایش پیام کامل",
+    "collapse": "جمع کردن",
+    "customTone": "لحن سفارشی"
+  },
+  "codeBlock": {
+    "openInEditor": "باز کردن در ویرایشگر"
+  },
+  "artifact": {
+    "noContentToExport": "محتوایی برای صدور وجود ندارد",
+    "exportedAsHtml": "به صورت HTML صادر شد",
+    "exportedAsMarkdown": "به صورت Markdown صادر شد",
+    "exportedAsText": "به صورت متن صادر شد",
+    "generatingPdf": "در حال تولید PDF...",
+    "exportedAsPdf": "به صورت PDF صادر شد",
+    "generatingDocx": "در حال تولید DOCX...",
+    "exportedAsDocx": "به صورت DOCX صادر شد",
+    "failedToExportAs": "صدور به فرمت {format} انجام نشد",
+    "document": "سند",
+    "switchToCodeEditor": "تغییر به ویرایشگر کد",
+    "exportDocument": "صدور سند",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "متن ساده (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "بستن",
+    "editsNotSaved": "ویرایش‌ها ذخیره نشده‌اند. برای ذخیره، پیام ارسال کنید یا دانلود نمایید.",
+    "fileDownloaded": "فایل دانلود شد",
+    "failedToDownload": "دانلود انجام نشد",
+    "switchToDocumentEditor": "تغییر به ویرایشگر سند",
+    "download": "دانلود",
+    "fileIncludedWithMessage": "فایل و ویرایش‌ها همراه پیام ارسال شده‌اند",
+    "closeEditor": "بستن ویرایشگر",
+    "closeCodeEditor": "بستن ویرایشگر کد",
+    "startWriting": "شروع به نوشتن...",
+    "toolbar": {
+      "bold": "درشت",
+      "italic": "مورب",
+      "underline": "زیرخط‌دار",
+      "strikethrough": "خط خورده",
+      "heading1": "سرفصل ۱",
+      "heading2": "سرفصل ۲",
+      "heading3": "سرفصل ۳",
+      "bulletList": "فهرست گلوله‌ای",
+      "numberedList": "فهرست شماره‌دار",
+      "codeBlock": "بلوک کد",
+      "quote": "نقل قول",
+      "insertTable": "درج جدول",
+      "table": "جدول",
+      "undo": "واگرد",
+      "redo": "انجام دوباره"
+    },
+    "codeEditor": {
+      "startTyping": "شروع به تایپ یا درخواست تولید کد از AI",
+      "codeWillSync": "کد به‌طور خودکار از پیام‌های چت همگام می‌شود",
+      "startCoding": "// شروع به کدنویسی..."
+    }
   }
 }
