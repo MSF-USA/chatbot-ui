@@ -1,25 +1,31 @@
 'use client';
 
 import {
+  IconCheck,
   IconCopy,
   IconDownload,
+  IconFileText,
   IconLanguage,
   IconLoader2,
+  IconVolume,
+  IconVolumeOff,
 } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { translateText } from '@/lib/services/translation/translationService';
 
-import {
-  TranscriptTranslationEntry,
-  TranscriptTranslationState,
-} from '@/types/translation';
+import { getAutonym } from '@/lib/utils/app/locales';
 
-import { VersionNavigation } from '@/components/Chat/ChatMessages/VersionNavigation';
+import { MessageTranslationState } from '@/types/translation';
+
+import AudioPlayer from '@/components/Chat/AudioPlayer';
+import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
+
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 interface TranscriptViewerProps {
   filename: string;
@@ -28,8 +34,8 @@ interface TranscriptViewerProps {
 }
 
 /**
- * Component for displaying audio/video transcripts with copy/download/translate functionality.
- * Translations are handled in-place with version navigation (arrows) rather than creating new messages.
+ * Component for displaying audio/video transcripts with copy/download/translate/TTS functionality.
+ * Translations use TranslationDropdown for consistency with AssistantMessage.
  */
 export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
   filename,
@@ -37,169 +43,206 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
   processedContent,
 }) => {
   const t = useTranslations();
+  const { openDocument } = useArtifactStore();
+
+  // UI state
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [showTranslationDropdown, setShowTranslationDropdown] = useState(false);
+  const translateButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Translation state with version navigation
+  // Translation state (locale-keyed cache pattern, consistent with AssistantMessage)
   const [translationState, setTranslationState] =
-    useState<TranscriptTranslationState>({
-      currentIndex: 0, // 0 = original
-      translations: [],
+    useState<MessageTranslationState>({
+      currentLocale: null,
       isTranslating: false,
+      translations: {},
       error: null,
     });
 
-  const languages = [
-    { value: 'en', label: t('languageEnglish'), autonym: 'English' },
-    { value: 'es', label: t('languageSpanish'), autonym: 'Español' },
-    { value: 'fr', label: t('languageFrench'), autonym: 'Français' },
-    { value: 'de', label: t('languageGerman'), autonym: 'Deutsch' },
-    { value: 'nl', label: t('languageDutch'), autonym: 'Nederlands' },
-    { value: 'it', label: t('languageItalian'), autonym: 'Italiano' },
-    { value: 'pt', label: t('languagePortuguese'), autonym: 'Português' },
-    { value: 'ru', label: t('languageRussian'), autonym: 'Русский' },
-    { value: 'zh', label: t('languageChinese'), autonym: '中文' },
-    { value: 'ja', label: t('languageJapanese'), autonym: '日本語' },
-    { value: 'ko', label: t('languageKorean'), autonym: '한국어' },
-    { value: 'ar', label: t('languageArabic'), autonym: 'العربية' },
-    { value: 'hi', label: t('languageHindi'), autonym: 'हिन्दी' },
-  ].sort((a, b) => a.label.localeCompare(b.label));
-
-  // Get language autonym from locale code
-  const getAutonym = useCallback(
-    (locale: string): string => {
-      const lang = languages.find((l) => l.value === locale);
-      return lang?.autonym || locale;
-    },
-    [languages],
+  // TTS state
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioSourceLocale, setAudioSourceLocale] = useState<string | null>(
+    null,
   );
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+
+  // Clean up audio URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  }, [audioUrl]);
 
   // Determine currently displayed transcript
   const displayedTranscript = useMemo(() => {
-    if (translationState.currentIndex === 0) {
-      return transcript;
+    const { currentLocale, translations } = translationState;
+    if (currentLocale && translations[currentLocale]) {
+      return translations[currentLocale].translatedText;
     }
-    const translation =
-      translationState.translations[translationState.currentIndex - 1];
-    return translation?.translatedText || transcript;
-  }, [
-    transcript,
-    translationState.currentIndex,
-    translationState.translations,
-  ]);
+    return transcript;
+  }, [transcript, translationState]);
 
   // Get current view label (Original or language name)
   const currentViewLabel = useMemo(() => {
-    if (translationState.currentIndex === 0) {
-      return processedContent ? 'Original Transcript' : 'Transcript';
+    if (!translationState.currentLocale) {
+      return processedContent
+        ? t('transcript.originalTranscript')
+        : t('transcript.transcript');
     }
-    const translation =
-      translationState.translations[translationState.currentIndex - 1];
-    return translation?.localeName || 'Translation';
-  }, [
-    processedContent,
-    translationState.currentIndex,
-    translationState.translations,
-  ]);
+    return getAutonym(translationState.currentLocale);
+  }, [processedContent, translationState.currentLocale, t]);
 
-  // Total versions = 1 (original) + number of translations
-  const totalVersions = 1 + translationState.translations.length;
+  // Set of cached locale codes (for TranslationDropdown)
+  const cachedLocales = useMemo(() => {
+    return new Set(Object.keys(translationState.translations));
+  }, [translationState.translations]);
 
-  // Handle translation request
-  const handleTranslate = useCallback(async () => {
-    const targetLocale = selectedLanguage;
-    const localeName = getAutonym(targetLocale);
-
-    // Check if already translated to this language
-    const existingIndex = translationState.translations.findIndex(
-      (t) => t.locale === targetLocale,
-    );
-    if (existingIndex !== -1) {
-      // Already cached, just switch to it
-      setTranslationState((prev) => ({
-        ...prev,
-        currentIndex: existingIndex + 1,
-      }));
-      setShowLanguageSelector(false);
-      return;
-    }
-
-    // Start translation
-    setTranslationState((prev) => ({
-      ...prev,
-      isTranslating: true,
-      error: null,
-    }));
-    setShowLanguageSelector(false);
-
-    try {
-      const response = await translateText({
-        sourceText: transcript,
-        targetLocale,
-      });
-
-      if (response.success && response.data) {
-        const newTranslation: TranscriptTranslationEntry = {
-          locale: targetLocale,
-          localeName,
-          translatedText: response.data.translatedText,
-          cachedAt: Date.now(),
-        };
-
+  // Handle translation request (consistent with AssistantMessage pattern)
+  const handleTranslate = useCallback(
+    async (targetLocale: string | null) => {
+      // Reset to original
+      if (targetLocale === null) {
         setTranslationState((prev) => ({
           ...prev,
-          translations: [...prev.translations, newTranslation],
-          currentIndex: prev.translations.length + 1, // Point to new translation
-          isTranslating: false,
+          currentLocale: null,
+          error: null,
         }));
-      } else {
-        throw new Error(response.error || 'Translation failed');
+        return;
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Translation failed';
+
+      // Check cache first
+      if (translationState.translations[targetLocale]) {
+        setTranslationState((prev) => ({
+          ...prev,
+          currentLocale: targetLocale,
+          error: null,
+        }));
+        return;
+      }
+
+      // Call API for new translation
       setTranslationState((prev) => ({
         ...prev,
-        isTranslating: false,
-        error: errorMessage,
+        isTranslating: true,
+        error: null,
       }));
-      // Auto-clear error after 3 seconds
-      setTimeout(() => {
-        setTranslationState((prev) => ({ ...prev, error: null }));
-      }, 3000);
+
+      try {
+        const response = await translateText({
+          sourceText: transcript,
+          targetLocale,
+        });
+
+        if (response.success && response.data) {
+          setTranslationState((prev) => ({
+            ...prev,
+            currentLocale: targetLocale,
+            isTranslating: false,
+            translations: {
+              ...prev.translations,
+              [targetLocale]: {
+                locale: targetLocale,
+                translatedText: response.data!.translatedText,
+                notes: response.data!.notes,
+                cachedAt: Date.now(),
+              },
+            },
+          }));
+        } else {
+          throw new Error(response.error || 'Translation failed');
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : t('chat.translationError');
+        setTranslationState((prev) => ({
+          ...prev,
+          isTranslating: false,
+          error: errorMessage,
+        }));
+        // Auto-clear error after 3 seconds
+        setTimeout(() => {
+          setTranslationState((prev) => ({ ...prev, error: null }));
+        }, 3000);
+      }
+    },
+    [transcript, translationState.translations, t],
+  );
+
+  // TTS handler (consistent with AssistantMessage pattern)
+  const handleTTS = useCallback(async () => {
+    try {
+      setIsGeneratingAudio(true);
+      setLoadingMessage(t('chat.translating'));
+
+      const response = await fetch('/api/chat/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: displayedTranscript }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'TTS conversion failed');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+      setAudioSourceLocale(translationState.currentLocale);
+      setIsGeneratingAudio(false);
+      setLoadingMessage(null);
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      setIsGeneratingAudio(false);
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Error generating audio. Please try again.';
+      setLoadingMessage(message);
+      setTimeout(() => setLoadingMessage(null), 3000);
     }
-  }, [selectedLanguage, getAutonym, transcript, translationState.translations]);
+  }, [displayedTranscript, translationState.currentLocale, t]);
 
-  // Navigation handlers
-  const handlePreviousVersion = useCallback(() => {
-    setTranslationState((prev) => ({
-      ...prev,
-      currentIndex: Math.max(0, prev.currentIndex - 1),
-    }));
-  }, []);
+  // Close audio player and clean up resources
+  const handleCloseAudio = useCallback(() => {
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+  }, [audioUrl]);
 
-  const handleNextVersion = useCallback(() => {
-    setTranslationState((prev) => ({
-      ...prev,
-      currentIndex: Math.min(prev.translations.length, prev.currentIndex + 1),
-    }));
-  }, []);
+  // Open transcript as document
+  const handleOpenAsDocument = useCallback(() => {
+    const baseName = filename.replace(
+      /\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/i,
+      '',
+    );
+    openDocument(
+      displayedTranscript,
+      'txt',
+      `${baseName}_transcript.txt`,
+      'document',
+    );
+  }, [filename, displayedTranscript, openDocument]);
 
   // Copy uses currently displayed transcript
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(displayedTranscript);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [displayedTranscript]);
 
   // Download uses currently displayed transcript
-  const handleDownload = () => {
-    const suffix =
-      translationState.currentIndex > 0
-        ? `_${translationState.translations[translationState.currentIndex - 1]?.locale || 'translated'}`
-        : '';
+  const handleDownload = useCallback(() => {
+    const suffix = translationState.currentLocale
+      ? `_${translationState.currentLocale}`
+      : '';
     const blob = new Blob([displayedTranscript], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -209,7 +252,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
+  }, [displayedTranscript, filename, translationState.currentLocale]);
 
   // Format transcript with line breaks at sentence boundaries
   const formattedTranscript = displayedTranscript
@@ -222,17 +265,49 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
       <div className="mb-3">
         {processedContent ? (
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            Transcription of{' '}
+            {t('transcript.transcriptionOf')}{' '}
             <span className="font-medium text-gray-900 dark:text-gray-100">
               {filename}
             </span>
           </div>
         ) : (
           <div className="text-base font-medium text-gray-900 dark:text-gray-100">
-            Transcription of {filename}
+            {t('transcript.transcriptionOf')} {filename}
           </div>
         )}
       </div>
+
+      {/* Loading message */}
+      {loadingMessage && (
+        <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
+          {loadingMessage}
+        </div>
+      )}
+
+      {/* Translation indicator - shown when viewing translated content */}
+      {translationState.currentLocale && (
+        <div className="flex items-center gap-2 mb-2 text-sm text-blue-600 dark:text-blue-400">
+          <IconLanguage size={14} />
+          <span>
+            {t('chat.translatedTo', {
+              language: getAutonym(translationState.currentLocale),
+            })}
+          </span>
+          <button
+            onClick={() => handleTranslate(null)}
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            {t('chat.showOriginal')}
+          </button>
+        </div>
+      )}
+
+      {/* Translation error */}
+      {translationState.error && (
+        <div className="text-sm text-red-500 dark:text-red-400 mb-2">
+          {translationState.error}
+        </div>
+      )}
 
       {/* Processed Content (if provided) */}
       {processedContent && (
@@ -258,96 +333,97 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
             <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
               {currentViewLabel}
             </div>
-            {/* Version navigation */}
-            {totalVersions > 1 && (
-              <VersionNavigation
-                currentVersion={translationState.currentIndex + 1}
-                totalVersions={totalVersions}
-                onPrevious={handlePreviousVersion}
-                onNext={handleNextVersion}
-              />
-            )}
             {/* Translation loading indicator */}
             {translationState.isTranslating && (
               <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
                 <IconLoader2 size={14} className="animate-spin" />
-                <span>Translating...</span>
-              </div>
-            )}
-            {/* Error display */}
-            {translationState.error && (
-              <div className="text-xs text-red-600 dark:text-red-400">
-                {translationState.error}
+                <span>{t('transcript.translating')}</span>
               </div>
             )}
           </div>
           <div className="flex items-center gap-2">
+            {/* Copy button */}
             <button
               onClick={handleCopy}
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
               title={t('common.copyToClipboard')}
             >
-              <IconCopy size={14} />
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+              {copied ? t('transcript.copied') : t('transcript.copy')}
             </button>
+
+            {/* Download button */}
             <button
               onClick={handleDownload}
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
               title={t('chat.downloadTranscript')}
             >
               <IconDownload size={14} />
-              Download
+              {t('transcript.download')}
             </button>
-            <div className="relative">
-              {!showLanguageSelector ? (
-                <button
-                  onClick={() => setShowLanguageSelector(true)}
-                  disabled={translationState.isTranslating}
-                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title={t('chat.translateTranscript')}
-                >
-                  <IconLanguage size={14} />
-                  Translate
-                </button>
+
+            {/* TTS button */}
+            <button
+              onClick={audioUrl ? handleCloseAudio : handleTTS}
+              disabled={isGeneratingAudio}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                isGeneratingAudio
+                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              title={
+                audioUrl ? t('transcript.stopAudio') : t('transcript.listen')
+              }
+            >
+              {isGeneratingAudio ? (
+                <IconLoader2 size={14} className="animate-spin" />
+              ) : audioUrl ? (
+                <IconVolumeOff size={14} />
               ) : (
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                    className="px-2 py-1 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {languages.map((language) => (
-                      <option key={language.value} value={language.value}>
-                        {language.autonym}
-                        {translationState.translations.some(
-                          (t) => t.locale === language.value,
-                        )
-                          ? ' ✓'
-                          : ''}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={handleTranslate}
-                    className="px-2.5 py-1 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded transition-colors"
-                  >
-                    Go
-                  </button>
-                  <button
-                    onClick={() => setShowLanguageSelector(false)}
-                    className="px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                <IconVolume size={14} />
               )}
-            </div>
+            </button>
+
+            {/* Translate button */}
+            <button
+              ref={translateButtonRef}
+              onClick={() =>
+                setShowTranslationDropdown(!showTranslationDropdown)
+              }
+              disabled={translationState.isTranslating}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                translationState.isTranslating
+                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : translationState.currentLocale
+                    ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+              title={t('chat.translateTranscript')}
+            >
+              {translationState.isTranslating ? (
+                <IconLoader2 size={14} className="animate-spin" />
+              ) : (
+                <IconLanguage size={14} />
+              )}
+              {t('transcript.translate')}
+            </button>
+
+            {/* Open as document button */}
+            <button
+              onClick={handleOpenAsDocument}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+              title={t('transcript.openAsDocument')}
+            >
+              <IconFileText size={14} />
+            </button>
+
+            {/* Expand/Collapse button (only when processedContent exists) */}
             {processedContent && (
               <button
                 onClick={() => setExpanded(!expanded)}
                 className="ml-2 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
               >
-                {expanded ? 'Collapse' : 'Expand'}
+                {expanded ? t('transcript.collapse') : t('transcript.expand')}
               </button>
             )}
           </div>
@@ -367,10 +443,43 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
         {/* Collapsed state hint */}
         {processedContent && !expanded && (
           <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
-            Click &ldquo;Expand&rdquo; to view the original transcript
+            {t('transcript.expandHint')}
           </div>
         )}
       </div>
+
+      {/* Audio player */}
+      {audioUrl && (
+        <>
+          {/* Indicator when audio source doesn't match displayed content */}
+          {audioSourceLocale !== translationState.currentLocale && (
+            <div className="text-xs text-amber-600 dark:text-amber-400 mt-2 mb-1 flex items-center gap-1">
+              <IconVolume size={12} />
+              <span>
+                {audioSourceLocale
+                  ? t('chat.audioFromTranslation', {
+                      language: getAutonym(audioSourceLocale),
+                    })
+                  : t('chat.audioFromOriginal')}
+              </span>
+            </div>
+          )}
+          <div className="mt-2">
+            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+          </div>
+        </>
+      )}
+
+      {/* Translation dropdown */}
+      <TranslationDropdown
+        triggerRef={translateButtonRef}
+        isOpen={showTranslationDropdown}
+        onClose={() => setShowTranslationDropdown(false)}
+        onSelectLanguage={handleTranslate}
+        currentLocale={translationState.currentLocale}
+        isTranslating={translationState.isTranslating}
+        cachedLocales={cachedLocales}
+      />
     </div>
   );
 };
