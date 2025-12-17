@@ -1304,6 +1304,32 @@
     "fileDownloaded": "File downloaded",
     "failedToDownload": "Failed to download",
     "switchToDocumentEditor": "Switch to Document Editor",
-    "download": "Download"
+    "download": "Download",
+    "fileIncludedWithMessage": "File and edits included with message",
+    "closeEditor": "Close editor",
+    "closeCodeEditor": "Close code editor",
+    "startWriting": "Start writing...",
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "bulletList": "Bullet List",
+      "numberedList": "Numbered List",
+      "codeBlock": "Code Block",
+      "quote": "Quote",
+      "insertTable": "Insert Table",
+      "table": "Table",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "codeEditor": {
+      "startTyping": "Start typing or ask AI to generate code",
+      "codeWillSync": "Code will automatically sync from chat messages",
+      "startCoding": "// Start coding..."
+    }
   }
 }
