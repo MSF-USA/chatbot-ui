@@ -10,6 +10,8 @@ import {
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { useTranslations } from 'next-intl';
+
 import { useTheme } from '@/client/hooks/ui/useTheme';
 
 import {
@@ -39,6 +41,7 @@ export default function DocumentArtifact({
   onClose,
   onSwitchToCode,
 }: DocumentArtifactProps) {
+  const t = useTranslations();
   const theme = useTheme();
   const { fileName, modifiedCode, setFileName, setIsEditorOpen } =
     useArtifactStore();
@@ -69,7 +72,7 @@ export default function DocumentArtifact({
     format: 'html' | 'md' | 'txt' | 'pdf' | 'docx',
   ) => {
     if (!modifiedCode) {
-      toast.error('No content to export');
+      toast.error(t('artifact.noContentToExport'));
       return;
     }
 
@@ -79,42 +82,44 @@ export default function DocumentArtifact({
       switch (format) {
         case 'html':
           downloadFileUtil(modifiedCode, `${baseFileName}.html`, 'text/html');
-          toast.success('Exported as HTML');
+          toast.success(t('artifact.exportedAsHtml'));
           break;
 
         case 'md': {
           const markdown = htmlToMarkdown(modifiedCode);
           downloadFileUtil(markdown, `${baseFileName}.md`, 'text/markdown');
-          toast.success('Exported as Markdown');
+          toast.success(t('artifact.exportedAsMarkdown'));
           break;
         }
 
         case 'txt': {
           const plainText = await htmlToPlainText(modifiedCode);
           downloadFileUtil(plainText, `${baseFileName}.txt`, 'text/plain');
-          toast.success('Exported as Text');
+          toast.success(t('artifact.exportedAsText'));
           break;
         }
 
         case 'pdf':
-          toast.loading('Generating PDF...');
+          toast.loading(t('artifact.generatingPdf'));
           await exportToPDF(modifiedCode, `${baseFileName}.pdf`);
           toast.dismiss();
-          toast.success('Exported as PDF');
+          toast.success(t('artifact.exportedAsPdf'));
           break;
 
         case 'docx':
-          toast.loading('Generating DOCX...');
+          toast.loading(t('artifact.generatingDocx'));
           await exportToDOCX(modifiedCode, `${baseFileName}.docx`);
           toast.dismiss();
-          toast.success('Exported as DOCX');
+          toast.success(t('artifact.exportedAsDocx'));
           break;
       }
 
       setShowExportMenu(false);
     } catch (error) {
       console.error('Export error:', error);
-      toast.error(`Failed to export as ${format.toUpperCase()}`);
+      toast.error(
+        t('artifact.failedToExportAs', { format: format.toUpperCase() }),
+      );
     }
   };
 
@@ -144,7 +149,7 @@ export default function DocumentArtifact({
           )}
           <span className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 flex-shrink-0">
             <IconFileText size={14} />
-            Document
+            {t('artifact.document')}
           </span>
         </div>
 
@@ -153,7 +158,7 @@ export default function DocumentArtifact({
           <button
             onClick={onSwitchToCode}
             className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-            title="Switch to Code Editor"
+            title={t('artifact.switchToCodeEditor')}
           >
             <IconCode size={18} />
           </button>
@@ -167,7 +172,7 @@ export default function DocumentArtifact({
               }}
               disabled={!modifiedCode}
               className="flex items-center gap-1 px-2 py-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              title="Export Document"
+              title={t('artifact.exportDocument')}
             >
               <IconDownload size={18} />
               <IconChevronDown size={14} />
@@ -180,31 +185,31 @@ export default function DocumentArtifact({
                   onClick={() => handleExport('md')}
                   className="w-full px-4 py-2 text-left text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  Markdown (.md)
+                  {t('artifact.formatMarkdown')}
                 </button>
                 <button
                   onClick={() => handleExport('html')}
                   className="w-full px-4 py-2 text-left text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  HTML (.html)
+                  {t('artifact.formatHtml')}
                 </button>
                 <button
                   onClick={() => handleExport('docx')}
                   className="w-full px-4 py-2 text-left text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  Word (.docx)
+                  {t('artifact.formatDocx')}
                 </button>
                 <button
                   onClick={() => handleExport('txt')}
                   className="w-full px-4 py-2 text-left text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  Plain Text (.txt)
+                  {t('artifact.formatText')}
                 </button>
                 <button
                   onClick={() => handleExport('pdf')}
                   className="w-full px-4 py-2 text-left text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
-                  PDF (.pdf)
+                  {t('artifact.formatPdf')}
                 </button>
               </div>
             )}
@@ -215,7 +220,7 @@ export default function DocumentArtifact({
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            title="Close"
+            title={t('artifact.close')}
           >
             <IconX size={18} />
           </button>
@@ -230,7 +235,7 @@ export default function DocumentArtifact({
       {/* Disclaimer Footer */}
       <div className="px-4 py-2 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex-shrink-0">
         <p className="text-xs text-center text-neutral-500 dark:text-neutral-400">
-          Edits are not saved. Send via message or download to save any edits.
+          {t('artifact.editsNotSaved')}
         </p>
       </div>
     </div>
