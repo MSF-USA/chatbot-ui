@@ -168,8 +168,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           searchMode === SearchMode.ALWAYS
             ? `✓ ${t('webSearchDropdown')}`
             : t('webSearchDropdown'),
-        infoTooltip:
-          'Enable web search for every message.\n\nProvides up-to-date information using real-time Bing web access.',
+        infoTooltip: t('dropdown.searchTooltip'),
         onClick: () => {
           toggleSearchMode();
           closeDropdown();
@@ -185,7 +184,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           />
         ),
         label: selectedToneId
-          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || 'Selected'}`
+          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || t('dropdown.selected')}`
           : t('toneDropdown'),
         infoTooltip:
           tones.length === 0
@@ -207,8 +206,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           />
         ),
         label: t('attachFilesDropdown'),
-        infoTooltip:
-          'Attach files, images, or audio/video.\n\nSupported formats:\n• Images: JPEG, PNG, GIF, WebP (5MB max, up to 10)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max, up to 3)\n• Data: CSV, JSON, XML, YAML (10MB max, up to 3)\n• Code: PY, JS, TS, JAVA, C, CPP, GO, etc. (10MB max, up to 3)\n• Audio/Video: MP3, WAV, MP4, WebM (25MB max, 1 file)\n\nTotal: 10 files, 50MB max',
+        infoTooltip: t('dropdown.attachTooltip'),
         onClick: handleAttachClick,
         category: 'media',
       },
@@ -218,8 +216,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           <IconFileMusic size={18} className="text-orange-500 flex-shrink-0" />
         ),
         label: t('transcribeAudioVideoDropdown'),
-        infoTooltip:
-          'Upload audio or video files for transcription.\n\nSupported formats: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMax size: 25MB\n\nTranscription happens automatically when you send the message.',
+        infoTooltip: t('dropdown.transcribeTooltip'),
         onClick: handleTranscribeClick,
         category: 'media',
       },
@@ -306,7 +303,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         >
           <IconCirclePlus className="w-7 h-7 md:w-6 md:h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-            Expand Actions
+            {t('dropdown.expandActions')}
           </div>
         </button>
       </div>
@@ -373,10 +370,10 @@ const Dropdown: React.FC<DropdownProps> = ({
             >
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Select Tone
+                  {t('dropdown.selectTone')}
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Choose a voice profile for your messages
+                  {t('dropdown.selectToneDescription')}
                 </p>
               </div>
 
@@ -393,10 +390,10 @@ const Dropdown: React.FC<DropdownProps> = ({
                   }`}
                 >
                   <div className="font-medium text-gray-900 dark:text-white">
-                    No Tone (Default)
+                    {t('dropdown.noToneDefault')}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Use default writing style
+                    {t('dropdown.useDefaultStyle')}
                   </div>
                 </button>
 
@@ -440,9 +437,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                 {tones.length === 0 && (
                   <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                     <IconVolume size={48} className="mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">No tones created yet</p>
+                    <p className="text-sm">{t('dropdown.noTonesCreated')}</p>
                     <p className="text-xs mt-1">
-                      Create tones in Quick Actions
+                      {t('dropdown.createTonesHint')}
                     </p>
                   </div>
                 )}
