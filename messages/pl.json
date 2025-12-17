@@ -327,13 +327,25 @@
   "Tones": "Tony",
   "Create Your First Tone": "Utwórz swój pierwszy ton",
   "Search tones": "Szukaj tonów...",
-  "Voice Guidelines": "Wytyczne głosowe",
+  "Voice Guidelines": "Wytyczne Głosowe",
   "Examples": "Przykłady",
   "Select a tone to view details": "Wybierz ton, aby zobaczyć szczegóły",
   "Team Templates": "Szablony zespołu",
   "selected": "wybrano",
   "folders": "foldery",
-  "agents": "agenci",
+  "agents": {
+    "exportAgent": "Eksportuj agenta",
+    "editAgent": "Edytuj agenta",
+    "agentName": "Nazwa agenta",
+    "myResearchAssistant": "Mój asystent badawczy",
+    "agentId": "ID agenta",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Opis (opcjonalnie)",
+    "descriptionPlaceholder": "Agent wyspecjalizowany w zadaniach badawczych...",
+    "baseModel": "Model bazowy",
+    "formatDescription": "Format: asst_xxxxx (z MSF AI Assistant Foundry)",
+    "importantInfo": "Ten agent będzie miał dostęp do kontekstu rozmowy i będzie mógł korzystać z tych samych narzędzi co standardowe modele. Upewnij się, że ID agenta jest poprawne, ponieważ nie można go później zmienić."
+  },
   "Quick Actions": "Szybkie akcje",
   "Type / in chat to access your prompts": "Wpisz / w czacie, aby uzyskać dostęp do swoich promptów",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Wpisz / w czacie, wybierz swój prompt i wypełnij zmienne, gdy zostaniesz o to poproszony",
@@ -380,7 +392,6 @@
   "Custom Agents": "Niestandardowi Agenci",
   "Delete template and all its items": "Usuń szablon i wszystkie jego elementy",
   "Description (Optional)": "Opis (Opcjonalnie)",
-  "Edit Prompt": "Edytuj Prompt",
   "Edit Tone": "Edytuj Ton",
   "Email Response Template": "Szablon Odpowiedzi E-mail",
   "Example Prompt": "Przykładowy Prompt",
@@ -440,7 +451,6 @@
   "msf_logo_alt": "Logo MSF",
   "collapse_sidebar": "Zwiń pasek boczny",
   "expand_sidebar": "Rozwiń pasek boczny",
-  "Voice Guidelines": "Wytyczne Głosowe",
   "Please upload some content or describe the tone you want": "Prześlij treść lub opisz ton, którego chcesz",
   "Untitled Tone": "Ton Bez Tytułu",
   "Failed to analyze tone": "Nie udało się przeanalizować tonu",
@@ -470,13 +480,41 @@
   "enterPromptDescriptionPlaceholder": "Do czego służy ten prompt?",
   "enterPromptContentPlaceholder": "Napisz swój prompt tutaj. Użyj {{variable}} dla treści dynamicznych.",
   "common": {
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "close": "Zamknij",
+    "remove": "Usuń",
+    "tryAgain": "Spróbuj ponownie",
+    "menu": "Menu",
+    "copyToClipboard": "Kopiuj do schowka",
+    "toggleDropdownMenu": "Przełącz menu rozwijane",
+    "toggleMenu": "Przełącz menu",
+    "closeModal": "Zamknij okno modalne",
+    "dismissBanner": "Ukryj baner",
+    "searchEllipsis": "Szukaj...",
+    "addTagEllipsis": "Dodaj tag...",
+    "msfLogo": "Logo MSF",
+    "importantInformation": "Ważne informacje",
+    "noResults": "Brak wyników",
+    "confirm": "Potwierdź",
+    "cancel": "Anuluj",
+    "discard": "Odrzuć",
+    "keepEditing": "Kontynuuj edycję",
+    "yes": "Tak",
+    "no": "Nie"
   },
   "errors": {
     "unexpectedErrorOccurred": "Wystąpił nieoczekiwany błąd",
     "criticalErrorReload": "Wystąpił krytyczny błąd. Proszę przeładować stronę.",
     "reloadPage": "Przeładuj stronę",
-    "persistContactSupport": "Jeśli problem będzie się powtarzał, skontaktuj się z pomocą techniczną"
+    "persistContactSupport": "Jeśli problem będzie się powtarzał, skontaktuj się z pomocą techniczną",
+    "somethingWentWrong": "Coś poszło nie tak",
+    "anErrorOccurred": "Wystąpił błąd",
+    "copyErrorMessage": "Kopiuj treść błędu",
+    "contactSupport": "Jeśli problem się powtarza, skontaktuj się z pomocą techniczną pod adresem",
+    "dismissError": "Ukryj błąd",
+    "applicationError": "Błąd aplikacji",
+    "chatLoadError": "Wystąpił błąd podczas ładowania czatu",
+    "anErrorOccurredTryAgain": "Wystąpił błąd. Prosimy spróbować ponownie."
   },
   "auth": {
     "authenticationError": "Błąd uwierzytelniania",
@@ -545,7 +583,25 @@
     "fullSizePreview": "Podgląd pełnego rozmiaru",
     "enterSearchQueryPlaceholder": "Wprowadź zapytanie lub pytanie wyszukiwania...",
     "errorFetchingUrl": "Wystąpił błąd podczas pobierania zawartości adresu URL",
-    "errorInitiatingSearch": "Wystąpił błąd podczas inicjowania wyszukiwania w sieci"
+    "errorInitiatingSearch": "Wystąpił błąd podczas inicjowania wyszukiwania w sieci",
+    "regenerate": "Wygeneruj ponownie",
+    "modelSwitchPrompt": "{original} nie powiodło się, ale {fallback} zakończyło się sukcesem. Czy chcesz przełączyć model?",
+    "keepOriginalModel": "Pozostań przy {model}",
+    "switchToModel": "Przełącz na {model}",
+    "alwaysSwitchToModel": "Zawsze automatycznie przełączaj",
+    "translateMessage": "Przetłumacz wiadomość",
+    "translating": "Tłumaczenie...",
+    "translationError": "Nie udało się przetłumaczyć",
+    "showOriginal": "Pokaż oryginał",
+    "translatedTo": "Przetłumaczono na {language}",
+    "searchLanguages": "Szukaj języków...",
+    "selectLanguage": "Wybierz język",
+    "audioFromOriginal": "Dźwięk pochodzi z oryginalnego tekstu",
+    "audioFromTranslation": "Dźwięk pochodzi z tłumaczenia na {language}",
+    "thinking": "Myśli...",
+    "viewReasoningProcess": "Zobacz proces rozumowania",
+    "collapseThinking": "Zwiń myślenie",
+    "expandThinking": "Rozwiń myślenie"
   },
   "sidebar": {
     "collapseSidebar": "Zwiń pasek boczny",
@@ -553,29 +609,135 @@
     "quickActionsTitle": "Szybkie akcje",
     "quickActions": "Szybkie akcje"
   },
-  "agents": {
-    "exportAgent": "Eksportuj agenta",
-    "editAgent": "Edytuj agenta",
-    "agentName": "Nazwa agenta",
-    "myResearchAssistant": "Mój asystent badawczy",
-    "agentId": "ID agenta",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Opis (opcjonalnie)",
-    "descriptionPlaceholder": "Agent wyspecjalizowany w zadaniach badawczych...",
-    "baseModel": "Model bazowy",
-    "formatDescription": "Format: asst_xxxxx (z MSF AI Assistant Foundry)",
-    "importantInfo": "Ten agent będzie miał dostęp do kontekstu rozmowy i będzie mógł korzystać z tych samych narzędzi co standardowe modele. Upewnij się, że ID agenta jest poprawne, ponieważ nie można go później zmienić."
-  },
   "prompts": {
-    "buildReusablePrompts": "Twórz wielokrotnego użytku podpowiedzi z pomocą AI"
+    "buildReusablePrompts": "Twórz wielokrotnego użytku podpowiedzi z pomocą AI",
+    "noToneDefault": "Brak tonu (domyślny)",
+    "tagHelp": "Pomoc dotycząca tagów",
+    "tagHelpContent": "Używaj tagów, aby kategoryzować i szybko znajdować swoje podpowiedzi. Przykłady:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "techniczny",
+      "customerSupport": "obsługa-klienta"
+    },
+    "variableHelp": "Pomoc dotycząca zmiennych",
+    "variableHelpIntro": "Używaj zmiennych, aby uelastycznić swoje podpowiedzi:",
+    "requiredVariables": "Wymagane zmienne (bez wartości domyślnej):",
+    "optionalVariables": "Opcjonalne zmienne (z domyślną wartością):",
+    "userMustProvide": "Użytkownik musi podać wartość",
+    "userCanProvide": "Użytkownik może podać wartość lub zostanie użyta domyślna",
+    "example": "Przykład:",
+    "variableExampleText": "Napisz {{tone:professional}} email do {{recipient}} o {{topic}} w {{language:English}}",
+    "detectedVariables": "Wykryte zmienne",
+    "required": "Wymagane",
+    "aiAssistant": "Asystent AI",
+    "whatToImprove": "Co chcesz poprawić?",
+    "whatShouldPromptDo": "Co powinna zrobić ta podpowiedź?",
+    "improvePlaceholder": "np. Uczyń ją bardziej profesjonalną, dodaj przykłady, popraw przejrzystość...",
+    "generatePlaceholder": "np. Wygeneruj profesjonalny szablon emaila ze zmiennymi dla odbiorcy i tematu...",
+    "addContextOptional": "Dodaj kontekst (opcjonalnie)",
+    "revising": "Poprawianie...",
+    "generating": "Generowanie...",
+    "reviseWithAI": "Popraw z AI",
+    "generatePrompt": "Wygeneruj podpowiedź",
+    "revisionComplete": "Poprawka zakończona",
+    "generationComplete": "Generowanie zakończone",
+    "revisedPrompt": "Poprawiona podpowiedź:",
+    "generatedPrompt": "Wygenerowana podpowiedź:",
+    "applyRevision": "Zastosuj tę poprawkę",
+    "useThisPrompt": "Użyj tej podpowiedzi",
+    "improvementsMade": "Wprowadzone ulepszenia:",
+    "tips": "Wskazówki:",
+    "howAICanHelp": "Jak AI może pomóc",
+    "helpItems": {
+      "improveClarity": "Popraw przejrzystość i strukturę",
+      "suggestVariables": "Zaproponuj przydatne zmienne",
+      "addContext": "Dodaj kontekst i przykłady",
+      "optimize": "Optymalizuj dla lepszych wyników"
+    },
+    "savePrompt": "Zapisz podpowiedź",
+    "add": "Dodaj"
   },
   "tones": {
     "createCustomVoiceProfile": "Utwórz niestandardowy profil głosowy z pomocą AI",
-    "examplePlaceholder": "np. Utwórz profesjonalny, ale przyjazny ton obsługi klienta..."
+    "examplePlaceholder": "np. Utwórz profesjonalny, ale przyjazny ton obsługi klienta...",
+    "tagHelp": "Pomoc dotycząca tagów",
+    "tagHelpContent": "Używaj tagów, aby kategoryzować i szybko znajdować swoje tony. Przykłady:",
+    "tagExamples": {
+      "professional": "profesjonalny",
+      "casual": "swobodny",
+      "technical": "techniczny",
+      "marketing": "marketing"
+    },
+    "add": "Dodaj",
+    "aiToneAnalyzer": "AI Tone Analyzer",
+    "describeToneToCreate": "Opisz ton, który chcesz uzyskać",
+    "uploadContentSamples": "Prześlij przykłady treści",
+    "analyzing": "Analizowanie...",
+    "analyzeToneWithAI": "Analizuj ton za pomocą AI",
+    "analysisComplete": "Analiza zakończona",
+    "generatedVoiceGuidelines": "Wygenerowane wytyczne głosu:",
+    "examplePhrases": "Przykładowe zwroty:",
+    "suggestedTags": "Sugerowane tagi:",
+    "applyThisAnalysis": "Zastosuj tę analizę",
+    "detectedCharacteristics": "Wykryte cechy:",
+    "howAICanHelp": "Jak AI może pomóc",
+    "helpItems": {
+      "transcribe": "Transkrybuj treści audio/wideo",
+      "analyzeContent": "Analizuj swoje przykłady treści",
+      "extractPatterns": "Wyodrębnij wzorce tonu i stylu",
+      "generateGuidelines": "Wygeneruj wytyczne głosu",
+      "suggestTags": "Zaproponuj odpowiednie tagi"
+    },
+    "saveTone": "Zapisz ton"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Zobacz diagram przepływu technicznego"
+    "viewTechnicalFlowDiagram": "Zobacz diagram przepływu technicznego",
+    "backToChat": "Powrót do czatu",
+    "title": "Centrum pomocy",
+    "subtitle": "Znajdź odpowiedzi, dowiedz się o prywatności i uzyskaj wsparcie",
+    "faq": {
+      "title": "Najczęstsze pytania",
+      "description": "Znajdź odpowiedzi na najczęstsze pytania dotyczące korzystania z AI Assistant",
+      "articles": "artykuły",
+      "searchPlaceholder": "Szukaj w FAQ...",
+      "noResults": "Brak pasujących pytań FAQ",
+      "noResultsHint": "Spróbuj innego hasła"
+    },
+    "privacy": {
+      "title": "Prywatność i dane",
+      "description": "Dowiedz się, jak Twoje dane są przechowywane i chronione",
+      "topics": "tematy",
+      "searchPlaceholder": "Szukaj tematów prywatności...",
+      "noResults": "Brak tematów dotyczących prywatności, które pasują do wyszukiwania",
+      "noResultsHint": "Spróbuj innego hasła",
+      "bannerTitle": "Twoja prywatność ma znaczenie",
+      "bannerDescription": "Wszystkie rozmowy są przechowywane lokalnie na Twoim urządzeniu. Przetwarzanie danych odbywa się w systemach MSF przy użyciu infrastruktury Azure.",
+      "localStorageOnly": "Tylko lokalne przechowywanie",
+      "msfControlled": "Zarządzane przez MSF",
+      "noPersonalData": "Brak danych osobowych",
+      "noSensitiveOps": "Brak wrażliwych operacji"
+    },
+    "contact": {
+      "title": "Kontakt i zasoby",
+      "description": "Skontaktuj się z naszym zespołem i uzyskaj dostęp do przydatnych linków",
+      "supportAvailable": "Wsparcie dostępne",
+      "submitRequest": "Wyślij zgłoszenie do wsparcia",
+      "getHelp": "Uzyskaj pomoc od naszego zespołu",
+      "requestDescription": "Potrzebujesz pomocy lub chcesz przekazać opinię? Kliknij poniżej, aby otworzyć formularz wsparcia.",
+      "openSupportForm": "Otwórz formularz wsparcia",
+      "otherWays": "Inne sposoby kontaktu",
+      "emailSupport": "Wsparcie e-mail",
+      "emailDescription": "Wyślij nam e-mail z pytaniami, opiniami lub zgłoszeniami technicznymi"
+    },
+    "resources": {
+      "title": "Dodatkowe zasoby",
+      "portalTitle": "Portal AI Accelerator",
+      "portalDescription": "Dokumentacja, aktualizacje projektów i materiały szkoleniowe",
+      "githubTitle": "Repozytorium Open Source",
+      "githubDescription": "Zobacz kod, zgłoś problemy i współtwórz na GitHubie"
+    }
   },
   "settings": {
     "Settings": "Ustawienia",
@@ -643,9 +805,326 @@
     "FAQs, privacy policy, and guides": "Najczęściej zadawane pytania, polityka prywatności i przewodniki",
     "Contact Support": "Skontaktuj się z pomocą techniczną",
     "Popular Questions": "Popularne pytania",
-    "View all FAQs": "Zobacz wszystkie najczęściej zadawane pytania"
+    "View all FAQs": "Zobacz wszystkie najczęściej zadawane pytania",
+    "Delete legacy data after migration": "Usuń dane dziedziczone po migracji",
+    "frees up storage space": "zwalnia miejsce na dysku",
+    "Legacy data deleted": "Dane dziedziczone usunięte",
+    "freed": "zwolniono",
+    "Conversations": "Konwersacje",
+    "Legacy": "Dziedziczone",
+    "Other": "Inne",
+    "Loading": "Ładowanie",
+    "Legacy Data Detected": "Wykryto dane dziedziczone",
+    "legacyDataDescription": "Masz {size} danych z poprzedniej wersji. Możesz je przenieść, wyeksportować lub usunąć, aby zwolnić miejsce.",
+    "legacyDeleteSuccess": "Pomyślnie usunięto dane dziedziczone i zwolniono {size}.",
+    "legacyDeleteError": "Nie udało się usunąć danych dziedziczonych. Proszę spróbować ponownie.",
+    "Explore solutions": "Poznaj rozwiązania",
+    "Migrate to Current Format": "Przenieś do aktualnego formatu",
+    "Export Legacy Data": "Eksportuj dane dziedziczone",
+    "Delete Legacy Data": "Usuń dane dziedziczone",
+    "deleteLegacyConfirm": "Czy na pewno chcesz usunąć wszystkie dane dziedziczone? Tej operacji nie można cofnąć.",
+    "Deleting": "Usuwanie",
+    "Confirm Delete": "Potwierdź usunięcie",
+    "Cancel": "Anuluj"
   },
   "notFound": {
     "lostDog": "Zagubiony pies"
+  },
+  "New conversation": "Nowa rozmowa",
+  "Run Typewriter Intro": "Uruchom wprowadzenie Typewriter",
+  "transcription": {
+    "transcribesOnSend": "Transkrybuje po wysłaniu",
+    "addInstructions": "Dodaj instrukcje",
+    "instructionsPlaceholder": "Kontekst, aby poprawić dokładność (np. imiona, terminy)"
+  },
+  "importBackupParseError": "Nie udało się przetworzyć pliku kopii zapasowej. Upewnij się, że jest to poprawny plik JSON.",
+  "emptyState": {
+    "greeting": "W czym mogę pomóc?",
+    "greetingWithName": "W czym mogę pomóc, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Tworzenie diagramów",
+        "prompt": "Pokaż mi, jak można tworzyć diagramy i schematy blokowe. Jakie procesy, przepływy pracy lub systemy możesz pomóc mi zwizualizować? Podaj kilka przykładów."
+      },
+      "draftContent": {
+        "title": "Tworzenie profesjonalnych treści",
+        "prompt": "Potrzebuję pomocy w pisaniu profesjonalnych dokumentów – e-maili, raportów, podsumowań. Czy możesz pokazać przykłady wsparcia w różnych typach tekstów biznesowych?"
+      },
+      "analyzeInformation": {
+        "title": "Analiza informacji",
+        "prompt": "Jak możesz mi pomóc analizować dane lub informacje? Pokaż różne sposoby rozkładania liczb, wyszukiwania wzorców lub wydobywania wniosków z dokumentów lub zbiorów danych."
+      },
+      "planOrganize": {
+        "title": "Planowanie i organizacja",
+        "prompt": "Czy możesz pomóc mi planować projekty lub organizować pracę? Podaj przykłady tworzenia harmonogramów, agend lub planów projektowych o różnych strukturach."
+      },
+      "brainstormIdeas": {
+        "title": "Burza mózgów",
+        "prompt": "Chcę przeprowadzić burzę mózgów nad rozwiązaniem problemu. Pokaż, jak podchodzisz do twórczego myślenia i generowania pomysłów – jakie pytania zadajesz i jak eksplorujesz możliwości?"
+      },
+      "buildPresentations": {
+        "title": "Tworzenie prezentacji",
+        "prompt": "Jak możesz mi pomóc w tworzeniu prezentacji? Pokaż przykłady różnych struktur prezentacji, propozycji wizualnych i sposobów organizacji treści dla różnych odbiorców."
+      },
+      "workWithCode": {
+        "title": "Praca z kodem",
+        "prompt": "Czy możesz pomóc z kodowaniem lub skryptami? Pokaż przykłady – od pisania nowego kodu, przez debugowanie, po wyjaśnienia krok po kroku, jak coś działa."
+      },
+      "decisionSupport": {
+        "title": "Wsparcie w podejmowaniu decyzji",
+        "prompt": "Muszę podjąć decyzję, ale nie wiem, jak ocenić opcje. Czy możesz pokazać różne schematy lub metody, które stosujesz podczas analizy wyborów?"
+      },
+      "summarizeSynthesize": {
+        "title": "Streszczanie i synteza",
+        "prompt": "Jak pomagasz w streszczaniu długich dokumentów lub syntezie informacji z różnych źródeł? Pokaż przykłady różnych formatów streszczeń i poziomów szczegółowości."
+      },
+      "explainTopics": {
+        "title": "Wyjaśnianie złożonych tematów",
+        "prompt": "Czy potrafisz w prosty sposób wyjaśnić skomplikowane pojęcia? Pokaż, jak rozbijasz trudne zagadnienia, stosujesz analogie i dostosowujesz wyjaśnienia do różnych poziomów wiedzy."
+      },
+      "createSchedules": {
+        "title": "Tworzenie harmonogramów",
+        "prompt": "Potrzebuję pomocy w organizowaniu czasu i układaniu harmonogramów. Pokaż różne sposoby tworzenia agend, kalendarzy lub planów czasowych – z przykładami."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modele",
+      "agents": "Agentów"
+    },
+    "sections": {
+      "baseModels": "Modele bazowe"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Funkcja zaawansowana",
+      "description": "Twórz i zarządzaj własnymi agentami AI ze specjalistycznymi funkcjami. Agenci ci działają na instancji MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Funkcja zaawansowana – wymaga współpracy z zespołem technicznym AI Assistant",
+      "advancedFeatureWarning": "Własne agenty działają tylko na instancji MSF AI Assistant Foundry. ID agentów muszą być utworzone przez zespół techniczny AI Assistant w tej konkretnej instancji i uzgodnione z Tobą przed użyciem.",
+      "createNewAgent": "Utwórz nowego własnego agenta",
+      "noAgentsTitle": "Brak własnych agentów",
+      "noAgentsDescription": "Utwórz pierwszego własnego agenta, aby rozszerzyć możliwości AI o specjalistyczne narzędzia i zachowania."
+    },
+    "advancedOptions": {
+      "title": "Opcje zaawansowane",
+      "temperature": "Temperatura",
+      "fixedTemperatureNote": "Uwaga: Ten model używa stałej wartości temperatury dla spójnej wydajności.",
+      "reasoningEffort": "Poziom rozumowania",
+      "minimal": "Minimalny",
+      "low": "Niski",
+      "medium": "Średni",
+      "high": "Wysoki",
+      "verbosity": "Szczegółowość odpowiedzi"
+    },
+    "searchMode": {
+      "title": "Tryb wyszukiwania",
+      "subtitle": "Wyszukiwanie w internecie zostanie użyte w razie potrzeby",
+      "routingLabel": "Routing wyszukiwania:",
+      "whatsDifference": "Jaka jest różnica?",
+      "privacyFocused": "Nastawiony na prywatność (domyślnie)",
+      "privacyFocusedDescription": "Wolniejszy, ale bardziej prywatny",
+      "azureAgentMode": "Tryb Azure AI Agent",
+      "azureAgentModeDescription": "Szybszy, ale przechowuje dane rozmowy w chmurze",
+      "privacyInfoTitle": "Ważna informacja o prywatności",
+      "privacyInfoDescription": "Cała Twoja rozmowa zostanie wysłana do agenta Azure AI Foundry.",
+      "learnMoreDataStorage": "Dowiedz się więcej o przechowywaniu danych"
+    },
+    "customAgent": {
+      "label": "Własny agent:",
+      "description": "Ten agent działa na instancji MSF AI Assistant Foundry z zawsze włączonymi narzędziami.",
+      "webSearch": "Wyszukiwanie w internecie w czasie rzeczywistym",
+      "codeInterpreter": "Interpreter kodu i analiza plików"
+    },
+    "header": {
+      "backToModels": "Powrót do modeli",
+      "knowledgeCutoff": "Zakres wiedzy: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "podstawowy",
+      "omni": "omni",
+      "reasoning": "rozumowanie",
+      "agent": "agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Model AI oparty na GPT-4.1 z wyszukiwaniem internetowym w czasie rzeczywistym przez Bing. Dostarcza aktualnych informacji, weryfikacji faktów i wiedzy o bieżących wydarzeniach. Najlepszy do badań wymagających najnowszych danych, analiz wiadomości oraz potwierdzania faktów.",
+      "knowledgeCutoff": "Wyszukiwanie w czasie rzeczywistym"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Najbardziej zaawansowany model OpenAI, świetny w złożonym rozumowaniu, generowaniu kodu i technicznym rozwiązywaniu problemów. Najlepszy do zadań analitycznych, programowania, badań i szczegółowych wyjaśnień. Umożliwia regulację poziomu rozumowania i szczegółowości odpowiedzi.",
+      "knowledgeCutoff": "6 sie 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Szybsza i bardziej ekonomiczna wersja GPT-5, zoptymalizowana pod kątem szybkości przy zachowaniu wysokiej jakości. Idealny do codziennych zadań, szybkich zapytań, routingu narzędzi i zastosowań wymagających natychmiastowej odpowiedzi. Doskonała równowaga między wydajnością a efektywnością.",
+      "knowledgeCutoff": "6 sie 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Specjalna wersja GPT-5 zoptymalizowana pod kątem konwersacji i inteligencji emocjonalnej. Doskonała w empatycznej komunikacji, wsparciu psychologicznym, kreatywnym pisaniu, burzach mózgów i naturalnym dialogu. Najlepszy do rozmów codziennych, scenariuszy doradztwa oraz zadań wymagających wyczucia emocjonalnego.",
+      "knowledgeCutoff": "1 października 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Najbardziej zaawansowany model rozumowania OpenAI z przełomowymi możliwościami rozwiązywania problemów. Świetnie radzi sobie ze złożoną matematyką, rozumowaniem naukowym, zadaniami programistycznymi i wieloetapową logiką. Rozszerzone okno kontekstu 200K. Wspiera kontrolę poziomu rozumowania.",
+      "knowledgeCutoff": "8 kwietnia 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Szybki i ekonomiczny model od Meta. Doskonały do codziennych zadań jak pisanie, streszczanie czy podstawowa pomoc programistyczna. Dobry kompromis między szybkością a jakością przy rutynowej pracy.",
+      "knowledgeCutoff": "7 maja 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Specjalista od rozumowania pokazujący kolejne kroki rozwiązania. Doskonały do zadań matematycznych, łamigłówek logicznych i zrozumienia złożonych pojęć. Umożliwia obserwowanie procesu myślowego w czasie rzeczywistym.",
+      "knowledgeCutoff": "20 stycznia 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Wszechstronny model szczególnie dobry w programowaniu i pisaniu technicznym. Świetnie sprawdza się przy debugowaniu, tworzeniu dokumentacji i wyjaśnianiu terminów technicznych. Szybki i niezawodny w pracy deweloperskiej.",
+      "knowledgeCutoff": "16 kwietnia 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Wszechstronny model od xAI znany z zniuansowanych odpowiedzi. Świetny do otwartych dyskusji, projektów kreatywnych i rozwiązywania złożonych problemów.",
+      "knowledgeCutoff": "13 maja 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Najbardziej zaawansowany model Anthropic o wyjątkowych możliwościach rozumowania, programowania i kreatywności. Najlepszy do złożonej analizy, badań i zadań wymagających głębokiego zrozumienia.",
+      "knowledgeCutoff": "styczeń 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Zrównoważony model Claude oferujący doskonałe wyniki w programowaniu, analizie i zadaniach kreatywnych. Świetny do codziennego użytku z szybkim czasem reakcji.",
+      "knowledgeCutoff": "styczeń 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Poprzednia generacja modelu Claude Opus. Doskonały do zaawansowanych zadań programistycznych, szczegółowej analizy i głębokiego zrozumienia.",
+      "knowledgeCutoff": "styczeń 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Szybki i ekonomiczny model Claude zoptymalizowany do szybkich zadań. Idealny do prostych zapytań, streszczeń i zastosowań wymagających dużej wydajności.",
+      "knowledgeCutoff": "styczeń 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Powrót do czatu",
+    "title": "Wyjaśnienie trybu wyszukiwania",
+    "subtitle": "Poznaj opcje wyszukiwania i dowiedz się, gdzie przechowywane są Twoje dane",
+    "quickComparison": "Szybkie porównanie",
+    "noSearch": "Brak wyszukiwania",
+    "privacyFocused": "Skoncentrowany na prywatności",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Szybkość odpowiedzi",
+    "fastest": "Najszybszy",
+    "slowerMultiStep": "Wolniejszy (wielostopniowy)",
+    "fasterDirect": "Szybszy (bezpośredni)",
+    "fullConversationStored": "Cała rozmowa zapisana w chmurze",
+    "whatsStoredInAzure": "Co jest przechowywane w Azure",
+    "nothingStateless": "Nic (tylko bezstanowo)",
+    "searchQueriesOnly": "Tylko zapytania wyszukiwania",
+    "fullConversationHistory": "Pełna historia rozmowy",
+    "modelAvailability": "Dostępność modelu",
+    "allModels": "Wszystkie modele",
+    "gpt41Only": "Tylko GPT-4.1",
+    "searchTurnedOff": "Wyszukiwanie wyłączone",
+    "noSearchDescription": "Najszybsze odpowiedzi bez możliwości wyszukiwania w sieci. Pełna rozmowa pozostaje w Twojej przeglądarce – nic nie jest przechowywane w chmurze.",
+    "viewDetailsBelow": "Więcej informacji znajdziesz w poniższym schemacie technicznym.",
+    "viewTechnicalFlowDiagram": "Zobacz schemat techniczny przepływu",
+    "legend": "Legenda:",
+    "legendNoSearch": "Twoja przeglądarka (local storage) | Serwer AI Assistant | Azure OpenAI (bezstanowy)",
+    "privacyFocusedMode": "Tryb zorientowany na prywatność",
+    "default": "Domyślny",
+    "privacyDescription": "Używa wyszukiwarki internetowej w razie potrzeby, ale działa wolniej, bo obejmuje więcej kroków. Tylko zapytania są przechowywane w Azure – cała rozmowa zostaje w Twojej przeglądarce.",
+    "legendPrivacy": "Twoja przeglądarka (local storage) | Serwer AI Assistant | Azure AI Foundry (tylko zapytania) | Azure OpenAI (bezstanowy)",
+    "azureAIFoundryMode": "Tryb Azure AI Foundry",
+    "foundryDescription": "Szybsze odpowiedzi z wbudowaną funkcją wyszukiwania. Cała rozmowa jest zapisywana w bazie Azure AI Foundry, nie tylko w Twojej przeglądarce.",
+    "legendFoundry": "Twoja przeglądarka (local storage) | Serwer AI Assistant | Agent Azure AI Foundry (przechowuje całą rozmowę)",
+    "whyTheseOptions": "Dlaczego te opcje?",
+    "whyTheseOptionsText1": "To dostępne implementacje po wycofaniu Bing Search API przez Azure, z którego wcześniej korzystał AI Assistant.",
+    "whyTheseOptionsText2": "Zespół aktywnie poszukuje bardziej prywatnych alternatyw wyszukiwania. Obie obecne opcje wykorzystują wyszukiwanie Azure AI Foundry, ale różnią się zakresem udostępniania danych rozmowy.",
+    "azureDeprecatedBingApi": "Azure wycofał swoje Bing Search API",
+    "footerNote": "Oba tryby przechowują rozmowę lokalnie w przeglądarce. Możesz zmienić tryb w ustawieniach modelu w dowolnym momencie.",
+    "note": "Uwaga:",
+    "loadingDiagram": "Ładowanie schematu..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Sprawdzanie pamięci",
+      "analyzingData": "Analizowanie danych...",
+      "updateAvailable": "Dostępna aktualizacja",
+      "storageSpaceLimited": "Ograniczona ilość miejsca",
+      "migratingData": "Migracja danych",
+      "migrationComplete": "Migracja zakończona",
+      "partiallyComplete": "Częściowo zakończona",
+      "migrationFailed": "Migracja nie powiodła się"
+    },
+    "descriptions": {
+      "foundLegacyData": "Znaleziono dane z poprzedniej wersji. Czy chcesz je przenieść do nowego systemu?",
+      "storageSpaceWarning": "Twoje dane wymagają więcej miejsca niż obecnie dostępne. Zalecamy migrację przyrostową.",
+      "pleaseWait": "Proszę czekać, aktualizujemy Twoje dane...",
+      "dataIsSafe": "Twoje oryginalne dane są bezpieczne. Możesz spróbować ponownie lub pominąć na razie.",
+      "itemsTooLarge": "Te elementy są zbyt duże, aby zmieścić się w pamięci. Możesz je wyeksportować, zwolnić miejsce lub kontynuować bez nich.",
+      "settingsUpdated": "Twoje ustawienia zostały zaktualizowane."
+    },
+    "benefits": {
+      "title": "Korzyści",
+      "fasterPerformance": "Szybsze działanie",
+      "betterReliability": "Większa niezawodność",
+      "dataPreserved": "Twoje dane są zachowane"
+    },
+    "options": {
+      "advancedOptions": "Zaawansowane opcje",
+      "useIncrementalMode": "Użyj trybu przyrostowego",
+      "slowerButSafer": "wolniejszy, ale bezpieczniejszy",
+      "recommended": "zalecane",
+      "deleteLegacyData": "Usuń stare dane po migracji",
+      "freesUpSpace": "zwalnia miejsce w pamięci"
+    },
+    "actions": {
+      "skip": "Pomiń",
+      "migrateData": "Migracja danych",
+      "migrateAnyway": "Migruj mimo to",
+      "continue": "Kontynuuj",
+      "retry": "Ponów próbę",
+      "exportBackupFirst": "Najpierw wyeksportuj kopię zapasową",
+      "exportSkippedItems": "Eksportuj pominięte elementy"
+    },
+    "quota": {
+      "availableSpace": "Dostępne miejsce",
+      "dataToMigrate": "Dane do migracji",
+      "additionalSpaceNeeded": "Potrzebne dodatkowe miejsce"
+    },
+    "progress": {
+      "migratingConversations": "Migrowanie rozmów",
+      "migratingPrompts": "Migrowanie promptów",
+      "migratingAgents": "Migrowanie agentów",
+      "finishingUp": "Kończenie migracji"
+    },
+    "results": {
+      "successfullyMigrated": "Pomyślnie zmigrowano",
+      "notes": "Notatki",
+      "couldNotMigrate": "Nie udało się zmigrować",
+      "legacyDataDeleted": "Usunięto dane archiwalne",
+      "freed": "zwolniono"
+    },
+    "units": {
+      "conversation": "rozmowa",
+      "conversations": "rozmowy",
+      "folder": "folder",
+      "folders": "foldery",
+      "prompt": "prompt",
+      "prompts": "prompty",
+      "customAgent": "własny agent",
+      "customAgents": "własne agenty",
+      "item": "pozycja",
+      "items": "pozycje"
+    }
   }
 }
