@@ -132,7 +132,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     ? OpenAIModels[selectedModel.id as OpenAIModelID]
     : null;
   const isCustomAgent = selectedModel?.isCustomAgent === true;
-  const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
+  const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5_2;
   const agentAvailable = modelConfig?.agentId !== undefined;
 
   // Get current search mode from conversation (default to INTELLIGENT for privacy)

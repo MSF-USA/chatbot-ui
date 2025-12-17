@@ -32,6 +32,9 @@ export class HandlerFactory {
       throw new Error('Model configuration is required to create handler');
     }
 
+    // Note: Anthropic Claude models use getAnthropicHandler() instead
+    // as they require the AnthropicFoundry client
+
     // Azure OpenAI models (GPT-5, o3, GPT-4.1 non-agent)
     if (model.sdk === 'azure-openai') {
       return new AzureOpenAIHandler(azureClient);

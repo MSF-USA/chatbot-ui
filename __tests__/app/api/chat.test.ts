@@ -435,9 +435,9 @@ describe('/api/chat - Integration Tests', () => {
 
       expect(response.status).toBe(408);
       const data = await parseJsonResponse(response);
-      // Pipeline stage timeout returns PIPELINE_TIMEOUT code
-      expect(data.code).toBe(ErrorCode.PIPELINE_TIMEOUT);
-      expect(data.message).toContain('timeout');
+      // Request timeout returns REQUEST_TIMEOUT code
+      expect(data.code).toBe(ErrorCode.REQUEST_TIMEOUT);
+      expect(data.message.toLowerCase()).toContain('timed out');
     }, 70000); // Increase test timeout
   });
 

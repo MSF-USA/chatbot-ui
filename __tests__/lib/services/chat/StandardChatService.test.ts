@@ -116,7 +116,7 @@ describe('StandardChatService', () => {
 
   describe('handleChat', () => {
     it('should handle standard chat request successfully (non-streaming)', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: undefined },
       ];
@@ -221,7 +221,7 @@ describe('StandardChatService', () => {
     });
 
     it('should handle streaming chat request successfully', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: undefined },
       ];
@@ -312,7 +312,7 @@ describe('StandardChatService', () => {
     });
 
     it('should apply tone when tone is specified', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         {
           role: 'user',
@@ -458,7 +458,7 @@ describe('StandardChatService', () => {
     });
 
     it('should handle errors and log them appropriately', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: undefined },
       ];
@@ -511,7 +511,7 @@ describe('StandardChatService', () => {
     });
 
     it('should use default stream value of true when not specified', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: undefined },
       ];
@@ -580,7 +580,7 @@ describe('StandardChatService', () => {
     });
 
     it('should pass botId to logger when provided', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: undefined },
       ];
@@ -628,7 +628,7 @@ describe('StandardChatService', () => {
 
   describe('integration scenarios', () => {
     it('should handle Azure OpenAI model (gpt-5) complete workflow', async () => {
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
+      const model = OpenAIModels[OpenAIModelID.GPT_5_2];
       const messages: Message[] = [
         {
           role: 'user',

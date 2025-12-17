@@ -82,6 +82,7 @@ export class ServiceContainer {
     );
 
     this.azureOpenAIClient = new AzureOpenAI({
+      endpoint: env.AZURE_OPENAI_ENDPOINT,
       azureADTokenProvider,
       apiVersion: OPENAI_API_VERSION,
     });

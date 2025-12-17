@@ -29,33 +29,37 @@ export interface OpenAIModel {
   usesResponsesAPI?: boolean; // Uses Azure responses.create() instead of chat.completions
 }
 
+// Model order determines display order in UI (most advanced first)
 export enum OpenAIModelID {
-  GPT_4_1 = 'gpt-4.1',
-  GPT_5 = 'gpt-5',
-  GPT_5_MINI = 'gpt-5-mini',
-  GPT_5_CHAT = 'gpt-5-chat',
+  GPT_5_2 = 'gpt-5.2',
+  GPT_5_2_CHAT = 'gpt-5.2-chat',
   GPT_o3 = 'o3',
-  LLAMA_4_MAVERICK = 'Llama-4-Maverick-17B-128E-Instruct-FP8',
-  DEEPSEEK_R1 = 'DeepSeek-R1',
-  DEEPSEEK_V3_1 = 'DeepSeek-V3.1',
-  GROK_3 = 'grok-3',
+  GPT_5_MINI = 'gpt-5-mini',
+  GPT_4_1 = 'gpt-4.1',
   // Anthropic Claude models (via Azure AI Foundry)
   CLAUDE_OPUS_4_5 = 'claude-opus-4-5',
   CLAUDE_SONNET_4_5 = 'claude-sonnet-4-5',
   CLAUDE_OPUS_4_1 = 'claude-opus-4-1',
   CLAUDE_HAIKU_4_5 = 'claude-haiku-4-5',
+  // Other providers
+  LLAMA_4_MAVERICK = 'Llama-4-Maverick-17B-128E-Instruct-FP8',
+  DEEPSEEK_R1 = 'DeepSeek-R1',
+  DEEPSEEK_V3_1 = 'DeepSeek-V3.1',
+  GROK_3 = 'grok-3',
 }
 
 export enum OpenAIVisionModelID {
   GPT_4_1 = 'gpt-4.1',
-  GPT_5 = 'gpt-5',
+  GPT_5_2 = 'gpt-5.2',
   GPT_5_MINI = 'gpt-5-mini',
-  GPT_5_CHAT = 'gpt-5-chat',
+  GPT_5_2_CHAT = 'gpt-5.2-chat',
   GROK_3 = 'grok-3',
+  CLAUDE_SONNET_4_5 = 'claude-sonnet-4-5',
+  CLAUDE_HAIKU_4_5 = 'claude-haiku-4-5',
 }
 
 // Fallback model ID
-export const fallbackModelID = OpenAIModelID.GPT_4_1;
+export const fallbackModelID = OpenAIModelID.GPT_5_2_CHAT;
 
 /**
  * Environment-specific configuration for models
@@ -71,12 +75,12 @@ const ENVIRONMENT_CONFIGS: Record<
 > = {
   dev: {
     [OpenAIModelID.GPT_4_1]: {
-      agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL',
+      agentId: 'asst_sbddkxz8DLyCXATINdB10pys', // Agent145 - dev
     },
   },
   prod: {
     [OpenAIModelID.GPT_4_1]: {
-      agentId: 'asst_PROD_AGENT_ID_PLACEHOLDER', // Production agent ID - set in Terraform
+      agentId: 'asst_31fflP2JhFb9iJmeauwV82X5', // Agent312 - gpt-4.1
     },
   },
 };
@@ -111,9 +115,9 @@ function createModelConfigs(
       supportsReasoningEffort: false,
       supportsVerbosity: false,
     },
-    [OpenAIModelID.GPT_5]: {
-      id: OpenAIModelID.GPT_5,
-      name: 'GPT-5',
+    [OpenAIModelID.GPT_5_2]: {
+      id: OpenAIModelID.GPT_5_2,
+      name: 'GPT-5.2',
       maxLength: 128000,
       tokenLimit: 16000,
       modelType: 'omni',
@@ -121,12 +125,12 @@ function createModelConfigs(
         "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
       isDisabled: false,
       provider: 'openai',
-      knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
+      knowledgeCutoff: 'Dec 2025',
       sdk: 'azure-openai',
       supportsTemperature: false,
       reasoningEffort: 'medium',
       supportsReasoningEffort: true,
-      supportsMinimalReasoning: true, // GPT-5 uniquely supports 'minimal' effort
+      supportsMinimalReasoning: true, // GPT-5.2 uniquely supports 'minimal' effort
       verbosity: 'medium',
       supportsVerbosity: true,
     },
@@ -149,17 +153,17 @@ function createModelConfigs(
       verbosity: 'low',
       supportsVerbosity: false,
     },
-    [OpenAIModelID.GPT_5_CHAT]: {
-      id: OpenAIModelID.GPT_5_CHAT,
-      name: 'GPT-5 Chat',
+    [OpenAIModelID.GPT_5_2_CHAT]: {
+      id: OpenAIModelID.GPT_5_2_CHAT,
+      name: 'GPT-5.2 Chat',
       maxLength: 128000,
       tokenLimit: 16000,
       modelType: 'omni',
       description:
-        'Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.',
+        'Specialized variant of GPT-5.2 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.',
       isDisabled: false,
       provider: 'openai',
-      knowledgeCutoff: 'Oct 1, 2025 8:00 PM',
+      knowledgeCutoff: 'Dec 2025',
       sdk: 'azure-openai',
       supportsTemperature: false,
       supportsReasoningEffort: false,

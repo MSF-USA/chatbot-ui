@@ -97,7 +97,7 @@ describe('cleanData Functions', () => {
       const conv = obj.history[0];
       expect(conv.id).toBe(1);
       expect(conv.name).toBe('conversation 1');
-      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5]);
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2_CHAT]);
       expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
       expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
       expect(conv.folderId).toBeNull();
@@ -159,7 +159,7 @@ describe('cleanData Functions', () => {
       const conv = obj.history[0];
       expect(conv.id).toBe('1');
       expect(conv.name).toBe('conversation 1');
-      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5]);
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2_CHAT]);
       expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
       expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
       expect(conv.folderId).toBeNull();
@@ -195,7 +195,7 @@ describe('cleanData Functions', () => {
                 content: 'Hi',
               },
             ],
-            model: OpenAIModels[OpenAIModelID.GPT_5],
+            model: OpenAIModels[OpenAIModelID.GPT_5_2],
             prompt: DEFAULT_SYSTEM_PROMPT,
             temperature: DEFAULT_TEMPERATURE,
             folderId: null,
@@ -214,7 +214,7 @@ describe('cleanData Functions', () => {
             name: 'prompt 1',
             description: '',
             content: '',
-            model: OpenAIModels[OpenAIModelID.GPT_5],
+            model: OpenAIModels[OpenAIModelID.GPT_5_2],
             folderId: null,
           },
         ],
@@ -238,7 +238,7 @@ describe('cleanData Functions', () => {
           name: 'prompt 1',
           description: '',
           content: '',
-          model: OpenAIModels[OpenAIModelID.GPT_5],
+          model: OpenAIModels[OpenAIModelID.GPT_5_2],
           folderId: null,
         },
       ]);
@@ -247,7 +247,8 @@ describe('cleanData Functions', () => {
       const conv = obj.history[0];
       expect(conv.id).toBe('1');
       expect(conv.name).toBe('conversation 1');
-      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5]);
+      // v4 format preserves the explicit model from import data
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2]);
       expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
       expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
       expect(conv.folderId).toBeNull();
@@ -282,7 +283,7 @@ describe('cleanData Functions', () => {
                 content: 'Hi',
               },
             ],
-            model: OpenAIModels[OpenAIModelID.GPT_5],
+            model: OpenAIModels[OpenAIModelID.GPT_5_2],
             prompt: DEFAULT_SYSTEM_PROMPT,
             temperature: DEFAULT_TEMPERATURE,
             folderId: null,
