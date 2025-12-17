@@ -251,7 +251,7 @@
   "Options": "옵션",
   "Are you sure you want to delete this folder?": "이 폴더를 삭제하시겠습니까?",
   "New Prompt": "새 프롬프트",
-  "Edit Prompt": "프롬프트 편집",
+  "Edit Prompt": "프롬프트 수정",
   "Prompt name": "프롬프트 이름",
   "Prompt content": "프롬프트 내용",
   "Are you sure you want to delete this prompt?": "이 프롬프트를 삭제하시겠습니까?",
@@ -336,7 +336,19 @@
   "Team Templates": "팀 템플릿",
   "selected": "선택됨",
   "folders": "폴더",
-  "agents": "에이전트",
+  "agents": {
+    "exportAgent": "에이전트 내보내기",
+    "editAgent": "에이전트 편집",
+    "agentName": "에이전트 이름",
+    "myResearchAssistant": "내 연구 어시스턴트",
+    "agentId": "에이전트 ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "설명 (선택 사항)",
+    "descriptionPlaceholder": "연구 작업 전문 에이전트...",
+    "baseModel": "기본 모델",
+    "formatDescription": "형식: asst_xxxxx (MSF AI Assistant Foundry에서)",
+    "importantInfo": "이 에이전트는 대화 컨텍스트에 액세스하고 표준 모델과 동일한 도구를 사용할 수 있습니다. 에이전트 ID가 올바른지 확인하세요. 나중에 변경할 수 없습니다."
+  },
   "Quick Actions": "빠른 작업",
   "Type / in chat to access your prompts": "채팅에서 /를 입력하여 프롬프트에 액세스하세요",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "채팅에서 /를 입력하고 프롬프트를 선택한 다음 메시지가 표시되면 변수를 입력하세요",
@@ -383,7 +395,6 @@
   "Custom Agents": "사용자 정의 에이전트",
   "Delete template and all its items": "템플릿 및 모든 항목 삭제",
   "Description (Optional)": "설명 (선택사항)",
-  "Edit Prompt": "프롬프트 수정",
   "Edit Tone": "톤 수정",
   "Email Response Template": "이메일 응답 템플릿",
   "Example Prompt": "프롬프트 예시",
@@ -443,7 +454,6 @@
   "msf_logo_alt": "MSF 로고",
   "collapse_sidebar": "사이드바 접기",
   "expand_sidebar": "사이드바 펼치기",
-  "Voice Guidelines": "음성 가이드라인",
   "Please upload some content or describe the tone you want": "콘텐츠를 업로드하거나 원하는 톤을 설명하세요",
   "Untitled Tone": "제목 없는 톤",
   "Failed to analyze tone": "톤 분석 실패",
@@ -601,19 +611,6 @@
     "expandSidebar": "사이드바 확장",
     "quickActionsTitle": "빠른 작업",
     "quickActions": "빠른 작업"
-  },
-  "agents": {
-    "exportAgent": "에이전트 내보내기",
-    "editAgent": "에이전트 편집",
-    "agentName": "에이전트 이름",
-    "myResearchAssistant": "내 연구 어시스턴트",
-    "agentId": "에이전트 ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "설명 (선택 사항)",
-    "descriptionPlaceholder": "연구 작업 전문 에이전트...",
-    "baseModel": "기본 모델",
-    "formatDescription": "형식: asst_xxxxx (MSF AI Assistant Foundry에서)",
-    "importantInfo": "이 에이전트는 대화 컨텍스트에 액세스하고 표준 모델과 동일한 도구를 사용할 수 있습니다. 에이전트 ID가 올바른지 확인하세요. 나중에 변경할 수 없습니다."
   },
   "prompts": {
     "buildReusablePrompts": "AI 지원으로 재사용 가능한 프롬프트 구축",
@@ -1009,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "빠른 작업에 최적화된 빠르고 비용 효율적인 Claude 모델. 간단한 쿼리, 요약, 대량 애플리케이션에 적합합니다.",
       "knowledgeCutoff": "2025년 1월"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI의 가장 진보된 모델로, 복잡한 추론, 코드 생성, 기술적 문제 해결에 뛰어납니다. 분석 작업, 프로그래밍 문제, 연구, 상세한 설명에 최적화되어 있습니다. 추론 강도와 응답 길이 조정이 가능합니다.",
+      "knowledgeCutoff": "2025년 12월"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 챗",
+      "description": "GPT-5.2의 대화형 특화 버전으로, 대화와 감성 지능에 최적화되어 있습니다. 공감 기반 소통, 심리 지원, 창의적 글쓰기, 아이디어 브레인스토밍, 자연스러운 대화에 탁월합니다. 일상 대화, 심리 상담, 감성 인식이 필요한 작업에 적합합니다.",
+      "knowledgeCutoff": "2025년 12월"
     }
   },
   "searchMode": {
@@ -1056,5 +1063,167 @@
     "transcribesOnSend": "전송 시 전사",
     "addInstructions": "지침 추가",
     "instructionsPlaceholder": "정확도를 높이기 위한 컨텍스트 (예: 이름, 용어)"
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "저장 공간 확인 중",
+      "analyzingData": "데이터 분석 중...",
+      "updateAvailable": "업데이트 가능",
+      "storageSpaceLimited": "저장 공간 부족",
+      "migratingData": "데이터 마이그레이션 중",
+      "migrationComplete": "마이그레이션 완료",
+      "partiallyComplete": "부분 완료",
+      "migrationFailed": "마이그레이션 실패"
+    },
+    "descriptions": {
+      "foundLegacyData": "이전 버전의 데이터를 발견했습니다. 향상된 시스템에서 사용하도록 마이그레이션하시겠습니까?",
+      "storageSpaceWarning": "현재 사용 가능한 공간보다 더 많은 공간이 필요합니다. 증분 마이그레이션 모드를 권장합니다.",
+      "pleaseWait": "데이터를 업데이트하는 동안 기다려 주세요...",
+      "dataIsSafe": "원본 데이터는 안전합니다. 다시 시도하거나 건너뛸 수 있습니다.",
+      "itemsTooLarge": "이 항목들은 저장 공간에 넣기엔 너무 큽니다. 내보내기, 공간 확보 또는 항목 없이 계속할 수 있습니다.",
+      "settingsUpdated": "설정이 업데이트되었습니다."
+    },
+    "benefits": {
+      "title": "혜택",
+      "fasterPerformance": "더 빠른 성능",
+      "betterReliability": "향상된 안정성",
+      "dataPreserved": "데이터가 보존됨"
+    },
+    "options": {
+      "advancedOptions": "고급 옵션",
+      "useIncrementalMode": "증분 모드 사용",
+      "slowerButSafer": "느리지만 더 안전함",
+      "recommended": "권장",
+      "deleteLegacyData": "마이그레이션 후 기존 데이터 삭제",
+      "freesUpSpace": "저장 공간 확보"
+    },
+    "actions": {
+      "skip": "건너뛰기",
+      "migrateData": "데이터 마이그레이션",
+      "migrateAnyway": "그래도 마이그레이션",
+      "continue": "계속",
+      "retry": "다시 시도",
+      "exportBackupFirst": "먼저 백업 내보내기",
+      "exportSkippedItems": "건너뛴 항목 내보내기"
+    },
+    "quota": {
+      "availableSpace": "사용 가능한 공간",
+      "dataToMigrate": "마이그레이션할 데이터",
+      "additionalSpaceNeeded": "추가 필요 공간"
+    },
+    "progress": {
+      "migratingConversations": "대화 마이그레이션 중",
+      "migratingPrompts": "프롬프트 마이그레이션 중",
+      "migratingAgents": "에이전트 마이그레이션 중",
+      "finishingUp": "마무리 중"
+    },
+    "results": {
+      "successfullyMigrated": "성공적으로 마이그레이션됨",
+      "notes": "참고",
+      "couldNotMigrate": "마이그레이션할 수 없음",
+      "legacyDataDeleted": "기존 데이터 삭제됨",
+      "freed": "확보됨"
+    },
+    "units": {
+      "conversation": "대화",
+      "conversations": "대화",
+      "folder": "폴더",
+      "folders": "폴더",
+      "prompt": "프롬프트",
+      "prompts": "프롬프트",
+      "customAgent": "커스텀 에이전트",
+      "customAgents": "커스텀 에이전트",
+      "item": "항목",
+      "items": "항목들"
+    }
+  },
+  "languageSwahili": "스와힐리어",
+  "welcomeBanner": {
+    "title": "AI Assistant V2에 오신 것을 환영합니다",
+    "whatsNew": "새로운 기능",
+    "whatsNewQuestion": "무엇이 새로워졌나요?"
+  },
+  "welcomeV2": {
+    "backToChat": "채팅으로 돌아가기",
+    "title": "AI Assistant V2에 오신 것을 환영합니다",
+    "subtitle": "새로운 기능이 추가된 완전한 재설계",
+    "webSearch": {
+      "title": "웹 검색 모드",
+      "description": "AI가 실시간 웹 검색에 접근할 수 있도록 하며, 개인정보 보호에 중점을 둔 옵션 제공",
+      "quickAccess": "빠른 접근:",
+      "quickAccessInstructions": "채팅 입력창 옆의 + 버튼 클릭 → \"웹 검색\" 선택",
+      "setAsDefault": "기본값으로 설정:",
+      "setAsDefaultInstructions": "모델 설정을 열고 웹 검색 모드 토글을 활성화하세요. 다음 중에서 선택:",
+      "privacyFocused": "개인정보 중시(기본)",
+      "privacyFocusedDescription": "검색 쿼리만 외부 전송",
+      "azureAIFoundry": "Azure AI Foundry 모드",
+      "azureAIFoundryDescription": "더 빠르지만 전체 대화가 외부에 저장됨",
+      "learnMore": "검색 모드 더 알아보기 →"
+    },
+    "tones": {
+      "title": "톤(음성 프로필)",
+      "description": "AI 작문 스타일, 격식, 성격을 제어",
+      "createTones": "1. 톤 생성:",
+      "createTonesInstructions": "사이드바의 빠른 작업 → 톤 탭",
+      "useTones": "2. 톤 사용:",
+      "useTonesInstructions": "채팅 입력창 옆의 톤 드롭다운 클릭",
+      "exampleProfessionalDesc": "격식 있고 비즈니스적인 톤",
+      "exampleCasualDesc": "친근하고 대화체"
+    },
+    "aiAssist": {
+      "title": "프롬프트 & 톤용 AI 어시스트",
+      "description": "AI가 더욱 빠르게 더 나은 프롬프트와 톤을 만들 수 있도록 도와줍니다",
+      "step1": "사이드바에서 빠른 작업 열기",
+      "step2": "{prompts} 또는 {tones} 탭으로 이동",
+      "step3": "AI Assistant 패널 확인",
+      "getSuggestions": "추천 받기",
+      "getSuggestionsDesc": "AI가 초안을 분석하여 개선안을 제시합니다",
+      "buildFromFiles": "파일로부터 생성",
+      "buildFromFilesDesc": "문서를 업로드하여 프롬프트/톤 생성",
+      "testBeforeSaving": "저장 전 테스트",
+      "testBeforeSavingDesc": "실시간 채팅 미리보기에서 프롬프트/톤 사용해보기",
+      "step2Prefix": "다음으로 이동",
+      "step2Suffix": "탭"
+    },
+    "customAgents": {
+      "title": "맞춤형 에이전트",
+      "advancedBadge": "고급",
+      "description": "웹 검색 및 코드 해석 등 고급 기능을 갖춘 특화된 AI 에이전트",
+      "advancedFeature": "고급 기능",
+      "advancedFeatureDesc": "맞춤형 에이전트는 Azure AI Foundry에서 특화된 도구와 함께 실행됩니다. 에이전트 ID 생성 시 AI Assistant 기술팀과의 협업이 필요합니다.",
+      "howToAccess": "접근 방법:",
+      "howToAccessInstructions": "설정 → 모델 → 에이전트 탭",
+      "whatYouCanDo": "가능한 작업:",
+      "configureAgents": "특화된 기능의 에이전트 구성",
+      "importExport": "에이전트 구성 가져오기/내보내기",
+      "selectFromDropdown": "모델 드롭다운에서 맞춤형 에이전트 선택"
+    },
+    "audioTranslation": {
+      "title": "번역이 포함된 음성 기록",
+      "description": "음성 기록을 자동으로 13개 이상 언어로 번역합니다",
+      "howToUse": "사용 방법:",
+      "step1": "오디오 또는 비디오 파일 업로드",
+      "step2": "전사 화면에서 언어 드롭다운 클릭",
+      "step3": "목표 언어 선택",
+      "availableLanguages": "지원 언어:",
+      "moreLanguages": "+7개 더"
+    },
+    "pwa": {
+      "title": "모바일 앱으로 설치",
+      "description": "네이티브 환경의 Progressive Web App",
+      "installTip": "팁: 인증 정보를 유지하고 최적의 환경을 위해 로그인 후 설치하세요.",
+      "howToInstall": "설치 방법:",
+      "step1": "계정에 로그인",
+      "step2": "설정 → 모바일 앱에서 자세한 안내 확인",
+      "step3": "모바일에서: 브라우저 메뉴(⋮ 또는 ⚙️) 탭",
+      "step4": "\"홈 화면에 추가\" 또는 \"앱 설치\" 선택",
+      "step5": "화면 안내에 따라 설치",
+      "benefits": "장점:",
+      "benefit1": "홈 화면에서 네이티브 앱처럼 실행",
+      "benefit2": "브라우저 UI 없이 전체 화면 사용",
+      "benefit3": "저장된 대화 오프라인 접근"
+    }
+  },
+  "Professional": "전문적",
+  "Casual": "캐주얼"
 }
