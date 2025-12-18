@@ -4,6 +4,8 @@ import {
   saveBase64AsFile,
 } from '@/lib/services/transcription/common';
 
+import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
+
 import {
   ITranscriptionService,
   TranscriptionOptions,
@@ -72,13 +74,13 @@ export class WhisperTranscriptionService implements ITranscriptionService {
 
     try {
       // Check file size (Whisper API limit is 25MB)
-      const maxSize = 25 * 1024 * 1024; // 25MB
       const stats = await fs.promises.stat(filePath);
       const fileSize = stats.size;
 
-      if (fileSize > maxSize) {
+      if (fileSize > WHISPER_MAX_SIZE) {
+        const maxSizeMB = WHISPER_MAX_SIZE / (1024 * 1024);
         throw new Error(
-          `Audio file size (${(fileSize / 1024 / 1024).toFixed(2)}MB) exceeds the maximum limit of 25MB. Please upload a shorter audio file.`,
+          `Audio file size (${(fileSize / 1024 / 1024).toFixed(2)}MB) exceeds the maximum limit of ${maxSizeMB}MB. Please upload a shorter audio file.`,
         );
       }
 
@@ -101,8 +103,11 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const stats = await fs.promises.stat(segmentPath);
     const fileSize = stats.size;
 
-    if (fileSize > 25 * 1024 * 1024) {
-      throw new Error('Segment size exceeds the maximum allowed size of 25MB.');
+    if (fileSize > WHISPER_MAX_SIZE) {
+      const maxSizeMB = WHISPER_MAX_SIZE / (1024 * 1024);
+      throw new Error(
+        `Segment size exceeds the maximum allowed size of ${maxSizeMB}MB.`,
+      );
     }
 
     try {
