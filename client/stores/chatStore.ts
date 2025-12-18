@@ -202,9 +202,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     let showLoadingTimeout: NodeJS.Timeout | null = null;
 
     try {
-      // Use analyzer to determine loading message
+      // Use analyzer to determine loading message key (for translation in UI)
       const analyzer = new MessageContentAnalyzer(message);
-      const loadingMessage = analyzer.getLoadingMessage();
+      const loadingMessage = analyzer.getLoadingMessageKey();
 
       // Initialize streaming state
       get().initializeStreamingState(conversation.id, loadingMessage);
@@ -601,7 +601,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     let showLoadingTimeout: NodeJS.Timeout | null = null;
 
     try {
-      // Use analyzer to determine loading message (reusing existing pattern)
+      // Use analyzer to determine loading message key (for translation in UI)
       // Flatten messages to find user messages
       const flatMessages = flattenEntriesForAPI(conversation.messages);
       const lastUserMessage = flatMessages
@@ -613,7 +613,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }
 
       const analyzer = new MessageContentAnalyzer(lastUserMessage);
-      const loadingMessage = analyzer.getLoadingMessage();
+      const loadingMessage = analyzer.getLoadingMessageKey();
 
       // Initialize streaming state
       get().initializeStreamingState(retryConversation.id, loadingMessage);
