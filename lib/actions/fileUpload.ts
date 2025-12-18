@@ -4,7 +4,6 @@ import { Session } from 'next-auth';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
-import { MAX_API_FILE_SIZE } from '@/lib/utils/app/const';
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import { BlobStorage } from '@/lib/utils/server/blob';
@@ -15,6 +14,7 @@ import {
 } from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
+import { validateFileSizeRaw } from '@/lib/constants/fileLimits';
 
 /**
  * Result of a file upload operation.
@@ -28,8 +28,9 @@ export interface UploadResult {
 /**
  * Server Action to upload files to blob storage.
  *
- * This action supports the 50MB body size limit configured in next.config.js,
+ * This action supports up to 1.6GB body size limit configured in next.config.js,
  * unlike Route Handlers which have a lower default limit.
+ * File size limits vary by file type (image: 5MB, audio: 1GB, video: 1.5GB, document: 50MB).
  *
  * @param formData - FormData containing:
  *   - file: The file to upload
@@ -63,20 +64,25 @@ export async function uploadFileAction(
     }
 
     // Validate file is not executable
-    const validation = validateFileNotExecutable(filename, mimeType);
-    if (!validation.isValid) {
-      return { success: false, error: validation.error };
+    const executableValidation = validateFileNotExecutable(filename, mimeType);
+    if (!executableValidation.isValid) {
+      return { success: false, error: executableValidation.error };
     }
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const fileData = Buffer.from(arrayBuffer);
 
-    // Check file size
-    if (fileData.length > MAX_API_FILE_SIZE) {
+    // Check file size using category-based limits
+    const sizeValidation = validateFileSizeRaw(
+      filename,
+      fileData.length,
+      mimeType ?? undefined,
+    );
+    if (!sizeValidation.valid) {
       return {
         success: false,
-        error: `File size exceeds maximum of ${MAX_API_FILE_SIZE / (1024 * 1024)}MB`,
+        error: sizeValidation.error,
       };
     }
 
