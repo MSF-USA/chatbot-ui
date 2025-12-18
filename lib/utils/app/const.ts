@@ -20,24 +20,89 @@ export const DEFAULT_MODEL = env.DEFAULT_MODEL;
 export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
   env.FORCE_LOGOUT_ON_REFRESH_FAILURE;
 
+// =============================================================================
+// File Upload Size Limits
+// =============================================================================
+
 // File upload size limits (in bytes)
 export const FILE_SIZE_LIMITS = {
+  // Media files - by file size
   IMAGE_MAX_BYTES: 5 * 1024 * 1024, // 5MB
-  AUDIO_VIDEO_MAX_BYTES: 25 * 1024 * 1024, // 25MB (for direct audio uploads)
-  VIDEO_MAX_BYTES: 1024 * 1024 * 1024, // 1GB (video files - audio will be extracted client-side)
-  FILE_MAX_BYTES: 10 * 1024 * 1024, // 10MB
+  AUDIO_MAX_BYTES: 1024 * 1024 * 1024, // 1GB (for transcription)
+  VIDEO_MAX_BYTES: 1.5 * 1024 * 1024 * 1024, // 1.5GB (audio extracted)
+
+  // Documents - by file size (initial gate before content validation)
+  DOCUMENT_MAX_BYTES: 50 * 1024 * 1024, // 50MB
+
+  // Upload chunks
   UPLOAD_CHUNK_BYTES: 5 * 1024 * 1024, // 5MB chunks
+
+  // Backward compatibility aliases (deprecated - use new names)
+  /** @deprecated Use AUDIO_MAX_BYTES instead */
+  AUDIO_VIDEO_MAX_BYTES: 1024 * 1024 * 1024, // Now same as AUDIO_MAX_BYTES
+  /** @deprecated Use DOCUMENT_MAX_BYTES instead */
+  FILE_MAX_BYTES: 50 * 1024 * 1024, // Now same as DOCUMENT_MAX_BYTES
 } as const;
 
-// File upload size limits (in MB for display)
+// Content limits for text-based files (validated after upload/extraction)
+export const CONTENT_LIMITS = {
+  // PDF: limit by page count
+  PDF_MAX_PAGES: 500,
+
+  // Text files: limit by character count (estimate ~4 chars per token)
+  TEXT_MAX_CHARACTERS: 400_000, // ~100K tokens
+
+  // Token estimation factor (for display purposes)
+  CHARS_PER_TOKEN_ESTIMATE: 4,
+} as const;
+
+// =============================================================================
+// Display Formatting Utilities
+// =============================================================================
+
+/**
+ * Formats bytes to a human-readable string (e.g., "5MB", "1.5GB").
+ * Used to generate display strings from byte constants.
+ */
+export function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024 * 1024) {
+    const gb = bytes / (1024 * 1024 * 1024);
+    return gb % 1 === 0 ? `${gb}GB` : `${gb.toFixed(1)}GB`;
+  }
+  return `${bytes / (1024 * 1024)}MB`;
+}
+
+/**
+ * Formats large numbers with K/M suffixes (e.g., "400K", "1M").
+ */
+export function formatNumber(num: number): string {
+  if (num >= 1_000_000) return `${num / 1_000_000}M`;
+  if (num >= 1_000) return `${num / 1_000}K`;
+  return String(num);
+}
+
+// Display-friendly limits - dynamically derived from byte values
+export const FILE_SIZE_LIMITS_DISPLAY = {
+  IMAGE: formatBytes(FILE_SIZE_LIMITS.IMAGE_MAX_BYTES),
+  AUDIO: formatBytes(FILE_SIZE_LIMITS.AUDIO_MAX_BYTES),
+  VIDEO: formatBytes(FILE_SIZE_LIMITS.VIDEO_MAX_BYTES),
+  DOCUMENT: formatBytes(FILE_SIZE_LIMITS.DOCUMENT_MAX_BYTES),
+  PDF_PAGES: `${CONTENT_LIMITS.PDF_MAX_PAGES} pages`,
+  TEXT_CHARS: `${formatNumber(CONTENT_LIMITS.TEXT_MAX_CHARACTERS)} characters`,
+} as const;
+
+// File upload size limits (in MB for display) - backward compatibility
+// Values are derived from byte constants to stay in sync
 export const FILE_SIZE_LIMITS_MB = {
-  IMAGE: 5,
-  AUDIO_VIDEO: 25,
-  VIDEO: 1024, // 1GB for video (audio extracted client-side)
-  FILE: 10,
+  IMAGE: FILE_SIZE_LIMITS.IMAGE_MAX_BYTES / (1024 * 1024),
+  AUDIO: FILE_SIZE_LIMITS.AUDIO_MAX_BYTES / (1024 * 1024),
+  AUDIO_VIDEO: FILE_SIZE_LIMITS.AUDIO_MAX_BYTES / (1024 * 1024), // Deprecated alias
+  VIDEO: FILE_SIZE_LIMITS.VIDEO_MAX_BYTES / (1024 * 1024),
+  DOCUMENT: FILE_SIZE_LIMITS.DOCUMENT_MAX_BYTES / (1024 * 1024),
+  FILE: FILE_SIZE_LIMITS.DOCUMENT_MAX_BYTES / (1024 * 1024), // Deprecated alias
 } as const;
 
-// Whisper API size limit for transcription
+// Whisper API size limit for transcription (25MB API limit, but we process larger files via chunking)
 export const WHISPER_MAX_SIZE = 25 * 1024 * 1024; // 25MB
 
 // File upload count limits per message
@@ -50,8 +115,8 @@ export const FILE_COUNT_LIMITS = {
 } as const;
 
 // Maximum file upload size for API endpoints (in bytes)
-// Set to 1GB to support large video files (audio is extracted server-side via FFmpeg)
-export const MAX_API_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
+// Set to 1.5GB to support large video files (audio is extracted)
+export const MAX_API_FILE_SIZE = FILE_SIZE_LIMITS.VIDEO_MAX_BYTES;
 
 // Default model for AI analysis operations (tone analysis, prompt revision, etc.)
 // Uses 'gpt-5' - reasoning model with advanced analysis capabilities
