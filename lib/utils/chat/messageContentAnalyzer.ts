@@ -176,8 +176,51 @@ export class MessageContentAnalyzer {
   }
 
   /**
-   * Get an appropriate loading message based on content type
-   * Used to show users what's being processed
+   * Get the translation key for the appropriate loading message based on content type.
+   * Returns a key from the chat.loadingMessages namespace.
+   * The caller should translate using their translation function.
+   *
+   * @returns Translation key (e.g., 'chat.loadingMessages.transcribingAudio')
+   */
+  getLoadingMessageKey(): string {
+    const summary = this.getContentSummary();
+    const { types, counts, isAudioVideo, hasText } = summary;
+
+    // Audio/video transcription
+    if (isAudioVideo) {
+      return hasText
+        ? 'chat.loadingMessages.transcribingAndProcessing'
+        : 'chat.loadingMessages.transcribingAudio';
+    }
+
+    // Files
+    if (types.has('file')) {
+      // Mixed content (files + images)
+      if (types.has('image')) {
+        return 'chat.loadingMessages.analyzingFiles';
+      }
+      // Multiple documents
+      if (counts.files > 1) {
+        return 'chat.loadingMessages.analyzingDocuments';
+      }
+      // Single document
+      return 'chat.loadingMessages.analyzingDocument';
+    }
+
+    // Images only
+    if (types.has('image')) {
+      return counts.images > 1
+        ? 'chat.loadingMessages.analyzingImages'
+        : 'chat.loadingMessages.analyzingImage';
+    }
+
+    // Default
+    return 'chat.thinking';
+  }
+
+  /**
+   * Get an appropriate loading message based on content type.
+   * @deprecated Use getLoadingMessageKey() and translate in the UI layer instead.
    */
   getLoadingMessage(): string {
     const summary = this.getContentSummary();
@@ -267,8 +310,45 @@ export class MessageContentAnalyzer {
   }
 
   /**
-   * Get a human-readable description of the content
-   * Useful for debugging and logging
+   * Content description part with translation key and optional parameters.
+   */
+  getContentDescriptionParts(): Array<{
+    key: string;
+    params?: Record<string, number>;
+  }> {
+    const summary = this.getContentSummary();
+    const parts: Array<{ key: string; params?: Record<string, number> }> = [];
+
+    if (summary.counts.text > 0) {
+      parts.push({ key: 'chat.contentDescription.text' });
+    }
+    if (summary.counts.images > 0) {
+      parts.push({
+        key: 'chat.contentDescription.imagesCount',
+        params: { count: summary.counts.images },
+      });
+    }
+    if (summary.counts.files > 0) {
+      parts.push({
+        key: 'chat.contentDescription.filesCount',
+        params: { count: summary.counts.files },
+      });
+    }
+    if (summary.isAudioVideo) {
+      parts.push({ key: 'chat.contentDescription.audioVideo' });
+    }
+
+    if (parts.length === 0) {
+      parts.push({ key: 'chat.contentDescription.empty' });
+    }
+
+    return parts;
+  }
+
+  /**
+   * Get a human-readable description of the content.
+   * Useful for debugging and logging.
+   * @deprecated Use getContentDescriptionParts() and translate in the UI layer instead.
    */
   getContentDescription(): string {
     const summary = this.getContentSummary();
