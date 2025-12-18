@@ -592,6 +592,8 @@
     "no": "No"
   },
   "chat": {
+    "discardChanges": "Discard Changes",
+    "discardChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
     "downloadAudio": "Download audio",
     "closeAudioPlayer": "Close audio player",
     "downloadTranscript": "Download transcript",
