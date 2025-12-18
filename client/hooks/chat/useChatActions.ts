@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { createDefaultConversation } from '@/lib/utils/app/conversationInit';
 import {
   entryToDisplayMessage,
   findPrecedingUserMessageIndex,
@@ -16,6 +17,7 @@ import { SearchMode } from '@/types/searchMode';
 
 import { useChatStore } from '@/client/stores/chatStore';
 import { useConversationStore } from '@/client/stores/conversationStore';
+import { useSettingsStore } from '@/client/stores/settingsStore';
 
 interface UseChatActionsProps {
   updateConversation: (id: string, updates: any) => void;
@@ -95,13 +97,51 @@ export function useChatActions({
 
   const handleSend = useCallback(
     (message: Message, searchMode?: SearchMode) => {
-      const state = useConversationStore.getState();
-      const currentConversation = state.conversations.find(
-        (c) => c.id === state.selectedConversationId,
+      const conversationState = useConversationStore.getState();
+      const settingsState = useSettingsStore.getState();
+
+      let currentConversation = conversationState.conversations.find(
+        (c) => c.id === conversationState.selectedConversationId,
       );
 
-      if (!currentConversation) return;
+      // If no conversation exists, create one first
+      if (!currentConversation) {
+        const {
+          models,
+          defaultModelId,
+          systemPrompt,
+          temperature,
+          defaultSearchMode,
+        } = settingsState;
 
+        if (models.length === 0) {
+          console.error('Cannot create conversation: no models available');
+          return;
+        }
+
+        // Create a new conversation with the user's message
+        const newConversation = createDefaultConversation(
+          models,
+          defaultModelId,
+          systemPrompt || '',
+          temperature || 0.5,
+          defaultSearchMode,
+        );
+
+        const conversationWithMessage = {
+          ...newConversation,
+          messages: [message],
+        };
+
+        // Add and select the new conversation
+        conversationState.addConversation(conversationWithMessage);
+
+        // Send the message with the new conversation
+        sendMessage?.(message, conversationWithMessage, searchMode);
+        return;
+      }
+
+      // Existing conversation flow
       const updatedMessages = [...currentConversation.messages, message];
 
       updateConversation(currentConversation.id, { messages: updatedMessages });
