@@ -1,3 +1,9 @@
+import { getPdfPageCount } from './pdfUtils';
+
+import {
+  requiresContentValidation,
+  validateDocumentContent,
+} from '@/lib/constants/fileLimits';
 import { exec } from 'child_process';
 import fs from 'fs';
 import { lookup } from 'mime-types';
@@ -273,7 +279,6 @@ async function pptToText(inputPath: string): Promise<string> {
 }
 
 export async function loadDocument(file: File): Promise<string> {
-  let text, content, loader;
   const mimeType = lookup(file.name) || 'application/octet-stream';
   const tempFilePath = `/tmp/${file.name}`;
 
@@ -283,6 +288,7 @@ export async function loadDocument(file: File): Promise<string> {
     mode: 0o600,
   });
 
+  let text: string;
   switch (true) {
     case mimeType.startsWith('application/pdf'):
       text = await pdfToText(tempFilePath);
@@ -325,4 +331,77 @@ export async function loadDocument(file: File): Promise<string> {
       }
   }
   return text;
+}
+
+/**
+ * Result of loading and validating a document.
+ */
+export interface LoadDocumentResult {
+  text: string;
+  pageCount?: number;
+}
+
+/**
+ * Loads a document and validates its content length against configured limits.
+ * Throws an error if the document exceeds content limits (page count for PDFs,
+ * character count for text files).
+ *
+ * @param file - The file to load and validate
+ * @returns Promise resolving to the extracted text and optional page count
+ * @throws Error if content validation fails or document cannot be loaded
+ */
+export async function loadDocumentWithValidation(
+  file: File,
+): Promise<LoadDocumentResult> {
+  const mimeType = lookup(file.name) || 'application/octet-stream';
+  const tempFilePath = `/tmp/${file.name}`;
+
+  // Write the file to a temporary location with secure permissions
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer), {
+    mode: 0o600,
+  });
+
+  let text: string;
+  let pageCount: number | undefined;
+
+  // Handle PDF separately to get page count for validation
+  if (mimeType.startsWith('application/pdf')) {
+    // Get page count first for validation
+    try {
+      pageCount = await getPdfPageCount(tempFilePath);
+    } catch (error) {
+      console.warn(
+        '[loadDocumentWithValidation] Failed to get PDF page count:',
+        error,
+      );
+      // Continue without page count - will fall back to character validation
+    }
+
+    // Validate page count if we got it
+    if (pageCount !== undefined && requiresContentValidation(file.name)) {
+      const validation = validateDocumentContent(file.name, '', pageCount);
+      if (!validation.valid) {
+        // Clean up temp file before throwing
+        retryRemoveFile(tempFilePath).catch(() => {});
+        throw new Error(validation.error);
+      }
+    }
+
+    // Extract text
+    text = await pdfToText(tempFilePath);
+  } else {
+    // For non-PDF files, load the document first
+    text = await loadDocument(file);
+  }
+
+  // Validate content length for text-based files
+  if (requiresContentValidation(file.name)) {
+    const validation = validateDocumentContent(file.name, text, pageCount);
+    if (!validation.valid) {
+      throw new Error(validation.error);
+    }
+  }
+
+  return { text, pageCount };
 }
