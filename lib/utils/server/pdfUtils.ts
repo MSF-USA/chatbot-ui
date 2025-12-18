@@ -23,13 +23,11 @@ export async function getPdfPageCount(filePath: string): Promise<number> {
 
   // Read file as ArrayBuffer
   const data = await fs.promises.readFile(filePath);
-  const arrayBuffer = data.buffer.slice(
-    data.byteOffset,
-    data.byteOffset + data.byteLength,
-  );
+  // Create a new Uint8Array to ensure we get a proper ArrayBuffer (not SharedArrayBuffer)
+  const uint8Array = new Uint8Array(data);
 
   // Load PDF and get page count
-  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
   const pdf = await loadingTask.promise;
 
   return pdf.numPages;
@@ -54,14 +52,11 @@ export async function getPdfPageCountFromBuffer(
     pdfjsLib.GlobalWorkerOptions.workerSrc = '';
   }
 
-  // Convert Buffer to ArrayBuffer
-  const arrayBuffer = buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + buffer.byteLength,
-  );
+  // Create a new Uint8Array to ensure we get a proper ArrayBuffer (not SharedArrayBuffer)
+  const uint8Array = new Uint8Array(buffer);
 
   // Load PDF and get page count
-  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
   const pdf = await loadingTask.promise;
 
   return pdf.numPages;
