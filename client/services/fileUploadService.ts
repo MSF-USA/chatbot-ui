@@ -2,9 +2,11 @@ import toast from 'react-hot-toast';
 
 import { cacheImageBase64 } from '@/lib/services/imageService';
 
-import { FILE_SIZE_LIMITS, FILE_SIZE_LIMITS_MB } from '@/lib/utils/app/const';
-
 import { uploadFileAction } from '@/lib/actions/fileUpload';
+import {
+  getMaxSizeForFile,
+  validateFileSize,
+} from '@/lib/constants/fileLimits';
 
 // Threshold for using Server Action (files larger than 10MB use Server Action)
 const SERVER_ACTION_THRESHOLD = 10 * 1024 * 1024; // 10MB
@@ -92,43 +94,19 @@ export class FileUploadService {
   }
 
   /**
-   * Get max file size for given file type
+   * Get max file size for given file type.
+   * Uses centralized limits from lib/constants/fileLimits.ts.
    */
-  static getMaxSize(file: File): { bytes: number; mb: number } {
-    const isImage = this.isImage(file);
-    const isVideo = this.isVideo(file);
-    const isAudio = file.type.startsWith('audio/');
-
-    if (isImage) {
-      return {
-        bytes: FILE_SIZE_LIMITS.IMAGE_MAX_BYTES,
-        mb: FILE_SIZE_LIMITS_MB.IMAGE,
-      };
-    }
-    // Video files can be larger since audio is extracted client-side
-    if (isVideo) {
-      return {
-        bytes: FILE_SIZE_LIMITS.VIDEO_MAX_BYTES,
-        mb: FILE_SIZE_LIMITS_MB.VIDEO,
-      };
-    }
-    // Audio files have the standard audio limit
-    if (isAudio) {
-      return {
-        bytes: FILE_SIZE_LIMITS.AUDIO_VIDEO_MAX_BYTES,
-        mb: FILE_SIZE_LIMITS_MB.AUDIO_VIDEO,
-      };
-    }
-    return {
-      bytes: FILE_SIZE_LIMITS.FILE_MAX_BYTES,
-      mb: FILE_SIZE_LIMITS_MB.FILE,
-    };
+  static getMaxSize(file: File): { bytes: number; display: string } {
+    return getMaxSizeForFile(file);
   }
 
   /**
-   * Validate file before upload
+   * Validate file before upload.
+   * Checks file type allowlist and size limits.
    */
   static validateFile(file: File): { valid: boolean; error?: string } {
+    // Check if file type is allowed
     if (!this.isFileAllowed(file)) {
       return {
         valid: false,
@@ -136,11 +114,12 @@ export class FileUploadService {
       };
     }
 
-    const { bytes, mb } = this.getMaxSize(file);
-    if (file.size > bytes) {
+    // Validate file size using centralized limits
+    const sizeValidation = validateFileSize(file);
+    if (!sizeValidation.valid) {
       return {
         valid: false,
-        error: `${file.name} must be less than ${mb}MB`,
+        error: sizeValidation.error,
       };
     }
 
@@ -185,7 +164,7 @@ export class FileUploadService {
    * Uses native binary upload to avoid base64 encoding corruption issues.
    *
    * For files larger than 10MB, uses Server Action to bypass Route Handler
-   * body size limits. Server Actions support up to 50MB (configured in next.config.js).
+   * body size limits. Server Actions support up to 1.6GB (configured in next.config.js).
    *
    * @param file - The file to upload
    * @param onProgress - Optional progress callback (0-100)
@@ -205,7 +184,7 @@ export class FileUploadService {
   }
 
   /**
-   * Upload file via Server Action (supports up to 50MB).
+   * Upload file via Server Action (supports up to 1.6GB).
    * Used for large files that exceed Route Handler body size limits.
    */
   private static async uploadFileViaServerAction(
