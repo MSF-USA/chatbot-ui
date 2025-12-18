@@ -246,11 +246,6 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
           </div>
         )}
 
-        {/* Sign Out Button - Aligned Right */}
-        <div className="flex justify-end">
-          <SignInSignOut />
-        </div>
-
         {/* App Settings Header */}
         <div>
           <h3 className="text-base font-bold text-black dark:text-white mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
@@ -320,6 +315,11 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Sign Out Button - Aligned Right */}
+      <div className="flex justify-end">
+        <SignInSignOut />
       </div>
 
       {/* Version Information - At Very Bottom */}
