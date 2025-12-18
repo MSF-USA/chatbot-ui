@@ -6,6 +6,7 @@ import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import {
   getContentType,
+  validateBufferSignature,
   validateFileNotExecutable,
 } from '@/lib/utils/server/mimeTypes';
 
@@ -30,6 +31,7 @@ vi.mock('@/lib/utils/app/user/session', () => ({
 
 vi.mock('@/lib/utils/server/mimeTypes', () => ({
   validateFileNotExecutable: vi.fn(),
+  validateBufferSignature: vi.fn(),
   getContentType: vi.fn(),
 }));
 
@@ -61,6 +63,7 @@ describe('/api/file/upload', () => {
     vi.mocked(getUserIdFromSession).mockReturnValue('test-user-id');
     vi.mocked(createBlobStorageClient).mockReturnValue(mockBlobClient as any);
     vi.mocked(validateFileNotExecutable).mockReturnValue({ isValid: true });
+    vi.mocked(validateBufferSignature).mockReturnValue({ isValid: true });
     vi.mocked(getContentType).mockReturnValue('text/plain');
     vi.mocked(Hasher.sha256).mockReturnValue('a'.repeat(300)); // Long hash for slicing
     mockBlobClient.upload.mockResolvedValue(
@@ -131,10 +134,39 @@ describe('/api/file/upload', () => {
       );
     });
 
-    it('accepts files up to 1GB (increased limit for video support)', async () => {
-      // The MAX_API_FILE_SIZE was increased from 50MB to 1GB to support large video files
-      // (audio is extracted server-side via FFmpeg before transcription)
-      // Testing with a 51MB file to verify it's now accepted
+    it('accepts large video files up to 1.5GB', async () => {
+      // Category-based limits:
+      // - Documents: 50MB
+      // - Audio: 1GB
+      // - Video: 1.5GB
+      // Testing with a 51MB video file to verify it's accepted (under 1.5GB limit)
+      const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
+      const file = new File([largeContent], 'large.mp4', {
+        type: 'video/mp4',
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const params = new URLSearchParams();
+      params.set('filename', 'large.mp4');
+      params.set('filetype', 'video');
+      params.set('mime', 'video/mp4');
+
+      const url = `http://localhost:3000/api/file/upload?${params.toString()}`;
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const response = await POST(request);
+
+      // 51MB video files should be accepted (limit is 1.5GB)
+      expect(response.status).toBe(200);
+    });
+
+    it('rejects documents exceeding 50MB limit', async () => {
+      // Documents have a 50MB limit
       const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
       const file = new File([largeContent], 'large.txt', {
         type: 'text/plain',
@@ -156,8 +188,8 @@ describe('/api/file/upload', () => {
 
       const response = await POST(request);
 
-      // 51MB files should now be accepted (limit is 1GB)
-      expect(response.status).toBe(200);
+      // 51MB document files should be rejected (limit is 50MB)
+      expect(response.status).toBe(413);
     });
   });
 
