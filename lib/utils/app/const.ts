@@ -111,7 +111,7 @@ export const FILE_COUNT_LIMITS = {
   MAX_DOCUMENTS: 3, // Document summarization is expensive
   MAX_AUDIO_VIDEO: 1, // Transcription is expensive (time + cost)
   MAX_TOTAL_FILES: 10, // Total attachments (any type)
-  MAX_TOTAL_SIZE: 50 * 1024 * 1024, // 50MB total per message
+  MAX_TOTAL_SIZE: FILE_SIZE_LIMITS.VIDEO_MAX_BYTES, // 1.5GB total per message (matches largest file type)
 } as const;
 
 // Maximum file upload size for API endpoints (in bytes)
