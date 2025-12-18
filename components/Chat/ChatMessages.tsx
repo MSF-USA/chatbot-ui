@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import {
   entryToDisplayMessage,
   getVersionInfo,
@@ -91,6 +93,8 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   onSaveAsPrompt,
   onNavigateVersion,
 }) => {
+  const t = useTranslations();
+
   return (
     <>
       {messages.map((entry, index) => {
@@ -165,7 +169,9 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
             <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
               <div className="flex items-center gap-3">
                 <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing flex-shrink-0"></div>
-                <AnimatedLoadingText text={loadingMessage || 'Thinking...'} />
+                <AnimatedLoadingText
+                  text={t(loadingMessage || 'chat.thinking')}
+                />
               </div>
             </div>
           )}
