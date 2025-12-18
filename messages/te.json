@@ -603,7 +603,23 @@
     "viewReasoningProcess": "తర్క ప్రాసెస్‌ను చూడండి",
     "collapseThinking": "ఆలోచనను ముడిచేయి",
     "expandThinking": "ఆలోచనను విస్తరించు",
-    "actionsDisabledForEmbed": "పైన ఇముడిన కంటెంట్‌లోని నియంత్రణలను వినియోగించండి"
+    "actionsDisabledForEmbed": "పైన ఇముడిన కంటెంట్‌లోని నియంత్రణలను వినియోగించండి",
+    "loadingMessages": {
+      "transcribingAndProcessing": " ట్రాన్స్‌క్రైబ్ చేసి ప్రాసెస్ చేస్తున్నాము...",
+      "transcribingAudio": "ఆడియోను ట్రాన్స్‌క్రైబ్ చేస్తున్నాము...",
+      "analyzingFiles": "ఫైళ్ళను విశ్లేషిస్తున్నాను...",
+      "analyzingDocuments": "పత్రాలను విశ్లేషిస్తున్నాము...",
+      "analyzingDocument": "పత్రాన్ని విశ్లేషిస్తున్నాము...",
+      "analyzingImages": "చిత్రాలను విశ్లేషిస్తున్నాము...",
+      "analyzingImage": "చిత్రాన్ని విశ్లేషిస్తున్నాము..."
+    },
+    "contentDescription": {
+      "text": "పాఠ్యం",
+      "imagesCount": "{count} చిత్రం(లు)",
+      "filesCount": "{count} ఫైలు(లు)",
+      "audioVideo": "ఆడియో/వీడియో",
+      "empty": "ఖాళీ"
+    }
   },
   "sidebar": {
     "collapseSidebar": "సైడ్‌బార్‌ను కుదించండి",
@@ -839,7 +855,8 @@
     "None": "ఏమీ లేదు",
     "Custom Display Name": "అనుకూల ప్రదర్శించే పేరు",
     "Custom Display Name Placeholder": "మీ ఇష్టమైన పేరును నమోదు చేయండి",
-    "displayNamePreview": "ప్రీవ్యూ: \"నేను ఎలా సహాయం చేయగలను, {name}?\""
+    "displayNamePreview": "ప్రీవ్యూ: \"నేను ఎలా సహాయం చేయగలను, {name}?\"",
+    "howShouldWeAddressYou": "మీరు మా ద్వారా ఎలా గుర్తించబడాలనుకుంటున్నారు?"
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "కోడ్ చాట్ సందేశాల నుండి ఆటోమేటిక్‌గా సింక్ అవుతుంది",
       "startCoding": "// కోడింగ్ ప్రారంభించండి..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "ప్రతి సందేశానికి వెబ్ సెర్చ్ ενεργం చేయండి.\n\nప్రస్తుత Bing వెబ్ యాక్సెస్ ద్వారా తాజా సమాచారాన్ని అందిస్తుంది.",
+    "attachTooltip": "ఫైళ్లు, చిత్రాలు లేదా ఆడియో/వీడియోలను జతచేయండి.\n\nమద్దతు కలిగిన ఫార్మాట్స్:\n• చిత్రాలు: JPEG, PNG, GIF, WebP (గరిష్ఠంగా 5MB, 10 వరకు)\n• డాక్యుమెంట్లు: PDF, DOCX, XLSX, PPTX, TXT, MD (గరిష్ఠంగా 10MB, 3 వరకు)\n• డేటా: CSV, JSON, XML, YAML (గరిష్ఠంగా 10MB, 3 వరకు)\n• కోడ్: PY, JS, TS, JAVA, C, CPP, GO, మొదలైనవి (గరిష్ఠంగా 10MB, 3 వరకు)\n• ఆడియో/వీడియో: MP3, WAV, MP4, WebM (గరిష్ఠంగా 25MB, 1 ఫైల్)\n\nమొత్తం: 10 ఫైళ్లు, గరిష్ఠంగా 50MB",
+    "transcribeTooltip": "ఆడియో లేదా వీడియో ఫైళ్ళను ట్రాన్స్క్రిప్షన్ కోసం అప్‌లోడ్ చేయండి.\n\nమద్దతు ఫార్మాట్స్: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nగరిష్ఠ పరిమాణం: 25MB\n\nమీరు సందేశాన్ని పంపినప్పుడు ట్రాన్స్క్రిప్షన్ స్వయంచాలకంగా జరుగుతుంది.",
+    "selected": "ఎంచుకున్నది",
+    "expandActions": "చర్యలను విస్తరించు",
+    "selectTone": "ధ్వని శైలి ఎంచుకోండి",
+    "selectToneDescription": "మీ సందేశాల కోసం వాయిస్ ప్రొఫైల్ ఎంచుకోండి",
+    "noToneDefault": "శైలి లేదు (ఒప్పందమైనది)",
+    "useDefaultStyle": "డిఫాల్ట్ రైటింగ్ స్టైల్లు వినియోగించండి",
+    "noTonesCreated": "ఇంకా ఎలాంటి శైలులు సృష్టించలేదు",
+    "createTonesHint": "త్వరిత చర్యల్లో శైల్లను సృష్టించండి"
   }
 }

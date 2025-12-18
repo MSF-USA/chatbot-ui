@@ -522,7 +522,23 @@
     "viewReasoningProcess": "ดูขั้นตอนการให้เหตุผล",
     "collapseThinking": "ย่อรายละเอียด",
     "expandThinking": "ขยายรายละเอียด",
-    "actionsDisabledForEmbed": "กรุณาใช้ตัวควบคุมที่อยู่ในเนื้อหาด้านบน"
+    "actionsDisabledForEmbed": "กรุณาใช้ตัวควบคุมที่อยู่ในเนื้อหาด้านบน",
+    "loadingMessages": {
+      "transcribingAndProcessing": "กำลังถอดเสียงและประมวลผล...",
+      "transcribingAudio": "กำลังถอดเสียงเสียง...",
+      "analyzingFiles": "กำลังวิเคราะห์ไฟล์...",
+      "analyzingDocuments": "กำลังวิเคราะห์เอกสาร...",
+      "analyzingDocument": "กำลังวิเคราะห์เอกสาร...",
+      "analyzingImages": "กำลังวิเคราะห์ภาพ...",
+      "analyzingImage": "กำลังวิเคราะห์ภาพ..."
+    },
+    "contentDescription": {
+      "text": "ข้อความ",
+      "imagesCount": "{count} ภาพ",
+      "filesCount": "{count} ไฟล์",
+      "audioVideo": "เสียง/วิดีโอ",
+      "empty": "ว่างเปล่า"
+    }
   },
   "sidebar": {
     "collapseSidebar": "ยุบแถบด้านข้าง",
@@ -758,7 +774,8 @@
     "None": "ไม่มี",
     "Custom Display Name": "ชื่อที่กำหนดเอง",
     "Custom Display Name Placeholder": "กรอกชื่อที่คุณต้องการ",
-    "displayNamePreview": "ตัวอย่าง: \"ฉันสามารถช่วยอะไรคุณได้บ้าง, {name}?\""
+    "displayNamePreview": "ตัวอย่าง: \"ฉันสามารถช่วยอะไรคุณได้บ้าง, {name}?\"",
+    "howShouldWeAddressYou": "เราควรเรียกคุณว่าอะไร?"
   },
   "notFound": {
     "lostDog": "สุนัขหาย"
@@ -793,7 +810,7 @@
   "OpenAI API Key Required": "ต้องใช้ OpenAI API Key",
   "Please enter a message": "กรุณาป้อนข้อความ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "โปรดตั้งค่า OpenAI API key ที่มุมล่างซ้ายของแถบด้านข้าง",
-  "Prompt limit is {{maxLength}} characters": "จำกัดจำนวนอักขระ {{maxLength}} ตัวอักษร",
+  "Prompt limit is {{maxLength}} characters": "จำนวนอักขระสูงสุดของ Prompt คือ {{maxLength}} ตัวอักษร",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร คุณป้อนแล้ว {{valueLength}} ตัวอักษร",
   "Regenerate response": "สร้างคำตอบใหม่",
   "Run Typewriter Intro": "เริ่มต้นแนะนำแบบพิมพ์ดีด",
@@ -1350,5 +1367,18 @@
       "codeWillSync": "โค้ดจะซิงค์อัตโนมัติจากข้อความแชท",
       "startCoding": "// เริ่มเขียนโค้ด..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "เปิดการค้นหาทางเว็บสำหรับทุกข้อความ\n\nให้ข้อมูลที่ทันสมัยโดยใช้ Bing แบบเรียลไทม์",
+    "attachTooltip": "แนบไฟล์ รูปภาพ หรือเสียง/วิดีโอ\n\nรูปแบบที่รองรับ:\n• รูปภาพ: JPEG, PNG, GIF, WebP (สูงสุด 5MB, ไม่เกิน 10 ไฟล์)\n• เอกสาร: PDF, DOCX, XLSX, PPTX, TXT, MD (สูงสุด 10MB, ไม่เกิน 3 ไฟล์)\n• ข้อมูล: CSV, JSON, XML, YAML (สูงสุด 10MB, ไม่เกิน 3 ไฟล์)\n• โค้ด: PY, JS, TS, JAVA, C, CPP, GO เป็นต้น (สูงสุด 10MB, ไม่เกิน 3 ไฟล์)\n• เสียง/วิดีโอ: MP3, WAV, MP4, WebM (สูงสุด 25MB, 1 ไฟล์)\n\nรวมทั้งหมด: 10 ไฟล์, ขนาดไม่เกิน 50MB",
+    "transcribeTooltip": "อัปโหลดไฟล์เสียงหรือวิดีโอเพื่อถอดเสียง\n\nรองรับ: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nขนาดสูงสุด: 25MB\n\nระบบจะถอดเสียงอัตโนมัติเมื่อคุณส่งข้อความ",
+    "selected": "เลือกแล้ว",
+    "expandActions": "ขยายรายการการดำเนินการ",
+    "selectTone": "เลือกโทนเสียง",
+    "selectToneDescription": "เลือกโปรไฟล์เสียงสำหรับข้อความของคุณ",
+    "noToneDefault": "ไม่มีโทนเสียง (ค่าเริ่มต้น)",
+    "useDefaultStyle": "ใช้รูปแบบการเขียนค่าเริ่มต้น",
+    "noTonesCreated": "ยังไม่ได้สร้างโทนเสียง",
+    "createTonesHint": "สร้างโทนเสียงใน Quick Actions"
   }
 }

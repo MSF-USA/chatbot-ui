@@ -572,7 +572,23 @@
     "alwaysSwitchToModel": "Selalu beralih ke model ini",
     "audioFromOriginal": "Audio dari asli",
     "audioFromTranslation": "Audio dari terjemahan",
-    "actionsDisabledForEmbed": "Gunakan kontrol pada konten yang tersemat di atas"
+    "actionsDisabledForEmbed": "Gunakan kontrol pada konten yang tersemat di atas",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Sedang mentranskripsi dan memproses...",
+      "transcribingAudio": "Sedang mentranskripsi audio...",
+      "analyzingFiles": "Sedang menganalisis file...",
+      "analyzingDocuments": "Sedang menganalisis dokumen...",
+      "analyzingDocument": "Sedang menganalisis dokumen...",
+      "analyzingImages": "Sedang menganalisis gambar...",
+      "analyzingImage": "Sedang menganalisis gambar..."
+    },
+    "contentDescription": {
+      "text": "teks",
+      "imagesCount": "{count} gambar",
+      "filesCount": "{count} file",
+      "audioVideo": "audio/video",
+      "empty": "kosong"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",
@@ -808,7 +824,8 @@
     "None": "Tidak Ada",
     "Custom Display Name": "Nama Tampilan Khusus",
     "Custom Display Name Placeholder": "Masukkan nama pilihan Anda",
-    "displayNamePreview": "Pratinjau: \"Bagaimana saya dapat membantu, {name}?\""
+    "displayNamePreview": "Pratinjau: \"Bagaimana saya dapat membantu, {name}?\"",
+    "howShouldWeAddressYou": "Bagaimana kami harus menyapa Anda?"
   },
   "notFound": {
     "lostDog": "Anjing hilang"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Kode akan tersinkronisasi otomatis dari pesan chat",
       "startCoding": "// Mulai coding..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Aktifkan pencarian web untuk setiap pesan.\n\nMemberikan informasi terbaru menggunakan akses web Bing secara real-time.",
+    "attachTooltip": "Lampirkan file, gambar, atau audio/video.\n\nFormat yang didukung:\n• Gambar: JPEG, PNG, GIF, WebP (maksimal 5MB, hingga 10 file)\n• Dokumen: PDF, DOCX, XLSX, PPTX, TXT, MD (maksimal 10MB, hingga 3 file)\n• Data: CSV, JSON, XML, YAML (maksimal 10MB, hingga 3 file)\n• Kode: PY, JS, TS, JAVA, C, CPP, GO, dll. (maksimal 10MB, hingga 3 file)\n• Audio/Video: MP3, WAV, MP4, WebM (maksimal 25MB, 1 file)\n\nTotal: 10 file, maksimal 50MB",
+    "transcribeTooltip": "Unggah file audio atau video untuk transkripsi.\n\nFormat yang didukung: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nUkuran maksimum: 25MB\n\nTranskripsi berlangsung otomatis saat Anda mengirim pesan.",
+    "selected": "Dipilih",
+    "expandActions": "Perluas Aksi",
+    "selectTone": "Pilih Nada",
+    "selectToneDescription": "Pilih profil suara untuk pesan Anda",
+    "noToneDefault": "Tanpa Nada (Default)",
+    "useDefaultStyle": "Gunakan gaya penulisan default",
+    "noTonesCreated": "Belum ada nada yang dibuat",
+    "createTonesHint": "Buat nada di Aksi Cepat"
   }
 }

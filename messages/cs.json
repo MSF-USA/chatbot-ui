@@ -608,7 +608,23 @@
     "viewReasoningProcess": "Zobrazit proces uvažování",
     "collapseThinking": "Sbalit přemýšlení",
     "expandThinking": "Rozbalit přemýšlení",
-    "actionsDisabledForEmbed": "Použijte ovládací prvky ve vloženém obsahu výše"
+    "actionsDisabledForEmbed": "Použijte ovládací prvky ve vloženém obsahu výše",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Přepis a zpracování...",
+      "transcribingAudio": "Probíhá přepis audia...",
+      "analyzingFiles": "Analýza souborů...",
+      "analyzingDocuments": "Analýza dokumentů...",
+      "analyzingDocument": "Analýza dokumentu...",
+      "analyzingImages": "Analýza obrázků...",
+      "analyzingImage": "Analýza obrázku..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} obrázek/ů",
+      "filesCount": "{count} soubor(ů)",
+      "audioVideo": "audio/video",
+      "empty": "prázdné"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",
@@ -844,7 +860,8 @@
     "None": "Žádné",
     "Custom Display Name": "Vlastní zobrazované jméno",
     "Custom Display Name Placeholder": "Zadejte preferované jméno",
-    "displayNamePreview": "Náhled: \"Jak vám mohu pomoci, {name}?\""
+    "displayNamePreview": "Náhled: \"Jak vám mohu pomoci, {name}?\"",
+    "howShouldWeAddressYou": "Jak Vás máme oslovovat?"
   },
   "notFound": {
     "lostDog": "Ztracený pes"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "Kód se bude automaticky synchronizovat ze zpráv v chatu",
       "startCoding": "// Začněte programovat..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Povolit webové vyhledávání pro každou zprávu.\n\nPoskytuje aktuální informace pomocí přístupu na web Bing v reálném čase.",
+    "attachTooltip": "Připojte soubory, obrázky nebo audio/video.\n\nPodporované formáty:\n• Obrázky: JPEG, PNG, GIF, WebP (max. 5 MB, až 10)\n• Dokumenty: PDF, DOCX, XLSX, PPTX, TXT, MD (max. 10 MB, až 3)\n• Data: CSV, JSON, XML, YAML (max. 10 MB, až 3)\n• Kód: PY, JS, TS, JAVA, C, CPP, GO, atd. (max. 10 MB, až 3)\n• Audio/Video: MP3, WAV, MP4, WebM (max. 25 MB, 1 soubor)\n\nCelkem: 10 souborů, maximálně 50 MB",
+    "transcribeTooltip": "Nahrajte audio nebo video soubory k přepisu.\n\nPodporované formáty: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaximální velikost: 25 MB\n\nPřepis proběhne automaticky po odeslání zprávy.",
+    "selected": "Vybráno",
+    "expandActions": "Rozbalit akce",
+    "selectTone": "Vyberte tón",
+    "selectToneDescription": "Vyberte hlasový profil pro vaše zprávy",
+    "noToneDefault": "Žádný tón (výchozí)",
+    "useDefaultStyle": "Použít výchozí styl psaní",
+    "noTonesCreated": "Zatím nebyly vytvořeny žádné tóny",
+    "createTonesHint": "Vytvořte tóny v Rychlých akcích"
   }
 }

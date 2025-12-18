@@ -145,7 +145,7 @@
   "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
   "Please enter a message": "እባኮትን መልእክት ያስገቡ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
-  "Prompt limit is {{maxLength}} characters": "የፓምፕት ገደብ {{maxLength}} ቁምፊዎች ነው",
+  "Prompt limit is {{maxLength}} characters": "የፕሮምፕት ገደብ {{maxLength}} ቁምፊዎች ነው",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
   "Regenerate response": "ምላሽ እንደገና አመንጭ",
   "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
@@ -557,7 +557,23 @@
     "viewReasoningProcess": "የማመዛዘን ሂደት ይመልከቱ",
     "collapseThinking": "አስተሳሰብን ሰብስብ",
     "expandThinking": "አስተሳሰብን አስፋፋ",
-    "actionsDisabledForEmbed": "ከላይ በተያያዘው ይዞታ ያሉትን መቆጣጠሪያዎች ይጠቀሙ"
+    "actionsDisabledForEmbed": "ከላይ በተያያዘው ይዞታ ያሉትን መቆጣጠሪያዎች ይጠቀሙ",
+    "loadingMessages": {
+      "transcribingAndProcessing": "በመተረጎምና በመስራት ላይ...",
+      "transcribingAudio": "ድምጹን በመተረጎም ላይ...",
+      "analyzingFiles": "ፋይሎችን በመተንተን ላይ...",
+      "analyzingDocuments": "ሰነዶችን በመተንተን ላይ...",
+      "analyzingDocument": "ሰነዱን በመተንተን ላይ...",
+      "analyzingImages": "ምስሎችን በመተንተን ላይ...",
+      "analyzingImage": "ምስሉን በመተንተን ላይ..."
+    },
+    "contentDescription": {
+      "text": "ጽሑፍ",
+      "imagesCount": "{count} ምስል(ዎች)",
+      "filesCount": "{count} ፋይል(ዎች)",
+      "audioVideo": "ድምጽ/ቪዲዮ",
+      "empty": "ባዶ"
+    }
   },
   "sidebar": {
     "collapseSidebar": "የጎን አሞሌውን ሰብስብ",
@@ -793,7 +809,8 @@
     "None": "ምንም የለም",
     "Custom Display Name": "በተግባር የታየው ስም",
     "Custom Display Name Placeholder": "የሚመርጡትን ስም ያስገቡ",
-    "displayNamePreview": "ቅድመ እይታ፡ \"እንዴት ልረዳዎ, {name}?\""
+    "displayNamePreview": "ቅድመ እይታ፡ \"እንዴት ልረዳዎ, {name}?\"",
+    "howShouldWeAddressYou": "እንዴት እንድንጠራዎት እንፈልጋለን?"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "ኮድ በራስ-አንደበት ከቻት መልእክቶች ጋር ይቀያየራል",
       "startCoding": "// መኮድ ጀምሩ..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "ለእያንዳንዱ መልእክት የድህረ ገፅ ፍለጋ ያንቃ።\n\nበቅርብ ጊዜ Bing ድህረ ገፅ አገልግሎት ላይ ትኩስ መረጃ ይሰጣል።",
+    "attachTooltip": "ፋይሎች፣ ምስሎች ወይም ድምፅ/ቪዲዮ ያጫኑ።\n\nየሚደገፉ ቅርጸ ቁምፊዎች:\n• ምስሎች: JPEG, PNG, GIF, WebP (ከፍተኛ 5MB፣ እስከ 10)\n• ሰነዶች: PDF, DOCX, XLSX, PPTX, TXT, MD (ከፍተኛ 10MB፣ እስከ 3)\n• ውሂብ: CSV, JSON, XML, YAML (ከፍተኛ 10MB፣ እስከ 3)\n• ኮድ: PY, JS, TS, JAVA, C, CPP, GO, ወዘተ (ከፍተኛ 10MB፣ እስከ 3)\n• ድምፅ/ቪዲዮ: MP3, WAV, MP4, WebM (ከፍተኛ 25MB፣ 1 ፋይል)\n\nጠቅላላ፡ 10 ፋይሎች፣ ከፍተኛ 50MB",
+    "transcribeTooltip": "የድምፅ ወይም የቪዲዮ ፋይሎችን ለማስተርጎም ያጫኑ።\n\nየሚደገፉ ቅርጸ ቁምፊዎች: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nከፍተኛ መጠን፡ 25MB\n\nመርጃውን ሲላኩ ማስተርጎም በራሱ ይከናወናል።",
+    "selected": "ተመርጧል",
+    "expandActions": "እርምጃዎችን ያሳድጉ",
+    "selectTone": "ድምፅ ይምረጡ",
+    "selectToneDescription": "ለመልእክቶቻችሁ የድምፅ አቀማመጥ ይምረጡ",
+    "noToneDefault": "ድምፅ የለም (ነባሪ)",
+    "useDefaultStyle": "ነባሪ የመጻፍ ዘዴ ይጠቀሙ",
+    "noTonesCreated": "ምንም ድምፅ አልተፈጠረም",
+    "createTonesHint": "ድምፆችን በፈጣን ተግባራት ውስጥ ይፍጠሩ"
   }
 }

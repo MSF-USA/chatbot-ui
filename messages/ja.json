@@ -27,7 +27,7 @@
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
-  "Prompt limit is {{maxLength}} characters": "プロンプトの上限は{{maxLength}}文字です",
+  "Prompt limit is {{maxLength}} characters": "プロンプトの制限は{{maxLength}}文字です",
   "System Prompt": "システムのプロンプト",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "あなたはOpenAIによってトレーニングされた大規模言語モデルのChatGPTです。ユーザーの指示には注意深く従ってください。マークダウンを使用して応答してください。",
   "Enter a prompt": "プロンプトを入力してください",
@@ -605,7 +605,23 @@
     "viewReasoningProcess": "推論プロセスを表示",
     "collapseThinking": "思考を折りたたむ",
     "expandThinking": "思考を展開",
-    "actionsDisabledForEmbed": "上部の埋め込みコンテンツのコントロールを使用してください"
+    "actionsDisabledForEmbed": "上部の埋め込みコンテンツのコントロールを使用してください",
+    "loadingMessages": {
+      "transcribingAndProcessing": "書き起こしと処理中...",
+      "transcribingAudio": "音声を文字起こし中...",
+      "analyzingFiles": "ファイルを分析中...",
+      "analyzingDocuments": "ドキュメントを分析中...",
+      "analyzingDocument": "ドキュメントを分析中...",
+      "analyzingImages": "画像を分析中...",
+      "analyzingImage": "画像を分析中..."
+    },
+    "contentDescription": {
+      "text": "テキスト",
+      "imagesCount": "{count}枚の画像",
+      "filesCount": "{count}件のファイル",
+      "audioVideo": "音声／ビデオ",
+      "empty": "空欄"
+    }
   },
   "sidebar": {
     "collapseSidebar": "サイドバーを折りたたむ",
@@ -841,7 +857,8 @@
     "None": "なし",
     "Custom Display Name": "カスタム表示名",
     "Custom Display Name Placeholder": "ご希望の名前を入力してください",
-    "displayNamePreview": "プレビュー：「どのようにお手伝いできますか、{name}？」"
+    "displayNamePreview": "プレビュー：「どのようにお手伝いできますか、{name}？」",
+    "howShouldWeAddressYou": "どのようにお呼びすればよいですか？"
   },
   "notFound": {
     "lostDog": "迷子の犬"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "コードはチャットメッセージから自動で同期されます",
       "startCoding": "// コーディングを開始..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "すべてのメッセージでウェブ検索を有効にします。\n\nリアルタイムのBingウェブアクセスで最新情報を取得します。",
+    "attachTooltip": "ファイル、画像、音声/動画を添付します。\n\n対応形式:\n• 画像: JPEG、PNG、GIF、WebP（最大5MB、最大10件）\n• 書類: PDF、DOCX、XLSX、PPTX、TXT、MD（最大10MB、最大3件）\n• データ: CSV、JSON、XML、YAML（最大10MB、最大3件）\n• コード: PY、JS、TS、JAVA、C、CPP、GOなど（最大10MB、最大3件）\n• 音声/動画: MP3、WAV、MP4、WebM（最大25MB、1ファイル）\n\n合計: 最大10ファイル、合計50MBまで",
+    "transcribeTooltip": "音声または動画ファイルをアップロードして文字起こしを行います。\n\n対応形式: MP3、MP4、WAV、WebM、M4A、MPEG、MPGA\n最大サイズ: 25MB\n\nメッセージ送信時に自動で文字起こしされます。",
+    "selected": "選択済み",
+    "expandActions": "アクションを展開",
+    "selectTone": "トーンを選択",
+    "selectToneDescription": "メッセージのボイスプロファイルを選択します",
+    "noToneDefault": "トーンなし（デフォルト）",
+    "useDefaultStyle": "デフォルトの文体を使用",
+    "noTonesCreated": "トーンはまだ作成されていません",
+    "createTonesHint": "クイックアクションでトーンを作成"
   }
 }

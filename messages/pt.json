@@ -560,7 +560,23 @@
     "viewReasoningProcess": "Ver processo de raciocínio",
     "collapseThinking": "Recolher pensamento",
     "expandThinking": "Expandir pensamento",
-    "actionsDisabledForEmbed": "Use os controles no conteúdo incorporado acima"
+    "actionsDisabledForEmbed": "Use os controles no conteúdo incorporado acima",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcrevendo e processando...",
+      "transcribingAudio": "Transcrevendo áudio...",
+      "analyzingFiles": "Analisando arquivos...",
+      "analyzingDocuments": "Analisando documentos...",
+      "analyzingDocument": "Analisando documento...",
+      "analyzingImages": "Analisando imagens...",
+      "analyzingImage": "Analisando imagem..."
+    },
+    "contentDescription": {
+      "text": "texto",
+      "imagesCount": "{count} imagem(ns)",
+      "filesCount": "{count} arquivo(s)",
+      "audioVideo": "áudio/vídeo",
+      "empty": "vazio"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Recolher barra lateral",
@@ -844,7 +860,8 @@
     "None": "Nenhum",
     "Custom Display Name": "Nome de Exibição Personalizado",
     "Custom Display Name Placeholder": "Insira o nome de sua preferência",
-    "displayNamePreview": "Pré-visualização: \"Como posso ajudar, {name}?\""
+    "displayNamePreview": "Pré-visualização: \"Como posso ajudar, {name}?\"",
+    "howShouldWeAddressYou": "Como devemos chamá-lo(a)?"
   },
   "notFound": {
     "lostDog": "Cão perdido"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "O código será sincronizado automaticamente a partir das mensagens do chat",
       "startCoding": "// Comece a programar..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Ativar pesquisa na web para cada mensagem.\n\nFornece informações atualizadas usando acesso em tempo real ao Bing.",
+    "attachTooltip": "Anexe arquivos, imagens ou áudio/vídeo.\n\nFormatos suportados:\n• Imagens: JPEG, PNG, GIF, WebP (máx. 5MB, até 10)\n• Documentos: PDF, DOCX, XLSX, PPTX, TXT, MD (máx. 10MB, até 3)\n• Dados: CSV, JSON, XML, YAML (máx. 10MB, até 3)\n• Código: PY, JS, TS, JAVA, C, CPP, GO, etc. (máx. 10MB, até 3)\n• Áudio/Vídeo: MP3, WAV, MP4, WebM (máx. 25MB, 1 arquivo)\n\nTotal: 10 arquivos, máximo de 50MB",
+    "transcribeTooltip": "Carregue arquivos de áudio ou vídeo para transcrição.\n\nFormatos suportados: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nTamanho máximo: 25MB\n\nA transcrição é feita automaticamente ao enviar a mensagem.",
+    "selected": "Selecionado",
+    "expandActions": "Expandir ações",
+    "selectTone": "Selecionar tom",
+    "selectToneDescription": "Escolha um perfil de voz para suas mensagens",
+    "noToneDefault": "Sem tom (padrão)",
+    "useDefaultStyle": "Usar estilo de escrita padrão",
+    "noTonesCreated": "Nenhum tom criado ainda",
+    "createTonesHint": "Crie tons em Ações Rápidas"
   }
 }

@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "OpenAI API යතුර අවශ්‍යයි",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "කරුණාකර ඔබේ OpenAI API යතුර පැති තීරුවේ පහළ වම්පසින් සකසන්න.",
   "Stop Generating": "උත්පාදනය නවත්වන්න",
-  "Prompt limit is {{maxLength}} characters": "උත්ප්‍රේරකයේ සීමාව වන්නේ අක්ෂර {{maxLength}}කි",
+  "Prompt limit is {{maxLength}} characters": "උත්ස්වාද සීමාව අක්ෂර {{maxLength}}කි",
   "System Prompt": "පද්ධති ඉඟිය",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "ඔබ ChatGPT, OpenAI විසින් පුහුණු කරන ලද විශාල භාෂා ආකෘතියකි. පරිශීලක උපදෙස් ප්රවේශමෙන් අනුගමනය කරන්න. මාර්ක්ඩවුන් භාවිතයෙන් ප්‍රතිචාර දක්වන්න.",
   "Enter a prompt": "ප්‍රේරකයක් ඇතුළු කරන්න",
@@ -572,7 +572,23 @@
     "viewReasoningProcess": "යානිකරණ ක්‍රියාවලිය පෙන්වන්න",
     "collapseThinking": "සිතීම හකුලා හරින්න",
     "expandThinking": "සිතීම විහිදන්න",
-    "actionsDisabledForEmbed": "ඉහත සම්ප්‍රේත විෂය කොටස තුළ පාලක භාවිත කරන්න"
+    "actionsDisabledForEmbed": "ඉහත සම්ප්‍රේත විෂය කොටස තුළ පාලක භාවිත කරන්න",
+    "loadingMessages": {
+      "transcribingAndProcessing": "මුද්‍රණය කරමින් හා ක්‍රියාවලි කරන අතර...",
+      "transcribingAudio": "ශ්‍රව්‍යය මුද්‍රණය කරමින්...",
+      "analyzingFiles": "ගොනු විශ්ලේෂණය කරමින්...",
+      "analyzingDocuments": "ලේඛන විශ්ලේෂණය කරමින්...",
+      "analyzingDocument": "ලේඛනය විශ්ලේෂණය කරමින්...",
+      "analyzingImages": "පිංතූර විශ්ලේෂණය කරමින්...",
+      "analyzingImage": "පිංතුරය විශ්ලේෂණය කරමින්..."
+    },
+    "contentDescription": {
+      "text": "පෙළ",
+      "imagesCount": "පිංතූර {count}ක්",
+      "filesCount": "ගොනු {count}ක්",
+      "audioVideo": "ශ්‍රව්‍ය/දෘශ්‍ය",
+      "empty": "හිස්"
+    }
   },
   "sidebar": {
     "collapseSidebar": "පැති තීරුව හකුළන්න",
@@ -808,7 +824,8 @@
     "None": "කිසිවක් නැත",
     "Custom Display Name": "අභිරුචි පෙන්වන නම",
     "Custom Display Name Placeholder": "ඔබ අභිප්‍රේත නම ඇතුළත් කරන්න",
-    "displayNamePreview": "පූර්වදසුන: \"මට උපකාර කළ හැක්කේ කෙසේද, {name}?\""
+    "displayNamePreview": "පූර්වදසුන: \"මට උපකාර කළ හැක්කේ කෙසේද, {name}?\"",
+    "howShouldWeAddressYou": "ඔබට අපි කෙසේ වශයෙන් චමත්කාර කරන්නද?"
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "කේතය ස්වයංක්‍රීයව කතාබස් පණිවිඩවලින් සම්බන්ධ වෙයි",
       "startCoding": "// කේතකරණය අරඹන්න..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "සෑම පණිවුඩයක්ම සඳහා වෙබ් සෙවීම සක්‍රිය කරන්න.\n\nසමුදායේතින් Bing වෙබ් පිවිසුම භාවිතයෙන් යාවත්කාලීන තොරතුරු ලබා දේ.",
+    "attachTooltip": "ගොනු, පින්තූර හෝ ශ්‍රව්‍ය/දෘශ්‍ය යෙදවන්න.\n\nසහාය දක්වන ආකෘති:\n• පින්තූර: JPEG, PNG, GIF, WebP (උපරිම 5MB, ගොනු 10ක් දක්වා)\n• ලියවිලි: PDF, DOCX, XLSX, PPTX, TXT, MD (උපරිම 10MB, ගොනු 3ක් දක්වා)\n• දත්ත: CSV, JSON, XML, YAML (උපරිම 10MB, ගොනු 3ක් දක්වා)\n• කේතය: PY, JS, TS, JAVA, C, CPP, GO, ආදී (උපරිම 10MB, ගොනු 3ක් දක්වා)\n• ශ්‍රව්‍ය/දෘශ්‍ය: MP3, WAV, MP4, WebM (උපරිම 25MB, ගොනුව 1ක්)\n\nමුලු ගණන: ගොනු 10, උපරිම 50MB",
+    "transcribeTooltip": "ලිපිගත කිරීම සඳහා ශ්‍රව්‍ය හෝ දෘශ්‍ය ගොනු උඩුගත කරන්න.\n\nසහායදක්වන ආකෘති: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nඋපරිම ප්‍රමාණය: 25MB\n\nපණිවුඩය යැවූ විට ලිපිගත කිරීම ස්වයංක්‍රීයව සිදු වේ.",
+    "selected": "තෝරාගෙන ඇත",
+    "expandActions": "ක්‍රියා විකාශනය කරන්න",
+    "selectTone": "සුරැස්සු තෝරන්න",
+    "selectToneDescription": "ඔබගේ පණිවුඩ සඳහා කථන පැතිකඩක් තෝරන්න",
+    "noToneDefault": "සුරැස්සුවක් නැහැ (පෙරනිමිය)",
+    "useDefaultStyle": "පෙරනිමි ලිවීමේ විලාසය භාවිතා කරන්න",
+    "noTonesCreated": "තවම සුරැස්සු නිර්මාණය කර නැත",
+    "createTonesHint": "Quick Actions තුළ සුරැස්සු නිර්මාණය කරන්න"
   }
 }

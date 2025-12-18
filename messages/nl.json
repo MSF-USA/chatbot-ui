@@ -21,7 +21,7 @@
   "Please enter a message": "Voer een bericht in",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Stel je OpenAI API-sleutel in de linkeronderhoek van de zijbalk in.",
   "Precise": "Nauwkeurig",
-  "Prompt limit is {{maxLength}} characters": "Promptlimiet is {{maxLength}} tekens",
+  "Prompt limit is {{maxLength}} characters": "Limiet voor prompt is {{maxLength}} tekens",
   "Regenerate response": "Antwoord opnieuw genereren",
   "Save & Submit": "Opslaan & Verzenden",
   "Search_ellipsis": "Zoeken...",
@@ -570,7 +570,23 @@
     "viewReasoningProcess": "Redeneerproces bekijken",
     "collapseThinking": "Denken inklappen",
     "expandThinking": "Denken uitklappen",
-    "actionsDisabledForEmbed": "Gebruik de bedieningselementen in de ingesloten inhoud hierboven"
+    "actionsDisabledForEmbed": "Gebruik de bedieningselementen in de ingesloten inhoud hierboven",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcriberen en verwerken...",
+      "transcribingAudio": "Audio transcriberen...",
+      "analyzingFiles": "Bestanden analyseren...",
+      "analyzingDocuments": "Documenten analyseren...",
+      "analyzingDocument": "Document analyseren...",
+      "analyzingImages": "Afbeeldingen analyseren...",
+      "analyzingImage": "Afbeelding analyseren..."
+    },
+    "contentDescription": {
+      "text": "tekst",
+      "imagesCount": "{count} afbeelding(en)",
+      "filesCount": "{count} bestand(en)",
+      "audioVideo": "audio/video",
+      "empty": "leeg"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",
@@ -806,7 +822,8 @@
     "None": "Geen",
     "Custom Display Name": "Aangepaste weergavenaam",
     "Custom Display Name Placeholder": "Voer uw gewenste naam in",
-    "displayNamePreview": "Voorbeeld: \"Hoe kan ik helpen, {name}?\""
+    "displayNamePreview": "Voorbeeld: \"Hoe kan ik helpen, {name}?\"",
+    "howShouldWeAddressYou": "Hoe mogen wij u aanspreken?"
   },
   "notFound": {
     "lostDog": "Verloren hond"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Code wordt automatisch gesynchroniseerd met chatberichten",
       "startCoding": "// Begin met coderen..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Webzoekfunctie inschakelen voor elk bericht.\n\nBiedt actuele informatie via real-time Bing webtoegang.",
+    "attachTooltip": "Bestanden, afbeeldingen of audio/video bijvoegen.\n\nOndersteunde formaten:\n• Afbeeldingen: JPEG, PNG, GIF, WebP (max. 5MB, tot 10)\n• Documenten: PDF, DOCX, XLSX, PPTX, TXT, MD (max. 10MB, tot 3)\n• Data: CSV, JSON, XML, YAML (max. 10MB, tot 3)\n• Code: PY, JS, TS, JAVA, C, CPP, GO, enz. (max. 10MB, tot 3)\n• Audio/Video: MP3, WAV, MP4, WebM (max. 25MB, 1 bestand)\n\nTotaal: 10 bestanden, maximaal 50MB",
+    "transcribeTooltip": "Upload audio- of videobestanden voor transcriptie.\n\nOndersteunde formaten: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaximale grootte: 25MB\n\nTranscriptie gebeurt automatisch bij het verzenden van het bericht.",
+    "selected": "Geselecteerd",
+    "expandActions": "Acties uitklappen",
+    "selectTone": "Toon selecteren",
+    "selectToneDescription": "Kies een stemprofiel voor uw berichten",
+    "noToneDefault": "Geen toon (standaard)",
+    "useDefaultStyle": "Standaard schrijfstijl gebruiken",
+    "noTonesCreated": "Nog geen tonen aangemaakt",
+    "createTonesHint": "Maak tonen aan in Snelle acties"
   }
 }

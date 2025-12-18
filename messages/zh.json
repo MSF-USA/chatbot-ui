@@ -8,7 +8,7 @@
   "Default System Prompt": "默认系统提示",
   "Edit": "编辑",
   "Email": "电子邮件",
-  "Prompt limit is {{maxLength}} characters": "提示字数限制为 {{maxLength}} 个字符",
+  "Prompt limit is {{maxLength}} characters": "提示上限为 {{maxLength}} 个字符",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
   "New conversation": "新对话",
   "New Conversation": "新的聊天",
@@ -608,7 +608,23 @@
     "viewReasoningProcess": "查看推理过程",
     "collapseThinking": "折叠思考",
     "expandThinking": "展开思考",
-    "actionsDisabledForEmbed": "请使用上方嵌入内容中的控件"
+    "actionsDisabledForEmbed": "请使用上方嵌入内容中的控件",
+    "loadingMessages": {
+      "transcribingAndProcessing": "正在转录并处理...",
+      "transcribingAudio": "正在转录音频...",
+      "analyzingFiles": "正在分析文件...",
+      "analyzingDocuments": "正在分析文档...",
+      "analyzingDocument": "正在分析文档...",
+      "analyzingImages": "正在分析图片...",
+      "analyzingImage": "正在分析图片..."
+    },
+    "contentDescription": {
+      "text": "文本",
+      "imagesCount": "{count} 张图片",
+      "filesCount": "{count} 个文件",
+      "audioVideo": "音频/视频",
+      "empty": "空"
+    }
   },
   "sidebar": {
     "collapseSidebar": "折叠侧边栏",
@@ -844,7 +860,8 @@
     "None": "无",
     "Custom Display Name": "自定义显示名称",
     "Custom Display Name Placeholder": "请输入您偏好的名称",
-    "displayNamePreview": "预览：“我能帮您什么，{name}？”"
+    "displayNamePreview": "预览：“我能帮您什么，{name}？”",
+    "howShouldWeAddressYou": "我们该如何称呼您？"
   },
   "notFound": {
     "lostDog": "迷路的狗"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "代码将自动从聊天消息同步",
       "startCoding": "// 开始编码..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "为每条消息启用网页搜索。\n\n通过实时 Bing 网页访问提供最新信息。",
+    "attachTooltip": "可附加文件、图片或音频/视频。\n\n支持格式：\n• 图片：JPEG、PNG、GIF、WebP（最大5MB，最多10个）\n• 文档：PDF、DOCX、XLSX、PPTX、TXT、MD（最大10MB，最多3个）\n• 数据：CSV、JSON、XML、YAML（最大10MB，最多3个）\n• 代码：PY、JS、TS、JAVA、C、CPP、GO 等（最大10MB，最多3个）\n• 音频/视频：MP3、WAV、MP4、WebM（最大25MB，1个文件）\n\n总计：最多10个文件，最大50MB",
+    "transcribeTooltip": "上传音频或视频文件进行转录。\n\n支持格式：MP3、MP4、WAV、WebM、M4A、MPEG、MPGA\n单文件最大：25MB\n\n发送消息后自动转录。",
+    "selected": "已选择",
+    "expandActions": "展开操作",
+    "selectTone": "选择语气",
+    "selectToneDescription": "为您的消息选择语音风格",
+    "noToneDefault": "无语气（默认）",
+    "useDefaultStyle": "使用默认写作风格",
+    "noTonesCreated": "尚未创建语气",
+    "createTonesHint": "可在快捷操作中创建语气"
   }
 }

@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "מפתח openAI API",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "עליך להזין את המפתח האישי שלך בצידו השמאלי התחתון של תפריט הניווט.",
   "Stop Generating": "עצור תהליך הפקת התשובה",
-  "Prompt limit is {{maxLength}} characters": "המגבלה היא {{maxLength}} תווים",
+  "Prompt limit is {{maxLength}} characters": "המגבלה להנחיה היא {{maxLength}} תווים",
   "System Prompt": "הגדרת בסיס לכל תשובה של המערכת",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "You are Hebrew speaking ChatGPT, a large language model trained by OpenAI which responds in Hebrew to any question or User comment. Follow the user's instructions carefully. Respond in Hebrew using markdown.",
   "Enter a prompt": "הקלד הודעה",
@@ -580,7 +580,23 @@
     "viewReasoningProcess": "הצג תהליך חשיבה",
     "collapseThinking": "כווץ חשיבה",
     "expandThinking": "הרחב חשיבה",
-    "actionsDisabledForEmbed": "השתמש/י בכפתורים שבתוכן המשובץ למעלה"
+    "actionsDisabledForEmbed": "השתמש/י בכפתורים שבתוכן המשובץ למעלה",
+    "loadingMessages": {
+      "transcribingAndProcessing": "מתמלל ומעבד...",
+      "transcribingAudio": "מתמלל שמע...",
+      "analyzingFiles": "מנתח קבצים...",
+      "analyzingDocuments": "מנתח מסמכים...",
+      "analyzingDocument": "מנתח מסמך...",
+      "analyzingImages": "מנתח תמונות...",
+      "analyzingImage": "מנתח תמונה..."
+    },
+    "contentDescription": {
+      "text": "טקסט",
+      "imagesCount": "{count} תמונה",
+      "filesCount": "{count} קובץ",
+      "audioVideo": "שמע/וידאו",
+      "empty": "ריק"
+    }
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",
@@ -816,7 +832,8 @@
     "None": "ללא",
     "Custom Display Name": "שם תצוגה מותאם אישית",
     "Custom Display Name Placeholder": "הזן את השם המועדף עליך",
-    "displayNamePreview": "תצוגה מקדימה: \"איך אפשר לעזור, {name}?\""
+    "displayNamePreview": "תצוגה מקדימה: \"איך אפשר לעזור, {name}?\"",
+    "howShouldWeAddressYou": "כיצד לפנות אליך?"
   },
   "notFound": {
     "lostDog": "כלב אבוד"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "הקוד יסונכרן אוטומטית מהודעות הצ'אט",
       "startCoding": "// התחילו לקודד..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "הפעל חיפוש באינטרנט עבור כל הודעה.\n\nמספק מידע עדכני באמצעות גישה בזמן אמת ל-Bing.",
+    "attachTooltip": "צרף קבצים, תמונות או שמע/וידאו.\n\nפורמטים נתמכים:\n• תמונות: JPEG, PNG, GIF, WebP (עד 5MB, עד 10 קבצים)\n• מסמכים: PDF, DOCX, XLSX, PPTX, TXT, MD (עד 10MB, עד 3 קבצים)\n• נתונים: CSV, JSON, XML, YAML (עד 10MB, עד 3 קבצים)\n• קוד: PY, JS, TS, JAVA, C, CPP, GO ועוד (עד 10MB, עד 3 קבצים)\n• שמע/וידאו: MP3, WAV, MP4, WebM (עד 25MB, קובץ אחד)\n\nסה\"כ: 10 קבצים, עד 50MB",
+    "transcribeTooltip": "העלה קבצי שמע או וידאו לתמלול.\n\nפורמטים נתמכים: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nגודל מקסימלי: 25MB\n\nהתמלול מתבצע אוטומטית בעת שליחת ההודעה.",
+    "selected": "נבחר",
+    "expandActions": "הצג פעולות נוספות",
+    "selectTone": "בחר טון",
+    "selectToneDescription": "בחר פרופיל קול עבור ההודעות שלך",
+    "noToneDefault": "ללא טון (ברירת מחדל)",
+    "useDefaultStyle": "השתמש בסגנון כתיבה ברירת מחדל",
+    "noTonesCreated": "לא נוצרו טונים עדיין",
+    "createTonesHint": "צור טונים בפעולות מהירות"
   }
 }

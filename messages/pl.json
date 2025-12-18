@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Klucz do OpenAI API jest wymagany",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Proszę wprowadzić swój klucz do OpenAI API na pasku bocznym w lewym dolnym rogu",
   "Stop Generating": "Zatrzymaj generowanie",
-  "Prompt limit is {{maxLength}} characters": "Limit długości polecenia to {{maxLength}} znaków",
+  "Prompt limit is {{maxLength}} characters": "Limit polecenia to {{maxLength}} znaków",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit prompta wynosi {{maxLength}} znaków. Wprowadziłeś {{valueLength}} znaków.",
   "System Prompt": "Prompt systemowy",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Jesteś ChatGPT, duży model językowy wytrenowany przez OpenAI. Postępuj zgodnie z instrukcjami użytkownika. Odpowiedz za pomocą formatu markdown.",
@@ -602,7 +602,23 @@
     "viewReasoningProcess": "Zobacz proces rozumowania",
     "collapseThinking": "Zwiń myślenie",
     "expandThinking": "Rozwiń myślenie",
-    "actionsDisabledForEmbed": "Użyj kontrolek w osadzonym materiale powyżej"
+    "actionsDisabledForEmbed": "Użyj kontrolek w osadzonym materiale powyżej",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transkrypcja i przetwarzanie...",
+      "transcribingAudio": "Transkrypcja dźwięku...",
+      "analyzingFiles": "Analiza plików...",
+      "analyzingDocuments": "Analiza dokumentów...",
+      "analyzingDocument": "Analiza dokumentu...",
+      "analyzingImages": "Analiza obrazów...",
+      "analyzingImage": "Analiza obrazu..."
+    },
+    "contentDescription": {
+      "text": "tekst",
+      "imagesCount": "{count} obraz(y)",
+      "filesCount": "{count} plik(ów)",
+      "audioVideo": "audio/wideo",
+      "empty": "puste"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Zwiń pasek boczny",
@@ -838,7 +854,8 @@
     "None": "Brak",
     "Custom Display Name": "Własna wyświetlana nazwa",
     "Custom Display Name Placeholder": "Wpisz preferowaną nazwę",
-    "displayNamePreview": "Podgląd: „Jak mogę pomóc, {name}?”"
+    "displayNamePreview": "Podgląd: „Jak mogę pomóc, {name}?”",
+    "howShouldWeAddressYou": "Jak powinniśmy się do Ciebie zwracać?"
   },
   "notFound": {
     "lostDog": "Zagubiony pies"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Kod będzie automatycznie synchronizowany z wiadomościami na czacie",
       "startCoding": "// Zacznij kodować..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Włącz wyszukiwanie w sieci dla każdej wiadomości.\n\nZapewnia aktualne informacje dzięki dostępowi do internetu Bing w czasie rzeczywistym.",
+    "attachTooltip": "Dołącz pliki, obrazy lub dźwięk/wideo.\n\nObsługiwane formaty:\n• Obrazy: JPEG, PNG, GIF, WebP (maks. 5 MB, do 10 plików)\n• Dokumenty: PDF, DOCX, XLSX, PPTX, TXT, MD (maks. 10 MB, do 3 plików)\n• Dane: CSV, JSON, XML, YAML (maks. 10 MB, do 3 plików)\n• Kod: PY, JS, TS, JAVA, C, CPP, GO itp. (maks. 10 MB, do 3 plików)\n• Audio/Wideo: MP3, WAV, MP4, WebM (maks. 25 MB, 1 plik)\n\nŁącznie: 10 plików, maks. 50 MB",
+    "transcribeTooltip": "Prześlij pliki audio lub wideo do transkrypcji.\n\nObsługiwane formaty: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaksymalny rozmiar: 25 MB\n\nTranskrypcja nastąpi automatycznie po wysłaniu wiadomości.",
+    "selected": "Wybrano",
+    "expandActions": "Rozwiń działania",
+    "selectTone": "Wybierz ton",
+    "selectToneDescription": "Wybierz profil głosu dla swoich wiadomości",
+    "noToneDefault": "Brak tonu (domyślny)",
+    "useDefaultStyle": "Użyj domyślnego stylu pisania",
+    "noTonesCreated": "Nie utworzono jeszcze tonów",
+    "createTonesHint": "Utwórz tony w Szybkich działaniach"
   }
 }

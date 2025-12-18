@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Cal la clau d'API d'OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Si us plau, introdueix la teva clau d'API d'OpenAI a la cantonada inferior esquerra de la barra lateral.",
   "Stop Generating": "Parar de generar",
-  "Prompt limit is {{maxLength}} characters": "El límit de caràcters és de {{maxLength}}",
+  "Prompt limit is {{maxLength}} characters": "El límit de caràcters del prompt és de {{maxLength}}",
   "System Prompt": "Missatge del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ets ChatGPT, un model de llenguatge gran entrenat per OpenAI. Segueix les instruccions de l'usuari amb cura. Respon utilitzant markdown.",
   "Enter a prompt": "Introdueix un missatge",
@@ -580,7 +580,23 @@
     "viewReasoningProcess": "Veure el procés de raonament",
     "collapseThinking": "Redueix el raonament",
     "expandThinking": "Amplia el raonament",
-    "actionsDisabledForEmbed": "Utilitzeu els controls del contingut incrustat a dalt"
+    "actionsDisabledForEmbed": "Utilitzeu els controls del contingut incrustat a dalt",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcrivint i processant...",
+      "transcribingAudio": "Transcrivint l'àudio...",
+      "analyzingFiles": "Analitzant fitxers...",
+      "analyzingDocuments": "Analitzant documents...",
+      "analyzingDocument": "Analitzant document...",
+      "analyzingImages": "Analitzant imatges...",
+      "analyzingImage": "Analitzant imatge..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} imatge(es)",
+      "filesCount": "{count} fitxer(s)",
+      "audioVideo": "àudio/vídeo",
+      "empty": "buit"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Plegar barra lateral",
@@ -816,7 +832,8 @@
     "None": "Cap",
     "Custom Display Name": "Nom mostrat personalitzat",
     "Custom Display Name Placeholder": "Introdueix el nom que prefereixis",
-    "displayNamePreview": "Previsualització: \"En què et puc ajudar, {name}?\""
+    "displayNamePreview": "Previsualització: \"En què et puc ajudar, {name}?\"",
+    "howShouldWeAddressYou": "Com t’hem d’anomenar?"
   },
   "notFound": {
     "lostDog": "Gos perdut"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "El codi se sincronitzarà automàticament des dels missatges de xat",
       "startCoding": "// Comença a programar..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Activa la cerca web per a cada missatge.\n\nOfereix informació actualitzada amb accés en temps real a Bing.",
+    "attachTooltip": "Adjunta fitxers, imatges o àudio/vídeo.\n\nFormats admesos:\n• Imatges: JPEG, PNG, GIF, WebP (màx. 5MB, fins a 10)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (màx. 10MB, fins a 3)\n• Dades: CSV, JSON, XML, YAML (màx. 10MB, fins a 3)\n• Codi: PY, JS, TS, JAVA, C, CPP, GO, etc. (màx. 10MB, fins a 3)\n• Àudio/Vídeo: MP3, WAV, MP4, WebM (màx. 25MB, 1 fitxer)\n\nTotal: 10 fitxers, màx. 50MB",
+    "transcribeTooltip": "Puja fitxers d'àudio o vídeo per a la transcripció.\n\nFormats admesos: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMida màxima: 25MB\n\nLa transcripció es fa automàticament quan enviïs el missatge.",
+    "selected": "Seleccionat",
+    "expandActions": "Amplia accions",
+    "selectTone": "Selecciona el to",
+    "selectToneDescription": "Trieu un perfil de veu per als vostres missatges",
+    "noToneDefault": "Sense to (per defecte)",
+    "useDefaultStyle": "Fes servir l'estil d'escriptura per defecte",
+    "noTonesCreated": "Encara no s'ha creat cap to",
+    "createTonesHint": "Crea tons a Accions Ràpides"
   }
 }

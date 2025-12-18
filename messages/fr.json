@@ -99,7 +99,7 @@
   "OpenAI API Key Required": "Clé API OpenAI requise",
   "Please enter a message": "Veuillez entrer un message",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Veuillez définir votre clé API OpenAI en bas à gauche de la barre latérale.",
-  "Prompt limit is {{maxLength}} characters": "La limite du prompt est de {{maxLength}} caractères",
+  "Prompt limit is {{maxLength}} characters": "La limite est de {{maxLength}} caractères",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "La limite d'invite est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères.",
   "Regenerate response": "Régénérer la réponse",
   "Run Typewriter Intro": "Exécuter l'intro machine à écrire",
@@ -560,7 +560,23 @@
     "viewReasoningProcess": "Voir le processus de raisonnement",
     "collapseThinking": "Réduire la réflexion",
     "expandThinking": "Développer la réflexion",
-    "actionsDisabledForEmbed": "Utilisez les contrôles dans le contenu intégré ci-dessus"
+    "actionsDisabledForEmbed": "Utilisez les contrôles dans le contenu intégré ci-dessus",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcription et traitement...",
+      "transcribingAudio": "Transcription de l’audio...",
+      "analyzingFiles": "Analyse des fichiers...",
+      "analyzingDocuments": "Analyse des documents...",
+      "analyzingDocument": "Analyse du document...",
+      "analyzingImages": "Analyse des images...",
+      "analyzingImage": "Analyse de l’image..."
+    },
+    "contentDescription": {
+      "text": "texte",
+      "imagesCount": "{count} image(s)",
+      "filesCount": "{count} fichier(s)",
+      "audioVideo": "audio/vidéo",
+      "empty": "vide"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Réduire la barre latérale",
@@ -844,7 +860,8 @@
     "None": "Aucun",
     "Custom Display Name": "Nom affiché personnalisé",
     "Custom Display Name Placeholder": "Entrez le nom de votre choix",
-    "displayNamePreview": "Aperçu : « Comment puis-je vous aider, {name} ? »"
+    "displayNamePreview": "Aperçu : « Comment puis-je vous aider, {name} ? »",
+    "howShouldWeAddressYou": "Comment devons-nous vous adresser ?"
   },
   "notFound": {
     "lostDog": "Chien perdu"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "Le code sera automatiquement synchronisé depuis les messages du chat",
       "startCoding": "// Commencez à coder..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Activer la recherche web pour chaque message.\n\nFournit des informations à jour grâce à un accès web Bing en temps réel.",
+    "attachTooltip": "Joindre des fichiers, images ou audio/vidéo.\n\nFormats supportés :\n• Images : JPEG, PNG, GIF, WebP (5 Mo max., jusqu'à 10)\n• Documents : PDF, DOCX, XLSX, PPTX, TXT, MD (10 Mo max., jusqu'à 3)\n• Données : CSV, JSON, XML, YAML (10 Mo max., jusqu'à 3)\n• Code : PY, JS, TS, JAVA, C, CPP, GO, etc. (10 Mo max., jusqu'à 3)\n• Audio/Vidéo : MP3, WAV, MP4, WebM (25 Mo max., 1 fichier)\n\nTotal : 10 fichiers, 50 Mo max.",
+    "transcribeTooltip": "Téléchargez des fichiers audio ou vidéo pour transcription.\n\nFormats supportés : MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nTaille max. : 25 Mo\n\nLa transcription se fait automatiquement à l'envoi du message.",
+    "selected": "Sélectionné",
+    "expandActions": "Développer les actions",
+    "selectTone": "Sélectionner le ton",
+    "selectToneDescription": "Choisissez un profil vocal pour vos messages",
+    "noToneDefault": "Aucun ton (par défaut)",
+    "useDefaultStyle": "Utiliser le style d’écriture par défaut",
+    "noTonesCreated": "Aucun ton créé pour le moment",
+    "createTonesHint": "Créez des tons dans Actions rapides"
   }
 }

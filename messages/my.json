@@ -27,7 +27,7 @@
   "Please enter a message": "ကျေးဇူးပြု၍ စာတစ်စောင် ရိုက်ထည့်ပါ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "ကျေးဇူးပြု၍ သင့် OpenAI API သော့ကို ဘယ်ဘက်အောက်ခြေ ဘေးတန်းတွင် သတ်မှတ်ပါ။",
   "Precise": "တိကျသော",
-  "Prompt limit is {{maxLength}} characters": "ရိုက်ထည့်နိုင်သည့်စာလုံးအရေအတွက်မှာ {{maxLength}} လုံးအထိသာရှိပါသည်",
+  "Prompt limit is {{maxLength}} characters": "ပြောရန်အကန့်အသတ်မှာ {{maxLength}} အက္ခရာရှိသည်",
   "Regenerate response": "တုံ့ပြန်မှုကို ပြန်လည်ထုတ်လုပ်ရန်",
   "Save & Submit": "သိမ်းဆည်း & တင်သွင်းရန်",
   "Search_ellipsis": "ရှာဖွေရန်...",
@@ -580,7 +580,23 @@
     "viewReasoningProcess": "အကြောင်းအရင်း ဆင်ခြင်ချက်ကိုကြည့်ရန်",
     "collapseThinking": "စဉ်းစားမှုကိုပိတ်ရန်",
     "expandThinking": "စဉ်းစားမှုကိုချဲ့ရန်",
-    "actionsDisabledForEmbed": "ပေါင်းသွင်းထားသော အကြောင်းအရာအပေါ်ရှိ ထိန်းချုပ်မှုများကို အသုံးပြုပါ"
+    "actionsDisabledForEmbed": "ပေါင်းသွင်းထားသော အကြောင်းအရာအပေါ်ရှိ ထိန်းချုပ်မှုများကို အသုံးပြုပါ",
+    "loadingMessages": {
+      "transcribingAndProcessing": "မိန့်ခွန်းရယူပြီး ဖော်ပြနေသည်...",
+      "transcribingAudio": "အသံဖိုင်ကို ရေးသားနေသည်...",
+      "analyzingFiles": "ဖိုင်များကို ချုပ်ခြေ၊ ဖော်ပြနေသည်...",
+      "analyzingDocuments": "စာရွက်စာတမ်းများကို ချုပ်ခြေသုံးသပ်နေသည်...",
+      "analyzingDocument": "စာရွက်စာတမ်းကို ချုပ်ခြေသုံးသပ်နေသည်...",
+      "analyzingImages": "ပုံများကို ချုပ်ခြေသုံးသပ်နေသည်...",
+      "analyzingImage": "ပုံကို ချုပ်ခြေသုံးသပ်နေသည်..."
+    },
+    "contentDescription": {
+      "text": "စာသား",
+      "imagesCount": "ပုံ {count} ခု",
+      "filesCount": "ဖိုင် {count} ခု",
+      "audioVideo": "အသံ/ရုပ်သံ",
+      "empty": "ဗလာ"
+    }
   },
   "sidebar": {
     "collapseSidebar": "ဘေးဘားကို ကျုံ့ပါ",
@@ -816,7 +832,8 @@
     "None": "မရွေးထားပါ",
     "Custom Display Name": "ကိုယ်သတ်မှတ်ပြသမည်နာမည်",
     "Custom Display Name Placeholder": "သင့်လိုချင်သောနာမည် ထည့်ပါ",
-    "displayNamePreview": "နမူနာ - \"ဘာကြောင့်ကူညီပေးရမလဲ၊ {name}?\""
+    "displayNamePreview": "နမူနာ - \"ဘာကြောင့်ကူညီပေးရမလဲ၊ {name}?\"",
+    "howShouldWeAddressYou": "ကျွန်ုပ်တို့ ဘယ်လိုခေါ်ကြမလဲ?"
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "ကုဒ်သည် မက်ဆေ့ခ်ျများမှ အလိုအလျောက်တန်းတူဖြစ်ပါမည်",
       "startCoding": "// ကုဒ်ရေးပွဲစတင်ပါ..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "့Messages တိုင်းအတွက် web search ကိုဖွင့်နိုင်သည်။\n\nလက်ရှိ Bing အသုံးပြုခြင်းဖြင့် နောက်ဆုံးသတင်းအချက်အလက်များပေးစွမ်းသည်။",
+    "attachTooltip": "ဖိုင်များ၊ ဓါတ်ပုံ၊ သံ/ဗီဒီယိုများပူးတွဲပါ။\n\nထောက်ပံ့ထားသော ဖော်မတ်များ:\n• ဓါတ်ပုံ: JPEG, PNG, GIF, WebP (အများဆုံး 5MB၊ အများဆုံး 10 ဖိုင်)\n• စာရွက်စာတမ်း: PDF, DOCX, XLSX, PPTX, TXT, MD (အများဆုံး 10MB၊ အများဆုံး 3 ဖိုင်)\n• ဒေတာ: CSV, JSON, XML, YAML (အများဆုံး 10MB၊ အများဆုံး 3 ဖိုင်)\n• ကုဒ်: PY, JS, TS, JAVA, C, CPP, GO စသည် (အများဆုံး 10MB၊ အများဆုံး 3 ဖိုင်)\n• သံ/ဗီဒီယို: MP3, WAV, MP4, WebM (အများဆုံး 25MB, ဖိုင် ၁ ခု)\n\nစုစုပေါင်း: ဖိုင်အယောက် ၁၀၊ အများဆုံး ၅၀MB",
+    "transcribeTooltip": "လေ့လာရန်အတွက် သံဖိုင် သို့မဟုတ် ဗီဒီယိုဖိုင်များ တင်ပါ။\n\nထောက်ပံ့သည့်ဖော်မတ်များ- MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nအကြီးဆုံး 25MB\n\nသင် message ပို့သောအခါ ဆာဗာသည် အလိုအလျောက် လူ့ဘာသာပြန်ချက်ပြုလုပ်ပေးပါသည်။",
+    "selected": "ရွေးချယ်ပြီး",
+    "expandActions": "လုပ်ဆောင်ချက်များ ချဲ့ချင်ရန်",
+    "selectTone": "အသံသွင်းပုံ နှုတ်ရိုက်ခြင်းကို ရွေးချယ်ပါ",
+    "selectToneDescription": "သင့်စာတိုမှတ်တမ်းများအတွက် အသံပုံစံကို ရွေးချယ်ပါ",
+    "noToneDefault": "အသံသွင်းပုံ မရွေး (မူလအတည်းအထား)",
+    "useDefaultStyle": "မူလရေးသားပုံကိုအသုံးပြုပါ",
+    "noTonesCreated": "အသံသွင်းပုံ မရှိသေးပါ",
+    "createTonesHint": "Quick Actions တွင် အသံသွင်းပုံများ တည်ဆောက်နိုင်သည်"
   }
 }

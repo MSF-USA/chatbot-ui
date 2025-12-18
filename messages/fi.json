@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "OpenAI API-avain tarvitaan",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Ole hyvä ja aseta OpenAI API-avaimesi sivupalkin vasemmassa alareunassa.",
   "Stop Generating": "Lopeta generointi",
-  "Prompt limit is {{maxLength}} characters": "Viestin pituusraja on {{maxLength}} merkkiä",
+  "Prompt limit is {{maxLength}} characters": "Syötteen enimmäispituus on {{maxLength}} merkkiä",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sinä olet ChatGPT, OpenAI:n opettama laaja kielimalli. Seuraa käyttäjän ohjeita tarkasti. Vastaa käyttäen markdownia.",
   "Enter a prompt": "Syötä prompti",
@@ -580,7 +580,23 @@
     "viewReasoningProcess": "Näytä päättelyprosessi",
     "collapseThinking": "Piilota ajattelu",
     "expandThinking": "Laajenna ajattelu",
-    "actionsDisabledForEmbed": "Käytä yllä olevan upotetun sisällön ohjaimia"
+    "actionsDisabledForEmbed": "Käytä yllä olevan upotetun sisällön ohjaimia",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Puhtaaksikirjoitetaan ja käsitellään...",
+      "transcribingAudio": "Puhtaaksikirjoitetaan ääntä...",
+      "analyzingFiles": "Analysoidaan tiedostoja...",
+      "analyzingDocuments": "Analysoidaan asiakirjoja...",
+      "analyzingDocument": "Analysoidaan asiakirjaa...",
+      "analyzingImages": "Analysoidaan kuvia...",
+      "analyzingImage": "Analysoidaan kuvaa..."
+    },
+    "contentDescription": {
+      "text": "teksti",
+      "imagesCount": "{count} kuvaa",
+      "filesCount": "{count} tiedostoa",
+      "audioVideo": "ääni/video",
+      "empty": "tyhjä"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Tiivistä sivupalkki",
@@ -816,7 +832,8 @@
     "None": "Ei mitään",
     "Custom Display Name": "Mukautettu näyttönimi",
     "Custom Display Name Placeholder": "Anna haluamasi nimi",
-    "displayNamePreview": "Esikatselu: \"Miten voin auttaa, {name}?\""
+    "displayNamePreview": "Esikatselu: \"Miten voin auttaa, {name}?\"",
+    "howShouldWeAddressYou": "Miten haluat, että puhuttelemme sinua?"
   },
   "notFound": {
     "lostDog": "Kadonnut koira"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Koodi synkronoituu automaattisesti keskusteluista",
       "startCoding": "// Aloita koodaus..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Ota verkkohaku käyttöön jokaisessa viestissä.\n\nTarjoaa ajantasaiset tiedot reaaliaikaisen Bing-verkkoyhteyden avulla.",
+    "attachTooltip": "Liitä tiedostoja, kuvia tai ääni-/videotiedostoja.\n\nTuetut muodot:\n• Kuvat: JPEG, PNG, GIF, WebP (enint. 5 Mt, enintään 10 kpl)\n• Asiakirjat: PDF, DOCX, XLSX, PPTX, TXT, MD (enint. 10 Mt, enintään 3 kpl)\n• Data: CSV, JSON, XML, YAML (enint. 10 Mt, enintään 3 kpl)\n• Koodi: PY, JS, TS, JAVA, C, CPP, GO jne. (enint. 10 Mt, enintään 3 kpl)\n• Ääni/video: MP3, WAV, MP4, WebM (enint. 25 Mt, 1 tiedosto)\n\nYhteensä: 10 tiedostoa, maksimissaan 50 Mt",
+    "transcribeTooltip": "Lataa ääni- tai videotiedostoja puhtaaksikirjoitusta varten.\n\nTuetut muodot: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaksimikoko: 25 Mt\n\nPuhtaaksikirjoitus tapahtuu automaattisesti viestin lähetyksen yhteydessä.",
+    "selected": "Valittu",
+    "expandActions": "Laajenna toiminnot",
+    "selectTone": "Valitse äänensävy",
+    "selectToneDescription": "Valitse viesteillesi ääniprofiili",
+    "noToneDefault": "Ei äänensävyä (oletus)",
+    "useDefaultStyle": "Käytä oletuskirjoitustyyliä",
+    "noTonesCreated": "Äänensävyjä ei ole vielä luotu",
+    "createTonesHint": "Luo äänensävyjä Pikatoiminnoissa"
   }
 }

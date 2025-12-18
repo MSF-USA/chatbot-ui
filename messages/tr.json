@@ -4,7 +4,7 @@
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
-  "Prompt limit is {{maxLength}} characters": "Komut sınırı {{maxLength}} karakterdir",
+  "Prompt limit is {{maxLength}} characters": "Girdi sınırı {{maxLength}} karakterdir",
   "System Prompt": "Sistem İstemi",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Siz ChatGPT'siniz, OpenAI tarafından eğitilmiş büyük bir dil modelisiniz. Kullanıcının talimatlarını dikkatlice izleyin. Markdown kullanarak yanıt verin.",
   "Enter a prompt": "Bir istem girin",
@@ -605,7 +605,23 @@
     "viewReasoningProcess": "Akıl yürütme sürecini görüntüle",
     "collapseThinking": "Düşünceyi daralt",
     "expandThinking": "Düşünceyi genişlet",
-    "actionsDisabledForEmbed": "Yukarıdaki yerleştirilmiş içerikteki kontrolleri kullanın"
+    "actionsDisabledForEmbed": "Yukarıdaki yerleştirilmiş içerikteki kontrolleri kullanın",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Çevriliyor ve işleniyor...",
+      "transcribingAudio": "Ses çevriliyor...",
+      "analyzingFiles": "Dosyalar analiz ediliyor...",
+      "analyzingDocuments": "Belgeler analiz ediliyor...",
+      "analyzingDocument": "Belge analiz ediliyor...",
+      "analyzingImages": "Görseller analiz ediliyor...",
+      "analyzingImage": "Görsel analiz ediliyor..."
+    },
+    "contentDescription": {
+      "text": "metin",
+      "imagesCount": "{count} görsel",
+      "filesCount": "{count} dosya",
+      "audioVideo": "ses/video",
+      "empty": "boş"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",
@@ -841,7 +857,8 @@
     "None": "Yok",
     "Custom Display Name": "Özel Görünen Ad",
     "Custom Display Name Placeholder": "Tercih ettiğiniz adı girin",
-    "displayNamePreview": "Önizleme: \"Nasıl yardımcı olabilirim, {name}?\""
+    "displayNamePreview": "Önizleme: \"Nasıl yardımcı olabilirim, {name}?\"",
+    "howShouldWeAddressYou": "Size nasıl hitap etmemizi istersiniz?"
   },
   "notFound": {
     "lostDog": "Kayıp köpek"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Kod, sohbet mesajlarından otomatik olarak senkronize edilecek",
       "startCoding": "// Kodlamaya başlayın..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Her mesaj için web aramasını etkinleştirin.\n\nGerçek zamanlı Bing erişimiyle güncel bilgiler sunar.",
+    "attachTooltip": "Dosya, görsel veya ses/video ekleyin.\n\nDesteklenen formatlar:\n• Görseller: JPEG, PNG, GIF, WebP (en fazla 5MB, 10 adet)\n• Dokümanlar: PDF, DOCX, XLSX, PPTX, TXT, MD (en fazla 10MB, 3 adet)\n• Veri: CSV, JSON, XML, YAML (en fazla 10MB, 3 adet)\n• Kod: PY, JS, TS, JAVA, C, CPP, GO vb. (en fazla 10MB, 3 adet)\n• Ses/Video: MP3, WAV, MP4, WebM (en fazla 25MB, 1 dosya)\n\nToplam: 10 dosya, en fazla 50MB",
+    "transcribeTooltip": "Ses veya video dosyalarını transkripsiyon için yükleyin.\n\nDesteklenen formatlar: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaksimum boyut: 25MB\n\nMesajı gönderdiğinizde transkripsiyon otomatik olarak yapılır.",
+    "selected": "Seçildi",
+    "expandActions": "Eylemleri Genişlet",
+    "selectTone": "Ton Seçin",
+    "selectToneDescription": "Mesajlarınız için bir ses profili seçin",
+    "noToneDefault": "Ton Yok (Varsayılan)",
+    "useDefaultStyle": "Varsayılan yazı stilini kullan",
+    "noTonesCreated": "Henüz ton oluşturulmadı",
+    "createTonesHint": "Hızlı Eylemler'de tonlar oluşturun"
   }
 }

@@ -605,7 +605,23 @@
     "viewReasoningProcess": "Angalia mchakato wa kufikiri",
     "collapseThinking": "Kunja mawazo",
     "expandThinking": "Panua mawazo",
-    "actionsDisabledForEmbed": "Tumia vidhibiti kwenye yaliyomo hapo juu"
+    "actionsDisabledForEmbed": "Tumia vidhibiti kwenye yaliyomo hapo juu",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Inanakili na kuchakata...",
+      "transcribingAudio": "Inanakili sauti...",
+      "analyzingFiles": "Inachambua faili...",
+      "analyzingDocuments": "Inachambua hati...",
+      "analyzingDocument": "Inachambua hati...",
+      "analyzingImages": "Inachambua picha...",
+      "analyzingImage": "Inachambua picha..."
+    },
+    "contentDescription": {
+      "text": "maandishi",
+      "imagesCount": "{count} picha",
+      "filesCount": "{count} faili",
+      "audioVideo": "sauti/video",
+      "empty": "tupu"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",
@@ -841,7 +857,8 @@
     "None": "Hakuna",
     "Custom Display Name": "Jina Maalum Linaloonekana",
     "Custom Display Name Placeholder": "Weka jina lako unalopendelea",
-    "displayNamePreview": "Onyesho: \"Ninawezaje kusaidia, {name}?\""
+    "displayNamePreview": "Onyesho: \"Ninawezaje kusaidia, {name}?\"",
+    "howShouldWeAddressYou": "Tukuhitaje?"
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Msimbo utalinganishwa kiotomatiki kutoka kwa ujumbe wa gumzo",
       "startCoding": "// Anza kuandika msimbo..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Washa utafutaji wa mtandaoni kwa kila ujumbe.\n\nHutoa taarifa za hivi punde kwa kutumia Bing kwa muda halisi.",
+    "attachTooltip": "Ambatisha faili, picha, au sauti/video.\n\nAina zinazoungwa mkono:\n• Picha: JPEG, PNG, GIF, WebP (5MB kiwango cha juu, hadi 10)\n• Nyaraka: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB kiwango cha juu, hadi 3)\n• Data: CSV, JSON, XML, YAML (10MB kiwango cha juu, hadi 3)\n• Misimbo: PY, JS, TS, JAVA, C, CPP, GO, nk. (10MB kiwango cha juu, hadi 3)\n• Sauti/Video: MP3, WAV, MP4, WebM (25MB kiwango cha juu, faili 1)\n\nJumla: faili 10, 50MB kiwango cha juu",
+    "transcribeTooltip": "Pakia faili za sauti au video kwa ajili ya kunakiliwa.\n\nAina zinazoungwa mkono: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nUkubwa wa juu: 25MB\n\nUandishi hutokea moja kwa moja unapotuma ujumbe.",
+    "selected": "Imeteuliwa",
+    "expandActions": "Panua Vitendo",
+    "selectTone": "Chagua Tono",
+    "selectToneDescription": "Chagua mtindo wa sauti kwa ujumbe wako",
+    "noToneDefault": "Hakuna Tono (Chaguomsingi)",
+    "useDefaultStyle": "Tumia mtindo wa uandishi chaguomsingi",
+    "noTonesCreated": "Hakuna tono lililoundwa bado",
+    "createTonesHint": "Unda matono kwenye Vitendo vya Haraka"
   }
 }

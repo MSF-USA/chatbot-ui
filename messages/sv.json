@@ -35,7 +35,7 @@
   "OpenAI API Key Required": "OpenAI API-nyckel krävs",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vänligen ange din OpenAI API-nyckel längst ner till vänster i sidofältet.",
   "Stop Generating": "Sluta generera",
-  "Prompt limit is {{maxLength}} characters": "Gränsen för prompt är {{maxLength}} tecken",
+  "Prompt limit is {{maxLength}} characters": "Maxlängd för prompt är {{maxLength}} tecken",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du är ChatGPT, en stor språkmodell tränad av OpenAI. Följ användarens instruktioner noggrant. Svara genom att använda markdown.",
   "Enter a prompt": "Ange en prompt",
@@ -605,7 +605,23 @@
     "viewReasoningProcess": "Visa resonemangsprocess",
     "collapseThinking": "Dölj resonemang",
     "expandThinking": "Expandera resonemang",
-    "actionsDisabledForEmbed": "Använd kontrollerna i det inbäddade innehållet ovan"
+    "actionsDisabledForEmbed": "Använd kontrollerna i det inbäddade innehållet ovan",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transkriberar och bearbetar...",
+      "transcribingAudio": "Transkriberar ljud...",
+      "analyzingFiles": "Analyserar filer...",
+      "analyzingDocuments": "Analyserar dokument...",
+      "analyzingDocument": "Analyserar dokument...",
+      "analyzingImages": "Analyserar bilder...",
+      "analyzingImage": "Analyserar bild..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} bild(er)",
+      "filesCount": "{count} fil(er)",
+      "audioVideo": "ljud/video",
+      "empty": "tom"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",
@@ -841,7 +857,8 @@
     "None": "Ingen",
     "Custom Display Name": "Anpassat visningsnamn",
     "Custom Display Name Placeholder": "Ange önskat namn",
-    "displayNamePreview": "Förhandsvisning: \"Hur kan jag hjälpa till, {name}?\""
+    "displayNamePreview": "Förhandsvisning: \"Hur kan jag hjälpa till, {name}?\"",
+    "howShouldWeAddressYou": "Hur vill du bli tilltalad?"
   },
   "notFound": {
     "lostDog": "Förlorad hund"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Kod synkroniseras automatiskt från chattmeddelanden",
       "startCoding": "// Börja koda..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Aktivera webbsökning för varje meddelande.\n\nGer uppdaterad information med realtidsåtkomst till Bing webben.",
+    "attachTooltip": "Bifoga filer, bilder eller ljud/video.\n\nStödda format:\n• Bilder: JPEG, PNG, GIF, WebP (max 5 MB, upp till 10)\n• Dokument: PDF, DOCX, XLSX, PPTX, TXT, MD (max 10 MB, upp till 3)\n• Data: CSV, JSON, XML, YAML (max 10 MB, upp till 3)\n• Kod: PY, JS, TS, JAVA, C, CPP, GO, etc. (max 10 MB, upp till 3)\n• Ljud/Video: MP3, WAV, MP4, WebM (max 25 MB, 1 fil)\n\nTotalt: 10 filer, max 50 MB",
+    "transcribeTooltip": "Ladda upp ljud- eller videofiler för transkribering.\n\nStödda format: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaxstorlek: 25 MB\n\nTranskribering sker automatiskt när meddelandet skickas.",
+    "selected": "Vald",
+    "expandActions": "Visa fler åtgärder",
+    "selectTone": "Välj ton",
+    "selectToneDescription": "Välj en röstprofil för dina meddelanden",
+    "noToneDefault": "Ingen ton (standard)",
+    "useDefaultStyle": "Använd standardstil",
+    "noTonesCreated": "Inga toner har skapats ännu",
+    "createTonesHint": "Skapa toner i Snabbåtgärder"
   }
 }

@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Este necesară cheia API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Introduceți cheia API OpenAI în partea stângă jos a barei laterale",
   "Stop Generating": "Nu mai generați",
-  "Prompt limit is {{maxLength}} characters": "Limita pentru prompt este de {{maxLength}} caractere",
+  "Prompt limit is {{maxLength}} characters": "Limita promptului este de {{maxLength}} caractere",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limita mesajelor este de {{maxLength}} caractere. Ați introdus {{valueLength}} caractere.",
   "System Prompt": "Solicitări de sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sunteți ChatGPT, un model de limbă mare antrenat de OpenAI. Urmați cu atenție instrucțiunile de utilizare. Vă rugăm să răspundeți folosind markdown.",
@@ -603,7 +603,23 @@
     "viewReasoningProcess": "Vezi procesul de raționament",
     "collapseThinking": "Restrânge raționamentul",
     "expandThinking": "Extinde raționamentul",
-    "actionsDisabledForEmbed": "Utilizați controalele din conținutul încorporat de mai sus"
+    "actionsDisabledForEmbed": "Utilizați controalele din conținutul încorporat de mai sus",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Se transcrie și se procesează...",
+      "transcribingAudio": "Se transcrie audio...",
+      "analyzingFiles": "Se analizează fișierele...",
+      "analyzingDocuments": "Se analizează documentele...",
+      "analyzingDocument": "Se analizează documentul...",
+      "analyzingImages": "Se analizează imaginile...",
+      "analyzingImage": "Se analizează imaginea..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} imagine(imagini)",
+      "filesCount": "{count} fișier(e)",
+      "audioVideo": "audio/video",
+      "empty": "gol"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Restrânge bara laterală",
@@ -839,7 +855,8 @@
     "None": "Niciunul",
     "Custom Display Name": "Nume afișat personalizat",
     "Custom Display Name Placeholder": "Introduceți numele preferat",
-    "displayNamePreview": "Previzualizare: \"Cu ce vă pot ajuta, {name}?\""
+    "displayNamePreview": "Previzualizare: \"Cu ce vă pot ajuta, {name}?\"",
+    "howShouldWeAddressYou": "Cum doriți să vă adresăm?"
   },
   "notFound": {
     "lostDog": "Câine pierdut"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Codul se va sincroniza automat din mesajele din chat",
       "startCoding": "// Începeți să scrieți cod..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Activează căutarea web pentru fiecare mesaj.\n\nOferă informații actualizate folosind acces Bing în timp real.",
+    "attachTooltip": "Atașați fișiere, imagini sau audio/video.\n\nFormate acceptate:\n• Imagini: JPEG, PNG, GIF, WebP (maxim 5MB, până la 10)\n• Documente: PDF, DOCX, XLSX, PPTX, TXT, MD (maxim 10MB, până la 3)\n• Date: CSV, JSON, XML, YAML (maxim 10MB, până la 3)\n• Cod: PY, JS, TS, JAVA, C, CPP, GO etc. (maxim 10MB, până la 3)\n• Audio/Video: MP3, WAV, MP4, WebM (maxim 25MB, 1 fișier)\n\nTotal: 10 fișiere, maximum 50MB",
+    "transcribeTooltip": "Încărcați fișiere audio sau video pentru transcriere.\n\nFormate acceptate: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nDimensiune maximă: 25MB\n\nTranscrierea se face automat când trimiteți mesajul.",
+    "selected": "Selectat",
+    "expandActions": "Extindeți Acțiunile",
+    "selectTone": "Selectați tonul",
+    "selectToneDescription": "Alegeți un profil vocal pentru mesajele dumneavoastră",
+    "noToneDefault": "Fără ton (implicit)",
+    "useDefaultStyle": "Folosiți stilul de scriere implicit",
+    "noTonesCreated": "Nu au fost create tonuri încă",
+    "createTonesHint": "Creați tonuri în Acțiuni rapide"
   }
 }

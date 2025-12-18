@@ -532,7 +532,23 @@
     "viewReasoningProcess": "Visualizza il processo di ragionamento",
     "collapseThinking": "Comprimi il ragionamento",
     "expandThinking": "Espandi il ragionamento",
-    "actionsDisabledForEmbed": "Usa i controlli nel contenuto incorporato sopra"
+    "actionsDisabledForEmbed": "Usa i controlli nel contenuto incorporato sopra",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Trascrizione e elaborazione in corso...",
+      "transcribingAudio": "Trascrizione audio in corso...",
+      "analyzingFiles": "Analisi dei file in corso...",
+      "analyzingDocuments": "Analisi dei documenti in corso...",
+      "analyzingDocument": "Analisi del documento in corso...",
+      "analyzingImages": "Analisi delle immagini in corso...",
+      "analyzingImage": "Analisi dell’immagine in corso..."
+    },
+    "contentDescription": {
+      "text": "testo",
+      "imagesCount": "{count} immagine/i",
+      "filesCount": "{count} file",
+      "audioVideo": "audio/video",
+      "empty": "vuoto"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Comprimi barra laterale",
@@ -816,7 +832,8 @@
     "None": "Nessuno",
     "Custom Display Name": "Nome visualizzato personalizzato",
     "Custom Display Name Placeholder": "Inserisci il nome preferito",
-    "displayNamePreview": "Anteprima: \"Come posso aiutarti, {name}?\""
+    "displayNamePreview": "Anteprima: \"Come posso aiutarti, {name}?\"",
+    "howShouldWeAddressYou": "Come desidera essere chiamato/a?"
   },
   "notFound": {
     "lostDog": "Cane smarrito"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Il codice si sincronizzerà automaticamente dai messaggi della chat",
       "startCoding": "// Inizia a programmare..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Abilita la ricerca web per ogni messaggio.\n\nFornisce informazioni aggiornate tramite accesso web in tempo reale con Bing.",
+    "attachTooltip": "Allega file, immagini o audio/video.\n\nFormati supportati:\n• Immagini: JPEG, PNG, GIF, WebP (max 5MB, fino a 10)\n• Documenti: PDF, DOCX, XLSX, PPTX, TXT, MD (max 10MB, fino a 3)\n• Dati: CSV, JSON, XML, YAML (max 10MB, fino a 3)\n• Codice: PY, JS, TS, JAVA, C, CPP, GO, ecc. (max 10MB, fino a 3)\n• Audio/Video: MP3, WAV, MP4, WebM (max 25MB, 1 file)\n\nTotale: 10 file, massimo 50MB",
+    "transcribeTooltip": "Carica file audio o video per la trascrizione.\n\nFormati supportati: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nDimensione massima: 25MB\n\nLa trascrizione avviene automaticamente al momento dell'invio del messaggio.",
+    "selected": "Selezionato",
+    "expandActions": "Espandi azioni",
+    "selectTone": "Seleziona tono",
+    "selectToneDescription": "Scegli un profilo di voce per i tuoi messaggi",
+    "noToneDefault": "Nessun tono (predefinito)",
+    "useDefaultStyle": "Usa stile di scrittura predefinito",
+    "noTonesCreated": "Nessun tono creato",
+    "createTonesHint": "Crea toni nelle Azioni rapide"
   }
 }

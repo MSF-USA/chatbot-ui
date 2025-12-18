@@ -560,7 +560,23 @@
     "viewReasoningProcess": "عرض عملية التفكير",
     "collapseThinking": "طي التفكير",
     "expandThinking": "توسيع التفكير",
-    "actionsDisabledForEmbed": "استخدم أدوات التحكم في المحتوى المضمّن أعلاه"
+    "actionsDisabledForEmbed": "استخدم أدوات التحكم في المحتوى المضمّن أعلاه",
+    "loadingMessages": {
+      "transcribingAndProcessing": "جارٍ النسخ والمعالجة...",
+      "transcribingAudio": "جارٍ نسخ الصوت...",
+      "analyzingFiles": "جارٍ تحليل الملفات...",
+      "analyzingDocuments": "جارٍ تحليل المستندات...",
+      "analyzingDocument": "جارٍ تحليل المستند...",
+      "analyzingImages": "جارٍ تحليل الصور...",
+      "analyzingImage": "جارٍ تحليل الصورة..."
+    },
+    "contentDescription": {
+      "text": "نص",
+      "imagesCount": "{count} صورة",
+      "filesCount": "{count} ملف",
+      "audioVideo": "صوت/فيديو",
+      "empty": "فارغ"
+    }
   },
   "sidebar": {
     "collapseSidebar": "طي الشريط الجانبي",
@@ -796,7 +812,8 @@
     "None": "بدون",
     "Custom Display Name": "اسم عرض مخصص",
     "Custom Display Name Placeholder": "أدخل الاسم الذي تفضله",
-    "displayNamePreview": "معاينة: \"كيف يمكنني المساعدة، {name}?\""
+    "displayNamePreview": "معاينة: \"كيف يمكنني المساعدة، {name}?\"",
+    "howShouldWeAddressYou": "كيف نُناديك؟"
   },
   "notFound": {
     "lostDog": "كلب ضائع"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "سيتم مزامنة الشيفرة تلقائياً من رسائل الدردشة",
       "startCoding": "// ابدأ البرمجة..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "فعّل البحث عبر الإنترنت لكل رسالة.\n\nيقدّم معلومات محدثة باستخدام الوصول الفوري إلى Bing.",
+    "attachTooltip": "إرفاق الملفات أو الصور أو الصوت/الفيديو.\n\nالصيغ المدعومة:\n• الصور: JPEG، PNG، GIF، WebP (بحد أقصى 5MB، حتى 10 ملفات)\n• المستندات: PDF، DOCX، XLSX، PPTX، TXT، MD (بحد أقصى 10MB، حتى 3 ملفات)\n• البيانات: CSV، JSON، XML، YAML (بحد أقصى 10MB، حتى 3 ملفات)\n• الأكواد: PY، JS، TS، JAVA، C، CPP، GO، إلخ. (بحد أقصى 10MB، حتى 3 ملفات)\n• الصوت/الفيديو: MP3، WAV، MP4، WebM (بحد أقصى 25MB، ملف واحد)\n\nالإجمالي: 10 ملفات، حتى 50MB",
+    "transcribeTooltip": "تحميل ملفات صوتية أو فيديو لتحويلها إلى نص.\n\nالصيغ المدعومة: MP3، MP4، WAV، WebM، M4A، MPEG، MPGA\nالحجم الأقصى: 25MB\n\nيتم التحويل إلى نص تلقائياً عند إرسال الرسالة.",
+    "selected": "محدد",
+    "expandActions": "توسيع الإجراءات",
+    "selectTone": "اختر النبرة",
+    "selectToneDescription": "اختر نمط الصوت لرسائلك",
+    "noToneDefault": "بدون نبرة (افتراضي)",
+    "useDefaultStyle": "استخدم أسلوب الكتابة الافتراضي",
+    "noTonesCreated": "لم يتم إنشاء أي نبرة بعد",
+    "createTonesHint": "أنشئ النبرات من الإجراءات السريعة"
   }
 }

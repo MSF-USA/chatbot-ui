@@ -608,7 +608,23 @@
     "viewReasoningProcess": "Просмотреть процесс рассуждения",
     "collapseThinking": "Свернуть размышления",
     "expandThinking": "Развернуть размышления",
-    "actionsDisabledForEmbed": "Используйте элементы управления в содержимом выше"
+    "actionsDisabledForEmbed": "Используйте элементы управления в содержимом выше",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Транскрибирование и обработка...",
+      "transcribingAudio": "Транскрибирование аудио...",
+      "analyzingFiles": "Анализ файлов...",
+      "analyzingDocuments": "Анализ документов...",
+      "analyzingDocument": "Анализ документа...",
+      "analyzingImages": "Анализ изображений...",
+      "analyzingImage": "Анализ изображения..."
+    },
+    "contentDescription": {
+      "text": "текст",
+      "imagesCount": "{count} изображение(ий)",
+      "filesCount": "{count} файл(ов)",
+      "audioVideo": "аудио/видео",
+      "empty": "пусто"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Свернуть боковую панель",
@@ -844,7 +860,8 @@
     "None": "Нет",
     "Custom Display Name": "Настраиваемое отображаемое имя",
     "Custom Display Name Placeholder": "Введите предпочитаемое имя",
-    "displayNamePreview": "Пример: «Чем могу помочь, {name}?»"
+    "displayNamePreview": "Пример: «Чем могу помочь, {name}?»",
+    "howShouldWeAddressYou": "Как к вам обращаться?"
   },
   "notFound": {
     "lostDog": "Потерянная собака"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "Код будет автоматически синхронизироваться с сообщениями чата",
       "startCoding": "// Начните писать код..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Включить веб-поиск для каждого сообщения.\n\nОбеспечивает актуальную информацию с помощью Bing в реальном времени.",
+    "attachTooltip": "Прикрепите файлы, изображения или аудио/видео.\n\nПоддерживаемые форматы:\n• Изображения: JPEG, PNG, GIF, WebP (макс. 5 МБ, до 10 файлов)\n• Документы: PDF, DOCX, XLSX, PPTX, TXT, MD (макс. 10 МБ, до 3 файлов)\n• Данные: CSV, JSON, XML, YAML (макс. 10 МБ, до 3 файлов)\n• Код: PY, JS, TS, JAVA, C, CPP, GO и др. (макс. 10 МБ, до 3 файлов)\n• Аудио/видео: MP3, WAV, MP4, WebM (макс. 25 МБ, 1 файл)\n\nИтого: до 10 файлов, макс. 50 МБ",
+    "transcribeTooltip": "Загрузите аудио- или видеофайл для транскрипции.\n\nПоддерживаемые форматы: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nМаксимальный размер: 25 МБ\n\nТранскрипция происходит автоматически после отправки сообщения.",
+    "selected": "Выбрано",
+    "expandActions": "Показать действия",
+    "selectTone": "Выберите тональность",
+    "selectToneDescription": "Выберите голосовой профиль для ваших сообщений",
+    "noToneDefault": "Без тональности (по умолчанию)",
+    "useDefaultStyle": "Использовать стиль по умолчанию",
+    "noTonesCreated": "Тональности ещё не созданы",
+    "createTonesHint": "Создайте тональности в Быстрых действиях"
   }
 }

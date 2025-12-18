@@ -121,7 +121,7 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट सीमा {{maxLength}} अक्षर है",
+  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट की सीमा {{maxLength}} अक्षर है",
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -608,7 +608,23 @@
     "viewReasoningProcess": "तर्क प्रक्रिया देखें",
     "collapseThinking": "सोच संक्षिप्त करें",
     "expandThinking": "सोच विस्तृत करें",
-    "actionsDisabledForEmbed": "ऊपर एम्बेड किए गए कंटेंट में नियंत्रणों का उपयोग करें"
+    "actionsDisabledForEmbed": "ऊपर एम्बेड किए गए कंटेंट में नियंत्रणों का उपयोग करें",
+    "loadingMessages": {
+      "transcribingAndProcessing": "प्रतिलेखन और प्रोसेसिंग जारी है...",
+      "transcribingAudio": "ऑडियो का प्रतिलेखन हो रहा है...",
+      "analyzingFiles": "फ़ाइलों का विश्लेषण जारी है...",
+      "analyzingDocuments": "दस्तावेज़ों का विश्लेषण जारी है...",
+      "analyzingDocument": "दस्तावेज़ का विश्लेषण जारी है...",
+      "analyzingImages": "छवियों का विश्लेषण जारी है...",
+      "analyzingImage": "छवि का विश्लेषण जारी है..."
+    },
+    "contentDescription": {
+      "text": "टेक्स्ट",
+      "imagesCount": "{count} छवि(यां)",
+      "filesCount": "{count} फ़ाइल(ें)",
+      "audioVideo": "ऑडियो/वीडियो",
+      "empty": "खाली"
+    }
   },
   "sidebar": {
     "collapseSidebar": "साइडबार संक्षिप्त करें",
@@ -844,7 +860,8 @@
     "None": "कोई नहीं",
     "Custom Display Name": "कस्टम दर्शाया जाने वाला नाम",
     "Custom Display Name Placeholder": "अपना पसंदीदा नाम दर्ज करें",
-    "displayNamePreview": "पूर्वावलोकन: \"मैं आपकी कैसे मदद कर सकता हूँ, {name}?\""
+    "displayNamePreview": "पूर्वावलोकन: \"मैं आपकी कैसे मदद कर सकता हूँ, {name}?\"",
+    "howShouldWeAddressYou": "हम आपको किस नाम से संबोधित करें?"
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"
@@ -1348,5 +1365,18 @@
       "codeWillSync": "कोड चैट संदेशों से स्वतः सिंक हो जाएगा",
       "startCoding": "// कोडिंग शुरू करें..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "हर संदेश के लिए वेब सर्च सक्षम करें।\n\nरियल-टाइम Bing वेब एक्सेस से नवीनतम जानकारी प्राप्त करें।",
+    "attachTooltip": "फाइलें, चित्र या ऑडियो/वीडियो संलग्न करें।\n\nसमर्थित फॉर्मेट:\n• इमेज: JPEG, PNG, GIF, WebP (अधिकतम 5MB, 10 तक)\n• दस्तावेज़: PDF, DOCX, XLSX, PPTX, TXT, MD (अधिकतम 10MB, 3 तक)\n• डेटा: CSV, JSON, XML, YAML (अधिकतम 10MB, 3 तक)\n• कोड: PY, JS, TS, JAVA, C, CPP, GO आदि (अधिकतम 10MB, 3 तक)\n• ऑडियो/वीडियो: MP3, WAV, MP4, WebM (अधिकतम 25MB, 1 फाइल)\n\nकुलः 10 फाइलें, अधिकतम 50MB",
+    "transcribeTooltip": "ट्रांसक्रिप्शन के लिए ऑडियो या वीडियो फाइलें अपलोड करें।\n\nसमर्थित फॉर्मेट: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nअधिकतम आकार: 25MB\n\nजब आप संदेश भेजते हैं, ट्रांसक्रिप्शन स्वतः हो जाएगी।",
+    "selected": "चयनित",
+    "expandActions": "क्रियाएँ विस्तार करें",
+    "selectTone": "टोन चुनें",
+    "selectToneDescription": "अपने संदेशों के लिए वॉयस प्रोफाइल चुनें",
+    "noToneDefault": "कोई टोन नहीं (डिफ़ॉल्ट)",
+    "useDefaultStyle": "डिफ़ॉल्ट लेखन शैली का उपयोग करें",
+    "noTonesCreated": "अभी तक कोई टोन नहीं बनाई गई",
+    "createTonesHint": "त्वरित क्रियाओं में टोन बनाएं"
   }
 }

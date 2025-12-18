@@ -605,7 +605,23 @@
     "viewReasoningProcess": "추론 과정 보기",
     "collapseThinking": "생각 접기",
     "expandThinking": "생각 펼치기",
-    "actionsDisabledForEmbed": "위에 삽입된 콘텐츠의 컨트롤을 사용하세요"
+    "actionsDisabledForEmbed": "위에 삽입된 콘텐츠의 컨트롤을 사용하세요",
+    "loadingMessages": {
+      "transcribingAndProcessing": "기록 및 처리 중...",
+      "transcribingAudio": "음성 기록 중...",
+      "analyzingFiles": "파일 분석 중...",
+      "analyzingDocuments": "문서 분석 중...",
+      "analyzingDocument": "문서 분석 중...",
+      "analyzingImages": "이미지 분석 중...",
+      "analyzingImage": "이미지 분석 중..."
+    },
+    "contentDescription": {
+      "text": "텍스트",
+      "imagesCount": "이미지 {count}개",
+      "filesCount": "파일 {count}개",
+      "audioVideo": "오디오/비디오",
+      "empty": "비어 있음"
+    }
   },
   "sidebar": {
     "collapseSidebar": "사이드바 축소",
@@ -841,7 +857,8 @@
     "None": "없음",
     "Custom Display Name": "사용자 지정 표시 이름",
     "Custom Display Name Placeholder": "원하는 이름을 입력하세요.",
-    "displayNamePreview": "미리보기: \"무엇을 도와드릴까요, {name}?\""
+    "displayNamePreview": "미리보기: \"무엇을 도와드릴까요, {name}?\"",
+    "howShouldWeAddressYou": "어떻게 불러드릴까요?"
   },
   "notFound": {
     "lostDog": "잃어버린 개"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "코드는 채팅 메시지에서 자동으로 동기화됩니다.",
       "startCoding": "// 코딩을 시작하세요..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "모든 메시지에 웹 검색을 활성화합니다.\n\n실시간 Bing 웹 액세스를 통해 최신 정보를 제공합니다.",
+    "attachTooltip": "파일, 이미지 또는 오디오/비디오를 첨부하세요.\n\n지원 형식:\n• 이미지: JPEG, PNG, GIF, WebP (최대 5MB, 최대 10개)\n• 문서: PDF, DOCX, XLSX, PPTX, TXT, MD (최대 10MB, 최대 3개)\n• 데이터: CSV, JSON, XML, YAML (최대 10MB, 최대 3개)\n• 코드: PY, JS, TS, JAVA, C, CPP, GO 등 (최대 10MB, 최대 3개)\n• 오디오/비디오: MP3, WAV, MP4, WebM (최대 25MB, 1개 파일)\n\n총합: 최대 10개 파일, 50MB까지",
+    "transcribeTooltip": "오디오 또는 비디오 파일을 업로드하여 전사하세요.\n\n지원 형식: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\n최대 크기: 25MB\n\n메시지를 전송하면 자동으로 전사가 시작됩니다.",
+    "selected": "선택됨",
+    "expandActions": "작업 확장",
+    "selectTone": "톤 선택",
+    "selectToneDescription": "메시지에 사용할 음성 프로필을 선택하세요",
+    "noToneDefault": "톤 없음 (기본값)",
+    "useDefaultStyle": "기본 작성 스타일 사용",
+    "noTonesCreated": "아직 생성된 톤이 없습니다",
+    "createTonesHint": "빠른 작업에서 톤을 생성하세요"
   }
 }

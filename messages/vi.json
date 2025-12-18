@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Yêu cầu nhập API Key từ tài khoản OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vui lòng nhập API Key từ tài khoản OpenAI của bạn vào ô dưới cùng của thanh bên trái.",
   "Stop Generating": "Dừng tạo",
-  "Prompt limit is {{maxLength}} characters": "Giới hạn độ dài là {{maxLength}} ký tự",
+  "Prompt limit is {{maxLength}} characters": "Giới hạn độ dài lời nhắc là {{maxLength}} ký tự",
   "System Prompt": "Prompt hệ thống",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Bạn là ChatGPT, một mô hình ngôn ngữ lớn được đào tạo bởi OpenAI. Hãy tuân theo hướng dẫn của người dùng một cách cẩn thận. Phản hồi bằng cách sử dụng định dạng markdown.",
   "Enter a prompt": "Nhập một Prompt",
@@ -575,7 +575,23 @@
     "viewReasoningProcess": "Xem quá trình suy luận",
     "collapseThinking": "Thu gọn suy nghĩ",
     "expandThinking": "Mở rộng suy nghĩ",
-    "actionsDisabledForEmbed": "Vui lòng sử dụng các điều khiển trong nội dung nhúng ở trên"
+    "actionsDisabledForEmbed": "Vui lòng sử dụng các điều khiển trong nội dung nhúng ở trên",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Đang chuyển lời nói thành văn bản và xử lý...",
+      "transcribingAudio": "Đang chuyển lời nói thành văn bản...",
+      "analyzingFiles": "Đang phân tích các tệp...",
+      "analyzingDocuments": "Đang phân tích các tài liệu...",
+      "analyzingDocument": "Đang phân tích tài liệu...",
+      "analyzingImages": "Đang phân tích các hình ảnh...",
+      "analyzingImage": "Đang phân tích hình ảnh..."
+    },
+    "contentDescription": {
+      "text": "văn bản",
+      "imagesCount": "{count} hình ảnh",
+      "filesCount": "{count} tệp",
+      "audioVideo": "âm thanh/video",
+      "empty": "trống"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Thu gọn thanh bên",
@@ -811,7 +827,8 @@
     "None": "Không",
     "Custom Display Name": "Tên hiển thị tùy chỉnh",
     "Custom Display Name Placeholder": "Nhập tên bạn muốn sử dụng",
-    "displayNamePreview": "Xem trước: \"Tôi có thể giúp gì cho bạn, {name}?\""
+    "displayNamePreview": "Xem trước: \"Tôi có thể giúp gì cho bạn, {name}?\"",
+    "howShouldWeAddressYou": "Chúng tôi nên xưng hô với bạn như thế nào?"
   },
   "notFound": {
     "lostDog": "Chó bị lạc"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Mã sẽ được đồng bộ tự động từ các tin nhắn trò chuyện",
       "startCoding": "// Bắt đầu viết mã..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Bật tìm kiếm web cho mỗi tin nhắn.\n\nCung cấp thông tin cập nhật bằng truy cập Bing thời gian thực.",
+    "attachTooltip": "Đính kèm tệp, hình ảnh hoặc âm thanh/video.\n\nĐịnh dạng hỗ trợ:\n• Hình ảnh: JPEG, PNG, GIF, WebP (tối đa 5MB, tối đa 10 tệp)\n• Tài liệu: PDF, DOCX, XLSX, PPTX, TXT, MD (tối đa 10MB, tối đa 3 tệp)\n• Dữ liệu: CSV, JSON, XML, YAML (tối đa 10MB, tối đa 3 tệp)\n• Mã nguồn: PY, JS, TS, JAVA, C, CPP, GO, v.v. (tối đa 10MB, tối đa 3 tệp)\n• Âm thanh/Video: MP3, WAV, MP4, WebM (tối đa 25MB, 1 tệp)\n\nTổng cộng: 10 tệp, tối đa 50MB",
+    "transcribeTooltip": "Tải lên tệp âm thanh hoặc video để chuyển thành văn bản.\n\nĐịnh dạng hỗ trợ: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nDung lượng tối đa: 25MB\n\nChuyển đổi thành văn bản sẽ tự động khi bạn gửi tin nhắn.",
+    "selected": "Đã chọn",
+    "expandActions": "Mở rộng hành động",
+    "selectTone": "Chọn giọng điệu",
+    "selectToneDescription": "Chọn kiểu giọng cho tin nhắn của bạn",
+    "noToneDefault": "Không có giọng điệu (Mặc định)",
+    "useDefaultStyle": "Sử dụng phong cách viết mặc định",
+    "noTonesCreated": "Chưa tạo giọng điệu nào",
+    "createTonesHint": "Tạo giọng điệu trong Quick Actions"
   }
 }

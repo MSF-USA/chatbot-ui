@@ -530,7 +530,23 @@
     "viewReasoningProcess": "مشاهده فرایند استدلال",
     "collapseThinking": "جمع کردن تفکر",
     "expandThinking": "گسترش تفکر",
-    "actionsDisabledForEmbed": "از کنترل‌های موجود در محتوای تعبیه‌شده بالا استفاده کنید"
+    "actionsDisabledForEmbed": "از کنترل‌های موجود در محتوای تعبیه‌شده بالا استفاده کنید",
+    "loadingMessages": {
+      "transcribingAndProcessing": "در حال تبدیل و پردازش...",
+      "transcribingAudio": "در حال تبدیل صوت به متن...",
+      "analyzingFiles": "در حال تجزیه و تحلیل فایل‌ها...",
+      "analyzingDocuments": "در حال تجزیه و تحلیل اسناد...",
+      "analyzingDocument": "در حال تجزیه و تحلیل سند...",
+      "analyzingImages": "در حال تجزیه و تحلیل تصاویر...",
+      "analyzingImage": "در حال تجزیه و تحلیل تصویر..."
+    },
+    "contentDescription": {
+      "text": "متن",
+      "imagesCount": "{count} تصویر",
+      "filesCount": "{count} فایل",
+      "audioVideo": "صوت/ویدئو",
+      "empty": "خالی"
+    }
   },
   "sidebar": {
     "collapseSidebar": "بستن نوار کناری",
@@ -766,7 +782,8 @@
     "None": "هیچ‌کدام",
     "Custom Display Name": "نام نمایشی سفارشی",
     "Custom Display Name Placeholder": "نام دلخواه خود را وارد کنید",
-    "displayNamePreview": "پیش‌نمایش: «چگونه می‌توانم کمک کنم، {name}؟»"
+    "displayNamePreview": "پیش‌نمایش: «چگونه می‌توانم کمک کنم، {name}؟»",
+    "howShouldWeAddressYou": "مایلیم شما را چگونه خطاب کنیم؟"
   },
   "notFound": {
     "lostDog": "سگ گمشده"
@@ -801,7 +818,7 @@
   "OpenAI API Key Required": "نیاز به کلید OpenAI API",
   "Please enter a message": "لطفاً یک پیام وارد کنید",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
-  "Prompt limit is {{maxLength}} characters": "حداکثر طول متن {{maxLength}} کاراکتر است",
+  "Prompt limit is {{maxLength}} characters": "حداکثر تعداد نویسه‌های مجاز: {{maxLength}}",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
   "Regenerate response": "تولید مجدد پاسخ",
   "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",
@@ -1350,5 +1367,18 @@
       "codeWillSync": "کد به‌طور خودکار از پیام‌های چت همگام می‌شود",
       "startCoding": "// شروع به کدنویسی..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "جستجوی وب را برای هر پیام فعال کنید.\n\nاطلاعات به‌روز را با دسترسی لحظه‌ای به وب Bing فراهم می‌کند.",
+    "attachTooltip": "ضمیمه کردن فایل‌ها، تصاویر یا صوت/ویدیو.\n\nفرمت‌های پشتیبانی‌شده:\n• تصاویر: JPEG، PNG، GIF، WebP (حداکثر ۵ مگابایت، تا ۱۰ عدد)\n• اسناد: PDF، DOCX، XLSX، PPTX، TXT، MD (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• داده‌ها: CSV، JSON، XML، YAML (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• کد: PY، JS، TS، JAVA، C، CPP، GO و غیره (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• صوت/ویدیو: MP3، WAV، MP4، WebM (حداکثر ۲۵ مگابایت، ۱ فایل)\n\nمجموع: ۱۰ فایل، حداکثر ۵۰ مگابایت",
+    "transcribeTooltip": "آپلود فایل‌های صوتی یا ویدیویی برای تبدیل به متن.\n\nفرمت‌های پشتیبانی‌شده: MP3، MP4، WAV، WebM، M4A، MPEG، MPGA\nحداکثر اندازه: ۲۵ مگابایت\n\nتبدیل به متن به‌صورت خودکار هنگام ارسال پیام انجام می‌شود.",
+    "selected": "انتخاب شده",
+    "expandActions": "گسترش عملیات",
+    "selectTone": "انتخاب لحن",
+    "selectToneDescription": "یک پروفایل صدا برای پیام خود انتخاب کنید",
+    "noToneDefault": "بدون لحن (پیش‌فرض)",
+    "useDefaultStyle": "استفاده از سبک نوشتاری پیش‌فرض",
+    "noTonesCreated": "هنوز لحنی ایجاد نشده است",
+    "createTonesHint": "می‌توانید لحن را در عملیات سریع ایجاد کنید"
   }
 }

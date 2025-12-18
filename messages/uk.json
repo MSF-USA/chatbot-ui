@@ -522,7 +522,23 @@
     "viewReasoningProcess": "Переглянути хід міркування",
     "collapseThinking": "Згорнути хід міркування",
     "expandThinking": "Розгорнути хід міркування",
-    "actionsDisabledForEmbed": "Використовуйте елементи керування у вбудованому вмісті вище"
+    "actionsDisabledForEmbed": "Використовуйте елементи керування у вбудованому вмісті вище",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Транскрибування та обробка...",
+      "transcribingAudio": "Транскрибування аудіо...",
+      "analyzingFiles": "Аналіз файлів...",
+      "analyzingDocuments": "Аналіз документів...",
+      "analyzingDocument": "Аналіз документа...",
+      "analyzingImages": "Аналіз зображень...",
+      "analyzingImage": "Аналіз зображення..."
+    },
+    "contentDescription": {
+      "text": "текст",
+      "imagesCount": "{count} зображення(нь)",
+      "filesCount": "{count} файл(ів)",
+      "audioVideo": "аудіо/відео",
+      "empty": "порожньо"
+    }
   },
   "sidebar": {
     "collapseSidebar": "Згорнути бічну панель",
@@ -758,7 +774,8 @@
     "None": "Не вказано",
     "Custom Display Name": "Власне відображуване ім’я",
     "Custom Display Name Placeholder": "Введіть бажане ім’я",
-    "displayNamePreview": "Попередній перегляд: «Чим можу допомогти, {name}?»"
+    "displayNamePreview": "Попередній перегляд: «Чим можу допомогти, {name}?»",
+    "howShouldWeAddressYou": "Як до вас звертатися?"
   },
   "notFound": {
     "lostDog": "Загублений пес"
@@ -1350,5 +1367,18 @@
       "codeWillSync": "Код буде автоматично синхронізовано з повідомленнями чату",
       "startCoding": "// Почніть кодувати..."
     }
+  },
+  "dropdown": {
+    "searchTooltip": "Увімкніть веб-пошук для кожного повідомлення.\n\nНадає актуальну інформацію через доступ до Bing у реальному часі.",
+    "attachTooltip": "Додавайте файли, зображення або аудіо/відео.\n\nПідтримувані формати:\n• Зображення: JPEG, PNG, GIF, WebP (до 5 МБ, до 10 штук)\n• Документи: PDF, DOCX, XLSX, PPTX, TXT, MD (до 10 МБ, до 3 штук)\n• Дані: CSV, JSON, XML, YAML (до 10 МБ, до 3 штук)\n• Код: PY, JS, TS, JAVA, C, CPP, GO тощо (до 10 МБ, до 3 штук)\n• Аудіо/відео: MP3, WAV, MP4, WebM (до 25 МБ, 1 файл)\n\nРазом: до 10 файлів, до 50 МБ",
+    "transcribeTooltip": "Завантажте аудіо або відеофайли для транскрипції.\n\nПідтримувані формати: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nМакс. розмір: 25 МБ\n\nТранскрипція виконується автоматично після надсилання повідомлення.",
+    "selected": "Вибрано",
+    "expandActions": "Розгорнути дії",
+    "selectTone": "Виберіть тон",
+    "selectToneDescription": "Виберіть голосовий профіль для ваших повідомлень",
+    "noToneDefault": "Без тону (за замовчуванням)",
+    "useDefaultStyle": "Використовувати стиль за замовчуванням",
+    "noTonesCreated": "Ще не створено жодного тону",
+    "createTonesHint": "Створюйте тони у Швидких діях"
   }
 }
