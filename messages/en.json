@@ -643,7 +643,23 @@
     "viewReasoningProcess": "View reasoning process",
     "collapseThinking": "Collapse thinking",
     "expandThinking": "Expand thinking",
-    "actionsDisabledForEmbed": "Use the controls in the embedded content above"
+    "actionsDisabledForEmbed": "Use the controls in the embedded content above",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcribing and processing...",
+      "transcribingAudio": "Transcribing audio...",
+      "analyzingFiles": "Analyzing files...",
+      "analyzingDocuments": "Analyzing documents...",
+      "analyzingDocument": "Analyzing document...",
+      "analyzingImages": "Analyzing images...",
+      "analyzingImage": "Analyzing image..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} image(s)",
+      "filesCount": "{count} file(s)",
+      "audioVideo": "audio/video",
+      "empty": "empty"
+    }
   },
   "transcript": {
     "originalTranscript": "Original Transcript",
