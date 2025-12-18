@@ -7,13 +7,14 @@ const nextConfig = {
   transpilePackages: ['streamdown', 'shiki', 'mermaid'],
 
   // Experimental settings for large file uploads
+  // Supports up to 1.5GB video files + buffer for form data overhead
   experimental: {
     serverActions: {
-      bodySizeLimit: '50mb',
+      bodySizeLimit: '1600mb',
     },
     // Also increase middleware body buffer limit (defaults to 10MB)
     // This is needed because middleware buffers the body before passing to Server Actions
-    middlewareClientMaxBodySize: '50mb',
+    middlewareClientMaxBodySize: '1600mb',
   },
 
   // Remove X-Powered-By header for security
