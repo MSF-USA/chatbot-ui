@@ -118,6 +118,14 @@ export const FILE_COUNT_LIMITS = {
 // Set to 1.5GB to support large video files (audio is extracted)
 export const MAX_API_FILE_SIZE = FILE_SIZE_LIMITS.VIDEO_MAX_BYTES;
 
+// Validation limits for server-side checks
+export const VALIDATION_LIMITS = {
+  // Maximum size for JSON request body (chat messages + metadata)
+  REQUEST_BODY_MAX_BYTES: 10 * 1024 * 1024, // 10MB
+  // Maximum file size for pre-download validation (matches largest file type)
+  FILE_DOWNLOAD_MAX_BYTES: FILE_SIZE_LIMITS.VIDEO_MAX_BYTES, // 1.5GB
+} as const;
+
 // Default model for AI analysis operations (tone analysis, prompt revision, etc.)
 // Uses 'gpt-5' - reasoning model with advanced analysis capabilities
 export const DEFAULT_ANALYSIS_MODEL = 'gpt-5';
