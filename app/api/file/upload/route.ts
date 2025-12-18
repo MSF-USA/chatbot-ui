@@ -1,10 +1,8 @@
 import { Session } from 'next-auth';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
-// Allow up to 60 seconds for large uploads
-import { MAX_API_FILE_SIZE } from '@/lib/utils/app/const';
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import {
@@ -21,6 +19,7 @@ import {
 } from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
+import { validateFileSizeRaw } from '@/lib/constants/fileLimits';
 
 /**
  * Route segment config to allow large file uploads.
@@ -150,12 +149,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check file size
+    // Check file size using category-based limits
     const fileSize = Buffer.isBuffer(fileData)
       ? fileData.length
       : Buffer.byteLength(fileData);
-    if (fileSize > MAX_API_FILE_SIZE) {
-      return payloadTooLargeResponse(`${MAX_API_FILE_SIZE / (1024 * 1024)}MB`);
+    const sizeValidation = validateFileSizeRaw(
+      filename,
+      fileSize,
+      mimeType ?? undefined,
+    );
+    if (!sizeValidation.valid) {
+      return payloadTooLargeResponse(sizeValidation.error ?? 'File too large');
     }
 
     const fileURI: string = await uploadFileToBlobStorage(fileData, session);
