@@ -160,10 +160,12 @@ const TranscriptionOptions: FC<TranscriptionOptionsProps> = ({
     });
   };
 
-  const selectedLanguage =
-    TRANSCRIPTION_LANGUAGES.find(
-      (lang) => lang.code === filePreview.transcriptionLanguage,
-    )?.label || 'Auto-detect';
+  const selectedLanguage = TRANSCRIPTION_LANGUAGES.find(
+    (lang) => lang.code === filePreview.transcriptionLanguage,
+  );
+  const selectedLanguageLabel = selectedLanguage
+    ? t(selectedLanguage.labelKey)
+    : t('transcription.languages.autoDetect');
 
   return (
     <div className="space-y-1.5">
@@ -182,8 +184,16 @@ const TranscriptionOptions: FC<TranscriptionOptionsProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           {TRANSCRIPTION_LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code}>
-              {lang.label}
+            <option
+              key={lang.code}
+              value={lang.code}
+              className={
+                lang.officiallySupported
+                  ? 'text-gray-700 dark:text-gray-200'
+                  : 'text-gray-400 dark:text-gray-500'
+              }
+            >
+              {t(lang.labelKey)}
             </option>
           ))}
         </select>
