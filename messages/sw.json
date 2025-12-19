@@ -457,7 +457,11 @@
   "Privacy Policy": "Sera ya Faragha",
   "Prompt": "Kidokezo",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": "Kikomo cha maandishi ni herufi {{maxLength}}",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Kikomo cha maandishi ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
   "Regenerate response": "Tengeneza jibu upya",
   "Retry": "Jaribu tena",
@@ -621,7 +625,9 @@
       "filesCount": "{count} faili",
       "audioVideo": "sauti/video",
       "empty": "tupu"
-    }
+    },
+    "discardChanges": "Tupa Mabadiliko",
+    "discardChangesMessage": "Una mabadiliko ambayo hayijahifadhiwa. Una uhakika unataka kuyatupa?"
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",
@@ -1092,7 +1098,68 @@
   "transcription": {
     "transcribesOnSend": "Inanakilisha unapotuma",
     "addInstructions": "Ongeza maelekezo",
-    "instructionsPlaceholder": "Muktadha wa kuboresha usahihi (mfano, majina, maneno)"
+    "instructionsPlaceholder": "Muktadha wa kuboresha usahihi (mfano, majina, maneno)",
+    "languages": {
+      "autoDetect": "Tambua kiotomatiki",
+      "afrikaans": "Kiafrikaans",
+      "arabic": "Kiarabu",
+      "armenian": "Kiarmenia",
+      "azerbaijani": "Kiazabaijani",
+      "belarusian": "Kibelarusi",
+      "bosnian": "Kibosnia",
+      "bulgarian": "Kibulgaria",
+      "burmese": "Kiburma",
+      "catalan": "Kikatalani",
+      "chinese": "Kichina",
+      "croatian": "Kikroeshia",
+      "czech": "Kichecki",
+      "danish": "Kideni",
+      "dutch": "Kiholanzi",
+      "english": "Kiingereza",
+      "estonian": "Kiestonia",
+      "finnish": "Kifini",
+      "french": "Kifaransa",
+      "galician": "Kigalicia",
+      "german": "Kijerumani",
+      "greek": "Kigiriki",
+      "hebrew": "Kiebrania",
+      "hindi": "Kihindi",
+      "hungarian": "Kihungaria",
+      "icelandic": "Kiaislandi",
+      "indonesian": "Kiindonesia",
+      "italian": "Kiitaliano",
+      "japanese": "Kijapani",
+      "kannada": "Kikannada",
+      "kazakh": "Kikazaki",
+      "korean": "Kikorea",
+      "latvian": "Kilatvia",
+      "lithuanian": "Kilithuania",
+      "macedonian": "Kimasedonia",
+      "malay": "Kimalaia",
+      "maori": "Kimaori",
+      "marathi": "Kimarathi",
+      "nepali": "Kinepali",
+      "norwegian": "Kinorwe",
+      "persian": "Kiajemi",
+      "polish": "Kipolandi",
+      "portuguese": "Kireno",
+      "romanian": "Kiromania",
+      "russian": "Kirusi",
+      "serbian": "Kiserbia",
+      "slovak": "Kislovakia",
+      "slovenian": "Kislovenia",
+      "spanish": "Kihispania",
+      "swahili": "Kiswahili",
+      "swedish": "Kiswidi",
+      "tagalog": "Kitagalog",
+      "tamil": "Kitamil",
+      "thai": "Kithai",
+      "turkish": "Kituruki",
+      "ukrainian": "Kiukreni",
+      "urdu": "Kiurdu",
+      "vietnamese": "Kivietinamu",
+      "welsh": "Kiwelisi"
+    }
   },
   "migration": {
     "status": {

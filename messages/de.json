@@ -27,7 +27,11 @@
   "OpenAI API Key Required": "OpenAI API-Schlüssel erforderlich",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Bitte trage deinen OpenAI API-Schlüssel in der linken unteren Ecke der Seitenleiste ein.",
   "Stop Generating": "Generieren stoppen",
-  "Prompt limit is {{maxLength}} characters": "Die Eingabe ist auf {{maxLength}} Zeichen begrenzt",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Die Eingabe ist auf {{maxLength}} Zeichen begrenzt. Sie haben {{valueLength}} Zeichen eingegeben."
+    }
+  },
   "System Prompt": "Systemaufforderung",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du bist ChatGPT, ein großes Sprachmodell, das von OpenAI trainiert wurde. Befolge die Anweisungen des Benutzers sorgfältig. Antworte in Markdown-Format.",
   "Enter a prompt": "Gib eine Anweisung ein",
@@ -573,7 +577,9 @@
       "filesCount": "{count} Datei(en)",
       "audioVideo": "Audio/Video",
       "empty": "leer"
-    }
+    },
+    "discardChanges": "Änderungen verwerfen",
+    "discardChangesMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
   },
   "sidebar": {
     "collapseSidebar": "Seitenleiste einklappen",
@@ -1089,7 +1095,68 @@
   "transcription": {
     "transcribesOnSend": "Transkribiert beim Senden",
     "addInstructions": "Anweisungen hinzufügen",
-    "instructionsPlaceholder": "Kontext zur Verbesserung der Genauigkeit (z.B. Namen, Begriffe)"
+    "instructionsPlaceholder": "Kontext zur Verbesserung der Genauigkeit (z.B. Namen, Begriffe)",
+    "languages": {
+      "autoDetect": "Automatisch erkennen",
+      "afrikaans": "Afrikaans",
+      "arabic": "Arabisch",
+      "armenian": "Armenisch",
+      "azerbaijani": "Aserbaidschanisch",
+      "belarusian": "Weißrussisch",
+      "bosnian": "Bosnisch",
+      "bulgarian": "Bulgarisch",
+      "burmese": "Birmanisch",
+      "catalan": "Katalanisch",
+      "chinese": "Chinesisch",
+      "croatian": "Kroatisch",
+      "czech": "Tschechisch",
+      "danish": "Dänisch",
+      "dutch": "Niederländisch",
+      "english": "Englisch",
+      "estonian": "Estnisch",
+      "finnish": "Finnisch",
+      "french": "Französisch",
+      "galician": "Galicisch",
+      "german": "Deutsch",
+      "greek": "Griechisch",
+      "hebrew": "Hebräisch",
+      "hindi": "Hindi",
+      "hungarian": "Ungarisch",
+      "icelandic": "Isländisch",
+      "indonesian": "Indonesisch",
+      "italian": "Italienisch",
+      "japanese": "Japanisch",
+      "kannada": "Kannada",
+      "kazakh": "Kasachisch",
+      "korean": "Koreanisch",
+      "latvian": "Lettisch",
+      "lithuanian": "Litauisch",
+      "macedonian": "Mazedonisch",
+      "malay": "Malaiisch",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepalesisch",
+      "norwegian": "Norwegisch",
+      "persian": "Persisch",
+      "polish": "Polnisch",
+      "portuguese": "Portugiesisch",
+      "romanian": "Rumänisch",
+      "russian": "Russisch",
+      "serbian": "Serbisch",
+      "slovak": "Slowakisch",
+      "slovenian": "Slowenisch",
+      "spanish": "Spanisch",
+      "swahili": "Suaheli",
+      "swedish": "Schwedisch",
+      "tagalog": "Tagalog",
+      "tamil": "Tamil",
+      "thai": "Thailändisch",
+      "turkish": "Türkisch",
+      "ukrainian": "Ukrainisch",
+      "urdu": "Urdu",
+      "vietnamese": "Vietnamesisch",
+      "welsh": "Walisisch"
+    }
   },
   "notFound": {
     "lostDog": "Verlorener Hund"

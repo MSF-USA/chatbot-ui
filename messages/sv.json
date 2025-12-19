@@ -35,7 +35,11 @@
   "OpenAI API Key Required": "OpenAI API-nyckel krävs",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vänligen ange din OpenAI API-nyckel längst ner till vänster i sidofältet.",
   "Stop Generating": "Sluta generera",
-  "Prompt limit is {{maxLength}} characters": "Maxlängd för prompt är {{maxLength}} tecken",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Gränsen för prompt är {{maxLength}} tecken. Du har angett {{valueLength}} tecken."
+    }
+  },
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du är ChatGPT, en stor språkmodell tränad av OpenAI. Följ användarens instruktioner noggrant. Svara genom att använda markdown.",
   "Enter a prompt": "Ange en prompt",
@@ -621,7 +625,9 @@
       "filesCount": "{count} fil(er)",
       "audioVideo": "ljud/video",
       "empty": "tom"
-    }
+    },
+    "discardChanges": "Kasta ändringar",
+    "discardChangesMessage": "Du har osparade ändringar. Är du säker på att du vill kasta dem?"
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",
@@ -1092,7 +1098,68 @@
   "transcription": {
     "transcribesOnSend": "Transkriberar vid sändning",
     "addInstructions": "Lägg till instruktioner",
-    "instructionsPlaceholder": "Kontext för att förbättra noggrannheten (t.ex. namn, termer)"
+    "instructionsPlaceholder": "Kontext för att förbättra noggrannheten (t.ex. namn, termer)",
+    "languages": {
+      "autoDetect": "Autoidentifiera",
+      "afrikaans": "Afrikaans",
+      "arabic": "Arabiska",
+      "armenian": "Armeniska",
+      "azerbaijani": "Azerbajdzjanska",
+      "belarusian": "Vitryska",
+      "bosnian": "Bosniska",
+      "bulgarian": "Bulgariska",
+      "burmese": "Burmesiska",
+      "catalan": "Katalanska",
+      "chinese": "Kinesiska",
+      "croatian": "Kroatiska",
+      "czech": "Tjeckiska",
+      "danish": "Danska",
+      "dutch": "Nederländska",
+      "english": "Engelska",
+      "estonian": "Estniska",
+      "finnish": "Finska",
+      "french": "Franska",
+      "galician": "Galiciska",
+      "german": "Tyska",
+      "greek": "Grekiska",
+      "hebrew": "Hebreiska",
+      "hindi": "Hindi",
+      "hungarian": "Ungerska",
+      "icelandic": "Isländska",
+      "indonesian": "Indonesiska",
+      "italian": "Italienska",
+      "japanese": "Japanska",
+      "kannada": "Kannada",
+      "kazakh": "Kazakiska",
+      "korean": "Koreanska",
+      "latvian": "Lettiska",
+      "lithuanian": "Litauiska",
+      "macedonian": "Makedonska",
+      "malay": "Malajiska",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepali",
+      "norwegian": "Norska",
+      "persian": "Persiska",
+      "polish": "Polska",
+      "portuguese": "Portugisiska",
+      "romanian": "Rumänska",
+      "russian": "Ryska",
+      "serbian": "Serbiska",
+      "slovak": "Slovakiska",
+      "slovenian": "Slovenska",
+      "spanish": "Spanska",
+      "swahili": "Swahili",
+      "swedish": "Svenska",
+      "tagalog": "Tagalog",
+      "tamil": "Tamil",
+      "thai": "Thailändska",
+      "turkish": "Turkiska",
+      "ukrainian": "Ukrainska",
+      "urdu": "Urdu",
+      "vietnamese": "Vietnamesiska",
+      "welsh": "Walesiska"
+    }
   },
   "migration": {
     "status": {
