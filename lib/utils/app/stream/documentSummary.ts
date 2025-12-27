@@ -178,6 +178,10 @@ export async function parseAndQueryFileOpenAI({
         ]
       : finalPrompt;
 
+  // Check if model supports custom temperature values
+  const modelConfig = Object.values(OpenAIModels).find((m) => m.id === modelId);
+  const supportsTemperature = modelConfig?.supportsTemperature !== false;
+
   const commonParams = {
     model: modelId,
     messages: [
@@ -191,7 +195,7 @@ export async function parseAndQueryFileOpenAI({
         content: userMessageContent,
       },
     ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-    temperature: 0.1,
+    ...(supportsTemperature && { temperature: 0.1 }),
     max_completion_tokens: 5000,
     stream: stream,
     user: JSON.stringify(user),
