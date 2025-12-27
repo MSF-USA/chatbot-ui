@@ -1,33 +1,25 @@
-import { IconCpu, IconTemperature, IconTool, IconX } from '@tabler/icons-react';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { RiRobot2Line } from 'react-icons/ri';
+import { IconX } from '@tabler/icons-react';
+import React, { FC, useEffect, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useAgentManagement } from '@/client/hooks/settings/useAgentManagement';
+import { useModelOrder } from '@/client/hooks/settings/useModelOrder';
 import { useModelSelectState } from '@/client/hooks/settings/useModelSelectState';
-import { useModelSelection } from '@/client/hooks/settings/useModelSelection';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import { Conversation } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 
-import {
-  AzureAIIcon,
-  AzureOpenAIIcon,
-  ClaudeAIIcon,
-  DeepSeekIcon,
-  MetaIcon,
-  OpenAIIcon,
-  XAIIcon,
-} from '../Icons/providers';
+import { AzureAIIcon, AzureOpenAIIcon } from '../Icons/providers';
 import { TabNavigation } from '../UI/TabNavigation';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { ModelCard } from './ModelCard';
 import { AgentsTab } from './ModelSelect/AgentsTab';
 import { ModelDetailsPanel } from './ModelSelect/ModelDetailsPanel';
+import { ModelOrderControls } from './ModelSelect/ModelOrderControls';
 import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
