@@ -20,7 +20,7 @@ import {
   exportToPDF,
   htmlToMarkdown,
   htmlToPlainText,
-} from '@/lib/utils/document/exportUtils';
+} from '@/lib/utils/shared/document/exportUtils';
 
 import DocumentEditor from './DocumentEditor';
 

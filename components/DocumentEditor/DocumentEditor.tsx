@@ -70,7 +70,7 @@ export default function DocumentEditor({
         // Check if content is NOT HTML
         if (!trimmed.startsWith('<')) {
           const { autoConvertToHtml } = await import(
-            '@/lib/utils/document/formatConverter'
+            '@/lib/utils/shared/document/formatConverter'
           );
           const converted = await autoConvertToHtml(modifiedCode, fileName);
           setModifiedCode(converted);

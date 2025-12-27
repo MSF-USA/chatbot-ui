@@ -27,15 +27,15 @@ import { useTones } from '@/client/hooks/settings/useTones';
 import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import { isMobileDevice } from '@/lib/utils/client/device/detection';
 import {
   shouldPreventSubmission,
   validateMessageSubmission,
-} from '@/lib/utils/chat/validation';
+} from '@/lib/utils/shared/chat/validation';
 import {
   parseVariables,
   replaceVariablesWithMap,
-} from '@/lib/utils/chat/variables';
-import { isMobileDevice } from '@/lib/utils/device/detection';
+} from '@/lib/utils/shared/chat/variables';
 
 import { AgentType } from '@/types/agent';
 import {

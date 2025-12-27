@@ -8,7 +8,7 @@ import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService'
 import {
   autoConvertToHtml,
   detectFormat,
-} from '@/lib/utils/document/formatConverter';
+} from '@/lib/utils/shared/document/formatConverter';
 
 import { FileMessageContent, ImageMessageContent } from '@/types/chat';
 
@@ -300,7 +300,7 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
       // Handle PDF files specially (they need ArrayBuffer)
       if (extension === 'pdf') {
         const { pdfToHtml } = await import(
-          '@/lib/utils/document/formatConverter'
+          '@/lib/utils/shared/document/formatConverter'
         );
         const arrayBuffer = await blob.arrayBuffer();
         content = await pdfToHtml(arrayBuffer);

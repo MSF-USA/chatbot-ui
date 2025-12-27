@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import {
   entryToDisplayMessage,
   getVersionInfo,
-} from '@/lib/utils/chat/messageVersioning';
+} from '@/lib/utils/shared/chat/messageVersioning';
 
 import { ConversationEntry, Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';

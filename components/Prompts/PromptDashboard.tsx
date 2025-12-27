@@ -22,7 +22,7 @@ import {
   revisePrompt,
 } from '@/lib/services/prompts/promptRevisionService';
 
-import { getVariableDefinitions } from '@/lib/utils/chat/variables';
+import { getVariableDefinitions } from '@/lib/utils/shared/chat/variables';
 
 import { DashboardModal } from '@/components/UI/DashboardModal';
 import {

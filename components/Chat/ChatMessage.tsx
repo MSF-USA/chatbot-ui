@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { useChat } from '@/client/hooks/chat/useChat';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 
-import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+import { MessageContentAnalyzer } from '@/lib/utils/shared/chat/messageContentAnalyzer';
 
 import {
   FileMessageContent,
