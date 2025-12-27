@@ -97,7 +97,7 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
           return indexA - indexB;
         });
 
-      case 'custom':
+      case 'custom': {
         // Use custom order, falling back to default for models not in custom order
         const effectiveOrder =
           customModelOrder.length > 0 ? customModelOrder : DEFAULT_MODEL_ORDER;
@@ -113,6 +113,7 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
 
           return indexA - indexB;
         });
+      }
 
       default:
         // Default mode: use DEFAULT_MODEL_ORDER
