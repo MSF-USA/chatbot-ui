@@ -1,6 +1,10 @@
 'use client';
 
-import { OpenAIModel, OpenAIModelID } from '@/types/openai';
+import {
+  DEFAULT_MODEL_ORDER,
+  OpenAIModel,
+  OpenAIModelID,
+} from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
 import { DisplayNamePreference } from '@/types/settings';
@@ -8,6 +12,9 @@ import { Tone } from '@/types/tone';
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+
+/** Model ordering mode for the model selection UI */
+export type ModelOrderMode = 'default' | 'usage' | 'custom';
 
 export interface CustomAgent {
   id: string;
@@ -37,6 +44,11 @@ interface SettingsStore {
   tones: Tone[];
   customAgents: CustomAgent[];
 
+  // Model ordering state
+  modelOrderMode: ModelOrderMode;
+  customModelOrder: string[];
+  modelUsageStats: Record<string, number>;
+
   // Actions
   setTemperature: (temperature: number) => void;
   setSystemPrompt: (prompt: string) => void;
@@ -63,6 +75,13 @@ interface SettingsStore {
   updateCustomAgent: (id: string, updates: Partial<CustomAgent>) => void;
   deleteCustomAgent: (id: string) => void;
 
+  // Model Ordering Actions
+  setModelOrderMode: (mode: ModelOrderMode) => void;
+  setCustomModelOrder: (order: string[]) => void;
+  moveModelInOrder: (modelId: string, direction: 'up' | 'down') => void;
+  incrementModelUsage: (modelId: string) => void;
+  resetModelOrder: () => void;
+
   // Reset
   resetSettings: () => void;
 }
@@ -87,6 +106,11 @@ export const useSettingsStore = create<SettingsStore>()(
       prompts: [],
       tones: [],
       customAgents: [],
+
+      // Model ordering initial state
+      modelOrderMode: 'default',
+      customModelOrder: [],
+      modelUsageStats: {},
 
       // Actions
       setTemperature: (temperature) => set({ temperature }),
@@ -165,6 +189,48 @@ export const useSettingsStore = create<SettingsStore>()(
         set((state) => ({
           customAgents: state.customAgents.filter((a) => a.id !== id),
         })),
+
+      // Model Ordering Actions
+      setModelOrderMode: (mode) => set({ modelOrderMode: mode }),
+
+      setCustomModelOrder: (order) => set({ customModelOrder: order }),
+
+      moveModelInOrder: (modelId, direction) =>
+        set((state) => {
+          // Initialize from default order if empty
+          const order =
+            state.customModelOrder.length > 0
+              ? [...state.customModelOrder]
+              : [...DEFAULT_MODEL_ORDER];
+
+          const index = order.indexOf(modelId);
+          if (index === -1) return state;
+
+          const newIndex = direction === 'up' ? index - 1 : index + 1;
+          if (newIndex < 0 || newIndex >= order.length) return state;
+
+          // Swap the elements
+          [order[index], order[newIndex]] = [order[newIndex], order[index]];
+
+          return {
+            customModelOrder: order,
+            modelOrderMode: 'custom' as ModelOrderMode,
+          };
+        }),
+
+      incrementModelUsage: (modelId) =>
+        set((state) => ({
+          modelUsageStats: {
+            ...state.modelUsageStats,
+            [modelId]: (state.modelUsageStats[modelId] ?? 0) + 1,
+          },
+        })),
+
+      resetModelOrder: () =>
+        set({
+          modelOrderMode: 'default' as ModelOrderMode,
+          customModelOrder: [],
+        }),
 
       resetSettings: () =>
         set({
