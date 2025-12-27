@@ -249,7 +249,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 4, // Increment this when schema changes to trigger migrations
+      version: 5, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -266,6 +266,16 @@ export const useSettingsStore = create<SettingsStore>()(
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
       }),
+      migrate: (persistedState, version) => {
+        const state = persistedState as Record<string, unknown>;
+
+        // Version 4 → 5: Convert 'default' mode to 'usage'
+        if (version < 5 && state.modelOrderMode === 'default') {
+          state.modelOrderMode = 'usage';
+        }
+
+        return state;
+      },
     },
   ),
 );
