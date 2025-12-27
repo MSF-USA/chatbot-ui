@@ -340,13 +340,20 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               } w-full md:w-80 flex-shrink-0 overflow-y-auto md:border-e border-gray-200 dark:border-gray-700 md:pe-4`}
             >
               <div className="space-y-4">
+                {/* Model Order Controls */}
+                <ModelOrderControls
+                  orderMode={orderMode}
+                  onOrderModeChange={setOrderMode}
+                  onReset={resetOrder}
+                />
+
                 {/* Base Models */}
                 <div>
                   <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
                     {t('modelSelect.sections.baseModels')}
                   </h4>
                   <div className="space-y-2">
-                    {baseModels.map((model) => {
+                    {orderedModels.map((model) => {
                       const config = OpenAIModels[model.id as OpenAIModelID];
                       const isSelected = selectedModelId === model.id;
 
@@ -360,6 +367,11 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           icon={
                             <ModelProviderIcon provider={config?.provider} />
                           }
+                          showReorderControls={orderMode === 'custom'}
+                          canMoveUp={canMoveUp(model.id)}
+                          canMoveDown={canMoveDown(model.id)}
+                          onMoveUp={() => moveModel(model.id, 'up')}
+                          onMoveDown={() => moveModel(model.id, 'down')}
                         />
                       );
                     })}
