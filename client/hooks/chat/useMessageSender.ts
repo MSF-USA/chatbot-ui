@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { buildMessageContent } from '@/lib/utils/chat/contentBuilder';
-import { validateMessageSubmission } from '@/lib/utils/chat/validation';
+import { buildMessageContent } from '@/lib/utils/shared/chat/contentBuilder';
+import { validateMessageSubmission } from '@/lib/utils/shared/chat/validation';
 
 import {
   ChatInputSubmitTypes,

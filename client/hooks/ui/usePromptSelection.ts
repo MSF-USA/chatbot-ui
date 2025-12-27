@@ -3,8 +3,8 @@ import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   findPromptMatch,
   updatePromptListVisibility,
-} from '@/lib/utils/chat/promptMatching';
-import { parseVariables } from '@/lib/utils/chat/variables';
+} from '@/lib/utils/shared/chat/promptMatching';
+import { parseVariables } from '@/lib/utils/shared/chat/variables';
 
 import { Prompt } from '@/types/prompt';
 

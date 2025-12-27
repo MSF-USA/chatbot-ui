@@ -5,7 +5,7 @@ import {
   entryToDisplayMessage,
   findPrecedingUserMessageIndex,
   flattenEntriesForAPI,
-} from '@/lib/utils/chat/messageVersioning';
+} from '@/lib/utils/shared/chat/messageVersioning';
 
 import {
   Message,
