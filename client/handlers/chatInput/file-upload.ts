@@ -7,8 +7,8 @@ import { FILE_COUNT_LIMITS, FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
 import {
   extractAudioFromVideo,
   isAudioExtractionSupported,
-} from '@/lib/utils/client/audioExtractor';
-import { isVideoFile } from '@/lib/utils/client/fileValidation';
+} from '@/lib/utils/client/audio/audioExtractor';
+import { isVideoFile } from '@/lib/utils/client/file/fileValidation';
 
 import {
   ChatInputSubmitTypes,

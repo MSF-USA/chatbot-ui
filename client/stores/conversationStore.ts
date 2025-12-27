@@ -3,7 +3,7 @@
 import {
   migrateLegacyMessages,
   needsMigration,
-} from '@/lib/utils/chat/messageVersioning';
+} from '@/lib/utils/shared/chat/messageVersioning';
 
 import {
   AssistantMessageVersion,

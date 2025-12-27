@@ -3,7 +3,7 @@
  *
  * Client-side service for generating AI-powered conversation titles.
  */
-import { flattenEntriesForAPI } from '@/lib/utils/chat/messageVersioning';
+import { flattenEntriesForAPI } from '@/lib/utils/shared/chat/messageVersioning';
 
 import { ConversationEntry } from '@/types/chat';
 

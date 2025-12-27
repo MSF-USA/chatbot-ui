@@ -4,14 +4,14 @@ import toast from 'react-hot-toast';
 
 import { generateConversationTitle } from '@/client/services/titleService';
 
-import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+import { MessageContentAnalyzer } from '@/lib/utils/shared/chat/messageContentAnalyzer';
 import {
   createMessageGroup,
   entryToDisplayMessage,
   flattenEntriesForAPI,
   messageToVersion,
-} from '@/lib/utils/chat/messageVersioning';
-import { StreamParser } from '@/lib/utils/chat/streamParser';
+} from '@/lib/utils/shared/chat/messageVersioning';
+import { StreamParser } from '@/lib/utils/shared/chat/streamParser';
 
 import { AgentType } from '@/types/agent';
 import { Conversation, Message, MessageType } from '@/types/chat';

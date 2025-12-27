@@ -3,7 +3,7 @@
 import {
   htmlToMarkdown,
   htmlToPlainText,
-} from '@/lib/utils/document/exportUtils';
+} from '@/lib/utils/shared/document/exportUtils';
 
 import { create } from 'zustand';
 
@@ -199,35 +199,40 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
     }
 
     // Import conversion utilities
-    import('@/lib/utils/document/formatConverter').then(({ convertToHtml }) => {
-      import('@/lib/utils/document/exportUtils').then(
-        async ({ htmlToMarkdown, htmlToPlainText }) => {
-          let convertedContent = modifiedCode;
+    import('@/lib/utils/shared/document/formatConverter').then(
+      ({ convertToHtml }) => {
+        import('@/lib/utils/shared/document/exportUtils').then(
+          async ({ htmlToMarkdown, htmlToPlainText }) => {
+            let convertedContent = modifiedCode;
 
-          // Convert between formats when switching modes
-          if (mode === 'document' && currentMode === 'code') {
-            // Code → Document: Convert source format to HTML
-            convertedContent = await convertToHtml(modifiedCode, sourceFormat);
-          } else if (mode === 'code' && currentMode === 'document') {
-            // Document → Code: Convert HTML back to source format
-            if (sourceFormat === 'md' || sourceFormat === 'markdown') {
-              convertedContent = htmlToMarkdown(modifiedCode);
-            } else if (sourceFormat === 'txt') {
-              convertedContent = await htmlToPlainText(modifiedCode);
-            } else if (sourceFormat === 'html' || sourceFormat === 'htm') {
-              // HTML stays as-is
-              convertedContent = modifiedCode;
+            // Convert between formats when switching modes
+            if (mode === 'document' && currentMode === 'code') {
+              // Code → Document: Convert source format to HTML
+              convertedContent = await convertToHtml(
+                modifiedCode,
+                sourceFormat,
+              );
+            } else if (mode === 'code' && currentMode === 'document') {
+              // Document → Code: Convert HTML back to source format
+              if (sourceFormat === 'md' || sourceFormat === 'markdown') {
+                convertedContent = htmlToMarkdown(modifiedCode);
+              } else if (sourceFormat === 'txt') {
+                convertedContent = await htmlToPlainText(modifiedCode);
+              } else if (sourceFormat === 'html' || sourceFormat === 'htm') {
+                // HTML stays as-is
+                convertedContent = modifiedCode;
+              }
             }
-          }
 
-          set({
-            editorMode: mode,
-            modifiedCode: convertedContent,
-            originalCode: convertedContent,
-          });
-        },
-      );
-    });
+            set({
+              editorMode: mode,
+              modifiedCode: convertedContent,
+              originalCode: convertedContent,
+            });
+          },
+        );
+      },
+    );
   },
 
   openArtifact: (code, language = 'typescript', fileName?) => {
@@ -290,7 +295,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
 
     // If starting in document mode, convert to HTML first
     if (initialMode === 'document' && sourceFormat) {
-      import('@/lib/utils/document/formatConverter').then(
+      import('@/lib/utils/shared/document/formatConverter').then(
         async ({ convertToHtml }) => {
           const htmlContent = await convertToHtml(content, sourceFormat);
           set({
