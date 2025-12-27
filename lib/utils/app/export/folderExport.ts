@@ -1,7 +1,7 @@
 import {
   migrateLegacyMessages,
   needsMigration,
-} from '@/lib/utils/chat/messageVersioning';
+} from '@/lib/utils/shared/chat/messageVersioning';
 
 import { Conversation, Message } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';

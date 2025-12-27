@@ -6,7 +6,7 @@ import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
-import { BlobStorage } from '@/lib/utils/server/blob';
+import { BlobStorage } from '@/lib/utils/server/blob/blob';
 import {
   getContentType,
   validateBufferSignature,

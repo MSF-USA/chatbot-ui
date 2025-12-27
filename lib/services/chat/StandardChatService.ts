@@ -3,7 +3,7 @@ import { Session } from 'next-auth';
 import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 import { createAnthropicStreamProcessor } from '@/lib/utils/app/stream/anthropicStreamProcessor';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
-import { getMessagesToSend } from '@/lib/utils/server/chat';
+import { getMessagesToSend } from '@/lib/utils/server/chat/chat';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
 

@@ -1,7 +1,7 @@
 import {
   migrateLegacyMessages,
   needsMigration,
-} from '@/lib/utils/chat/messageVersioning';
+} from '@/lib/utils/shared/chat/messageVersioning';
 
 import { Conversation } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';

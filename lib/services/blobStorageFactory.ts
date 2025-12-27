@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 
 import { getEnvVariable } from '@/lib/utils/app/env';
-import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob';
+import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob/blob';
 
 import { env } from '@/config/environment';
 

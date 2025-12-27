@@ -2,11 +2,11 @@ import { Session } from 'next-auth';
 
 import { isFileConversation, isImageConversation } from '@/lib/utils/app/chat';
 import { getBase64FromImageURL } from '@/lib/utils/app/image';
+import { getBlobBase64String } from '@/lib/utils/server/blob/blob';
 import {
   ContentType,
   MessageContentAnalyzer,
-} from '@/lib/utils/chat/messageContentAnalyzer';
-import { getBlobBase64String } from '@/lib/utils/server/blob';
+} from '@/lib/utils/shared/chat/messageContentAnalyzer';
 
 import {
   FileMessageContent,

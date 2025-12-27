@@ -5,7 +5,7 @@ import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 import { ModelSelector, RateLimiter } from '@/lib/services/shared';
 
 import { buildSystemPrompt } from '@/lib/utils/app/systemPrompt';
-import { getMessageContentTypes } from '@/lib/utils/server/chat';
+import { getMessageContentTypes } from '@/lib/utils/server/chat/chat';
 
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody } from '@/types/chat';

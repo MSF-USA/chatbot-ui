@@ -5,7 +5,7 @@ import {
   createStreamEncoder,
   deduplicateCitations,
 } from '@/lib/utils/app/metadata';
-import { getMessagesToSend } from '@/lib/utils/server/chat';
+import { getMessagesToSend } from '@/lib/utils/server/chat/chat';
 import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
 
 import {
