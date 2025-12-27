@@ -6,6 +6,7 @@ import {
   DEFAULT_MODEL_ORDER,
   OpenAIModel,
   OpenAIModelID,
+  OpenAIModels,
 } from '@/types/openai';
 
 import {
@@ -40,9 +41,10 @@ export interface UseModelOrderResult {
 /**
  * Hook for managing model ordering in the model selection UI.
  *
- * Supports three ordering modes:
- * - 'default': Uses the DEFAULT_MODEL_ORDER enum from types/openai.ts
+ * Supports four ordering modes:
  * - 'usage': Orders by usage frequency (most used first), with default order as tiebreaker
+ * - 'name': Orders alphabetically by model name (A-Z)
+ * - 'cutoff': Orders by knowledge cutoff date (newest first)
  * - 'custom': User-defined order via moveModel function
  *
  * @param models - Array of models to order
@@ -75,27 +77,21 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
     const modelsCopy = [...models];
 
     switch (modelOrderMode) {
-      case 'usage':
+      case 'name':
+        // Sort alphabetically by model name (A-Z)
+        return modelsCopy.sort((a, b) => a.name.localeCompare(b.name));
+
+      case 'cutoff': {
+        // Sort by knowledge cutoff date (newest first)
         return modelsCopy.sort((a, b) => {
-          const usageA = modelUsageStats[a.id] ?? 0;
-          const usageB = modelUsageStats[b.id] ?? 0;
-
-          // Sort by usage count descending
-          if (usageB !== usageA) {
-            return usageB - usageA;
-          }
-
-          // Fallback to default order for ties
-          const indexA = DEFAULT_MODEL_ORDER.indexOf(a.id as OpenAIModelID);
-          const indexB = DEFAULT_MODEL_ORDER.indexOf(b.id as OpenAIModelID);
-
-          // Models not in default order go to the end
-          if (indexA === -1 && indexB === -1) return 0;
-          if (indexA === -1) return 1;
-          if (indexB === -1) return -1;
-
-          return indexA - indexB;
+          const configA = OpenAIModels[a.id as OpenAIModelID];
+          const configB = OpenAIModels[b.id as OpenAIModelID];
+          const cutoffA = configA?.knowledgeCutoff ?? '';
+          const cutoffB = configB?.knowledgeCutoff ?? '';
+          // Descending order (newest first)
+          return cutoffB.localeCompare(cutoffA);
         });
+      }
 
       case 'custom': {
         // Use custom order, falling back to default for models not in custom order
@@ -115,9 +111,19 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
         });
       }
 
+      case 'usage':
       default:
-        // Default mode: use DEFAULT_MODEL_ORDER
+        // Usage mode (default): Sort by usage frequency, with default order as tiebreaker
         return modelsCopy.sort((a, b) => {
+          const usageA = modelUsageStats[a.id] ?? 0;
+          const usageB = modelUsageStats[b.id] ?? 0;
+
+          // Sort by usage count descending
+          if (usageB !== usageA) {
+            return usageB - usageA;
+          }
+
+          // Fallback to default order for ties
           const indexA = DEFAULT_MODEL_ORDER.indexOf(a.id as OpenAIModelID);
           const indexB = DEFAULT_MODEL_ORDER.indexOf(b.id as OpenAIModelID);
 
