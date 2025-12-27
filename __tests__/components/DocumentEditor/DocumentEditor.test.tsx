@@ -393,7 +393,7 @@ describe('DocumentEditor', () => {
       });
 
       // Mock the format converter
-      vi.doMock('@/lib/utils/document/formatConverter', () => ({
+      vi.doMock('@/lib/utils/shared/document/formatConverter', () => ({
         autoConvertToHtml: vi.fn(
           (content) => '<h1>Hello</h1><p>This is markdown</p>',
         ),

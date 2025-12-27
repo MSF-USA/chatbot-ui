@@ -7,7 +7,7 @@ import {
   payloadTooLargeResponse,
   successResponse,
   unauthorizedResponse,
-} from '@/lib/utils/server/apiResponse';
+} from '@/lib/utils/server/api/apiResponse';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

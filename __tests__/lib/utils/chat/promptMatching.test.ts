@@ -1,7 +1,7 @@
 import {
   findPromptMatch,
   updatePromptListVisibility,
-} from '@/lib/utils/chat/promptMatching';
+} from '@/lib/utils/shared/chat/promptMatching';
 
 import { describe, expect, it } from 'vitest';
 

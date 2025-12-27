@@ -19,7 +19,7 @@ vi.mock('@/components/DocumentEditor/DocumentEditor', () => ({
 }));
 
 // Mock export utilities
-vi.mock('@/lib/utils/document/exportUtils', () => ({
+vi.mock('@/lib/utils/shared/document/exportUtils', () => ({
   htmlToMarkdown: vi.fn((html) => `# Markdown from ${html}`),
   htmlToPlainText: vi.fn((html) => `Plain text from ${html}`),
   exportToPDF: vi.fn().mockResolvedValue(undefined),
@@ -245,7 +245,7 @@ describe('DocumentArtifact', () => {
 
     it('should export as markdown', async () => {
       const { htmlToMarkdown, downloadFile } = await import(
-        '@/lib/utils/document/exportUtils'
+        '@/lib/utils/shared/document/exportUtils'
       );
 
       render(
@@ -268,7 +268,9 @@ describe('DocumentArtifact', () => {
     });
 
     it('should export as HTML', async () => {
-      const { downloadFile } = await import('@/lib/utils/document/exportUtils');
+      const { downloadFile } = await import(
+        '@/lib/utils/shared/document/exportUtils'
+      );
 
       render(
         <DocumentArtifact
@@ -290,7 +292,7 @@ describe('DocumentArtifact', () => {
 
     it('should export as plain text', async () => {
       const { htmlToPlainText, downloadFile } = await import(
-        '@/lib/utils/document/exportUtils'
+        '@/lib/utils/shared/document/exportUtils'
       );
 
       render(
@@ -313,7 +315,9 @@ describe('DocumentArtifact', () => {
     });
 
     it('should export as PDF', async () => {
-      const { exportToPDF } = await import('@/lib/utils/document/exportUtils');
+      const { exportToPDF } = await import(
+        '@/lib/utils/shared/document/exportUtils'
+      );
 
       render(
         <DocumentArtifact
@@ -340,7 +344,9 @@ describe('DocumentArtifact', () => {
     });
 
     it('should export as DOCX', async () => {
-      const { exportToDOCX } = await import('@/lib/utils/document/exportUtils');
+      const { exportToDOCX } = await import(
+        '@/lib/utils/shared/document/exportUtils'
+      );
 
       render(
         <DocumentArtifact
@@ -367,7 +373,9 @@ describe('DocumentArtifact', () => {
     });
 
     it('should show error toast when export fails', async () => {
-      const { exportToPDF } = await import('@/lib/utils/document/exportUtils');
+      const { exportToPDF } = await import(
+        '@/lib/utils/shared/document/exportUtils'
+      );
       (exportToPDF as any).mockRejectedValueOnce(new Error('Export failed'));
 
       render(

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import { AzureBlobStorage } from '@/lib/utils/server/blob';
+import { AzureBlobStorage } from '@/lib/utils/server/blob/blob';
 
 import { parseJsonResponse } from './helpers';
 

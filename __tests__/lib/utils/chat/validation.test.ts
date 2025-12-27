@@ -1,7 +1,7 @@
 import {
   shouldPreventSubmission,
   validateMessageSubmission,
-} from '@/lib/utils/chat/validation';
+} from '@/lib/utils/shared/chat/validation';
 
 import { FilePreview } from '@/types/chat';
 

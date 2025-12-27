@@ -1,4 +1,4 @@
-import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+import { MessageContentAnalyzer } from '@/lib/utils/shared/chat/messageContentAnalyzer';
 
 import { Message, MessageType } from '@/types/chat';
 

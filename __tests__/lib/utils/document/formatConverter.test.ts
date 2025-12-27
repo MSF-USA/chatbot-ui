@@ -5,7 +5,7 @@ import {
   markdownToHtml,
   sanitizeHtml,
   textToHtml,
-} from '@/lib/utils/document/formatConverter';
+} from '@/lib/utils/shared/document/formatConverter';
 
 import { describe, expect, it } from 'vitest';
 

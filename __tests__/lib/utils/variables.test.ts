@@ -5,7 +5,7 @@ import {
   parseVariables,
   replaceVariables,
   replaceVariablesWithMap,
-} from '@/lib/utils/chat/variables';
+} from '@/lib/utils/shared/chat/variables';
 
 import { describe, expect, it } from 'vitest';
 

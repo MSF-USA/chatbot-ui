@@ -1,4 +1,4 @@
-import { formatTime } from '@/lib/utils/audio/formatTime';
+import { formatTime } from '@/lib/utils/shared/audio/formatTime';
 
 import { describe, expect, it } from 'vitest';
 

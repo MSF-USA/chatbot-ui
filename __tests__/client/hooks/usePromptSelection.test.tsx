@@ -2,16 +2,16 @@ import { act, renderHook } from '@testing-library/react';
 
 import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 
-import * as promptMatching from '@/lib/utils/chat/promptMatching';
-import * as variables from '@/lib/utils/chat/variables';
+import * as promptMatching from '@/lib/utils/shared/chat/promptMatching';
+import * as variables from '@/lib/utils/shared/chat/variables';
 
 import type { Prompt } from '@/types/prompt';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the utility modules
-vi.mock('@/lib/utils/chat/promptMatching');
-vi.mock('@/lib/utils/chat/variables');
+vi.mock('@/lib/utils/shared/chat/promptMatching');
+vi.mock('@/lib/utils/shared/chat/variables');
 
 describe('usePromptSelection', () => {
   const mockModel = {
