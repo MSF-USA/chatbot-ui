@@ -141,6 +141,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       additionalProperties: false,
     };
 
+    // Check if model supports custom temperature (also indicates API parameter format)
+    const deploymentModel = OpenAIModels[deploymentId as OpenAIModelID];
+    const supportsTemperature = deploymentModel?.supportsTemperature !== false;
+
     // Generate title using structured response
     const response = await openai.chat.completions.create({
       model: deploymentId,
@@ -159,8 +163,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                 : '',
         })),
       ],
-      temperature: 0.7,
-      max_tokens: 100,
+      // Use appropriate parameters based on model capabilities
+      ...(supportsTemperature
+        ? { temperature: 0.7, max_tokens: 100 }
+        : { max_completion_tokens: 100 }),
       response_format: {
         type: 'json_schema',
         json_schema: {
