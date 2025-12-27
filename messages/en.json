@@ -1082,9 +1082,12 @@
     },
     "orderMode": {
       "label": "Sort by",
-      "default": "Default",
       "usage": "Most Used",
+      "name": "Name (A-Z)",
+      "cutoff": "Newest Models",
       "custom": "Custom",
+      "edit": "Edit",
+      "done": "Done",
       "reset": "Reset",
       "resetTooltip": "Reset to default order"
     }
