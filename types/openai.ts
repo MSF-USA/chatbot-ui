@@ -62,6 +62,27 @@ export enum OpenAIVisionModelID {
 export const fallbackModelID = OpenAIModelID.GPT_5_2_CHAT;
 
 /**
+ * Default display order for models in the model selection UI.
+ * Used when no user preferences exist.
+ * This array defines the priority order - models listed first appear at the top.
+ */
+export const DEFAULT_MODEL_ORDER: OpenAIModelID[] = [
+  OpenAIModelID.GPT_5_2,
+  OpenAIModelID.GPT_5_2_CHAT,
+  OpenAIModelID.GPT_o3,
+  OpenAIModelID.GPT_5_MINI,
+  OpenAIModelID.GPT_4_1,
+  OpenAIModelID.CLAUDE_OPUS_4_5,
+  OpenAIModelID.CLAUDE_SONNET_4_5,
+  OpenAIModelID.CLAUDE_OPUS_4_1,
+  OpenAIModelID.CLAUDE_HAIKU_4_5,
+  OpenAIModelID.LLAMA_4_MAVERICK,
+  OpenAIModelID.DEEPSEEK_R1,
+  OpenAIModelID.DEEPSEEK_V3_1,
+  OpenAIModelID.GROK_3,
+];
+
+/**
  * Environment-specific configuration for models
  * Only includes values that differ between environments
  */
