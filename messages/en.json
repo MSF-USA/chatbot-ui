@@ -1079,6 +1079,14 @@
       "omni": "omni",
       "reasoning": "reasoning",
       "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Sort by",
+      "default": "Default",
+      "usage": "Most Used",
+      "custom": "Custom",
+      "reset": "Reset",
+      "resetTooltip": "Reset to default order"
     }
   },
   "models": {
