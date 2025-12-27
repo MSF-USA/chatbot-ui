@@ -1,5 +1,5 @@
 import { IconX } from '@tabler/icons-react';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -86,6 +86,21 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     canMoveUp,
     canMoveDown,
   } = useModelOrder(baseModels);
+
+  // Edit mode for manual model reordering
+  const [isEditingOrder, setIsEditingOrder] = useState(false);
+
+  /**
+   * Toggle edit mode for model ordering.
+   * When entering edit mode, switch to 'custom' order mode if not already.
+   */
+  const handleToggleEditOrder = () => {
+    if (!isEditingOrder && orderMode !== 'custom') {
+      // Entering edit mode: switch to custom order
+      setOrderMode('custom');
+    }
+    setIsEditingOrder(!isEditingOrder);
+  };
 
   // Convert custom agents to OpenAIModel format
   const customAgentModels: OpenAIModel[] = useMemo(() => {
@@ -345,6 +360,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   orderMode={orderMode}
                   onOrderModeChange={setOrderMode}
                   onReset={resetOrder}
+                  isEditing={isEditingOrder}
+                  onToggleEdit={handleToggleEditOrder}
                 />
 
                 {/* Base Models */}
@@ -367,7 +384,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           icon={
                             <ModelProviderIcon provider={config?.provider} />
                           }
-                          showReorderControls={orderMode === 'custom'}
+                          showReorderControls={isEditingOrder}
                           canMoveUp={canMoveUp(model.id)}
                           canMoveDown={canMoveDown(model.id)}
                           onMoveUp={() => moveModel(model.id, 'up')}
