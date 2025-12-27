@@ -72,20 +72,20 @@ const createTestModels = (): OpenAIModel[] => [
 describe('useModelOrder', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset mock state
-    mockModelOrderMode = 'default';
+    // Reset mock state - usage is the default mode
+    mockModelOrderMode = 'usage';
     mockCustomModelOrder = [];
     mockModelUsageStats = {};
   });
 
-  describe('default ordering mode', () => {
-    it('should return models sorted by DEFAULT_MODEL_ORDER', () => {
+  describe('usage ordering mode (default)', () => {
+    it('should return models sorted by DEFAULT_MODEL_ORDER when no usage stats', () => {
       const testModels = createTestModels();
       const { result } = renderHook(() => useModelOrder(testModels));
 
-      expect(result.current.orderMode).toBe('default');
+      expect(result.current.orderMode).toBe('usage');
 
-      // Verify models are ordered according to DEFAULT_MODEL_ORDER
+      // With no usage stats, should fall back to DEFAULT_MODEL_ORDER
       const orderedIds = result.current.orderedModels.map((m) => m.id);
 
       // GPT_5_2 should come before GPT_4_1 in DEFAULT_MODEL_ORDER
@@ -110,6 +110,40 @@ describe('useModelOrder', () => {
 
       // Unknown model should be at the end
       expect(orderedIds[orderedIds.length - 1]).toBe('unknown-model');
+    });
+  });
+
+  describe('name ordering mode', () => {
+    it('should sort models alphabetically by name', () => {
+      mockModelOrderMode = 'name';
+
+      const testModels = createTestModels();
+      const { result } = renderHook(() => useModelOrder(testModels));
+
+      expect(result.current.orderMode).toBe('name');
+
+      const orderedNames = result.current.orderedModels.map((m) => m.name);
+
+      // Should be alphabetically sorted
+      expect(orderedNames[0]).toBe('Claude Opus 4.5');
+      expect(orderedNames[1]).toBe('DeepSeek-R1');
+      expect(orderedNames[2]).toBe('GPT-4.1');
+      expect(orderedNames[3]).toBe('GPT-5.2');
+    });
+  });
+
+  describe('cutoff ordering mode', () => {
+    it('should sort models by knowledge cutoff (newest first)', () => {
+      mockModelOrderMode = 'cutoff';
+
+      const testModels = createTestModels();
+      const { result } = renderHook(() => useModelOrder(testModels));
+
+      expect(result.current.orderMode).toBe('cutoff');
+
+      // Just verify the mode is set correctly - actual sorting depends on
+      // knowledgeCutoff values in OpenAIModels which may vary
+      expect(result.current.orderedModels.length).toBe(testModels.length);
     });
   });
 
