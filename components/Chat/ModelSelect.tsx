@@ -64,39 +64,28 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   } = useAgentManagement();
 
   // Filter out disabled models and custom agents (custom agents should only appear in Agents tab)
-  const baseModels = models
-    .filter(
-      (m) =>
-        !OpenAIModels[m.id as OpenAIModelID]?.isDisabled &&
-        !m.id.startsWith('custom-') &&
-        !m.isCustomAgent,
-    )
-    .sort((a, b) => {
-      const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
-      const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
+  const baseModels = useMemo(
+    () =>
+      models.filter(
+        (m) =>
+          !OpenAIModels[m.id as OpenAIModelID]?.isDisabled &&
+          !m.id.startsWith('custom-') &&
+          !m.isCustomAgent,
+      ),
+    [models],
+  );
 
-      // Provider order: openai, anthropic, meta, deepseek, xai
-      const providerOrder = {
-        openai: 0,
-        anthropic: 1,
-        meta: 2,
-        deepseek: 3,
-        xai: 4,
-      };
-      const providerDiff =
-        (providerOrder[aProvider as keyof typeof providerOrder] ?? 4) -
-        (providerOrder[bProvider as keyof typeof providerOrder] ?? 4);
-
-      if (providerDiff !== 0) return providerDiff;
-
-      // Within OpenAI, ensure GPT-4.1 is first
-      if (aProvider === 'openai') {
-        if (a.id === OpenAIModelID.GPT_4_1) return -1;
-        if (b.id === OpenAIModelID.GPT_4_1) return 1;
-      }
-
-      return a.name.localeCompare(b.name);
-    });
+  // Use the model ordering hook for sorting and reordering
+  const {
+    orderedModels,
+    orderMode,
+    setOrderMode,
+    moveModel,
+    incrementUsage,
+    resetOrder,
+    canMoveUp,
+    canMoveDown,
+  } = useModelOrder(baseModels);
 
   // Convert custom agents to OpenAIModel format
   const customAgentModels: OpenAIModel[] = useMemo(() => {
