@@ -242,11 +242,14 @@ export const useSettingsStore = create<SettingsStore>()(
           prompts: [],
           tones: [],
           customAgents: [],
+          modelOrderMode: 'default' as ModelOrderMode,
+          customModelOrder: [],
+          modelUsageStats: {},
         }),
     }),
     {
       name: 'settings-storage',
-      version: 3, // Increment this when schema changes to trigger migrations
+      version: 4, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -259,6 +262,9 @@ export const useSettingsStore = create<SettingsStore>()(
         prompts: state.prompts,
         tones: state.tones,
         customAgents: state.customAgents,
+        modelOrderMode: state.modelOrderMode,
+        customModelOrder: state.customModelOrder,
+        modelUsageStats: state.modelUsageStats,
       }),
     },
   ),
