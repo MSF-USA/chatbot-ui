@@ -108,7 +108,7 @@ export const useSettingsStore = create<SettingsStore>()(
       customAgents: [],
 
       // Model ordering initial state
-      modelOrderMode: 'default',
+      modelOrderMode: 'usage',
       customModelOrder: [],
       modelUsageStats: {},
 
@@ -228,7 +228,7 @@ export const useSettingsStore = create<SettingsStore>()(
 
       resetModelOrder: () =>
         set({
-          modelOrderMode: 'default' as ModelOrderMode,
+          modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
         }),
 
@@ -242,7 +242,7 @@ export const useSettingsStore = create<SettingsStore>()(
           prompts: [],
           tones: [],
           customAgents: [],
-          modelOrderMode: 'default' as ModelOrderMode,
+          modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
         }),
