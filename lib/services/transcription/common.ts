@@ -1,4 +1,4 @@
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import fs from 'fs';
 import os from 'os';

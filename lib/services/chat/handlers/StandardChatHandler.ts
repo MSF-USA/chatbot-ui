@@ -1,6 +1,6 @@
 import { MetricsService } from '@/lib/services/observability/MetricsService';
 
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import {
   FileMessageContent,

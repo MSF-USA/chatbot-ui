@@ -12,7 +12,7 @@ import { FileProcessor } from '@/lib/services/chat/processors/FileProcessor';
 import { ImageProcessor } from '@/lib/services/chat/processors/ImageProcessor';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
 

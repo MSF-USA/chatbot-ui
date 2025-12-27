@@ -4,7 +4,7 @@ import {
   isImageConversation,
 } from '@/lib/utils/app/chat';
 import { DEFAULT_MODEL } from '@/lib/utils/app/const';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { Message } from '@/types/chat';
 import {

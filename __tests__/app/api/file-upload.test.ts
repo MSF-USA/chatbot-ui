@@ -8,7 +8,7 @@ import {
   getContentType,
   validateBufferSignature,
   validateFileNotExecutable,
-} from '@/lib/utils/server/mimeTypes';
+} from '@/lib/utils/server/file/mimeTypes';
 
 import { parseJsonResponse } from './helpers';
 
@@ -29,7 +29,7 @@ vi.mock('@/lib/utils/app/user/session', () => ({
   getUserIdFromSession: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/mimeTypes', () => ({
+vi.mock('@/lib/utils/server/file/mimeTypes', () => ({
   validateFileNotExecutable: vi.fn(),
   validateBufferSignature: vi.fn(),
   getContentType: vi.fn(),

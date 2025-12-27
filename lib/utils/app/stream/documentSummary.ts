@@ -2,8 +2,8 @@ import { Session } from 'next-auth';
 
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
-import { loadDocument } from '@/lib/utils/server/file-handling';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { loadDocument } from '@/lib/utils/server/file/fileHandling';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { ImageMessageContent } from '@/types/chat';
 

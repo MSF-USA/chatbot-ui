@@ -1,7 +1,7 @@
 import {
   sanitizeForLog,
   sanitizeForLogMultiple,
-} from '@/lib/utils/server/logSanitization';
+} from '@/lib/utils/server/log/logSanitization';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 

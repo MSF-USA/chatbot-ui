@@ -17,7 +17,7 @@ vi.mock('@/auth', () => ({
 }));
 
 // Mock tiktoken cache to avoid WASM loading in tests
-vi.mock('@/lib/utils/server/tiktokenCache', () => ({
+vi.mock('@/lib/utils/server/tiktoken/tiktokenCache', () => ({
   getGlobalTiktoken: vi.fn().mockResolvedValue({
     encode: vi.fn().mockReturnValue([1, 2, 3, 4, 5]),
   }),

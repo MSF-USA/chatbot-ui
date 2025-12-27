@@ -11,7 +11,7 @@ import {
   getContentType,
   validateBufferSignature,
   validateFileNotExecutable,
-} from '@/lib/utils/server/mimeTypes';
+} from '@/lib/utils/server/file/mimeTypes';
 
 import { auth } from '@/auth';
 import { validateFileSizeRaw } from '@/lib/constants/fileLimits';

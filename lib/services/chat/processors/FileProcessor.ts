@@ -4,8 +4,8 @@ import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
 import { extractAudioFromVideo } from '@/lib/utils/server/audio/audioExtractor';
 import { BlobStorage } from '@/lib/utils/server/blob/blob';
-import { validateBufferSignature } from '@/lib/utils/server/fileValidation';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { BatchTranscriptionService } from '../../transcription/batchTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';

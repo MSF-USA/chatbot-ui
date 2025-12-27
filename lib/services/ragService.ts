@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';

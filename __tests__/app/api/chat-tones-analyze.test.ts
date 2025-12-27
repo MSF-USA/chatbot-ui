@@ -47,7 +47,7 @@ vi.mock('@/lib/services/transcriptionService', () => ({
   },
 }));
 
-vi.mock('@/lib/utils/server/file-handling', () => ({
+vi.mock('@/lib/utils/server/file/fileHandling', () => ({
   loadDocument: vi.fn(),
 }));
 

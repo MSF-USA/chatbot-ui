@@ -6,7 +6,7 @@ import {
   isExecutableFile,
   isExecutableMimeType,
   validateFileNotExecutable,
-} from '@/lib/utils/server/mimeTypes';
+} from '@/lib/utils/server/file/mimeTypes';
 
 import { describe, expect, it } from 'vitest';
 
