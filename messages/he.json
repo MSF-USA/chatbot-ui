@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "מפתח openAI API",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "עליך להזין את המפתח האישי שלך בצידו השמאלי התחתון של תפריט הניווט.",
   "Stop Generating": "עצור תהליך הפקת התשובה",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "המגבלה היא {{maxLength}} תווים. הזנת {{valueLength}} תווים."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "המגבלה להנחיה היא {{maxLength}} תווים",
   "System Prompt": "הגדרת בסיס לכל תשובה של המערכת",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "You are Hebrew speaking ChatGPT, a large language model trained by OpenAI which responds in Hebrew to any question or User comment. Follow the user's instructions carefully. Respond in Hebrew using markdown.",
   "Enter a prompt": "הקלד הודעה",
@@ -1041,6 +1037,17 @@
       "omni": "אומני",
       "reasoning": "היגיון",
       "agent": "סוכן"
+    },
+    "orderMode": {
+      "label": "מיין לפי",
+      "usage": "הנפוצים ביותר",
+      "name": "שם (א-ת)",
+      "cutoff": "המודלים החדשים ביותר",
+      "custom": "מותאם אישית",
+      "edit": "ערוך",
+      "done": "בוצע",
+      "reset": "איפוס",
+      "resetTooltip": "אפס לסדר ברירת מחדל"
     }
   },
   "models": {

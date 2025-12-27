@@ -8,11 +8,7 @@
   "Default System Prompt": "默认系统提示",
   "Edit": "编辑",
   "Email": "电子邮件",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "提示字数上限为{{maxLength}}个字符，您已输入{{valueLength}}个字符。"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "提示限制为 {{maxLength}} 个字符",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
   "New conversation": "新对话",
   "New Conversation": "新的聊天",
@@ -975,6 +971,17 @@
       "omni": "全能型",
       "reasoning": "推理型",
       "agent": "代理型"
+    },
+    "orderMode": {
+      "label": "排序方式",
+      "usage": "最常用",
+      "name": "名称（A-Z）",
+      "cutoff": "最新模型",
+      "custom": "自定义",
+      "edit": "编辑",
+      "done": "完成",
+      "reset": "重置",
+      "resetTooltip": "恢复默认排序"
     }
   },
   "models": {

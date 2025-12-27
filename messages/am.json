@@ -145,11 +145,7 @@
   "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
   "Please enter a message": "እባኮትን መልእክት ያስገቡ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "ከፍተኛ የመጻፊያ ገደብ {{maxLength}} ፊደል ነው። እርስዎ {{valueLength}} ፊደል አስገብተዋል።"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "አቀራረብ ገደቡ {{maxLength}} ቁምፊ ነው",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
   "Regenerate response": "ምላሽ እንደገና አመንጭ",
   "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
@@ -972,6 +968,17 @@
       "omni": "ኦምኒ",
       "reasoning": "ማመዛዘን",
       "agent": "ወኪል"
+    },
+    "orderMode": {
+      "label": "በመደብ መለያ ቅደም ተከተል",
+      "usage": "በብዛት የተጠቀሙ",
+      "name": "ስም (A-Z)",
+      "cutoff": "አዲስ ሞዴሎች",
+      "custom": "ብጁ",
+      "edit": "አርትዕ",
+      "done": "ተጠናቋል",
+      "reset": "ዳግም ያስጀምሩ",
+      "resetTooltip": "ወደ ነባር ቅደም ተከተል ያድሱ"
     }
   },
   "models": {

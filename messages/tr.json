@@ -4,11 +4,7 @@
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "İpucu sınırı {{maxLength}} karakterdir. {{valueLength}} karakter girdiniz."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Komut sınırı {{maxLength}} karakterdir",
   "System Prompt": "Sistem İstemi",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Siz ChatGPT'siniz, OpenAI tarafından eğitilmiş büyük bir dil modelisiniz. Kullanıcının talimatlarını dikkatlice izleyin. Markdown kullanarak yanıt verin.",
   "Enter a prompt": "Bir istem girin",
@@ -975,6 +971,17 @@
       "omni": "Çoklu",
       "reasoning": "Akıl yürütme",
       "agent": "Ajan"
+    },
+    "orderMode": {
+      "label": "Sırala",
+      "usage": "En Çok Kullanılan",
+      "name": "İsim (A-Z)",
+      "cutoff": "En Yeni Modeller",
+      "custom": "Özel",
+      "edit": "Düzenle",
+      "done": "Bitti",
+      "reset": "Sıfırla",
+      "resetTooltip": "Varsayılan sıraya sıfırla"
     }
   },
   "models": {

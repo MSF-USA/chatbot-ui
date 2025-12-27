@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API-avain tarvitaan",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Ole hyvä ja aseta OpenAI API-avaimesi sivupalkin vasemmassa alareunassa.",
   "Stop Generating": "Lopeta generointi",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Syötteen enimmäispituus on {{maxLength}} merkkiä. Olet syöttänyt {{valueLength}} merkkiä."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kehotteen maksimipituus on {{maxLength}} merkkiä",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sinä olet ChatGPT, OpenAI:n opettama laaja kielimalli. Seuraa käyttäjän ohjeita tarkasti. Vastaa käyttäen markdownia.",
   "Enter a prompt": "Syötä prompti",
@@ -1041,6 +1037,17 @@
       "omni": "omni",
       "reasoning": "päättely",
       "agent": "agentti"
+    },
+    "orderMode": {
+      "label": "Järjestä",
+      "usage": "Käytetyimmät",
+      "name": "Nimi (A–Z)",
+      "cutoff": "Uusimmat mallit",
+      "custom": "Mukautettu",
+      "edit": "Muokkaa",
+      "done": "Valmis",
+      "reset": "Palauta",
+      "resetTooltip": "Palauta oletusjärjestykseen"
     }
   },
   "models": {

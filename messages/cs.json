@@ -53,11 +53,7 @@
   "Plugin Keys": "Klíče pluginů",
   "Prompt": "Výzva",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte '{{}}' k označení proměnné. Např.: '{{name}}' je '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Limit pro zadání je {{maxLength}} znaků. Zadal(a) jste {{valueLength}} znaků."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Limit pro zadání je {{maxLength}} znaků",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit výzvy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
   "Regenerate response": "Regenerovat odpověď",
   "Save & Submit": "Uložit a odeslat",
@@ -975,6 +971,17 @@
       "omni": "omni",
       "reasoning": "uvažování",
       "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Řadit podle",
+      "usage": "Nejpoužívanější",
+      "name": "Název (A–Z)",
+      "cutoff": "Nejnovější modely",
+      "custom": "Vlastní",
+      "edit": "Upravit",
+      "done": "Hotovo",
+      "reset": "Obnovit",
+      "resetTooltip": "Obnovit výchozí pořadí"
     }
   },
   "models": {

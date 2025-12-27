@@ -27,11 +27,7 @@
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "プロンプトの上限は{{maxLength}}文字です。入力済みは{{valueLength}}文字です。"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "プロンプトの上限は{{maxLength}}文字です",
   "System Prompt": "システムのプロンプト",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "あなたはOpenAIによってトレーニングされた大規模言語モデルのChatGPTです。ユーザーの指示には注意深く従ってください。マークダウンを使用して応答してください。",
   "Enter a prompt": "プロンプトを入力してください",
@@ -975,6 +971,17 @@
       "omni": "オムニ",
       "reasoning": "推論",
       "agent": "エージェント"
+    },
+    "orderMode": {
+      "label": "並び替え",
+      "usage": "使用頻度順",
+      "name": "名前順（A-Z）",
+      "cutoff": "最新モデル",
+      "custom": "カスタム",
+      "edit": "編集",
+      "done": "完了",
+      "reset": "リセット",
+      "resetTooltip": "デフォルトの順序にリセット"
     }
   },
   "models": {

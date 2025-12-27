@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API key বাধ্যতামূলক",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "দয়া করে আপনার OpenAI API key বামে সাইডবারের নিচের দিকে সেট করুন।",
   "Stop Generating": "বার্তা জেনারেট করা বন্ধ করুন",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "প্রম্পটের সীমা {{maxLength}} অক্ষর। আপনি {{valueLength}} অক্ষর লিখেছেন।"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "প্রম্প্টের সীমা {{maxLength}} অক্ষর",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "প্রম্পট সীমা {{maxLength}} অক্ষর। আপনি {{valueLength}} অক্ষর লিখেছেন।",
   "System Prompt": "সিস্টেম নির্দেশনা (বার্তা)",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "তুমি ChatGPT, OpenAI দ্বারা প্রশিক্ষিত একটি বড় ভাষা মডেল। সাবধানে ব্যবহারকারীর নির্দেশাবলী অনুসরণ করুন. মার্কডাউন ব্যবহার করে উত্তর দিন।",
@@ -975,6 +971,17 @@
       "omni": "ওম্নি",
       "reasoning": "যুক্তি",
       "agent": "এজেন্ট"
+    },
+    "orderMode": {
+      "label": "ক্রমবিন্যাস করুন",
+      "usage": "সর্বাধিক ব্যবহৃত",
+      "name": "নাম (A-Z)",
+      "cutoff": "নতুনতম মডেল",
+      "custom": "স্বনির্ধারিত",
+      "edit": "সম্পাদনা",
+      "done": "সমাপ্ত",
+      "reset": "রিসেট",
+      "resetTooltip": "ডিফল্ট ক্রমে ফিরিয়ে নিন"
     }
   },
   "models": {

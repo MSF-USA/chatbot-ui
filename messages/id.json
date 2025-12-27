@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "Memerlukan Kunci API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Silakan atur kunci API OpenAI Anda di bagian kiri bawah bilah sisi.",
   "Stop Generating": "Berhenti Menghasilkan",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Batas prompt adalah {{maxLength}} karakter. Anda telah memasukkan {{valueLength}} karakter."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Batas prompt adalah {{maxLength}} karakter",
   "System Prompt": "Prompt Sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Anda adalah ChatGPT, model bahasa besar yang dilatih oleh OpenAI. Ikuti instruksi pengguna dengan hati-hati. Balas menggunakan markdown.",
   "Enter a prompt": "Masukkan sebuah prompt",
@@ -1033,6 +1029,17 @@
     "tabs": {
       "models": "Model",
       "agents": "Agen"
+    },
+    "orderMode": {
+      "label": "Urutkan berdasarkan",
+      "usage": "Paling Sering Digunakan",
+      "name": "Nama (A-Z)",
+      "cutoff": "Model Terbaru",
+      "custom": "Kustom",
+      "edit": "Edit",
+      "done": "Selesai",
+      "reset": "Setel Ulang",
+      "resetTooltip": "Atur ulang ke urutan default"
     }
   },
   "models": {

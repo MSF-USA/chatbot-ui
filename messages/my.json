@@ -27,11 +27,7 @@
   "Please enter a message": "ကျေးဇူးပြု၍ စာတစ်စောင် ရိုက်ထည့်ပါ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "ကျေးဇူးပြု၍ သင့် OpenAI API သော့ကို ဘယ်ဘက်အောက်ခြေ ဘေးတန်းတွင် သတ်မှတ်ပါ။",
   "Precise": "တိကျသော",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "စာတစ်ခုတွင် အများဆုံး အက္ခရာ {{maxLength}} လောက် ထည့်နိုင်ပါသည်။ သင့်ထည့်သွင်းထားသည်မှာ {{valueLength}} လောက် ဖြစ်ပါသည်။"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Prompt အလျှောက်အကန့်အသတ်မှာ အချက် {{maxLength}} လုံးဖြစ်သည်",
   "Regenerate response": "တုံ့ပြန်မှုကို ပြန်လည်ထုတ်လုပ်ရန်",
   "Save & Submit": "သိမ်းဆည်း & တင်သွင်းရန်",
   "Search_ellipsis": "ရှာဖွေရန်...",
@@ -1041,6 +1037,17 @@
       "omni": "Omni",
       "reasoning": "သုံးသပ်ချက်",
       "agent": "Agent"
+    },
+    "orderMode": {
+      "label": "စဉ်သည့်နည်းလမ်း",
+      "usage": "အများဆုံးအသုံးပြုသော",
+      "name": "အမည် (A-Z)",
+      "cutoff": "အသစ်ဆုံးမော်ဒယ်များ",
+      "custom": "စိတ်ကြိုက်",
+      "edit": "တည်းဖြတ်မည်",
+      "done": "ပြီးပြီ",
+      "reset": "ပြန်လည်သတ်မှတ်မည်",
+      "resetTooltip": "မူလစဥ်အတိုင်း ပြန်သတ်မှတ်မည်"
     }
   },
   "models": {

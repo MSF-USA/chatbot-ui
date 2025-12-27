@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API යතුර අවශ්‍යයි",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "කරුණාකර ඔබේ OpenAI API යතුර පැති තීරුවේ පහළ වම්පසින් සකසන්න.",
   "Stop Generating": "උත්පාදනය නවත්වන්න",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "උත්ප්‍රේරක සීමාව වන්නේ අක්ෂර {{maxLength}}කි. ඔබ ඇතුළත් කර ඇති අක්ෂර සංඛ්‍යාව {{valueLength}}කි."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "උපදෙස් සීමාව වන්නේ අක්ෂර {{maxLength}} ක් වේ",
   "System Prompt": "පද්ධති ඉඟිය",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "ඔබ ChatGPT, OpenAI විසින් පුහුණු කරන ලද විශාල භාෂා ආකෘතියකි. පරිශීලක උපදෙස් ප්රවේශමෙන් අනුගමනය කරන්න. මාර්ක්ඩවුන් භාවිතයෙන් ප්‍රතිචාර දක්වන්න.",
   "Enter a prompt": "ප්‍රේරකයක් ඇතුළු කරන්න",
@@ -1041,6 +1037,17 @@
       "omni": "omni",
       "reasoning": "යුක්ති ව reasoning",
       "agent": "නියෝජිතයා"
+    },
+    "orderMode": {
+      "label": "පෙළගස්වීම",
+      "usage": "වැඩිපුරම භාවිතා කළා",
+      "name": "නම (A-Z)",
+      "cutoff": "නවතම ආකෘති",
+      "custom": "හිමිකරු අනුපිළිවෙළ",
+      "edit": "සංස්කරණය කරන්න",
+      "done": "සම්පූර්ණයි",
+      "reset": "යළි සැකසන්න",
+      "resetTooltip": "පෙරනිමි අනුපිළිවෙළට යළි සැකසන්න"
     }
   },
   "models": {

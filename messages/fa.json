@@ -820,11 +820,7 @@
   "OpenAI API Key Required": "نیاز به کلید OpenAI API",
   "Please enter a message": "لطفاً یک پیام وارد کنید",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "حداکثر تعداد کاراکترها {{maxLength}} است. شما {{valueLength}} کاراکتر وارد کرده‌اید."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "حداکثر طول پیام {{maxLength}} کاراکتر است",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
   "Regenerate response": "تولید مجدد پاسخ",
   "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",
@@ -1041,6 +1037,17 @@
       "omni": "اومنی",
       "reasoning": "استدلال",
       "agent": "عامل"
+    },
+    "orderMode": {
+      "label": "مرتب‌سازی بر اساس",
+      "usage": "بیشترین استفاده",
+      "name": "نام (A-Z)",
+      "cutoff": "جدیدترین مدل‌ها",
+      "custom": "سفارشی",
+      "edit": "ویرایش",
+      "done": "تمام",
+      "reset": "بازنشانی",
+      "resetTooltip": "بازنشانی به ترتیب پیش‌فرض"
     }
   },
   "models": {

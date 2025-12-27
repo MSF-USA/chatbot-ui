@@ -35,11 +35,7 @@
   "OpenAI API Key Required": "OpenAI API-nyckel krävs",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vänligen ange din OpenAI API-nyckel längst ner till vänster i sidofältet.",
   "Stop Generating": "Sluta generera",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Gränsen för prompt är {{maxLength}} tecken. Du har angett {{valueLength}} tecken."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Maxlängd för prompt är {{maxLength}} tecken",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du är ChatGPT, en stor språkmodell tränad av OpenAI. Följ användarens instruktioner noggrant. Svara genom att använda markdown.",
   "Enter a prompt": "Ange en prompt",
@@ -975,6 +971,17 @@
       "omni": "Omni",
       "reasoning": "Resonemang",
       "agent": "Agent"
+    },
+    "orderMode": {
+      "label": "Sortera efter",
+      "usage": "Mest använda",
+      "name": "Namn (A–Ö)",
+      "cutoff": "Nyaste modellerna",
+      "custom": "Anpassad",
+      "edit": "Redigera",
+      "done": "Klar",
+      "reset": "Återställ",
+      "resetTooltip": "Återställ till standardordning"
     }
   },
   "models": {

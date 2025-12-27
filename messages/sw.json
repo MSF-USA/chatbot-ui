@@ -457,11 +457,7 @@
   "Privacy Policy": "Sera ya Faragha",
   "Prompt": "Kidokezo",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Kikomo cha maandishi ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kikomo cha maandishi ni herufi {{maxLength}}",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
   "Regenerate response": "Tengeneza jibu upya",
   "Retry": "Jaribu tena",
@@ -975,6 +971,17 @@
       "omni": "omni",
       "reasoning": "kufikiri",
       "agent": "wakala"
+    },
+    "orderMode": {
+      "label": "Panga kwa",
+      "usage": "Inayotumika Sana",
+      "name": "Jina (A-Z)",
+      "cutoff": "Miundo Mpya",
+      "custom": "Imebinafsishwa",
+      "edit": "Hariri",
+      "done": "Imekamilika",
+      "reset": "Weka upya",
+      "resetTooltip": "Rejesha mpangilio wa chaguo msingi"
     }
   },
   "models": {

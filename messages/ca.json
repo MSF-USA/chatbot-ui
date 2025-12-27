@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "Cal la clau d'API d'OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Si us plau, introdueix la teva clau d'API d'OpenAI a la cantonada inferior esquerra de la barra lateral.",
   "Stop Generating": "Parar de generar",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "El límit del missatge és de {{maxLength}} caràcters. N'heu introduït {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "El límit del text és de {{maxLength}} caràcters",
   "System Prompt": "Missatge del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ets ChatGPT, un model de llenguatge gran entrenat per OpenAI. Segueix les instruccions de l'usuari amb cura. Respon utilitzant markdown.",
   "Enter a prompt": "Introdueix un missatge",
@@ -1041,6 +1037,17 @@
       "omni": "omni",
       "reasoning": "raonament",
       "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Ordenar per",
+      "usage": "Més utilitzats",
+      "name": "Nom (A-Z)",
+      "cutoff": "Models més recents",
+      "custom": "Personalitzat",
+      "edit": "Editar",
+      "done": "Fet",
+      "reset": "Restableix",
+      "resetTooltip": "Restableix l'ordre predeterminat"
     }
   },
   "models": {

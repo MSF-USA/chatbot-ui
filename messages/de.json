@@ -27,11 +27,7 @@
   "OpenAI API Key Required": "OpenAI API-Schlüssel erforderlich",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Bitte trage deinen OpenAI API-Schlüssel in der linken unteren Ecke der Seitenleiste ein.",
   "Stop Generating": "Generieren stoppen",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Die Eingabe ist auf {{maxLength}} Zeichen begrenzt. Sie haben {{valueLength}} Zeichen eingegeben."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Die Eingabe ist auf {{maxLength}} Zeichen begrenzt.",
   "System Prompt": "Systemaufforderung",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du bist ChatGPT, ein großes Sprachmodell, das von OpenAI trainiert wurde. Befolge die Anweisungen des Benutzers sorgfältig. Antworte in Markdown-Format.",
   "Enter a prompt": "Gib eine Anweisung ein",
@@ -972,6 +968,17 @@
       "omni": "Omni",
       "reasoning": "Reasoning",
       "agent": "Agent"
+    },
+    "orderMode": {
+      "label": "Sortieren nach",
+      "usage": "Meistverwendet",
+      "name": "Name (A–Z)",
+      "cutoff": "Neueste Modelle",
+      "custom": "Benutzerdefiniert",
+      "edit": "Bearbeiten",
+      "done": "Fertig",
+      "reset": "Zurücksetzen",
+      "resetTooltip": "Auf Standardreihenfolge zurücksetzen"
     }
   },
   "models": {
