@@ -24,7 +24,7 @@ vi.mock('@/lib/utils/app/user/session', () => ({
   getUserIdFromSession: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/blob', () => ({
+vi.mock('@/lib/utils/server/blob/blob', () => ({
   BlobProperty: {
     BLOB: 'blob',
   },

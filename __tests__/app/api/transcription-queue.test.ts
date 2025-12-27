@@ -21,7 +21,7 @@ vi.mock('@/auth', () => ({
   auth: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/blob', () => ({
+vi.mock('@/lib/utils/server/blob/blob', () => ({
   AzureBlobStorage: vi.fn(),
 }));
 
