@@ -14,7 +14,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 /** Model ordering mode for the model selection UI */
-export type ModelOrderMode = 'default' | 'usage' | 'custom';
+export type ModelOrderMode = 'usage' | 'name' | 'cutoff' | 'custom';
 
 export interface CustomAgent {
   id: string;
