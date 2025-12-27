@@ -11,19 +11,21 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock store state
-let mockModelOrderMode: 'default' | 'usage' | 'custom' = 'default';
+let mockModelOrderMode: 'usage' | 'name' | 'cutoff' | 'custom' = 'usage';
 let mockCustomModelOrder: string[] = [];
 let mockModelUsageStats: Record<string, number> = {};
 
-const mockSetModelOrderMode = vi.fn((mode: 'default' | 'usage' | 'custom') => {
-  mockModelOrderMode = mode;
-});
+const mockSetModelOrderMode = vi.fn(
+  (mode: 'usage' | 'name' | 'cutoff' | 'custom') => {
+    mockModelOrderMode = mode;
+  },
+);
 const mockMoveModelInOrder = vi.fn();
 const mockIncrementModelUsage = vi.fn((modelId: string) => {
   mockModelUsageStats[modelId] = (mockModelUsageStats[modelId] ?? 0) + 1;
 });
 const mockResetModelOrder = vi.fn(() => {
-  mockModelOrderMode = 'default';
+  mockModelOrderMode = 'usage';
   mockCustomModelOrder = [];
 });
 
