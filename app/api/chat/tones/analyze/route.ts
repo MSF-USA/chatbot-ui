@@ -13,7 +13,7 @@ import {
   badRequestResponse,
   handleApiError,
   unauthorizedResponse,
-} from '@/lib/utils/server/apiResponse';
+} from '@/lib/utils/server/api/apiResponse';
 import { loadDocument } from '@/lib/utils/server/file-handling';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { getContentType } from '@/lib/utils/server/mimeTypes';

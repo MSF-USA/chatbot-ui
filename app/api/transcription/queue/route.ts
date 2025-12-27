@@ -1,7 +1,7 @@
 import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { AzureBlobStorage } from '@/lib/utils/server/blob';
+import { AzureBlobStorage } from '@/lib/utils/server/blob/blob';
 
 import { auth } from '@/auth';
 import { env } from '@/config/environment';

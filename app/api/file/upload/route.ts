@@ -10,8 +10,8 @@ import {
   errorResponse,
   payloadTooLargeResponse,
   successResponse,
-} from '@/lib/utils/server/apiResponse';
-import { BlobStorage } from '@/lib/utils/server/blob';
+} from '@/lib/utils/server/api/apiResponse';
+import { BlobStorage } from '@/lib/utils/server/blob/blob';
 import {
   getContentType,
   validateBufferSignature,
