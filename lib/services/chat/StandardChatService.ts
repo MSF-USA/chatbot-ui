@@ -184,6 +184,7 @@ export class StandardChatService {
         undefined, // stopConversationRef
         request.transcript, // transcript metadata
         request.citations, // web search citations
+        request.pendingTranscriptions, // async batch transcription jobs
       );
 
       return new Response(processedStream, {
