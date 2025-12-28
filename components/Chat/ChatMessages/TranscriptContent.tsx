@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -9,9 +9,16 @@ import { TRANSCRIPT_EXPIRY_DAYS } from '@/types/transcription';
 /**
  * Regex to match blob transcript references.
  * Format: [Transcript: filename | blob:jobId | expires:ISO_TIMESTAMP]
+ * Note: Uses case-insensitive hex characters to handle UUID variations.
  */
 const BLOB_REFERENCE_REGEX =
-  /^\[Transcript:\s*(.+?)\s*\|\s*blob:([a-f0-9-]+)\s*\|\s*expires:(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)\]$/;
+  /^\[Transcript:\s*(.+?)\s*\|\s*blob:([a-fA-F0-9-]+)\s*\|\s*expires:(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)\]$/;
+
+/** Polling interval in milliseconds */
+const POLL_INTERVAL_MS = 3000;
+
+/** Maximum polling attempts (20 minutes at 3s intervals = 400 attempts) */
+const MAX_POLL_ATTEMPTS = 400;
 
 interface TranscriptContentProps {
   /** The message content which may be inline text or a blob reference */
@@ -31,7 +38,8 @@ interface BlobReference {
  * Returns null if the content is not a blob reference.
  */
 function parseBlobReference(content: string): BlobReference | null {
-  const match = content.match(BLOB_REFERENCE_REGEX);
+  // Trim content before matching to handle whitespace
+  const match = content.trim().match(BLOB_REFERENCE_REGEX);
   if (!match) {
     return null;
   }
@@ -57,7 +65,7 @@ function getDaysUntilExpiry(expiresAt: Date): number {
  *
  * Handles two types of content:
  * 1. Inline transcripts: Renders the text directly
- * 2. Blob references: Fetches content from API and displays with expiration warning
+ * 2. Blob references: Polls API until content loads, with expiration warning
  */
 export function TranscriptContent({
   content,
@@ -65,49 +73,116 @@ export function TranscriptContent({
 }: TranscriptContentProps) {
   const t = useTranslations('transcription');
   const [loadedContent, setLoadedContent] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pollCount, setPollCount] = useState(0);
+
+  // Use ref to track if component is mounted (for cleanup)
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const blobRef = parseBlobReference(content);
+  const isExpired = blobRef
+    ? getDaysUntilExpiry(blobRef.expiresAt) <= 0
+    : false;
 
+  /**
+   * Fetches transcript content from blob storage.
+   * Returns true if successful, false if should retry.
+   */
+  const fetchTranscript = useCallback(async (): Promise<boolean> => {
+    if (!blobRef) return true; // No blob ref - nothing to fetch
+
+    try {
+      const response = await fetch(
+        `/api/transcription/content/${blobRef.jobId}`,
+      );
+
+      if (response.ok) {
+        const responseBody = await response.json();
+        const data = responseBody.data || responseBody;
+        if (isMountedRef.current) {
+          setLoadedContent(data.transcript);
+          setIsLoading(false);
+          setError(null);
+        }
+        return true; // Success - stop polling
+      }
+
+      if (response.status === 404) {
+        // Not found - could be still uploading or expired
+        console.log(
+          `[TranscriptContent] Blob not found for job ${blobRef.jobId}, will retry`,
+        );
+        return false; // Retry
+      }
+
+      // Other error
+      if (isMountedRef.current) {
+        setError(t('fetchError'));
+        setIsLoading(false);
+      }
+      return true; // Stop polling on error
+    } catch (err) {
+      console.error('[TranscriptContent] Fetch error:', err);
+      // Network error - retry
+      return false;
+    }
+  }, [blobRef, t]);
+
+  /**
+   * Polling effect that fetches transcript and retries if not found.
+   */
   useEffect(() => {
+    isMountedRef.current = true;
+
+    // Early returns
     if (!blobRef) {
+      setIsLoading(false);
       return;
     }
 
-    const fetchTranscript = async () => {
-      setIsLoading(true);
-      setError(null);
+    if (isExpired) {
+      setError(t('expiredOrDeleted'));
+      setIsLoading(false);
+      return;
+    }
 
-      try {
-        const response = await fetch(
-          `/api/transcription/content/${blobRef.jobId}`,
-        );
+    if (loadedContent) {
+      setIsLoading(false);
+      return;
+    }
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError(t('expiredOrDeleted'));
-          } else {
-            setError(t('fetchError'));
+    // Check poll limit
+    if (pollCount >= MAX_POLL_ATTEMPTS) {
+      setError(t('fetchError'));
+      setIsLoading(false);
+      return;
+    }
+
+    const poll = async () => {
+      const success = await fetchTranscript();
+
+      if (!success && isMountedRef.current && pollCount < MAX_POLL_ATTEMPTS) {
+        // Schedule next poll
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            setPollCount((c) => c + 1);
           }
-          return;
-        }
-
-        const responseBody = await response.json();
-        const data = responseBody.data || responseBody;
-        setLoadedContent(data.transcript);
-      } catch (err) {
-        console.error('[TranscriptContent] Failed to fetch transcript:', err);
-        setError(t('fetchError'));
-      } finally {
-        setIsLoading(false);
+        }, POLL_INTERVAL_MS);
       }
     };
 
-    fetchTranscript();
-    // Note: blobRef is derived from content via parseBlobReference and won't
-    // change unless content changes. Using blobRef.jobId to avoid stale closures.
-  }, [blobRef, t]);
+    poll();
+
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [blobRef, fetchTranscript, isExpired, loadedContent, pollCount, t]);
 
   // Inline content - render directly
   if (!blobRef) {
@@ -116,16 +191,16 @@ export function TranscriptContent({
 
   // Calculate expiration warning
   const daysUntilExpiry = getDaysUntilExpiry(blobRef.expiresAt);
-  const isExpired = daysUntilExpiry <= 0;
   const showWarning = daysUntilExpiry > 0 && daysUntilExpiry <= 2;
 
-  // Loading state
-  if (isLoading) {
+  // Loading state (with poll count indicator for long waits)
+  if (isLoading && !loadedContent) {
     return (
       <div className={`${className} text-gray-500 dark:text-gray-400`}>
         <div className="flex items-center gap-2">
           <span className="animate-pulse">
             {t('loadingTranscript', { filename: blobRef.filename })}
+            {pollCount > 0 && ` (attempt ${pollCount + 1})`}
           </span>
         </div>
       </div>
