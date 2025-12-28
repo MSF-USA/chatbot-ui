@@ -87,11 +87,24 @@ interface ChatStore {
     stream: ReadableStream<Uint8Array>,
     streamParser: StreamParser,
     showLoadingTimeout: NodeJS.Timeout | null,
-  ) => Promise<{ finalContent: string; threadId?: string }>;
+  ) => Promise<{
+    finalContent: string;
+    threadId?: string;
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath: string;
+    }[];
+  }>;
   finalizeMessage: (
     assistantMessage: Message,
     conversation: Conversation,
     threadId?: string,
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath: string;
+    }[],
   ) => Promise<void>;
   generateConversationName: (firstUserMessage: Message) => string | null;
   clearStreamingState: () => void;
@@ -248,17 +261,34 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       // Process the stream
       const streamParser = new StreamParser();
-      const { finalContent, threadId } = await get().processStream(
-        stream,
-        streamParser,
-        showLoadingTimeout,
-      );
+      const { finalContent, threadId, pendingTranscriptions } =
+        await get().processStream(stream, streamParser, showLoadingTimeout);
 
       // Create assistant message
       const assistantMessage = streamParser.toMessage(finalContent);
 
+      // Handle pending transcriptions (async batch jobs for large files)
+      if (pendingTranscriptions && pendingTranscriptions.length > 0) {
+        // Get the message index for the user message (will be at current length - 1)
+        // The assistant message will be added next, so the pending info should reference the user message
+        const messageIndex = conversation.messages.length;
+        const pending = pendingTranscriptions[0]; // Handle first pending transcription
+        get().setConversationTranscriptionPending({
+          conversationId: conversation.id,
+          jobId: pending.jobId,
+          messageIndex,
+          filename: pending.filename,
+          blobPath: pending.blobPath,
+        });
+      }
+
       // Finalize: update conversation, auto-name if needed
-      await get().finalizeMessage(assistantMessage, conversation, threadId);
+      await get().finalizeMessage(
+        assistantMessage,
+        conversation,
+        threadId,
+        pendingTranscriptions,
+      );
 
       // Clear state
       get().clearStreamingState();
@@ -423,6 +453,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     return {
       finalContent,
       threadId: streamParser.getThreadId(),
+      pendingTranscriptions: streamParser.getPendingTranscriptions(),
     };
   },
 
