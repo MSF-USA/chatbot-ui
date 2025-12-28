@@ -395,7 +395,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     stream: ReadableStream<Uint8Array>,
     streamParser: StreamParser,
     showLoadingTimeout: NodeJS.Timeout | null,
-  ): Promise<{ finalContent: string; threadId?: string }> => {
+  ): Promise<{
+    finalContent: string;
+    threadId?: string;
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath: string;
+    }[];
+  }> => {
     const reader = stream.getReader();
 
     while (true) {
