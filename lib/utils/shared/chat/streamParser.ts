@@ -66,6 +66,11 @@ export class StreamParser {
       this.extractedTranscript = parsed.transcript;
     }
 
+    // Update pending transcriptions if found (only once)
+    if (parsed.pendingTranscriptions && !this.extractedPendingTranscriptions) {
+      this.extractedPendingTranscriptions = parsed.pendingTranscriptions;
+    }
+
     // Check if we've received actual content (not just metadata)
     if (displayText && displayText.trim().length > 0) {
       this.hasReceivedContent = true;
@@ -144,6 +149,13 @@ export class StreamParser {
    */
   getTranscript(): any | undefined {
     return this.extractedTranscript;
+  }
+
+  /**
+   * Get pending transcriptions if extracted
+   */
+  getPendingTranscriptions(): PendingTranscriptionInfo[] | undefined {
+    return this.extractedPendingTranscriptions;
   }
 
   /**
