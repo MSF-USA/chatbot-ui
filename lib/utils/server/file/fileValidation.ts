@@ -276,6 +276,13 @@ export function validateFileSignature(
   }
 
   // Try to match against all known signatures
+  // First pass: find all matching signatures
+  interface SignatureMatch {
+    fileType: FileTypeSignature;
+    extensionMatches: boolean;
+  }
+  const matches: SignatureMatch[] = [];
+
   for (const fileType of FILE_SIGNATURES) {
     for (const signature of fileType.signatures) {
       if (matchesSignature(bytes, signature)) {
@@ -286,10 +293,6 @@ export function validateFileSignature(
           if (!validateRiffFormat(bytes, 'AVI ')) continue;
         }
 
-        // Check if type matches expected
-        const typeMatches =
-          expectedType === 'any' || fileType.type === expectedType;
-
         // Check if extension matches (if provided)
         let extensionMatches = true;
         if (claimedExtension) {
@@ -299,32 +302,55 @@ export function validateFileSignature(
           );
         }
 
-        // Determine confidence level
-        let confidence: 'high' | 'medium' | 'low' = 'high';
-        if (!extensionMatches) {
-          confidence = 'medium'; // Signature matches but extension doesn't
-        }
-
-        if (!typeMatches) {
-          return {
-            isValid: false,
-            detectedFormat: fileType.format,
-            detectedType: fileType.type,
-            expectedType,
-            error: `File appears to be ${fileType.type} (${fileType.format}), but ${expectedType} was expected`,
-            confidence,
-          };
-        }
-
-        return {
-          isValid: true,
-          detectedFormat: fileType.format,
-          detectedType: fileType.type,
-          expectedType,
-          confidence,
-        };
+        matches.push({ fileType, extensionMatches });
+        break; // Only need one signature match per file type
       }
     }
+  }
+
+  // Second pass: select best match (prefer extension match)
+  // This handles cases like MKV/WebM/webm-audio that share the same signature
+  let bestMatch: SignatureMatch | null = null;
+
+  // Priority 1: Match where extension matches
+  bestMatch = matches.find((m) => m.extensionMatches) || null;
+
+  // Priority 2: Any match
+  if (!bestMatch && matches.length > 0) {
+    bestMatch = matches[0];
+  }
+
+  if (bestMatch) {
+    const { fileType, extensionMatches } = bestMatch;
+
+    // Check if type matches expected
+    const typeMatches =
+      expectedType === 'any' || fileType.type === expectedType;
+
+    // Determine confidence level
+    let confidence: 'high' | 'medium' | 'low' = 'high';
+    if (!extensionMatches) {
+      confidence = 'medium'; // Signature matches but extension doesn't
+    }
+
+    if (!typeMatches) {
+      return {
+        isValid: false,
+        detectedFormat: fileType.format,
+        detectedType: fileType.type,
+        expectedType,
+        error: `File appears to be ${fileType.type} (${fileType.format}), but ${expectedType} was expected`,
+        confidence,
+      };
+    }
+
+    return {
+      isValid: true,
+      detectedFormat: fileType.format,
+      detectedType: fileType.type,
+      expectedType,
+      confidence,
+    };
   }
 
   // No matching signature found
