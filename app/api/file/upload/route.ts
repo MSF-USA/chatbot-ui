@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
     const userId = getUserIdFromSession(session);
     const blobStorageClient: BlobStorage = createBlobStorageClient(session);
 
-    // Hash file contents for deduplication-based naming
-    const hashInput = Buffer.isBuffer(data) ? data.toString('base64') : data;
-    const hashedFileContents = Hasher.sha256(hashInput).slice(0, 200);
+    // Hash data directly - Hasher accepts both Buffer and string
+    // For buffers, this avoids base64 string length limit for large files
+    const hashedFileContents = Hasher.sha256(data).slice(0, 200);
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
