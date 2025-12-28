@@ -27,7 +27,7 @@ type MessageContent =
  * - Pipeline continues with next stage
  */
 const STAGE_TIMEOUTS: Record<string, number> = {
-  FileProcessor: 30000, // 30s for file download/processing
+  FileProcessor: 180000, // 180s (3 min) for large file download + extraction + processing
   ImageProcessor: 5000, // 5s for image validation
   RAGEnricher: 10000, // 10s for knowledge base search
   ToolRouterEnricher: 45000, // 45s for web search (AI agent + Bing search + result processing)
