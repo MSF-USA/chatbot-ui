@@ -107,18 +107,174 @@ export function useTranscriptionPolling(): void {
   const isPollingRef = useRef(false);
 
   /**
-   * Polls the status of all active transcription jobs.
+   * Polls the status of a post-submit conversation transcription job.
+   * These are for large files (>25MB) that were submitted and are tracked
+   * after the message is already in the conversation.
+   */
+  const pollConversationTranscription = useCallback(async () => {
+    if (!pendingConversationTranscription) return;
+
+    const {
+      jobId,
+      filename,
+      blobPath,
+      startedAt,
+      conversationId,
+      messageIndex,
+    } = pendingConversationTranscription;
+
+    // Check for timeout (10 minutes)
+    const elapsedMs = Date.now() - startedAt;
+    if (elapsedMs > MAX_TRANSCRIPTION_TIME_MS) {
+      console.warn(
+        `[useTranscriptionPolling] Transcription timed out for ${filename}`,
+      );
+
+      // Update message with timeout error
+      updateMessageWithTranscript(
+        conversationId,
+        messageIndex,
+        '[Transcription timed out after 10 minutes]',
+        filename,
+      );
+
+      // Clear pending state
+      setConversationTranscriptionPending(null);
+
+      toast.error(`Transcription timed out: ${filename}`, {
+        duration: 5000,
+      });
+
+      // Cleanup Azure resources
+      fetch('/api/transcription/cleanup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobId, blobPath }),
+      }).catch(console.warn);
+
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/transcription/status/${jobId}`);
+
+      if (!response.ok) {
+        console.error(
+          `[useTranscriptionPolling] Failed to poll conversation job ${jobId}: ${response.status}`,
+        );
+        return;
+      }
+
+      const data: BatchTranscriptionStatusResponse = await response.json();
+
+      // Handle success case
+      if (data.status === 'Succeeded' && data.transcript) {
+        console.log(
+          `[useTranscriptionPolling] Conversation transcription completed: ${filename}`,
+        );
+
+        // Update message content with actual transcript
+        updateMessageWithTranscript(
+          conversationId,
+          messageIndex,
+          data.transcript,
+          filename,
+        );
+
+        // Clear pending state
+        setConversationTranscriptionPending(null);
+
+        toast.success(`Transcription complete: ${filename}`, {
+          duration: 4000,
+        });
+
+        // Generate AI title now that transcription is complete
+        const conversation = conversations.find((c) => c.id === conversationId);
+        if (conversation && conversation.messages.length > 0) {
+          generateConversationTitle(
+            conversation.messages,
+            conversation.model.id,
+          )
+            .then((result) => {
+              if (result?.title) {
+                updateConversation(conversationId, { name: result.title });
+              }
+            })
+            .catch((error) => {
+              console.error(
+                '[useTranscriptionPolling] Failed to generate AI title:',
+                error,
+              );
+            });
+        }
+
+        // Cleanup Azure resources (batch job + temp blob)
+        fetch('/api/transcription/cleanup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobId, blobPath }),
+        }).catch(console.warn);
+      }
+      // Handle failure case
+      else if (data.status === 'Failed') {
+        console.error(
+          `[useTranscriptionPolling] Conversation transcription failed: ${filename}`,
+        );
+
+        // Update message with failure error
+        updateMessageWithTranscript(
+          conversationId,
+          messageIndex,
+          `[Transcription failed${data.error ? `: ${data.error}` : ''}]`,
+          filename,
+        );
+
+        // Clear pending state
+        setConversationTranscriptionPending(null);
+
+        toast.error(
+          `Transcription failed: ${filename}${data.error ? ` - ${data.error}` : ''}`,
+          { duration: 5000 },
+        );
+
+        // Cleanup Azure resources
+        fetch('/api/transcription/cleanup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobId, blobPath }),
+        }).catch(console.warn);
+      }
+      // Running or NotStarted - continue polling
+    } catch (error) {
+      console.error(
+        `[useTranscriptionPolling] Error polling conversation job ${jobId}:`,
+        error,
+      );
+    }
+  }, [
+    pendingConversationTranscription,
+    updateMessageWithTranscript,
+    setConversationTranscriptionPending,
+    conversations,
+    updateConversation,
+  ]);
+
+  /**
+   * Polls the status of all active pre-submit transcription jobs.
    */
   const pollJobs = useCallback(async () => {
     if (isPollingRef.current) return;
     isPollingRef.current = true;
 
     try {
+      // Poll conversation transcription first
+      await pollConversationTranscription();
+
       const activeJobs = Array.from(pendingTranscriptions.entries()).filter(
         ([, job]) => job.status === 'pending' || job.status === 'processing',
       );
 
-      if (activeJobs.length === 0) {
+      if (activeJobs.length === 0 && !pendingConversationTranscription) {
         isPollingRef.current = false;
         return;
       }
@@ -206,16 +362,24 @@ export function useTranscriptionPolling(): void {
       isPollingRef.current = false;
     }
 
-    // Schedule next poll if there are still active jobs
+    // Schedule next poll if there are still active jobs or conversation transcription
     const stillActiveJobs = Array.from(pendingTranscriptions.entries()).filter(
       ([, job]) => job.status === 'pending' || job.status === 'processing',
     );
 
-    if (stillActiveJobs.length > 0) {
+    // Check if we still have work to do
+    const hasConversationJob = pendingConversationTranscription !== null;
+    if (stillActiveJobs.length > 0 || hasConversationJob) {
       // Find the oldest job to determine polling interval
-      const oldestStartTime = Math.min(
+      const startTimes: number[] = [
         ...stillActiveJobs.map(([, job]) => job.startedAt),
-      );
+      ];
+      if (hasConversationJob && pendingConversationTranscription) {
+        startTimes.push(pendingConversationTranscription.startedAt);
+      }
+
+      const oldestStartTime =
+        startTimes.length > 0 ? Math.min(...startTimes) : Date.now();
       const elapsedMs = Date.now() - oldestStartTime;
       const interval = getPollingInterval(elapsedMs);
 
@@ -223,19 +387,26 @@ export function useTranscriptionPolling(): void {
     }
   }, [
     pendingTranscriptions,
+    pendingConversationTranscription,
+    pollConversationTranscription,
     updateTranscriptionStatus,
     removePendingTranscription,
     setTextFieldValue,
     setFilePreviews,
   ]);
 
-  // Start/stop polling based on pending transcriptions
+  // Start/stop polling based on pending transcriptions (pre-submit or post-submit)
   useEffect(() => {
-    const hasActiveJobs = Array.from(pendingTranscriptions.values()).some(
-      (job) => job.status === 'pending' || job.status === 'processing',
-    );
+    const hasActivePreSubmitJobs = Array.from(
+      pendingTranscriptions.values(),
+    ).some((job) => job.status === 'pending' || job.status === 'processing');
 
-    if (hasActiveJobs && !timeoutRef.current) {
+    const hasActiveConversationJob = pendingConversationTranscription !== null;
+
+    if (
+      (hasActivePreSubmitJobs || hasActiveConversationJob) &&
+      !timeoutRef.current
+    ) {
       // Start polling
       pollJobs();
     }
@@ -247,7 +418,7 @@ export function useTranscriptionPolling(): void {
         timeoutRef.current = null;
       }
     };
-  }, [pendingTranscriptions, pollJobs]);
+  }, [pendingTranscriptions, pendingConversationTranscription, pollJobs]);
 }
 
 export default useTranscriptionPolling;
