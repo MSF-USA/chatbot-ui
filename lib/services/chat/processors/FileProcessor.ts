@@ -196,6 +196,17 @@ export class FileProcessor extends BasePipelineStage {
                 );
                 const isVideo = validation.detectedType === 'video';
 
+                // Get original file size for logging
+                const originalStats = await fs.promises.stat(filePath);
+                const originalSizeMB = (
+                  originalStats.size /
+                  (1024 * 1024)
+                ).toFixed(1);
+
+                console.log(
+                  `[FileProcessor] Original file size: ${originalSizeMB}MB, type: ${validation.detectedType || 'unknown'}`,
+                );
+
                 let fileToTranscribe = filePath;
                 let extractedAudioPath: string | null = null;
 
@@ -208,26 +219,41 @@ export class FileProcessor extends BasePipelineStage {
                     const extraction = await extractAudioFromVideo(filePath);
                     fileToTranscribe = extraction.outputPath;
                     extractedAudioPath = extraction.outputPath;
+
+                    // Log extracted audio size
+                    const extractedStats =
+                      await fs.promises.stat(extractedAudioPath);
+                    const extractedSizeMB = (
+                      extractedStats.size /
+                      (1024 * 1024)
+                    ).toFixed(1);
+
                     console.log(
                       `[FileProcessor] Audio extracted to: ${extractedAudioPath}`,
                     );
+                    console.log(
+                      `[FileProcessor] Extracted audio size: ${extractedSizeMB}MB (video was ${originalSizeMB}MB)`,
+                    );
                   } catch (extractionError) {
                     console.error(
-                      `[FileProcessor] Audio extraction failed, attempting direct transcription:`,
+                      `[FileProcessor] Audio extraction FAILED for ${sanitizeForLog(filename)}:`,
                       extractionError,
+                    );
+                    console.warn(
+                      `[FileProcessor] WARNING: Using original file (${originalSizeMB}MB) instead of extracted audio. This may exceed Whisper limits.`,
                     );
                     // Fall back to direct transcription (might work for some formats)
                   }
                 }
 
                 try {
-                  // Get file size to determine transcription service
+                  // Get file size to determine transcription service (extracted audio or original)
                   const stats = await fs.promises.stat(fileToTranscribe);
                   const audioSize = stats.size;
                   const audioSizeMB = (audioSize / (1024 * 1024)).toFixed(1);
 
                   console.log(
-                    `[FileProcessor] Audio file size: ${audioSizeMB}MB`,
+                    `[FileProcessor] File to transcribe size: ${audioSizeMB}MB${extractedAudioPath ? ' (extracted audio)' : ' (original file)'}`,
                   );
 
                   let transcript: string;
