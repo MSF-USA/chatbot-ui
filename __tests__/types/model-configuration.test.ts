@@ -180,7 +180,7 @@ describe('Model Configuration', () => {
         expect(model.tokenLimit).toBeGreaterThan(0);
         expect(model.description).toBeDefined();
         expect(model.provider).toBeDefined();
-        expect(model.knowledgeCutoff).toBeDefined();
+        expect(model.knowledgeCutoffDate).toBeDefined();
         expect(model.sdk).toBeDefined();
         expect(model.supportsTemperature).toBeDefined();
         // Note: searchMode is now controlled at request level via SearchMode enum, not model-level
