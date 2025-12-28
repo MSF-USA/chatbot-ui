@@ -78,6 +78,12 @@ export interface Message {
     language: string;
     code: string;
   };
+  /** Pending batch transcription job ID (for async transcription >25MB files) */
+  pendingTranscriptionJobId?: string;
+  /** Filename being transcribed (for UI display during pending state) */
+  pendingTranscriptionFilename?: string;
+  /** Blob path for cleanup after transcription completes */
+  pendingTranscriptionBlobPath?: string;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
