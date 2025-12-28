@@ -14,7 +14,7 @@ import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { env } from '@/config/environment';
 

@@ -4,7 +4,7 @@ import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
 import { VALIDATION_LIMITS } from '@/lib/utils/app/const';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { describe, expect, it } from 'vitest';
 

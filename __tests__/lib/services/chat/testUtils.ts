@@ -9,8 +9,8 @@ import { ModelSelector } from '@/lib/services/shared';
 
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
-import { ErrorCode, ErrorSeverity, PipelineError } from '@/lib/types/errors';
 import { Message, MessageType } from '@/types/chat';
+import { ErrorCode, ErrorSeverity, PipelineError } from '@/types/errors';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 

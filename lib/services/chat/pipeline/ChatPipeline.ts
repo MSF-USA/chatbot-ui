@@ -1,12 +1,12 @@
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { ErrorCode, ErrorSeverity, PipelineError } from '@/lib/types/errors';
 import {
   FileMessageContent,
   ImageMessageContent,
   Message,
   TextMessageContent,
 } from '@/types/chat';
+import { ErrorCode, ErrorSeverity, PipelineError } from '@/types/errors';
 
 import { ChatContext } from './ChatContext';
 import { PipelineStage } from './PipelineStage';

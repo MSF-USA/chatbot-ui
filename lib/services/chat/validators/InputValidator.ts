@@ -2,8 +2,8 @@ import { Session } from 'next-auth';
 
 import { VALIDATION_LIMITS } from '@/lib/utils/app/const';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody, Message } from '@/types/chat';
+import { ErrorCode, PipelineError } from '@/types/errors';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';

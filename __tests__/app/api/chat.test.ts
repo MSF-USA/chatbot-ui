@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server';
 import { ServiceContainer } from '@/lib/services/ServiceContainer';
 import { RateLimiter } from '@/lib/services/shared/RateLimiter';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { MessageType } from '@/types/chat';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { POST } from '@/app/api/chat/route';
 import { auth } from '@/auth';

@@ -2,7 +2,7 @@ import { ChatContext } from '@/lib/services/chat/pipeline/ChatContext';
 import { ChatPipeline } from '@/lib/services/chat/pipeline/ChatPipeline';
 import { PipelineStage } from '@/lib/services/chat/pipeline/PipelineStage';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { createTestChatContext } from '../testUtils';
 
