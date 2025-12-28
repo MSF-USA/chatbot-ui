@@ -1187,7 +1187,12 @@
     "unknownError": "Bilinmeyen hata",
     "completed": "Transkripsiyon tamamlandı",
     "completedToast": "Transkripsiyon tamamlandı: {filename}",
-    "placeholder": "[Transkripsiyon devam ediyor: {filename}]"
+    "placeholder": "[Transkripsiyon devam ediyor: {filename}]",
+    "loadingTranscript": "{filename} için transkript yükleniyor...",
+    "expiredOrDeleted": "Bu transkriptin süresi dolmuş veya silinmiş.",
+    "fetchError": "Transkript yüklenemedi. Lütfen tekrar deneyin.",
+    "transcriptExpired": "{filename} dosyasının transkriptinin süresi doldu. Gizlilik nedeniyle transkriptler {days} gün sonra otomatik olarak silinir.",
+    "expirationWarning": "{filename} dosyasının transkripti {days} gün içinde silinecek. Saklamak istiyorsanız içeriği kopyalayın."
   },
   "migration": {
     "status": {

@@ -1474,7 +1474,12 @@
     "unknownError": "Неизвестная ошибка",
     "completed": "Транскрипция завершена",
     "completedToast": "Транскрипция завершена: {filename}",
-    "placeholder": "[Транскрипция выполняется: {filename}]"
+    "placeholder": "[Транскрипция выполняется: {filename}]",
+    "loadingTranscript": "Загрузка расшифровки для {filename}...",
+    "expiredOrDeleted": "Эта расшифровка устарела или была удалена.",
+    "fetchError": "Не удалось загрузить расшифровку. Пожалуйста, попробуйте еще раз.",
+    "transcriptExpired": "Расшифровка для {filename} устарела. Для обеспечения конфиденциальности расшифровки автоматически удаляются через {days} дн.",
+    "expirationWarning": "Расшифровка для {filename} будет удалена через {days} дн. Скопируйте содержимое, если хотите его сохранить."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Добавьте свои инструкции, чтобы настроить ответы ИИ. Они будут дополнены основными правилами поведения, обеспечивающими полезные, точные и безопасные ответы.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Совет: введите «/», чтобы выбрать из сохранённых шаблонов запросов."

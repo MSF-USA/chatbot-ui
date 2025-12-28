@@ -1187,7 +1187,12 @@
     "unknownError": "Okänt fel",
     "completed": "Transkribering klar",
     "completedToast": "Transkribering klar: {filename}",
-    "placeholder": "[Transkribering pågår: {filename}]"
+    "placeholder": "[Transkribering pågår: {filename}]",
+    "loadingTranscript": "Laddar transkription för {filename}...",
+    "expiredOrDeleted": "Denna transkription har gått ut eller raderats.",
+    "fetchError": "Kunde inte ladda transkriptionen. Försök igen.",
+    "transcriptExpired": "Transkriptionen för {filename} har gått ut. Transkriptioner tas automatiskt bort efter {days} dagar av integritetsskäl.",
+    "expirationWarning": "Transkriptionen för {filename} går ut om {days} dag(ar). Kopiera innehållet om du behöver spara det."
   },
   "migration": {
     "status": {

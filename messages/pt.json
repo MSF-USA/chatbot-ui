@@ -1474,7 +1474,12 @@
     "unknownError": "Erro desconhecido",
     "completed": "Transcrição concluída",
     "completedToast": "Transcrição concluída: {filename}",
-    "placeholder": "[Transcrição em andamento: {filename}]"
+    "placeholder": "[Transcrição em andamento: {filename}]",
+    "loadingTranscript": "Carregando transcrição de {filename}...",
+    "expiredOrDeleted": "Esta transcrição expirou ou foi excluída.",
+    "fetchError": "Falha ao carregar a transcrição. Por favor, tente novamente.",
+    "transcriptExpired": "A transcrição de {filename} expirou. As transcrições são excluídas automaticamente após {days} dias por questões de privacidade.",
+    "expirationWarning": "A transcrição de {filename} irá expirar em {days} dia(s). Copie o conteúdo se precisar mantê-lo."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adicione suas instruções pessoais para personalizar as respostas da IA. Elas são combinadas com diretrizes principais de comportamento que garantem respostas úteis, precisas e seguras.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Dica: digite \"/\" para selecionar entre modelos de prompt salvos."

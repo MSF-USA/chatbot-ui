@@ -1187,7 +1187,12 @@
     "unknownError": "Onbekende fout",
     "completed": "Transcriptie voltooid",
     "completedToast": "Transcriptie voltooid: {filename}",
-    "placeholder": "[Transcriptie bezig: {filename}]"
+    "placeholder": "[Transcriptie bezig: {filename}]",
+    "loadingTranscript": "Transcript voor {filename} wordt geladen...",
+    "expiredOrDeleted": "Deze transcriptie is verlopen of verwijderd.",
+    "fetchError": "Transcriptie kon niet worden geladen. Probeer het alstublieft opnieuw.",
+    "transcriptExpired": "De transcriptie voor {filename} is verlopen. Transcripties worden om privacyredenen na {days} dagen automatisch verwijderd.",
+    "expirationWarning": "De transcriptie voor {filename} verloopt over {days} dag(en). Kopieer de inhoud als u deze wilt behouden."
   },
   "migration": {
     "status": {

@@ -940,7 +940,12 @@
     "unknownError": "Nieznany błąd",
     "completed": "Transkrypcja zakończona",
     "completedToast": "Transkrypcja zakończona: {filename}",
-    "placeholder": "[Trwa transkrypcja: {filename}]"
+    "placeholder": "[Trwa transkrypcja: {filename}]",
+    "loadingTranscript": "Ładowanie transkrypcji dla pliku {filename}...",
+    "expiredOrDeleted": "Ta transkrypcja wygasła lub została usunięta.",
+    "fetchError": "Nie udało się załadować transkrypcji. Spróbuj ponownie.",
+    "transcriptExpired": "Transkrypcja dla pliku {filename} wygasła. Transkrypcje są automatycznie usuwane po {days} dniach w celu ochrony prywatności.",
+    "expirationWarning": "Transkrypcja dla pliku {filename} wygaśnie za {days} dni. Skopiuj treść, jeśli chcesz ją zachować."
   },
   "importBackupParseError": "Nie udało się przetworzyć pliku kopii zapasowej. Upewnij się, że jest to poprawny plik JSON.",
   "emptyState": {

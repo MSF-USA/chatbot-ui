@@ -936,7 +936,12 @@
     "unknownError": "Errore sconosciuto",
     "completed": "Trascrizione completata",
     "completedToast": "Trascrizione completata: {filename}",
-    "placeholder": "[Trascrizione in corso: {filename}]"
+    "placeholder": "[Trascrizione in corso: {filename}]",
+    "loadingTranscript": "Caricamento trascrizione per {filename}...",
+    "expiredOrDeleted": "Questa trascrizione è scaduta o è stata eliminata.",
+    "fetchError": "Impossibile caricare la trascrizione. Riprova.",
+    "transcriptExpired": "La trascrizione per {filename} è scaduta. Le trascrizioni vengono eliminate automaticamente dopo {days} giorni per motivi di privacy.",
+    "expirationWarning": "La trascrizione per {filename} scadrà tra {days} giorno(i). Copia il contenuto se desideri conservarlo."
   },
   "transcriptionComplete": "Trascrizione completata! Testo aggiunto al campo di input.",
   "No prompts found": "Nessun prompt trovato",

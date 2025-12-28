@@ -1474,7 +1474,12 @@
     "unknownError": "Neznámá chyba",
     "completed": "Přepis dokončen",
     "completedToast": "Přepis dokončen: {filename}",
-    "placeholder": "[Přepis probíhá: {filename}]"
+    "placeholder": "[Přepis probíhá: {filename}]",
+    "loadingTranscript": "Načítání přepisu pro {filename}...",
+    "expiredOrDeleted": "Tento přepis expiroval nebo byl smazán.",
+    "fetchError": "Nepodařilo se načíst přepis. Zkuste to prosím znovu.",
+    "transcriptExpired": "Přepis pro {filename} expiroval. Přepisy jsou automaticky smazány po {days} dnech kvůli ochraně soukromí.",
+    "expirationWarning": "Přepis pro {filename} vyprší za {days} den/dny. Zkopírujte obsah, pokud jej potřebujete zachovat."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními zásadami chování, které zajišťují užitečné, přesné a bezpečné odpovědi.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání."

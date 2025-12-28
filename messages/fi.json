@@ -936,7 +936,12 @@
     "unknownError": "Tuntematon virhe",
     "completed": "Puhtaaksikirjoitus valmis",
     "completedToast": "Puhtaaksikirjoitus valmis: {filename}",
-    "placeholder": "[Puhtaaksikirjoitus käynnissä: {filename}]"
+    "placeholder": "[Puhtaaksikirjoitus käynnissä: {filename}]",
+    "loadingTranscript": "Ladataan transkriptiota tiedostolle {filename}...",
+    "expiredOrDeleted": "Tämä transkriptio on vanhentunut tai poistettu.",
+    "fetchError": "Transkription lataaminen epäonnistui. Yritä uudelleen.",
+    "transcriptExpired": "Tiedoston {filename} transkriptio on vanhentunut. Transkriptiot poistetaan automaattisesti {days} päivän kuluttua yksityisyyden suojaamiseksi.",
+    "expirationWarning": "Tiedoston {filename} transkriptio vanhenee {days} päivän kuluttua. Kopioi sisältö, jos tarvitset sitä jatkossa."
   },
   "transcriptionComplete": "Puhtaaksikirjoitus valmis! Teksti lisätty keskusteluun.",
   "No prompts found": "Kehotteita ei löytynyt",

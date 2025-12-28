@@ -1474,7 +1474,12 @@
     "unknownError": "خطأ غير معروف",
     "completed": "تم تحويل النص",
     "completedToast": "تم تحويل النص: {filename}",
-    "placeholder": "[جاري تحويل النص: {filename}]"
+    "placeholder": "[جاري تحويل النص: {filename}]",
+    "loadingTranscript": "جاري تحميل النص لـ {filename}...",
+    "expiredOrDeleted": "انتهت صلاحية هذا النص أو تم حذفه.",
+    "fetchError": "فشل في تحميل النص. يرجى المحاولة مرة أخرى.",
+    "transcriptExpired": "انتهت صلاحية النص لـ {filename}. يتم حذف النصوص تلقائيًا بعد {days} يومًا حفاظًا على الخصوصية.",
+    "expirationWarning": "ستنتهي صلاحية النص لـ {filename} خلال {days} يوم/أيام. يُرجى نسخ المحتوى إذا كنت بحاجة للاحتفاظ به."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة.",
   "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ."

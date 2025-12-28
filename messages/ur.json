@@ -940,7 +940,12 @@
     "unknownError": "نامعلوم خرابی",
     "completed": "تحریر مکمل ہوگئی",
     "completedToast": "تحریر مکمل: {filename}",
-    "placeholder": "[تحریر جاری ہے: {filename}]"
+    "placeholder": "[تحریر جاری ہے: {filename}]",
+    "loadingTranscript": "{filename} کے لیے ٹرانسکرپٹ لوڈ ہو رہا ہے...",
+    "expiredOrDeleted": "یہ ٹرانسکرپٹ ختم ہو چکا ہے یا حذف کر دیا گیا ہے۔",
+    "fetchError": "ٹرانسکرپٹ لوڈ کرنے میں ناکامی۔ براہ مہربانی دوبارہ کوشش کریں۔",
+    "transcriptExpired": "{filename} کے لیے ٹرانسکرپٹ کی میعاد ختم ہو چکی ہے۔ رازداری کے لیے ٹرانسکرپٹس {days} دن بعد خود بخود حذف ہو جاتے ہیں۔",
+    "expirationWarning": "{filename} کے لیے ٹرانسکرپٹ {days} دن میں ختم ہو جائے گا۔ اگر آپ کو اس کو محفوظ کرنا ہے تو اس کا مواد نقل کر لیں۔"
   },
   "importBackupParseError": "بیک اپ فائل پارس کرنے میں ناکام۔ براہ کرم یقینی بنائیں کہ یہ درست JSON ہے۔",
   "emptyState": {

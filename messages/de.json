@@ -1184,7 +1184,12 @@
     "unknownError": "Unbekannter Fehler",
     "completed": "Transkription abgeschlossen",
     "completedToast": "Transkription abgeschlossen: {filename}",
-    "placeholder": "[Transkription läuft: {filename}]"
+    "placeholder": "[Transkription läuft: {filename}]",
+    "loadingTranscript": "Transkript für {filename} wird geladen...",
+    "expiredOrDeleted": "Dieses Transkript ist abgelaufen oder wurde gelöscht.",
+    "fetchError": "Transkript konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "transcriptExpired": "Das Transkript für {filename} ist abgelaufen. Transkripte werden aus Datenschutzgründen nach {days} Tagen automatisch gelöscht.",
+    "expirationWarning": "Das Transkript für {filename} läuft in {days} Tag(en) ab. Kopieren Sie den Inhalt, falls Sie ihn behalten möchten."
   },
   "notFound": {
     "lostDog": "Verlorener Hund"

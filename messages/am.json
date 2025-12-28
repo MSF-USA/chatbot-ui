@@ -1474,7 +1474,12 @@
     "unknownError": "ያልታወቀ ስህተት",
     "completed": "የጽሑፍ ማዋቀሪያ ተጠናቋል",
     "completedToast": "የጽሑፍ ማዋቀሪያ ተጠናቋል፡ {filename}",
-    "placeholder": "[የጽሑፍ ማዋቀሪያ በሂደት ላይ፡ {filename}]"
+    "placeholder": "[የጽሑፍ ማዋቀሪያ በሂደት ላይ፡ {filename}]",
+    "loadingTranscript": "{filename} ትርጓሜ በመጫን ላይ...",
+    "expiredOrDeleted": "ይህ ትርጓሜ ጊዜው አልፏል ወይም ተሰርዟል።",
+    "fetchError": "ትርጓሜውን ማግኘት አልተሳካም። እባክዎ ደግመው ይሞክሩ።",
+    "transcriptExpired": "የ {filename} ትርጓሜ ጊዜው አልፏል። ለግላዊነት ትርጓሜዎች በራስ-ሰር ከ {days} ቀናት በኋላ ይሰረዳሉ።",
+    "expirationWarning": "የ {filename} ትርጓሜ በ {days} ቀን(ዎች) ውስጥ ይያያዝ። ያስፈልጋችሁ ከሆነ ይውሰዱት።"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "የእርስዎን የግል መመሪያዎች ያክሉ እና የAI ምላሽን ያስተካክሉ። እነዚህ ጥሩ፣ ትክክለኛ እና ደህና የሆኑ ምላሾችን ለመስጠት ከመሠረታዊ መመሪያዎች ጋር ይጣፉ።",
   "Tip: Type \"/\" to select from saved prompt templates_": "ምክር፦ \"/\" በመተግበር ከተቀመጡት ማስጠንቀቂያ አብነቶች ይምረጡ።"
