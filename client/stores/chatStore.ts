@@ -210,6 +210,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       successfulRetryConversationId: null,
       // Reset regeneration state
       regeneratingIndex: null,
+      // Reset pending transcription state
+      pendingConversationTranscription: null,
+    }),
+
+  setConversationTranscriptionPending: (info) =>
+    set({
+      pendingConversationTranscription: info
+        ? { ...info, startedAt: Date.now() }
+        : null,
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
