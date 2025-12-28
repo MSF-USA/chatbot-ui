@@ -1,5 +1,6 @@
 import {
   ParsedMetadata,
+  PendingTranscriptionInfo,
   createStreamDecoder,
   parseMetadataFromContent,
 } from '@/lib/utils/app/metadata';
@@ -16,6 +17,7 @@ export class StreamParser {
   private extractedCitations: Citation[] = [];
   private extractedThreadId?: string;
   private extractedTranscript?: any;
+  private extractedPendingTranscriptions?: PendingTranscriptionInfo[];
   private hasReceivedContent: boolean = false;
   private prevDisplayText: string = '';
   private prevCitationsStr: string = '[]';
