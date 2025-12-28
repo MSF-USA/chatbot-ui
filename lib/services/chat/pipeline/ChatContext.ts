@@ -25,6 +25,13 @@ export interface ProcessedContent {
     transcript: string;
   }[];
 
+  /** Pending batch transcription jobs (for files >25MB that use async Azure Speech API) */
+  pendingTranscriptions?: {
+    filename: string;
+    jobId: string;
+    blobPath: string;
+  }[];
+
   /** Validated image URLs (if images present) */
   images?: {
     url: string;
