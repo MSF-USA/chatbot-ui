@@ -115,16 +115,32 @@ export class StandardChatHandler extends BasePipelineStage {
 
               // Create a minimal response that just returns the transcript
               const encoder = new TextEncoder();
+              const pendingTranscriptions =
+                context.processedContent?.pendingTranscriptions;
               const stream = new ReadableStream({
                 start(controller) {
                   // Send metadata with transcript only (no LLM processing)
-                  const metadata = {
+                  // Include pendingTranscriptions for async batch jobs
+                  const metadata: {
+                    transcript: {
+                      filename: string;
+                      transcript: string;
+                      processedContent: undefined;
+                    };
+                    pendingTranscriptions?: typeof pendingTranscriptions;
+                  } = {
                     transcript: {
                       filename: transcript.filename,
                       transcript: transcript.transcript,
                       processedContent: undefined, // No LLM processing
                     },
                   };
+                  if (
+                    pendingTranscriptions &&
+                    pendingTranscriptions.length > 0
+                  ) {
+                    metadata.pendingTranscriptions = pendingTranscriptions;
+                  }
 
                   const metadataStr = `\n\n<<<METADATA_START>>>${JSON.stringify(metadata)}<<<METADATA_END>>>`;
                   controller.enqueue(encoder.encode(metadataStr));
