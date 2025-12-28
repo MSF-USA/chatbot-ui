@@ -142,6 +142,12 @@ export class StandardChatHandler extends BasePipelineStage {
                     metadata.pendingTranscriptions = pendingTranscriptions;
                   }
 
+                  // Send placeholder content FIRST so it becomes the message content
+                  // This allows updateMessageWithTranscript to find and replace it later
+                  const placeholderContent = transcript.transcript;
+                  controller.enqueue(encoder.encode(placeholderContent));
+
+                  // Then send metadata
                   const metadataStr = `\n\n<<<METADATA_START>>>${JSON.stringify(metadata)}<<<METADATA_END>>>`;
                   controller.enqueue(encoder.encode(metadataStr));
                   controller.close();
