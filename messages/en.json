@@ -1074,6 +1074,9 @@
       "backToModels": "Back to Models",
       "knowledgeCutoff": "Knowledge cutoff: {cutoff}"
     },
+    "knowledgeCutoff": {
+      "realtime": "Real-time web search"
+    },
     "modelTypes": {
       "foundational": "foundational",
       "omni": "omni",
