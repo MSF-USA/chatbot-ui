@@ -105,6 +105,10 @@ export function useTranscriptionPolling(): void {
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isPollingRef = useRef(false);
+  const consecutiveFailuresRef = useRef(0);
+
+  /** Maximum consecutive failures before giving up and clearing state */
+  const MAX_CONSECUTIVE_FAILURES = 5;
 
   /**
    * Polls the status of a post-submit conversation transcription job.
@@ -159,11 +163,40 @@ export function useTranscriptionPolling(): void {
       const response = await fetch(`/api/transcription/status/${jobId}`);
 
       if (!response.ok) {
+        consecutiveFailuresRef.current++;
         console.error(
-          `[useTranscriptionPolling] Failed to poll conversation job ${jobId}: ${response.status}`,
+          `[useTranscriptionPolling] Failed to poll conversation job ${jobId}: ${response.status} ` +
+            `(failure ${consecutiveFailuresRef.current}/${MAX_CONSECUTIVE_FAILURES})`,
         );
+
+        // After N consecutive failures, assume job is dead and clear state
+        if (consecutiveFailuresRef.current >= MAX_CONSECUTIVE_FAILURES) {
+          updateMessageWithTranscript(
+            conversationId,
+            messageIndex,
+            `[Transcription failed: Unable to retrieve status after ${MAX_CONSECUTIVE_FAILURES} attempts]`,
+            filename,
+          );
+          setConversationTranscriptionPending(null);
+          toast.error(
+            `Transcription failed: ${filename} - Unable to retrieve status`,
+            { duration: 5000 },
+          );
+
+          // Cleanup Azure resources
+          fetch('/api/transcription/cleanup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jobId, blobPath }),
+          }).catch(console.warn);
+
+          consecutiveFailuresRef.current = 0;
+        }
         return;
       }
+
+      // Reset failure counter on successful response
+      consecutiveFailuresRef.current = 0;
 
       const data: BatchTranscriptionStatusResponse = await response.json();
 
@@ -246,10 +279,35 @@ export function useTranscriptionPolling(): void {
       }
       // Running or NotStarted - continue polling
     } catch (error) {
+      consecutiveFailuresRef.current++;
       console.error(
-        `[useTranscriptionPolling] Error polling conversation job ${jobId}:`,
+        `[useTranscriptionPolling] Error polling conversation job ${jobId} ` +
+          `(failure ${consecutiveFailuresRef.current}/${MAX_CONSECUTIVE_FAILURES}):`,
         error,
       );
+
+      // After N consecutive failures, assume job is dead and clear state
+      if (consecutiveFailuresRef.current >= MAX_CONSECUTIVE_FAILURES) {
+        updateMessageWithTranscript(
+          conversationId,
+          messageIndex,
+          `[Transcription failed: Network error after ${MAX_CONSECUTIVE_FAILURES} attempts]`,
+          filename,
+        );
+        setConversationTranscriptionPending(null);
+        toast.error(`Transcription failed: ${filename} - Network error`, {
+          duration: 5000,
+        });
+
+        // Cleanup Azure resources
+        fetch('/api/transcription/cleanup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobId, blobPath }),
+        }).catch(console.warn);
+
+        consecutiveFailuresRef.current = 0;
+      }
     }
   }, [
     pendingConversationTranscription,
