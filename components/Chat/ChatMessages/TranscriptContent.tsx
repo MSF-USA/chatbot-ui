@@ -73,25 +73,35 @@ export function TranscriptContent({
 }: TranscriptContentProps) {
   const t = useTranslations('transcription');
   const [loadedContent, setLoadedContent] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [pollCount, setPollCount] = useState(0);
 
   // Use ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Parse blob reference from content
   const blobRef = parseBlobReference(content);
+
+  // Calculate expiration state
   const isExpired = blobRef
     ? getDaysUntilExpiry(blobRef.expiresAt) <= 0
     : false;
 
+  // Derive loading state from other state variables (avoids setState in effect body)
+  const shouldPoll =
+    blobRef !== null &&
+    !isExpired &&
+    loadedContent === null &&
+    fetchError === null &&
+    pollCount < MAX_POLL_ATTEMPTS;
+
   /**
    * Fetches transcript content from blob storage.
-   * Returns true if successful, false if should retry.
+   * Returns true if successful or should stop, false if should retry.
    */
   const fetchTranscript = useCallback(async (): Promise<boolean> => {
-    if (!blobRef) return true; // No blob ref - nothing to fetch
+    if (!blobRef) return true;
 
     try {
       const response = await fetch(
@@ -103,26 +113,23 @@ export function TranscriptContent({
         const data = responseBody.data || responseBody;
         if (isMountedRef.current) {
           setLoadedContent(data.transcript);
-          setIsLoading(false);
-          setError(null);
         }
         return true; // Success - stop polling
       }
 
       if (response.status === 404) {
-        // Not found - could be still uploading or expired
+        // Not found - could be still uploading
         console.log(
           `[TranscriptContent] Blob not found for job ${blobRef.jobId}, will retry`,
         );
         return false; // Retry
       }
 
-      // Other error
+      // Other error - stop polling
       if (isMountedRef.current) {
-        setError(t('fetchError'));
-        setIsLoading(false);
+        setFetchError(t('fetchError'));
       }
-      return true; // Stop polling on error
+      return true;
     } catch (err) {
       console.error('[TranscriptContent] Fetch error:', err);
       // Network error - retry
@@ -132,33 +139,14 @@ export function TranscriptContent({
 
   /**
    * Polling effect that fetches transcript and retries if not found.
+   * Only runs when shouldPoll is true (derived state).
    */
   useEffect(() => {
+    if (!shouldPoll) {
+      return;
+    }
+
     isMountedRef.current = true;
-
-    // Early returns
-    if (!blobRef) {
-      setIsLoading(false);
-      return;
-    }
-
-    if (isExpired) {
-      setError(t('expiredOrDeleted'));
-      setIsLoading(false);
-      return;
-    }
-
-    if (loadedContent) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Check poll limit
-    if (pollCount >= MAX_POLL_ATTEMPTS) {
-      setError(t('fetchError'));
-      setIsLoading(false);
-      return;
-    }
 
     const poll = async () => {
       const success = await fetchTranscript();
@@ -170,6 +158,11 @@ export function TranscriptContent({
             setPollCount((c) => c + 1);
           }
         }, POLL_INTERVAL_MS);
+      } else if (!success && pollCount >= MAX_POLL_ATTEMPTS - 1) {
+        // Max retries reached
+        if (isMountedRef.current) {
+          setFetchError(t('fetchError'));
+        }
       }
     };
 
@@ -182,19 +175,28 @@ export function TranscriptContent({
         timeoutRef.current = null;
       }
     };
-  }, [blobRef, fetchTranscript, isExpired, loadedContent, pollCount, t]);
+  }, [shouldPoll, fetchTranscript, pollCount, t]);
 
   // Inline content - render directly
   if (!blobRef) {
     return <div className={className}>{content}</div>;
   }
 
-  // Calculate expiration warning
+  // Calculate UI state
   const daysUntilExpiry = getDaysUntilExpiry(blobRef.expiresAt);
   const showWarning = daysUntilExpiry > 0 && daysUntilExpiry <= 2;
+  const isLoading = shouldPoll && !loadedContent;
+
+  // Determine error message to display
+  const displayError = isExpired
+    ? t('transcriptExpired', {
+        filename: blobRef.filename,
+        days: TRANSCRIPT_EXPIRY_DAYS,
+      })
+    : fetchError;
 
   // Loading state (with poll count indicator for long waits)
-  if (isLoading && !loadedContent) {
+  if (isLoading) {
     return (
       <div className={`${className} text-gray-500 dark:text-gray-400`}>
         <div className="flex items-center gap-2">
@@ -208,17 +210,12 @@ export function TranscriptContent({
   }
 
   // Error state (expired or fetch failed)
-  if (error || isExpired) {
+  if (displayError) {
     return (
       <div className={`${className} text-gray-500 dark:text-gray-400`}>
         <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/20">
           <p className="text-sm text-yellow-800 dark:text-yellow-200">
-            {isExpired
-              ? t('transcriptExpired', {
-                  filename: blobRef.filename,
-                  days: TRANSCRIPT_EXPIRY_DAYS,
-                })
-              : error}
+            {displayError}
           </p>
         </div>
       </div>
