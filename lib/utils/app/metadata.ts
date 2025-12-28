@@ -10,12 +10,18 @@ export interface TranscriptMetadata {
 }
 
 /**
- * Pending batch transcription job info for async processing
+ * Pending transcription job info for async processing.
+ *
+ * Supports two job types:
+ * - Chunked: Local processing with FFmpeg + Whisper (blobPath is optional)
+ * - Batch: Azure Speech Services (blobPath is required for cleanup)
  */
 export interface PendingTranscriptionInfo {
   filename: string;
   jobId: string;
-  blobPath: string;
+  blobPath?: string; // Only required for batch jobs
+  totalChunks?: number; // Only for chunked jobs
+  jobType?: 'chunked' | 'batch';
 }
 
 /**
