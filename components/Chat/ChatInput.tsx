@@ -24,6 +24,7 @@ import { useMessageSender } from '@/client/hooks/chat/useMessageSender';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useTones } from '@/client/hooks/settings/useTones';
+import { useTranscriptionPolling } from '@/client/hooks/transcription/useTranscriptionPolling';
 import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
@@ -94,6 +95,9 @@ export const ChatInput = ({
   onTranscriptionStatusChange,
 }: Props) => {
   const t = useTranslations();
+
+  // Enable transcription status polling for batch jobs (>25MB files)
+  useTranscriptionPolling();
 
   // Zustand hooks
   const { selectedConversation, folders } = useConversations();
