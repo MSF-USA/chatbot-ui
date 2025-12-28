@@ -122,14 +122,18 @@ interface ChatStore {
   dismissModelSwitchPrompt: () => void;
   acceptModelSwitch: (alwaysSwitch?: boolean) => void;
 
-  // Pending transcription state (for async batch transcription)
+  // Pending transcription state (for async chunked/batch transcription)
   pendingConversationTranscription: {
     conversationId: string;
     jobId: string;
     messageIndex: number;
     filename: string;
-    blobPath: string;
+    blobPath?: string; // Only for batch jobs
     startedAt: number;
+    progress?: {
+      completed: number;
+      total: number;
+    };
   } | null;
   setConversationTranscriptionPending: (
     info: {
@@ -137,9 +141,10 @@ interface ChatStore {
       jobId: string;
       messageIndex: number;
       filename: string;
-      blobPath: string;
+      blobPath?: string;
     } | null,
   ) => void;
+  updateTranscriptionProgress: (completed: number, total: number) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
