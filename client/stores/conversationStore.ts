@@ -59,6 +59,22 @@ interface ConversationStore {
     messageIndex: number,
     version: AssistantMessageVersion,
   ) => void;
+
+  /**
+   * Updates a message's content to replace a transcription placeholder with actual transcript.
+   * Used for async batch transcription when the job completes after the message is sent.
+   *
+   * @param conversationId - The conversation ID
+   * @param messageIndex - The index of the assistant message with the placeholder
+   * @param transcript - The actual transcript content
+   * @param filename - The filename to match in the placeholder
+   */
+  updateMessageWithTranscript: (
+    conversationId: string,
+    messageIndex: number,
+    transcript: string,
+    filename: string,
+  ) => void;
 }
 
 export const useConversationStore = create<ConversationStore>()(
@@ -199,6 +215,46 @@ export const useConversationStore = create<ConversationStore>()(
                 ...entry,
                 versions: [...entry.versions, version],
                 activeIndex: entry.versions.length, // Point to new version
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      updateMessageWithTranscript: (
+        conversationId,
+        messageIndex,
+        transcript,
+        filename,
+      ) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            // Handle assistant message groups (most likely case)
+            if (isAssistantMessageGroup(entry)) {
+              const updatedVersions = entry.versions.map((v) => {
+                // Replace placeholder with actual transcript
+                const placeholder = `[Transcription in progress: ${filename}]`;
+                if (typeof v.content === 'string') {
+                  return {
+                    ...v,
+                    content: v.content.replace(
+                      placeholder,
+                      `[Transcript: ${filename}]\n${transcript}`,
+                    ),
+                  };
+                }
+                return v;
+              });
+
+              messages[messageIndex] = {
+                ...entry,
+                versions: updatedVersions,
               };
             }
 
