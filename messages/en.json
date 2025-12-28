@@ -1081,6 +1081,12 @@
       "reasoning": "reasoning",
       "agent": "agent"
     },
+    "modelTypeIcons": {
+      "foundational": "Fast & efficient general-purpose model",
+      "reasoning": "Extended reasoning for complex problems",
+      "omni": "Multi-modal model with broad capabilities",
+      "agent": "Agent with real-time tools & web access"
+    },
     "orderMode": {
       "label": "Sort by",
       "usage": "Most Used",
