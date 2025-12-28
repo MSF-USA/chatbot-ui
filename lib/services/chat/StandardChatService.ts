@@ -1,6 +1,9 @@
 import { Session } from 'next-auth';
 
-import { TranscriptMetadata } from '@/lib/utils/app/metadata';
+import {
+  PendingTranscriptionInfo,
+  TranscriptMetadata,
+} from '@/lib/utils/app/metadata';
 import { createAnthropicStreamProcessor } from '@/lib/utils/app/stream/anthropicStreamProcessor';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat/chat';
@@ -35,6 +38,7 @@ export interface StandardChatRequest {
   transcript?: TranscriptMetadata;
   citations?: Citation[]; // Web search citations to include in response
   tone?: Tone; // Full tone object from client
+  pendingTranscriptions?: PendingTranscriptionInfo[]; // Async batch transcription jobs
 }
 
 /**
