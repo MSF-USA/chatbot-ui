@@ -1,12 +1,15 @@
 /**
- * In-memory job state storage for chunked transcription.
+ * File-based job state storage for chunked transcription.
  *
- * Stores the state of async chunked transcription jobs.
+ * Stores the state of async chunked transcription jobs as JSON files
+ * in /tmp/chunked-transcription-jobs/. This ensures persistence across
+ * Next.js API route invocations (unlike in-memory storage which can be
+ * lost due to hot reloading or serverless function restarts).
+ *
  * Jobs are tracked from submission through completion.
- *
- * Note: This is an in-memory store - jobs are lost on server restart.
- * For production persistence, consider Redis or database storage.
  */
+import * as fs from 'fs';
+import * as path from 'path';
 
 export type ChunkedJobStatus =
   | 'pending'
@@ -41,11 +44,36 @@ export interface ChunkedJob {
   updatedAt: number;
 }
 
-/** In-memory store for chunked jobs */
-const jobStore = new Map<string, ChunkedJob>();
+/** Directory for storing job JSON files */
+const JOB_STORE_DIR = '/tmp/chunked-transcription-jobs';
 
 /** How long to keep completed/failed jobs before cleanup (1 hour) */
 const JOB_RETENTION_MS = 60 * 60 * 1000;
+
+/**
+ * Ensures the job store directory exists.
+ */
+function ensureStoreDir(): void {
+  if (!fs.existsSync(JOB_STORE_DIR)) {
+    fs.mkdirSync(JOB_STORE_DIR, { recursive: true });
+  }
+}
+
+/**
+ * Gets the file path for a job's JSON file.
+ */
+function getJobFilePath(jobId: string): string {
+  return path.join(JOB_STORE_DIR, `${jobId}.json`);
+}
+
+/**
+ * Saves a job to the file system.
+ */
+function saveJob(job: ChunkedJob): void {
+  ensureStoreDir();
+  const filePath = getJobFilePath(job.jobId);
+  fs.writeFileSync(filePath, JSON.stringify(job, null, 2), 'utf-8');
+}
 
 /**
  * Creates a new chunked transcription job.
@@ -78,7 +106,7 @@ export function createJob(
     updatedAt: now,
   };
 
-  jobStore.set(jobId, job);
+  saveJob(job);
 
   console.log(
     `[ChunkedJobStore] Created job ${jobId}: ${totalChunks} chunks for "${filename}"`,
@@ -100,7 +128,7 @@ export function updateProgress(
   completedChunks: number,
   currentChunk?: number,
 ): void {
-  const job = jobStore.get(jobId);
+  const job = getJob(jobId);
   if (!job) {
     console.warn(`[ChunkedJobStore] updateProgress: Job ${jobId} not found`);
     return;
@@ -112,6 +140,8 @@ export function updateProgress(
     job.currentChunk = currentChunk;
   }
   job.updatedAt = Date.now();
+
+  saveJob(job);
 
   console.log(
     `[ChunkedJobStore] Job ${jobId} progress: ${completedChunks}/${job.totalChunks} chunks`,
@@ -125,7 +155,7 @@ export function updateProgress(
  * @param transcript - Combined transcript text
  */
 export function completeJob(jobId: string, transcript: string): void {
-  const job = jobStore.get(jobId);
+  const job = getJob(jobId);
   if (!job) {
     console.warn(`[ChunkedJobStore] completeJob: Job ${jobId} not found`);
     return;
@@ -135,6 +165,8 @@ export function completeJob(jobId: string, transcript: string): void {
   job.completedChunks = job.totalChunks;
   job.transcript = transcript;
   job.updatedAt = Date.now();
+
+  saveJob(job);
 
   console.log(
     `[ChunkedJobStore] Job ${jobId} completed successfully with ${transcript.length} chars`,
@@ -148,7 +180,7 @@ export function completeJob(jobId: string, transcript: string): void {
  * @param error - Error message
  */
 export function failJob(jobId: string, error: string): void {
-  const job = jobStore.get(jobId);
+  const job = getJob(jobId);
   if (!job) {
     console.warn(`[ChunkedJobStore] failJob: Job ${jobId} not found`);
     return;
@@ -157,6 +189,8 @@ export function failJob(jobId: string, error: string): void {
   job.status = 'failed';
   job.error = error;
   job.updatedAt = Date.now();
+
+  saveJob(job);
 
   console.error(`[ChunkedJobStore] Job ${jobId} failed: ${error}`);
 }
@@ -168,7 +202,18 @@ export function failJob(jobId: string, error: string): void {
  * @returns The job, or undefined if not found
  */
 export function getJob(jobId: string): ChunkedJob | undefined {
-  return jobStore.get(jobId);
+  const filePath = getJobFilePath(jobId);
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return undefined;
+    }
+    const data = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(data) as ChunkedJob;
+  } catch (error) {
+    console.warn(`[ChunkedJobStore] Error reading job ${jobId}:`, error);
+    return undefined;
+  }
 }
 
 /**
@@ -177,9 +222,15 @@ export function getJob(jobId: string): ChunkedJob | undefined {
  * @param jobId - Job identifier
  */
 export function deleteJob(jobId: string): void {
-  const deleted = jobStore.delete(jobId);
-  if (deleted) {
-    console.log(`[ChunkedJobStore] Deleted job ${jobId}`);
+  const filePath = getJobFilePath(jobId);
+
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`[ChunkedJobStore] Deleted job ${jobId}`);
+    }
+  } catch (error) {
+    console.warn(`[ChunkedJobStore] Error deleting job ${jobId}:`, error);
   }
 }
 
@@ -187,20 +238,40 @@ export function deleteJob(jobId: string): void {
  * Lists all jobs (for debugging/monitoring).
  */
 export function listJobs(): ChunkedJob[] {
-  return Array.from(jobStore.values());
+  ensureStoreDir();
+
+  const jobs: ChunkedJob[] = [];
+
+  try {
+    const files = fs.readdirSync(JOB_STORE_DIR);
+
+    for (const file of files) {
+      if (!file.endsWith('.json')) continue;
+
+      const filePath = path.join(JOB_STORE_DIR, file);
+      try {
+        const data = fs.readFileSync(filePath, 'utf-8');
+        const job = JSON.parse(data) as ChunkedJob;
+        jobs.push(job);
+      } catch {
+        // Skip invalid files
+      }
+    }
+  } catch {
+    // Directory might not exist yet
+  }
+
+  return jobs;
 }
 
 /**
  * Gets the number of active (non-completed) jobs.
  */
 export function getActiveJobCount(): number {
-  let count = 0;
-  for (const job of jobStore.values()) {
-    if (job.status === 'pending' || job.status === 'processing') {
-      count++;
-    }
-  }
-  return count;
+  const jobs = listJobs();
+  return jobs.filter(
+    (job) => job.status === 'pending' || job.status === 'processing',
+  ).length;
 }
 
 // Cleanup timer reference
@@ -221,7 +292,8 @@ function scheduleCleanup(): void {
       runCleanup();
 
       // Reschedule if there are still jobs
-      if (jobStore.size > 0) {
+      const jobs = listJobs();
+      if (jobs.length > 0) {
         scheduleCleanup();
       }
     },
@@ -236,7 +308,9 @@ function runCleanup(): void {
   const now = Date.now();
   let cleaned = 0;
 
-  for (const [jobId, job] of jobStore.entries()) {
+  const jobs = listJobs();
+
+  for (const job of jobs) {
     // Only clean up completed or failed jobs
     if (job.status !== 'succeeded' && job.status !== 'failed') {
       continue;
@@ -245,14 +319,15 @@ function runCleanup(): void {
     // Check if job is old enough to clean up
     const age = now - job.updatedAt;
     if (age > JOB_RETENTION_MS) {
-      jobStore.delete(jobId);
+      deleteJob(job.jobId);
       cleaned++;
     }
   }
 
   if (cleaned > 0) {
+    const remaining = listJobs().length;
     console.log(
-      `[ChunkedJobStore] Cleanup: removed ${cleaned} stale jobs, ${jobStore.size} remaining`,
+      `[ChunkedJobStore] Cleanup: removed ${cleaned} stale jobs, ${remaining} remaining`,
     );
   }
 }
