@@ -201,7 +201,10 @@ export function useTranscriptionPolling(): void {
       // Reset failure counter on successful response
       consecutiveFailuresRef.current = 0;
 
-      const data: BatchTranscriptionStatusResponse = await response.json();
+      const responseBody = await response.json();
+      // Unwrap API response envelope (successResponse wraps data in { success, data })
+      const data: BatchTranscriptionStatusResponse =
+        responseBody.data || responseBody;
 
       // Update progress for chunked transcription jobs
       if (data.progress) {
@@ -366,7 +369,10 @@ export function useTranscriptionPolling(): void {
             continue;
           }
 
-          const data: BatchTranscriptionStatusResponse = await response.json();
+          const responseBody = await response.json();
+          // Unwrap API response envelope (successResponse wraps data in { success, data })
+          const data: BatchTranscriptionStatusResponse =
+            responseBody.data || responseBody;
 
           // Handle success case
           if (data.status === 'Succeeded' && data.transcript) {
