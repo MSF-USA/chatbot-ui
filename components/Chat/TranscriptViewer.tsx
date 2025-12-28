@@ -521,128 +521,130 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
         </div>
       )}
 
-      {/* Transcript Box */}
-      <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-800">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
-          <div className="flex items-center gap-2">
-            <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              {currentViewLabel}
-            </div>
-            {/* Translation loading indicator */}
-            {translationState.isTranslating && (
-              <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                <IconLoader2 size={14} className="animate-spin" />
-                <span>{t('transcript.translating')}</span>
+      {/* Transcript Box - only show when content is available */}
+      {(!blobRef || (loadedTranscript && !blobError && !isExpired)) && (
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-800">
+          {/* Toolbar */}
+          <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
+            <div className="flex items-center gap-2">
+              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                {currentViewLabel}
               </div>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Copy button */}
-            <button
-              onClick={handleCopy}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-              title={t('common.copyToClipboard')}
-            >
-              {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
-              {copied ? t('transcript.copied') : t('transcript.copy')}
-            </button>
-
-            {/* Download button */}
-            <button
-              onClick={handleDownload}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-              title={t('chat.downloadTranscript')}
-            >
-              <IconDownload size={14} />
-              {t('transcript.download')}
-            </button>
-
-            {/* TTS button */}
-            <button
-              onClick={audioUrl ? handleCloseAudio : handleTTS}
-              disabled={isGeneratingAudio}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                isGeneratingAudio
-                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-              title={
-                audioUrl ? t('transcript.stopAudio') : t('transcript.listen')
-              }
-            >
-              {isGeneratingAudio ? (
-                <IconLoader2 size={14} className="animate-spin" />
-              ) : audioUrl ? (
-                <IconVolumeOff size={14} />
-              ) : (
-                <IconVolume size={14} />
+              {/* Translation loading indicator */}
+              {translationState.isTranslating && (
+                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                  <IconLoader2 size={14} className="animate-spin" />
+                  <span>{t('transcript.translating')}</span>
+                </div>
               )}
-            </button>
-
-            {/* Translate button */}
-            <button
-              ref={translateButtonRef}
-              onClick={() =>
-                setShowTranslationDropdown(!showTranslationDropdown)
-              }
-              disabled={translationState.isTranslating}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                translationState.isTranslating
-                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                  : translationState.currentLocale
-                    ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-              title={t('chat.translateTranscript')}
-            >
-              {translationState.isTranslating ? (
-                <IconLoader2 size={14} className="animate-spin" />
-              ) : (
-                <IconLanguage size={14} />
-              )}
-              {t('transcript.translate')}
-            </button>
-
-            {/* Open as document button */}
-            <button
-              onClick={handleOpenAsDocument}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-              title={t('transcript.openAsDocument')}
-            >
-              <IconFileText size={14} />
-            </button>
-
-            {/* Expand/Collapse button (only when processedContent exists) */}
-            {processedContent && (
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Copy button */}
               <button
-                onClick={() => setExpanded(!expanded)}
-                className="ml-2 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                title={t('common.copyToClipboard')}
               >
-                {expanded ? t('transcript.collapse') : t('transcript.expand')}
+                {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+                {copied ? t('transcript.copied') : t('transcript.copy')}
               </button>
-            )}
+
+              {/* Download button */}
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                title={t('chat.downloadTranscript')}
+              >
+                <IconDownload size={14} />
+                {t('transcript.download')}
+              </button>
+
+              {/* TTS button */}
+              <button
+                onClick={audioUrl ? handleCloseAudio : handleTTS}
+                disabled={isGeneratingAudio}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                  isGeneratingAudio
+                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+                title={
+                  audioUrl ? t('transcript.stopAudio') : t('transcript.listen')
+                }
+              >
+                {isGeneratingAudio ? (
+                  <IconLoader2 size={14} className="animate-spin" />
+                ) : audioUrl ? (
+                  <IconVolumeOff size={14} />
+                ) : (
+                  <IconVolume size={14} />
+                )}
+              </button>
+
+              {/* Translate button */}
+              <button
+                ref={translateButtonRef}
+                onClick={() =>
+                  setShowTranslationDropdown(!showTranslationDropdown)
+                }
+                disabled={translationState.isTranslating}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                  translationState.isTranslating
+                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : translationState.currentLocale
+                      ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+                title={t('chat.translateTranscript')}
+              >
+                {translationState.isTranslating ? (
+                  <IconLoader2 size={14} className="animate-spin" />
+                ) : (
+                  <IconLanguage size={14} />
+                )}
+                {t('transcript.translate')}
+              </button>
+
+              {/* Open as document button */}
+              <button
+                onClick={handleOpenAsDocument}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                title={t('transcript.openAsDocument')}
+              >
+                <IconFileText size={14} />
+              </button>
+
+              {/* Expand/Collapse button (only when processedContent exists) */}
+              {processedContent && (
+                <button
+                  onClick={() => setExpanded(!expanded)}
+                  className="ml-2 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+                >
+                  {expanded ? t('transcript.collapse') : t('transcript.expand')}
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* Transcript Content */}
+          {(!processedContent || expanded) && (
+            <div
+              className={`p-4 font-mono text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap overflow-y-auto ${
+                processedContent ? 'max-h-96' : 'max-h-[600px]'
+              }`}
+            >
+              {formattedTranscript}
+            </div>
+          )}
+
+          {/* Collapsed state hint */}
+          {processedContent && !expanded && (
+            <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
+              {t('transcript.expandHint')}
+            </div>
+          )}
         </div>
-
-        {/* Transcript Content */}
-        {(!processedContent || expanded) && (
-          <div
-            className={`p-4 font-mono text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap overflow-y-auto ${
-              processedContent ? 'max-h-96' : 'max-h-[600px]'
-            }`}
-          >
-            {formattedTranscript}
-          </div>
-        )}
-
-        {/* Collapsed state hint */}
-        {processedContent && !expanded && (
-          <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
-            {t('transcript.expandHint')}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Audio player */}
       {audioUrl && (
