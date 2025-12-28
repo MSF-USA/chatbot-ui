@@ -117,15 +117,24 @@ export class StandardChatHandler extends BasePipelineStage {
               const encoder = new TextEncoder();
               const pendingTranscriptions =
                 context.processedContent?.pendingTranscriptions;
+
+              // Get jobId from pending transcriptions for tracking
+              const pendingJobId =
+                pendingTranscriptions && pendingTranscriptions.length > 0
+                  ? pendingTranscriptions[0].jobId
+                  : undefined;
+
               const stream = new ReadableStream({
                 start(controller) {
                   // Send metadata with transcript only (no LLM processing)
                   // Include pendingTranscriptions for async batch jobs
+                  // Include jobId in transcript metadata for reliable message tracking
                   const metadata: {
                     transcript: {
                       filename: string;
                       transcript: string;
                       processedContent: undefined;
+                      jobId?: string;
                     };
                     pendingTranscriptions?: typeof pendingTranscriptions;
                   } = {
@@ -133,6 +142,7 @@ export class StandardChatHandler extends BasePipelineStage {
                       filename: transcript.filename,
                       transcript: transcript.transcript,
                       processedContent: undefined, // No LLM processing
+                      jobId: pendingJobId, // For reliable message update tracking
                     },
                   };
                   if (
