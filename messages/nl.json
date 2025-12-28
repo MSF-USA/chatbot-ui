@@ -21,7 +21,11 @@
   "Please enter a message": "Voer een bericht in",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Stel je OpenAI API-sleutel in de linkeronderhoek van de zijbalk in.",
   "Precise": "Nauwkeurig",
-  "Prompt limit is {{maxLength}} characters": "Promptlimiet is {{maxLength}} tekens",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "De limiet voor de prompt is {{maxLength}} tekens. U heeft {{valueLength}} tekens ingevoerd."
+    }
+  },
   "Regenerate response": "Antwoord opnieuw genereren",
   "Save & Submit": "Opslaan & Verzenden",
   "Search_ellipsis": "Zoeken...",
@@ -1023,6 +1027,9 @@
       "done": "Gereed",
       "reset": "Resetten",
       "resetTooltip": "Herstellen naar standaardvolgorde"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Real-time webzoekopdracht"
     }
   },
   "models": {

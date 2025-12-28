@@ -812,7 +812,11 @@
   "OpenAI API Key Required": "ต้องใช้ OpenAI API Key",
   "Please enter a message": "กรุณาป้อนข้อความ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "โปรดตั้งค่า OpenAI API key ที่มุมล่างซ้ายของแถบด้านข้าง",
-  "Prompt limit is {{maxLength}} characters": "จำกัดความยาวที่ {{maxLength}} ตัวอักษร",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "จำกัดความยาวไม่เกิน {{maxLength}} ตัวอักษร คุณกรอกแล้ว {{valueLength}} ตัวอักษร"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร คุณป้อนแล้ว {{valueLength}} ตัวอักษร",
   "Regenerate response": "สร้างคำตอบใหม่",
   "Run Typewriter Intro": "เริ่มต้นแนะนำแบบพิมพ์ดีด",
@@ -1048,6 +1052,9 @@
       "done": "เสร็จสิ้น",
       "reset": "รีเซ็ต",
       "resetTooltip": "รีเซ็ตเป็นลำดับเริ่มต้น"
+    },
+    "knowledgeCutoff": {
+      "realtime": "ค้นหาข้อมูลบนเว็บแบบเรียลไทม์"
     }
   },
   "models": {

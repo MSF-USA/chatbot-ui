@@ -812,7 +812,11 @@
   "OpenAI API Key Required": "Потрібен ключ OpenAI API",
   "Please enter a message": "Будь ласка, введіть повідомлення",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Будь ласка, задайте ваш OpenAI API ключ у нижньому лівому куті бічної панелі.",
-  "Prompt limit is {{maxLength}} characters": "Ліміт підказки — {{maxLength}} символів",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Ліміт запиту — {{maxLength}} символів. Ви ввели {{valueLength}} символів."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
   "Regenerate response": "Згенерувати відповідь знову",
   "Run Typewriter Intro": "Запустити Typewriter Intro",
@@ -1048,6 +1052,9 @@
       "done": "Готово",
       "reset": "Скинути",
       "resetTooltip": "Скинути до стандартного порядку"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Пошук у реальному часі"
     }
   },
   "models": {

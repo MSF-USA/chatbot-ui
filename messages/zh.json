@@ -8,7 +8,11 @@
   "Default System Prompt": "默认系统提示",
   "Edit": "编辑",
   "Email": "电子邮件",
-  "Prompt limit is {{maxLength}} characters": "提示限制为 {{maxLength}} 个字符",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "提示限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
   "New conversation": "新对话",
   "New Conversation": "新的聊天",
@@ -982,6 +986,9 @@
       "done": "完成",
       "reset": "重置",
       "resetTooltip": "恢复默认排序"
+    },
+    "knowledgeCutoff": {
+      "realtime": "实时网页搜索"
     }
   },
   "models": {

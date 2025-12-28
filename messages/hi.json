@@ -118,7 +118,11 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट की सीमा {{maxLength}} वर्ण है",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "प्रॉम्प्ट सीमा {{maxLength}} वर्ण है। आपने {{valueLength}} वर्ण दर्ज किए हैं।"
+    }
+  },
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -982,6 +986,9 @@
       "done": "संपन्न",
       "reset": "रीसेट",
       "resetTooltip": "डिफ़ॉल्ट क्रम में रीसेट करें"
+    },
+    "knowledgeCutoff": {
+      "realtime": "रीयल-टाइम वेब सर्च"
     }
   },
   "models": {

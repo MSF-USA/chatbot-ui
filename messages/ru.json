@@ -21,7 +21,11 @@
   "Invalid folder file": "Недопустимый файл папки",
   "New conversation": "Новый разговор",
   "No prompts found": "Подсказки не найдены",
-  "Prompt limit is {{maxLength}} characters": "Лимит запроса — {{maxLength}} символов",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Лимит запроса — {{maxLength}} символов. Вы ввели {{valueLength}} символов."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Лимит сообщения: {{maxLength}} символов. Вы ввели {{valueLength}} символов.",
   "System Prompt": "Системное сообщение",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Вы ChatGPT, большая языковая модель, созданная компанией OpenAI. Следуйте инструкциям пользователя. Отвечайте на сообщения, используя Markdown",
@@ -982,6 +986,9 @@
       "done": "Готово",
       "reset": "Сбросить",
       "resetTooltip": "Сбросить на порядок по умолчанию"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Поиск в интернете в реальном времени"
     }
   },
   "models": {

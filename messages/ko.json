@@ -27,7 +27,11 @@
   "OpenAI API Key Required": "OpenAI API 키가 필요합니다",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "사이드바 왼쪽 하단에 OpenAI API 키를 설정하세요.",
   "Stop Generating": "생성 중지",
-  "Prompt limit is {{maxLength}} characters": "프롬프트는 최대 {{maxLength}}자까지 입력할 수 있습니다.",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "프롬프트는 최대 {{maxLength}}자까지 입력할 수 있습니다. 현재 {{valueLength}}자를 입력하셨습니다."
+    }
+  },
   "System Prompt": "시스템 프롬트",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "당신은 OpenAI에서 훈련된 대규모 언어 모델 ChatGPT입니다. 사용자의 지시를 주의해서 따르세요. 마크다운을 사용하여 응답하세요.",
   "Enter a prompt": "프롬프트를 입력하세요",
@@ -982,6 +986,9 @@
       "done": "완료",
       "reset": "초기화",
       "resetTooltip": "기본 정렬로 초기화"
+    },
+    "knowledgeCutoff": {
+      "realtime": "실시간 웹 검색"
     }
   },
   "models": {

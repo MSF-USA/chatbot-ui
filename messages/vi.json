@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Yêu cầu nhập API Key từ tài khoản OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vui lòng nhập API Key từ tài khoản OpenAI của bạn vào ô dưới cùng của thanh bên trái.",
   "Stop Generating": "Dừng tạo",
-  "Prompt limit is {{maxLength}} characters": "Giới hạn ký tự là {{maxLength}} ký tự",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Giới hạn nhập là {{maxLength}} ký tự. Bạn đã nhập {{valueLength}} ký tự."
+    }
+  },
   "System Prompt": "Prompt hệ thống",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Bạn là ChatGPT, một mô hình ngôn ngữ lớn được đào tạo bởi OpenAI. Hãy tuân theo hướng dẫn của người dùng một cách cẩn thận. Phản hồi bằng cách sử dụng định dạng markdown.",
   "Enter a prompt": "Nhập một Prompt",
@@ -1048,6 +1052,9 @@
       "done": "Hoàn tất",
       "reset": "Đặt lại",
       "resetTooltip": "Đặt lại về thứ tự mặc định"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Tìm kiếm web theo thời gian thực"
     }
   },
   "models": {

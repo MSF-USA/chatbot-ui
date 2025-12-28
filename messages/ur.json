@@ -94,7 +94,11 @@
   "translatorTranslationTypeLabel": "ترجمہ کی قسم",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پیغام کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "OpenAI API Key Required": "OpenAI API کلید درکار ہے",
-  "Prompt limit is {{maxLength}} characters": "پرومپٹ کی حد {{maxLength}} حروف ہے",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "پرومپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔"
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "Regenerate response": "جواب دوبارہ تیار کریں",
   "cancelButton": "منسوخ کریں",
@@ -1048,6 +1052,9 @@
       "done": "مکمل",
       "reset": "ری سیٹ کریں",
       "resetTooltip": "اصل ترتیب پر بحال کریں"
+    },
+    "knowledgeCutoff": {
+      "realtime": "ریئل ٹائم ویب تلاش"
     }
   },
   "models": {

@@ -99,7 +99,11 @@
   "OpenAI API Key Required": "Clé API OpenAI requise",
   "Please enter a message": "Veuillez entrer un message",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Veuillez définir votre clé API OpenAI en bas à gauche de la barre latérale.",
-  "Prompt limit is {{maxLength}} characters": "La limite du prompt est de {{maxLength}} caractères",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "La limite du prompt est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "La limite d'invite est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères.",
   "Regenerate response": "Régénérer la réponse",
   "Run Typewriter Intro": "Exécuter l'intro machine à écrire",
@@ -982,6 +986,9 @@
       "done": "Terminé",
       "reset": "Réinitialiser",
       "resetTooltip": "Réinitialiser l'ordre par défaut"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Recherche web en temps réel"
     }
   },
   "models": {

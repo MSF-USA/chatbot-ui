@@ -2,7 +2,11 @@
   "OpenAI API Key Required": "Este necesară cheia API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Introduceți cheia API OpenAI în partea stângă jos a barei laterale",
   "Stop Generating": "Nu mai generați",
-  "Prompt limit is {{maxLength}} characters": "Limita pentru prompt este de {{maxLength}} caractere",
+  "Prompt limit is {{maxLength}} characters": {
+    " You have entered {{valueLength}} characters": {
+      "": "Limita pentru prompt este de {{maxLength}} caractere. Ați introdus {{valueLength}} caractere."
+    }
+  },
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limita mesajelor este de {{maxLength}} caractere. Ați introdus {{valueLength}} caractere.",
   "System Prompt": "Solicitări de sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sunteți ChatGPT, un model de limbă mare antrenat de OpenAI. Urmați cu atenție instrucțiunile de utilizare. Vă rugăm să răspundeți folosind markdown.",
@@ -1048,6 +1052,9 @@
       "done": "Gata",
       "reset": "Resetează",
       "resetTooltip": "Resetează la ordinea implicită"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Căutare web în timp real"
     }
   },
   "models": {
