@@ -2,7 +2,10 @@ import { FileProcessingService } from '@/lib/services/chat';
 
 import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
-import { extractAudioFromVideo } from '@/lib/utils/server/audio/audioExtractor';
+import {
+  extractAudioFromVideo,
+  isFFmpegAvailable,
+} from '@/lib/utils/server/audio/audioExtractor';
 import { BlobStorage } from '@/lib/utils/server/blob/blob';
 import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
@@ -212,6 +215,15 @@ export class FileProcessor extends BasePipelineStage {
 
                 // Extract audio from video files before transcription
                 if (isVideo) {
+                  // Check FFmpeg availability before attempting extraction
+                  const ffmpegAvailable = await isFFmpegAvailable();
+                  if (!ffmpegAvailable) {
+                    throw new Error(
+                      `Cannot process video file "${filename}": FFmpeg is not available. ` +
+                        `Please configure the FFMPEG_BIN environment variable or install FFmpeg.`,
+                    );
+                  }
+
                   console.log(
                     `[FileProcessor] Detected video file, extracting audio: ${sanitizeForLog(filename)}`,
                   );
@@ -235,14 +247,16 @@ export class FileProcessor extends BasePipelineStage {
                       `[FileProcessor] Extracted audio size: ${extractedSizeMB}MB (video was ${originalSizeMB}MB)`,
                     );
                   } catch (extractionError) {
+                    // For video files, extraction is REQUIRED - can't send video to batch transcription
+                    // Azure Batch Transcription only accepts audio files, not video containers
                     console.error(
                       `[FileProcessor] Audio extraction FAILED for ${sanitizeForLog(filename)}:`,
                       extractionError,
                     );
-                    console.warn(
-                      `[FileProcessor] WARNING: Using original file (${originalSizeMB}MB) instead of extracted audio. This may exceed Whisper limits.`,
+                    throw new Error(
+                      `Cannot transcribe video file "${filename}": Audio extraction failed. ` +
+                        `Please ensure FFmpeg is properly installed, or try uploading an audio file instead.`,
                     );
-                    // Fall back to direct transcription (might work for some formats)
                   }
                 }
 
