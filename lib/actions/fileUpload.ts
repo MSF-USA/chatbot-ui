@@ -118,9 +118,8 @@ async function uploadFileToBlobStorage(
   const userId = getUserIdFromSession(session);
   const blobStorageClient: BlobStorage = createBlobStorageClient(session);
 
-  // Hash file contents for deduplication-based naming
-  const hashInput = data.toString('base64');
-  const hashedFileContents = Hasher.sha256(hashInput).slice(0, 200);
+  // Hash buffer directly - avoids base64 string length limit for large files
+  const hashedFileContents = Hasher.sha256(data).slice(0, 200);
   const extension: string | undefined = filename.split('.').pop();
 
   // Determine content type
