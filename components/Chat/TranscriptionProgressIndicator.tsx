@@ -72,7 +72,7 @@ export function TranscriptionProgressIndicator({
       </div>
 
       {/* Show chunk progress if available */}
-      {progress && progress.total > 1 && (
+      {progress && progress.total > 1 && progress.completed > 0 && (
         <div className="w-full mt-1">
           <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
             <span>
