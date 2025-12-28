@@ -105,7 +105,9 @@ export function TranscriptContent({
     };
 
     fetchTranscript();
-  }, [blobRef?.jobId, t]);
+    // Note: blobRef is derived from content via parseBlobReference and won't
+    // change unless content changes. Using blobRef.jobId to avoid stale closures.
+  }, [blobRef, t]);
 
   // Inline content - render directly
   if (!blobRef) {
