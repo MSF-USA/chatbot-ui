@@ -20,11 +20,50 @@ import toast from 'react-hot-toast';
 
 import { generateConversationTitle } from '@/client/services/titleService';
 
-import { BatchTranscriptionStatusResponse } from '@/types/transcription';
+import {
+  BatchTranscriptionStatusResponse,
+  TRANSCRIPT_BLOB_THRESHOLD,
+  TranscriptReference,
+} from '@/types/transcription';
 
 import { useChatInputStore } from '@/client/stores/chatInputStore';
 import { useChatStore } from '@/client/stores/chatStore';
 import { useConversationStore } from '@/client/stores/conversationStore';
+
+/**
+ * Stores a large transcript in blob storage and returns a reference.
+ * Returns null if storage fails (caller should fall back to inline storage).
+ */
+async function storeTranscriptInBlob(
+  jobId: string,
+  transcript: string,
+  filename: string,
+): Promise<TranscriptReference | null> {
+  try {
+    const response = await fetch('/api/transcription/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId, transcript, filename }),
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `[useTranscriptionPolling] Failed to store transcript in blob: ${response.status}`,
+      );
+      return null;
+    }
+
+    const responseBody = await response.json();
+    const data = responseBody.data || responseBody;
+    return data as TranscriptReference;
+  } catch (error) {
+    console.warn(
+      '[useTranscriptionPolling] Error storing transcript in blob:',
+      error,
+    );
+    return null;
+  }
+}
 
 /** Polling intervals in milliseconds */
 const POLL_INTERVALS = {
@@ -143,6 +182,7 @@ export function useTranscriptionPolling(): void {
         messageIndex,
         '[Transcription timed out after 10 minutes]',
         filename,
+        jobId, // Pass jobId for reliable message matching
       );
 
       // Clear pending state
@@ -179,6 +219,7 @@ export function useTranscriptionPolling(): void {
             messageIndex,
             `[Transcription failed: Unable to retrieve status after ${MAX_CONSECUTIVE_FAILURES} attempts]`,
             filename,
+            jobId, // Pass jobId for reliable message matching
           );
           setConversationTranscriptionPending(null);
           toast.error(
@@ -224,12 +265,47 @@ export function useTranscriptionPolling(): void {
           `[useTranscriptionPolling] Conversation transcription completed: ${filename}`,
         );
 
-        // Update message content with actual transcript
+        // Check if transcript is large enough to store in blob
+        const transcriptSize = new Blob([data.transcript]).size;
+        let messageContent: string;
+
+        if (transcriptSize > TRANSCRIPT_BLOB_THRESHOLD) {
+          console.log(
+            `[useTranscriptionPolling] Large transcript (${transcriptSize} bytes), storing in blob`,
+          );
+
+          // Store in blob storage
+          const blobRef = await storeTranscriptInBlob(
+            jobId,
+            data.transcript,
+            filename,
+          );
+
+          if (blobRef) {
+            // Use blob reference format that UI can detect and load
+            messageContent = `[Transcript: ${filename} | blob:${jobId} | expires:${blobRef.expiresAt}]`;
+            console.log(
+              `[useTranscriptionPolling] Stored transcript in blob: ${blobRef.blobPath}`,
+            );
+          } else {
+            // Fall back to inline storage if blob upload fails
+            console.warn(
+              `[useTranscriptionPolling] Blob storage failed, using inline storage`,
+            );
+            messageContent = `[Transcript: ${filename}]\n${data.transcript}`;
+          }
+        } else {
+          // Small transcript - store inline as before
+          messageContent = `[Transcript: ${filename}]\n${data.transcript}`;
+        }
+
+        // Update message content with transcript (inline or blob reference)
         updateMessageWithTranscript(
           conversationId,
           messageIndex,
-          data.transcript,
+          messageContent,
           filename,
+          jobId, // Pass jobId for reliable message matching
         );
 
         // Clear pending state
@@ -278,6 +354,7 @@ export function useTranscriptionPolling(): void {
           messageIndex,
           `[Transcription failed${data.error ? `: ${data.error}` : ''}]`,
           filename,
+          jobId, // Pass jobId for reliable message matching
         );
 
         // Clear pending state
@@ -311,6 +388,7 @@ export function useTranscriptionPolling(): void {
           messageIndex,
           `[Transcription failed: Network error after ${MAX_CONSECUTIVE_FAILURES} attempts]`,
           filename,
+          jobId, // Pass jobId for reliable message matching
         );
         setConversationTranscriptionPending(null);
         toast.error(`Transcription failed: ${filename} - Network error`, {
