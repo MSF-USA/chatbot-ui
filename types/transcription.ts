@@ -43,7 +43,21 @@ export interface TranscriptionResponse {
 }
 
 /**
- * Status response when polling a batch transcription job.
+ * Progress information for chunked transcription jobs.
+ */
+export interface TranscriptionProgress {
+  /** Number of chunks completed */
+  completed: number;
+  /** Total number of chunks */
+  total: number;
+}
+
+/**
+ * Status response when polling a transcription job.
+ *
+ * Supports both:
+ * - Chunked jobs: Local processing with FFmpeg + Whisper
+ * - Batch jobs: Azure Speech Services (legacy)
  */
 export interface BatchTranscriptionStatusResponse {
   /** Current status of the job */
@@ -52,6 +66,10 @@ export interface BatchTranscriptionStatusResponse {
   transcript?: string;
   /** Error message (only when status is 'Failed') */
   error?: string;
+  /** Progress for chunked transcription jobs */
+  progress?: TranscriptionProgress;
+  /** Type of job ('chunked' or 'batch') */
+  jobType?: 'chunked' | 'batch';
   /** When the job was created */
   createdAt?: string;
   /** When the job completed (only when finished) */
