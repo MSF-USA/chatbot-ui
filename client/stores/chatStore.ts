@@ -461,9 +461,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     assistantMessage: Message,
     conversation: Conversation,
     threadId?: string,
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath: string;
+    }[],
   ) => {
     const conversationStore = useConversationStore.getState();
     const { regeneratingIndex } = get();
+    const hasPendingTranscription =
+      pendingTranscriptions && pendingTranscriptions.length > 0;
 
     if (regeneratingIndex !== null) {
       // Adding a new version to an existing message group
@@ -496,25 +503,37 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           updates.name = fallbackName;
         }
 
-        // Generate AI title async (fire and forget - updates when ready)
-        const conversationId = conversation.id;
-        const modelId = conversation.model.id;
-        const messageGroups = [
-          ...conversation.messages,
-          createMessageGroup(assistantMessage),
-        ];
+        // Defer AI title generation if transcription is pending
+        // The polling hook will generate the title after transcription completes
+        if (hasPendingTranscription) {
+          console.log(
+            '[ChatStore] Deferring title generation until transcription completes',
+          );
+          // Use filename as temporary title if available
+          if (pendingTranscriptions[0]?.filename) {
+            updates.name = pendingTranscriptions[0].filename;
+          }
+        } else {
+          // Generate AI title async (fire and forget - updates when ready)
+          const conversationId = conversation.id;
+          const modelId = conversation.model.id;
+          const messageGroups = [
+            ...conversation.messages,
+            createMessageGroup(assistantMessage),
+          ];
 
-        generateConversationTitle(messageGroups, modelId)
-          .then((result) => {
-            if (result?.title) {
-              conversationStore.updateConversation(conversationId, {
-                name: result.title,
-              });
-            }
-          })
-          .catch((error) => {
-            console.error('[ChatStore] Failed to generate AI title:', error);
-          });
+          generateConversationTitle(messageGroups, modelId)
+            .then((result) => {
+              if (result?.title) {
+                conversationStore.updateConversation(conversationId, {
+                  name: result.title,
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('[ChatStore] Failed to generate AI title:', error);
+            });
+        }
       }
 
       conversationStore.updateConversation(conversation.id, updates);
@@ -688,18 +707,33 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       // Process the stream
       const streamParser = new StreamParser();
-      const { finalContent, threadId } = await get().processStream(
-        stream,
-        streamParser,
-        showLoadingTimeout,
-      );
+      const { finalContent, threadId, pendingTranscriptions } =
+        await get().processStream(stream, streamParser, showLoadingTimeout);
 
       // Create assistant message
       const assistantMessage = streamParser.toMessage(finalContent);
 
+      // Handle pending transcriptions (async batch jobs for large files)
+      if (pendingTranscriptions && pendingTranscriptions.length > 0) {
+        const messageIndex = conversation.messages.length;
+        const pending = pendingTranscriptions[0];
+        get().setConversationTranscriptionPending({
+          conversationId: conversation.id,
+          jobId: pending.jobId,
+          messageIndex,
+          filename: pending.filename,
+          blobPath: pending.blobPath,
+        });
+      }
+
       // Finalize: update conversation with original model (not fallback)
       // The message was generated with fallback but we keep the conversation model unchanged
-      await get().finalizeMessage(assistantMessage, conversation, threadId);
+      await get().finalizeMessage(
+        assistantMessage,
+        conversation,
+        threadId,
+        pendingTranscriptions,
+      );
 
       // Clear streaming state and show success
       get().clearStreamingState();
