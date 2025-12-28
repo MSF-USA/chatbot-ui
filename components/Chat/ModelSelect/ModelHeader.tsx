@@ -1,9 +1,10 @@
 import { IconChevronLeft } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { modelIdToLocaleKey } from '@/lib/utils/app/locales';
+import { formatKnowledgeCutoff } from '@/lib/utils/shared/formatKnowledgeCutoff';
 
 import { OpenAIModel } from '@/types/openai';
 
@@ -21,6 +22,7 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
   setMobileView,
 }) => {
   const t = useTranslations();
+  const locale = useLocale();
 
   // Get localized model data if available
   const localeKey = modelIdToLocaleKey(selectedModel.id);
@@ -30,9 +32,19 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
   const localizedDescription = t.has(`models.${localeKey}.description`)
     ? t(`models.${localeKey}.description`)
     : selectedModel.description || modelConfig?.description;
-  const localizedKnowledgeCutoff = t.has(`models.${localeKey}.knowledgeCutoff`)
-    ? t(`models.${localeKey}.knowledgeCutoff`)
-    : modelConfig?.knowledgeCutoff;
+
+  // Get knowledge cutoff display - format ISO date with locale, or use translation for special cases
+  let knowledgeCutoffDisplay: string | null = null;
+  if (modelConfig?.knowledgeCutoffDate) {
+    // Has ISO date - format with user's locale
+    knowledgeCutoffDisplay = formatKnowledgeCutoff(
+      modelConfig.knowledgeCutoffDate,
+      locale,
+    );
+  } else if (modelConfig?.isAgent) {
+    // Special case for agent models (real-time web search)
+    knowledgeCutoffDisplay = t('modelSelect.knowledgeCutoff.realtime');
+  }
 
   // Get localized model type
   const modelType = modelConfig?.modelType || 'foundational';
@@ -77,10 +89,10 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
         >
           {localizedModelType}
         </span>
-        {localizedKnowledgeCutoff && (
+        {knowledgeCutoffDisplay && (
           <span className="text-xs text-gray-600 dark:text-gray-400">
             {t('modelSelect.header.knowledgeCutoff', {
-              cutoff: localizedKnowledgeCutoff,
+              cutoff: knowledgeCutoffDisplay,
             })}
           </span>
         )}
