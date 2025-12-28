@@ -64,8 +64,9 @@ import { env } from '@/config/environment';
  * - Non-streaming: application/json with { text: string }
  */
 export async function POST(req: NextRequest): Promise<Response> {
-  // Request timeout (60 seconds for standard chat, 5 minutes for file processing)
-  const timeoutMs = 60000; // 60 seconds
+  // Request timeout increased to handle large file downloads + processing
+  // Large video files (351MB+) can take 60-90s to download, plus extraction and batch job submission
+  const timeoutMs = 300000; // 5 minutes for file processing scenarios
 
   try {
     // Create timeout promise
