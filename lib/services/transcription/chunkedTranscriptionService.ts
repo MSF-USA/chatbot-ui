@@ -3,8 +3,8 @@
  *
  * Handles transcription of large audio files (>25MB) by:
  * 1. Splitting the audio into smaller chunks using FFmpeg
- * 2. Transcribing each chunk using the Whisper API
- * 3. Combining the results with chunk markers
+ * 2. Transcribing chunks in parallel (with concurrency limit) using the Whisper API
+ * 3. Combining the results with chunk markers, maintaining correct order
  *
  * This replaces the unreliable Azure Batch Transcription service
  * with a more reliable chunked approach using the same Whisper API
@@ -30,8 +30,8 @@ import { WhisperTranscriptionService } from './whisperTranscriptionService';
 
 import { v4 as uuidv4 } from 'uuid';
 
-/** Delay between chunk transcriptions to avoid rate limiting (ms) */
-const DELAY_BETWEEN_CHUNKS_MS = 500;
+/** Maximum number of chunks to process in parallel */
+const MAX_CONCURRENT_CHUNKS = 3;
 
 /** Maximum retries for a single chunk */
 const MAX_CHUNK_RETRIES = 2;
@@ -49,6 +49,14 @@ export interface ChunkedJobStartResult {
   jobId: string;
   /** Total number of chunks to process */
   totalChunks: number;
+}
+
+/** Result of transcribing a single chunk */
+interface ChunkResult {
+  /** Original index of the chunk (for ordering) */
+  index: number;
+  /** Transcribed text */
+  transcript: string;
 }
 
 /**
@@ -139,10 +147,13 @@ export class ChunkedTranscriptionService {
   }
 
   /**
-   * Processes chunks asynchronously in the background.
+   * Processes chunks asynchronously in the background using parallel batches.
    *
    * This method is called without await from startJob() and runs
    * independently, updating the job store as it progresses.
+   *
+   * Chunks are processed in parallel batches of MAX_CONCURRENT_CHUNKS,
+   * but results are sorted by index to maintain original order.
    */
   private async processChunksAsync(
     jobId: string,
@@ -150,43 +161,69 @@ export class ChunkedTranscriptionService {
     filename: string,
     options?: ChunkedTranscriptionOptions,
   ): Promise<void> {
-    const transcripts: string[] = [];
     const totalChunks = chunkPaths.length;
+    const results: ChunkResult[] = [];
 
     console.log(
-      `[ChunkedTranscription] Starting async processing for job ${jobId}`,
+      `[ChunkedTranscription] Starting parallel processing for job ${jobId} ` +
+        `(${totalChunks} chunks, max ${MAX_CONCURRENT_CHUNKS} concurrent)`,
     );
 
     try {
-      for (let i = 0; i < chunkPaths.length; i++) {
-        const chunkPath = chunkPaths[i];
-        const chunkNum = i + 1;
-
-        // Update progress at start of each chunk
-        updateProgress(jobId, i, i);
+      // Process chunks in parallel batches
+      for (
+        let batchStart = 0;
+        batchStart < totalChunks;
+        batchStart += MAX_CONCURRENT_CHUNKS
+      ) {
+        const batchEnd = Math.min(
+          batchStart + MAX_CONCURRENT_CHUNKS,
+          totalChunks,
+        );
+        const batchChunkPaths = chunkPaths.slice(batchStart, batchEnd);
 
         console.log(
-          `[ChunkedTranscription] Transcribing chunk ${chunkNum}/${totalChunks}: ${chunkPath}`,
+          `[ChunkedTranscription] Processing batch: chunks ${batchStart + 1}-${batchEnd} of ${totalChunks}`,
         );
 
-        // Transcribe with retry logic
-        const transcript = await this.transcribeChunkWithRetry(
-          chunkPath,
-          chunkNum,
-          totalChunks,
-          options,
+        // Update progress at batch start
+        updateProgress(jobId, results.length, batchStart);
+
+        // Process this batch in parallel
+        const batchPromises = batchChunkPaths.map(
+          async (chunkPath, batchIndex) => {
+            const globalIndex = batchStart + batchIndex;
+            const chunkNum = globalIndex + 1;
+
+            console.log(
+              `[ChunkedTranscription] Transcribing chunk ${chunkNum}/${totalChunks}: ${chunkPath}`,
+            );
+
+            const transcript = await this.transcribeChunkWithRetry(
+              chunkPath,
+              chunkNum,
+              totalChunks,
+              options,
+            );
+
+            return { index: globalIndex, transcript };
+          },
         );
 
-        transcripts.push(transcript);
+        // Wait for all chunks in this batch to complete
+        const batchResults = await Promise.all(batchPromises);
+        results.push(...batchResults);
+
+        // Update progress after batch completes
+        updateProgress(jobId, results.length, batchEnd - 1);
 
         // Call progress callback if provided
-        options?.onProgress?.(chunkNum, totalChunks);
-
-        // Rate limit delay between chunks (except for last chunk)
-        if (i < chunkPaths.length - 1) {
-          await delay(DELAY_BETWEEN_CHUNKS_MS);
-        }
+        options?.onProgress?.(results.length, totalChunks);
       }
+
+      // Sort by index to ensure correct order (parallel results may arrive out of order)
+      results.sort((a, b) => a.index - b.index);
+      const transcripts = results.map((r) => r.transcript);
 
       // Combine transcripts with chunk markers
       const combinedTranscript = this.combineTranscripts(
