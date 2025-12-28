@@ -7,6 +7,7 @@ export interface TranscriptMetadata {
   filename: string;
   transcript: string;
   processedContent?: string; // If user provided instructions for processing
+  jobId?: string; // For tracking async transcription jobs and reliable message updates
 }
 
 /**
