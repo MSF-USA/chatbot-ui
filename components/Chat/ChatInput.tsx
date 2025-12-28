@@ -522,6 +522,7 @@ export const ChatInput = ({
             <TranscriptionProgressIndicator
               startedAt={pendingConversationTranscription.startedAt}
               filename={pendingConversationTranscription.filename}
+              progress={pendingConversationTranscription.progress}
             />
           </div>
         )}
