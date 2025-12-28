@@ -10,6 +10,15 @@ export interface TranscriptMetadata {
 }
 
 /**
+ * Pending batch transcription job info for async processing
+ */
+export interface PendingTranscriptionInfo {
+  filename: string;
+  jobId: string;
+  blobPath: string;
+}
+
+/**
  * Metadata object that can be embedded in streamed responses
  */
 export interface StreamMetadata {
@@ -18,6 +27,7 @@ export interface StreamMetadata {
   thinking?: string;
   transcript?: TranscriptMetadata;
   action?: string; // Current action being performed (e.g., "searching_web", "processing")
+  pendingTranscriptions?: PendingTranscriptionInfo[]; // Async batch transcription jobs
 }
 
 /**
@@ -30,6 +40,7 @@ export interface ParsedMetadata {
   thinking?: string;
   transcript?: TranscriptMetadata;
   action?: string;
+  pendingTranscriptions?: PendingTranscriptionInfo[];
   extractionMethod: 'metadata' | 'none';
 }
 
@@ -47,6 +58,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
   let thinking: string | undefined;
   let transcript: TranscriptMetadata | undefined;
   let action: string | undefined;
+  let pendingTranscriptions: PendingTranscriptionInfo[] | undefined;
   let extractionMethod: ParsedMetadata['extractionMethod'] = 'none';
 
   // Check for metadata format
@@ -76,6 +88,9 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
       }
       if (parsedData.action) {
         action = parsedData.action;
+      }
+      if (parsedData.pendingTranscriptions) {
+        pendingTranscriptions = parsedData.pendingTranscriptions;
       }
     } catch (error) {
       console.error('Error parsing metadata JSON:', error);
