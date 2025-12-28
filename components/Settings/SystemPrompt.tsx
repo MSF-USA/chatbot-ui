@@ -55,7 +55,7 @@ export const SystemPrompt: FC<Props> = ({
     if (value.length > maxLength) {
       alert(
         t(
-          `Prompt limit is {{maxLength}} characters. You have entered {{valueLength}} characters.`,
+          `Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_`,
           { maxLength, valueLength: value.length },
         ),
       );
@@ -192,11 +192,11 @@ export const SystemPrompt: FC<Props> = ({
     <div className="flex flex-col">
       <span className="mb-2 text-[12px] text-black/50 dark:text-white/50 text-sm">
         {t(
-          'Add your personal instructions to customize how the AI responds. These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses.',
+          'Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_',
         )}
       </span>
       <span className="mb-4 text-[11px] text-black/40 dark:text-white/40">
-        {t('Tip: Type "/" to select from saved prompt templates.')}
+        {t('Tip: Type "/" to select from saved prompt templates_')}
       </span>
       <textarea
         ref={textareaRef}
