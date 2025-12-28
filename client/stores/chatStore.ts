@@ -93,7 +93,9 @@ interface ChatStore {
     pendingTranscriptions?: {
       filename: string;
       jobId: string;
-      blobPath: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
     }[];
   }>;
   finalizeMessage: (
@@ -103,7 +105,9 @@ interface ChatStore {
     pendingTranscriptions?: {
       filename: string;
       jobId: string;
-      blobPath: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
     }[],
   ) => Promise<void>;
   generateConversationName: (firstUserMessage: Message) => string | null;
@@ -238,6 +242,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         ? { ...info, startedAt: Date.now() }
         : null,
     }),
+
+  updateTranscriptionProgress: (completed, total) =>
+    set((state) => ({
+      pendingConversationTranscription: state.pendingConversationTranscription
+        ? {
+            ...state.pendingConversationTranscription,
+            progress: { completed, total },
+          }
+        : null,
+    })),
 
   sendMessage: async (message, conversation, searchMode) => {
     console.log('[chatStore.sendMessage] Message toneId:', message.toneId);
@@ -406,7 +420,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     pendingTranscriptions?: {
       filename: string;
       jobId: string;
-      blobPath: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
     }[];
   }> => {
     const reader = stream.getReader();
@@ -477,7 +493,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     pendingTranscriptions?: {
       filename: string;
       jobId: string;
-      blobPath: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
     }[],
   ) => {
     const conversationStore = useConversationStore.getState();
