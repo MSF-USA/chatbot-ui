@@ -1390,6 +1390,11 @@
     "completed": "Transcription complete",
     "completedToast": "Transcription complete: {filename}",
     "placeholder": "[Transcription in progress: {filename}]",
+    "loadingTranscript": "Loading transcript for {filename}...",
+    "expiredOrDeleted": "This transcript has expired or been deleted.",
+    "fetchError": "Failed to load transcript. Please try again.",
+    "transcriptExpired": "The transcript for {filename} has expired. Transcripts are automatically deleted after {days} days for privacy.",
+    "expirationWarning": "The transcript for {filename} will expire in {days} day(s). Copy the content if you need to keep it.",
     "languages": {
       "autoDetect": "Auto-detect",
       "afrikaans": "Afrikaans",
