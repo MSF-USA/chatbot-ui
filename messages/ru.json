@@ -21,11 +21,7 @@
   "Invalid folder file": "Недопустимый файл папки",
   "New conversation": "Новый разговор",
   "No prompts found": "Подсказки не найдены",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Лимит запроса — {{maxLength}} символов. Вы ввели {{valueLength}} символов."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Ограничение запроса — {{maxLength}} символов",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Лимит сообщения: {{maxLength}} символов. Вы ввели {{valueLength}} символов.",
   "System Prompt": "Системное сообщение",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Вы ChatGPT, большая языковая модель, созданная компанией OpenAI. Следуйте инструкциям пользователя. Отвечайте на сообщения, используя Markdown",
@@ -1461,5 +1457,7 @@
       "vietnamese": "Вьетнамский",
       "welsh": "Валлийский"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Добавьте свои инструкции, чтобы настроить ответы ИИ. Они будут дополнены основными правилами поведения, обеспечивающими полезные, точные и безопасные ответы.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Совет: введите «/», чтобы выбрать из сохранённых шаблонов запросов."
 }

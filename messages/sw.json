@@ -457,11 +457,7 @@
   "Privacy Policy": "Sera ya Faragha",
   "Prompt": "Kidokezo",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Kikomo cha herufi ni {{maxLength}}. Umeandika herufi {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kikomo cha maelekezo ni {{maxLength}} herufi",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
   "Regenerate response": "Tengeneza jibu upya",
   "Retry": "Jaribu tena",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "Tumia mtindo wa uandishi chaguomsingi",
     "noTonesCreated": "Hakuna tono lililoundwa bado",
     "createTonesHint": "Unda matono kwenye Vitendo vya Haraka"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ongeza maelekezo yako binafsi kubinafsisha jinsi AI inavyojibu. Haya yanaunganishwa na miongozo ya msingi ili kuhakikisha majibu ni ya msaada, sahihi na salama.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Dokezo: Andika \"/\" kuchagua kutoka kwenye templeti za maelekezo zilizohifadhiwa."
 }

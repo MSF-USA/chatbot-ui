@@ -94,11 +94,7 @@
   "translatorTranslationTypeLabel": "ترجمہ کی قسم",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پیغام کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "OpenAI API Key Required": "OpenAI API کلید درکار ہے",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "پرومپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "پرومپٹ کی حد {{maxLength}} حروف ہے",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "Regenerate response": "جواب دوبارہ تیار کریں",
   "cancelButton": "منسوخ کریں",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "ڈیفالٹ لکھنے کا انداز استعمال کریں",
     "noTonesCreated": "ابھی تک کوئی ٹونز نہیں بنائی گئی ہیں",
     "createTonesHint": "کوئیک ایکشنز میں ٹونز بنائیں"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "اپنی ذاتی ہدایات شامل کریں تاکہ AI کے ردعمل کو اپنی مرضی کے مطابق بنا سکیں۔ یہ ہدایات بنیادی رہنمائی کے ساتھ ملائی جاتی ہیں جو مددگار، درست اور محفوظ جوابات کو یقینی بناتی ہیں۔",
+  "Tip: Type \"/\" to select from saved prompt templates_": "ٹپ: محفوظ شدہ پرومپٹ ٹیمپلیٹس میں سے منتخب کرنے کے لیے \"/\" ٹائپ کریں۔"
 }

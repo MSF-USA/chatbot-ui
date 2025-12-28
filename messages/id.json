@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "Memerlukan Kunci API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Silakan atur kunci API OpenAI Anda di bagian kiri bawah bilah sisi.",
   "Stop Generating": "Berhenti Menghasilkan",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Batas prompt adalah {{maxLength}} karakter. Anda telah memasukkan {{valueLength}} karakter."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Batas prompt adalah {{maxLength}} karakter",
   "System Prompt": "Prompt Sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Anda adalah ChatGPT, model bahasa besar yang dilatih oleh OpenAI. Ikuti instruksi pengguna dengan hati-hati. Balas menggunakan markdown.",
   "Enter a prompt": "Masukkan sebuah prompt",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "Gunakan gaya penulisan default",
     "noTonesCreated": "Belum ada nada yang dibuat",
     "createTonesHint": "Buat nada di Aksi Cepat"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Tambahkan instruksi pribadi Anda untuk menyesuaikan respons AI. Instruksi ini akan digabungkan dengan pedoman utama untuk memastikan respons yang bermanfaat, akurat, dan aman.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Ketik \"/\" untuk memilih dari template prompt yang tersimpan."
 }

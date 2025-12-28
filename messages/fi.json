@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API-avain tarvitaan",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Ole hyvä ja aseta OpenAI API-avaimesi sivupalkin vasemmassa alareunassa.",
   "Stop Generating": "Lopeta generointi",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Kehotteen enimmäispituus on {{maxLength}} merkkiä. Olet syöttänyt {{valueLength}} merkkiä."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kehotteen pituusraja on {{maxLength}} merkkiä",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sinä olet ChatGPT, OpenAI:n opettama laaja kielimalli. Seuraa käyttäjän ohjeita tarkasti. Vastaa käyttäen markdownia.",
   "Enter a prompt": "Syötä prompti",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "Käytä oletuskirjoitustyyliä",
     "noTonesCreated": "Äänensävyjä ei ole vielä luotu",
     "createTonesHint": "Luo äänensävyjä Pikatoiminnoissa"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Lisää omat ohjeesi räätälöidäksesi, miten tekoäly vastaa. Nämä yhdistetään ydinkäyttäytymissääntöihin, jotka takaavat hyödylliset, tarkat ja turvalliset vastaukset.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Vinkki: Kirjoita \"/\" valitaksesi tallennetuista kehotepohjista."
 }

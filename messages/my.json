@@ -27,11 +27,7 @@
   "Please enter a message": "ကျေးဇူးပြု၍ စာတစ်စောင် ရိုက်ထည့်ပါ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "ကျေးဇူးပြု၍ သင့် OpenAI API သော့ကို ဘယ်ဘက်အောက်ခြေ ဘေးတန်းတွင် သတ်မှတ်ပါ။",
   "Precise": "တိကျသော",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "အကြံပြုပြောချက်တွင် အများဆုံးစာလုံး {{maxLength}} လုံးသုံးနိုင်သည်။ သင်ရေးသွင်းထားသောစာလုံးအရေအတွက်မှာ {{valueLength}} လုံးဖြစ်သည်။"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "မေးခွန်းအရှည် အထက်ဆုံး {{maxLength}} အက္ခရာသာ ခွင့်ပြုပါတယ်။",
   "Regenerate response": "တုံ့ပြန်မှုကို ပြန်လည်ထုတ်လုပ်ရန်",
   "Save & Submit": "သိမ်းဆည်း & တင်သွင်းရန်",
   "Search_ellipsis": "ရှာဖွေရန်...",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "မူလရေးသားပုံကိုအသုံးပြုပါ",
     "noTonesCreated": "အသံသွင်းပုံ မရှိသေးပါ",
     "createTonesHint": "Quick Actions တွင် အသံသွင်းပုံများ တည်ဆောက်နိုင်သည်"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI ရဲ့ တုန့်ပြန်မှုကို ပြင်ဆင်နိုင်ရန် ကိုယ်ပိုင်ညွှန်ကြားချက်များ ထည့်ပါ။ ဤညွှန်ကြားချက်များကို အထောက်အကူပြု၊ တိကျမှန်ကန်ပြီး လုံခြုံစိတ်ချသော တုန့်ပြန်မှုများ ရရှိစေရန် မူဝါဒအညွှန်းနှင့် တွဲဖက်အသုံးပြုပါသည်။",
+  "Tip: Type \"/\" to select from saved prompt templates_": "အကြံပြုချက် - သိမ်းထားသော prompt template များကို ရွေးချယ်ရန် \"/\" ကို ရိုက်ထည့်ပါ။"
 }

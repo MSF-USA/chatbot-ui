@@ -53,11 +53,7 @@
   "Plugin Keys": "Klíče pluginů",
   "Prompt": "Výzva",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte '{{}}' k označení proměnné. Např.: '{{name}}' je '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Limit pro zadání je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Limit pro zadání je {{maxLength}} znaků.",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit výzvy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
   "Regenerate response": "Regenerovat odpověď",
   "Save & Submit": "Uložit a odeslat",
@@ -1461,5 +1457,7 @@
       "vietnamese": "vietnamština",
       "welsh": "velština"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními zásadami chování, které zajišťují užitečné, přesné a bezpečné odpovědi.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání."
 }

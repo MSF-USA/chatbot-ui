@@ -99,11 +99,7 @@
   "OpenAI API Key Required": "Clé API OpenAI requise",
   "Please enter a message": "Veuillez entrer un message",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Veuillez définir votre clé API OpenAI en bas à gauche de la barre latérale.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "La limite du prompt est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "La limite de saisie est de {{maxLength}} caractères",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "La limite d'invite est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères.",
   "Regenerate response": "Régénérer la réponse",
   "Run Typewriter Intro": "Exécuter l'intro machine à écrire",
@@ -1461,5 +1457,7 @@
       "vietnamese": "Vietnamien",
       "welsh": "Gallois"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ajoutez vos instructions personnelles pour personnaliser les réponses de l'IA. Celles-ci sont combinées avec les directives principales afin de garantir des réponses utiles, précises et sûres.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Astuce : tapez « / » pour sélectionner un modèle d'invite enregistré."
 }

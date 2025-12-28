@@ -812,11 +812,7 @@
   "OpenAI API Key Required": "Потрібен ключ OpenAI API",
   "Please enter a message": "Будь ласка, введіть повідомлення",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Будь ласка, задайте ваш OpenAI API ключ у нижньому лівому куті бічної панелі.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Ліміт запиту — {{maxLength}} символів. Ви ввели {{valueLength}} символів."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Обмеження підказки — {{maxLength}} символів",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
   "Regenerate response": "Згенерувати відповідь знову",
   "Run Typewriter Intro": "Запустити Typewriter Intro",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "Використовувати стиль за замовчуванням",
     "noTonesCreated": "Ще не створено жодного тону",
     "createTonesHint": "Створюйте тони у Швидких діях"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Додайте особисті інструкції, щоб налаштувати відповіді ШІ. Вони поєднуються з основними правилами, які забезпечують корисні, точні та безпечні відповіді.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Порада: введіть \"/\", щоб вибрати із збережених шаблонів підказок."
 }

@@ -21,11 +21,7 @@
   "Invalid folder file": "ملف مجلد غير صالح",
   "New conversation": "محادثة جديدة",
   "No prompts found": "لم يتم العثور على موجهات",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "الحد الأقصى للمطالبة هو {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "الحد الأقصى للطَلب هو {{maxLength}} حرفاً",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "حد الموجه {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا.",
   "System Prompt": "مطالبة النظام",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "أنت شات جبت نموذج لغة كبير تم تدريبه بواسطة أوبن أيه أي. اتبع تعليمات المستخدم بعناية. الرد باستخدام الماركداون",
@@ -1461,5 +1457,7 @@
       "vietnamese": "الفيتنامية",
       "welsh": "الويلزية"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ."
 }

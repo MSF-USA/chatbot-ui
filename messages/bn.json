@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API key বাধ্যতামূলক",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "দয়া করে আপনার OpenAI API key বামে সাইডবারের নিচের দিকে সেট করুন।",
   "Stop Generating": "বার্তা জেনারেট করা বন্ধ করুন",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "প্রম্পটের সীমা {{maxLength}} অক্ষর। আপনি প্রবেশ করেছেন {{valueLength}} অক্ষর।"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "প্রম্পটের সীমা {{maxLength}} অক্ষর",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "প্রম্পট সীমা {{maxLength}} অক্ষর। আপনি {{valueLength}} অক্ষর লিখেছেন।",
   "System Prompt": "সিস্টেম নির্দেশনা (বার্তা)",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "তুমি ChatGPT, OpenAI দ্বারা প্রশিক্ষিত একটি বড় ভাষা মডেল। সাবধানে ব্যবহারকারীর নির্দেশাবলী অনুসরণ করুন. মার্কডাউন ব্যবহার করে উত্তর দিন।",
@@ -1461,5 +1457,7 @@
       "vietnamese": "ভিয়েতনামী",
       "welsh": "ওয়েলশ"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI কিভাবে প্রতিক্রিয়া জানাবে তা কাস্টমাইজ করতে আপনার ব্যক্তিগত নির্দেশনা যোগ করুন। এগুলো মূল আচরণ নির্দেশিকার সঙ্গে একত্রিত হয়, যা সহায়ক, সঠিক ও নিরাপদ প্রতিক্রিয়া নিশ্চিত করে।",
+  "Tip: Type \"/\" to select from saved prompt templates_": "টিপ: সংরক্ষিত প্রম্পট টেমপ্লেট থেকে নির্বাচন করতে \"/\" লিখুন।"
 }

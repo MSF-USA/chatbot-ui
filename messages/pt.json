@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "A API Key da OpenAI é necessária",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Por favor, insira sua API Key da OpenAI no canto inferior esquerdo da barra lateral.",
   "Stop Generating": "Parar de gerar",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "O limite do prompt é de {{maxLength}} caracteres. Você digitou {{valueLength}} caracteres."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "O limite do prompt é de {{maxLength}} caracteres",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "O limite do prompt é de {{maxLength}} caracteres. Você inseriu {{valueLength}} caracteres.",
   "System Prompt": "Mensagem do sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Você é o ChatGPT, um grande modelo de linguagem treinado pela OpenAI. Siga as instruções do usuário cuidadosamente. Responda usando markdown.",
@@ -1461,5 +1457,7 @@
       "vietnamese": "Vietnamita",
       "welsh": "Galês"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adicione suas instruções pessoais para personalizar as respostas da IA. Elas são combinadas com diretrizes principais de comportamento que garantem respostas úteis, precisas e seguras.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Dica: digite \"/\" para selecionar entre modelos de prompt salvos."
 }

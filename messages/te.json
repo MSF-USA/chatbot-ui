@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "ఒపెన్ ఎయి ఐ API కీ అవసరం",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "దయచేసి మీ OpenAI API కీని సైడ్ బార్ యొక్క దిగువ ఎడమ భాగంలో సెట్ చేయండి.",
   "Stop Generating": "జెనరేట్ చేస్తున్న ప్రక్రియ నిలిపేయి",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "ప్రాంప్ట్ పరిమితి {{maxLength}} అక్షరాలు. మీరు {{valueLength}} అక్షరాలు నమోదు చేయడం జరిగింది."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "ప్రాంప్ట్ పరిమితం {{maxLength}} అక్షరాలు",
   "System Prompt": "సిస్టమ్ ప్రాంప్ట్",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "మీరు ChatGPT, ఒక పెద్ద భాషా మోడల్ ఓపెన్‌ఏఐ ద్వారా ట్రైన్ చేయబడింది. యూజర్ ఇన్స్ట్రక్షన్స్ కనుగొనండి. మార్క్‌డౌన్ ఉపయోగించి సమాధానం ఇవ్వండి.",
   "Enter a prompt": "ఒక ప్రాంప్ట్(సంకేతం) నమోదు చేయండి",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "డిఫాల్ట్ రైటింగ్ స్టైల్లు వినియోగించండి",
     "noTonesCreated": "ఇంకా ఎలాంటి శైలులు సృష్టించలేదు",
     "createTonesHint": "త్వరిత చర్యల్లో శైల్లను సృష్టించండి"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI ఎలా స్పందించాలో అనుకూలీకరించడానికి మీ వ్యక్తిగత సూచనలను జత చేయండి. ఇవి సహాయకరమైన, ఖచ్చితమైన మరియు సురక్షితమైన స్పందనలను నిర్ధారించే ప్రాథమిక ప్రవర్తనా మార్గదర్శకాలతో కలిపి ఉపయోగించబడతాయి.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "సూచన: సేవ్ చేయబడిన ప్రాంప్ట్ టెంప్లేట్లను ఎంచుకోవడానికి \"/\" టైప్ చేయండి."
 }

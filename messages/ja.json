@@ -27,11 +27,7 @@
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "プロンプトの上限は{{maxLength}}文字です。現在{{valueLength}}文字入力されています。"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "プロンプトの上限は{{maxLength}}文字です",
   "System Prompt": "システムのプロンプト",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "あなたはOpenAIによってトレーニングされた大規模言語モデルのChatGPTです。ユーザーの指示には注意深く従ってください。マークダウンを使用して応答してください。",
   "Enter a prompt": "プロンプトを入力してください",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "デフォルトの文体を使用",
     "noTonesCreated": "トーンはまだ作成されていません",
     "createTonesHint": "クイックアクションでトーンを作成"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AIの応答をカスタマイズするための個別指示を追加できます。これらは、役立つ・正確・安全な応答を保証するための基本的なガイドラインと組み合わされます。",
+  "Tip: Type \"/\" to select from saved prompt templates_": "ヒント：「/」を入力すると保存されたプロンプトテンプレートから選択できます。"
 }

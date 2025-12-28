@@ -820,11 +820,7 @@
   "OpenAI API Key Required": "نیاز به کلید OpenAI API",
   "Please enter a message": "لطفاً یک پیام وارد کنید",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "حد مجاز متن ورودی {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "حداکثر تعداد کاراکتر مجاز برای راهنما {{maxLength}} است",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
   "Regenerate response": "تولید مجدد پاسخ",
   "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "استفاده از سبک نوشتاری پیش‌فرض",
     "noTonesCreated": "هنوز لحنی ایجاد نشده است",
     "createTonesHint": "می‌توانید لحن را در عملیات سریع ایجاد کنید"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "دستورالعمل‌های شخصی خود را برای سفارشی‌سازی نحوه پاسخ‌دهی هوش مصنوعی اضافه کنید. این دستورالعمل‌ها همراه با راهنماهای اصلی رفتاری برای تضمین پاسخ‌های مفید، دقیق و ایمن ترکیب می‌شوند.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "نکته: با وارد کردن \"/\" می‌توانید از قالب‌های ذخیره‌شده راهنما انتخاب کنید."
 }

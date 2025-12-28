@@ -145,11 +145,7 @@
   "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
   "Please enter a message": "እባኮትን መልእክት ያስገቡ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "መግቢያው የተፈቀደው ብዛት {{maxLength}} ቁምፊዎች ናቸው። እርስዎ {{valueLength}} ቁምፊዎችን አስገብተዋል።"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "የማስጠንቀቂያው ገደብ {{maxLength}} ቁምፊዎች ነው",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
   "Regenerate response": "ምላሽ እንደገና አመንጭ",
   "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
@@ -1461,5 +1457,7 @@
       "vietnamese": "ቪትናምኛ",
       "welsh": "ዌልሽ"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "የእርስዎን የግል መመሪያዎች ያክሉ እና የAI ምላሽን ያስተካክሉ። እነዚህ ጥሩ፣ ትክክለኛ እና ደህና የሆኑ ምላሾችን ለመስጠት ከመሠረታዊ መመሪያዎች ጋር ይጣፉ።",
+  "Tip: Type \"/\" to select from saved prompt templates_": "ምክር፦ \"/\" በመተግበር ከተቀመጡት ማስጠንቀቂያ አብነቶች ይምረጡ።"
 }

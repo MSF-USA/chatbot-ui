@@ -118,11 +118,7 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "प्रॉम्प्ट सीमा {{maxLength}} वर्ण है। आपने {{valueLength}} वर्ण दर्ज किए हैं।"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट की सीमा {{maxLength}} अक्षर है।",
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -1461,5 +1457,7 @@
       "vietnamese": "वियतनामी",
       "welsh": "वेल्श"
     }
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI की प्रतिक्रिया को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। इन्हें मुख्य व्यवहार दिशानिर्देशों के साथ जोड़ा जाता है ताकि प्रतिक्रियाएं सहायक, सटीक और सुरक्षित रहें।",
+  "Tip: Type \"/\" to select from saved prompt templates_": "टिप: सहेजे गए प्रॉम्प्ट टेम्पलेट्स में से चुनने के लिए \"/\" टाइप करें।"
 }

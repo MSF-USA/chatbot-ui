@@ -812,11 +812,7 @@
   "OpenAI API Key Required": "ต้องใช้ OpenAI API Key",
   "Please enter a message": "กรุณาป้อนข้อความ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "โปรดตั้งค่า OpenAI API key ที่มุมล่างซ้ายของแถบด้านข้าง",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "จำกัดความยาวไม่เกิน {{maxLength}} ตัวอักษร คุณกรอกแล้ว {{valueLength}} ตัวอักษร"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "จำกัดความยาวที่ {{maxLength}} อักขระ",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร คุณป้อนแล้ว {{valueLength}} ตัวอักษร",
   "Regenerate response": "สร้างคำตอบใหม่",
   "Run Typewriter Intro": "เริ่มต้นแนะนำแบบพิมพ์ดีด",
@@ -1461,5 +1457,7 @@
     "useDefaultStyle": "ใช้รูปแบบการเขียนค่าเริ่มต้น",
     "noTonesCreated": "ยังไม่ได้สร้างโทนเสียง",
     "createTonesHint": "สร้างโทนเสียงใน Quick Actions"
-  }
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "เพิ่มคำแนะนำส่วนตัวเพื่อปรับแต่งการตอบสนองของ AI โดยข้อมูลเหล่านี้จะถูกรวมกับแนวทางหลักเพื่อให้มั่นใจว่าการตอบสนองมีประโยชน์ ถูกต้อง และปลอดภัย",
+  "Tip: Type \"/\" to select from saved prompt templates_": "เคล็ดลับ: พิมพ์ \"/\" เพื่อเลือกจากเทมเพลตพรอมต์ที่บันทึกไว้"
 }
