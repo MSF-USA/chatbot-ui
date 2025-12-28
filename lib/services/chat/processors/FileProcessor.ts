@@ -10,7 +10,7 @@ import { BlobStorage } from '@/lib/utils/server/blob/blob';
 import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { BatchTranscriptionService } from '../../transcription/batchTranscriptionService';
+import { getChunkedTranscriptionService } from '../../transcription/chunkedTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
@@ -305,71 +305,41 @@ export class FileProcessor extends BasePipelineStage {
                       `[FileProcessor] Transcription complete: ${transcript.length} chars`,
                     );
                   } else {
-                    // Batch transcription (asynchronous with polling, >25MB)
+                    // Chunked transcription (asynchronous with polling, >25MB)
+                    // Splits large files into smaller chunks and transcribes each
                     console.log(
-                      `[FileProcessor] Using Batch transcription (>25MB)`,
+                      `[FileProcessor] Using Chunked transcription (>25MB)`,
                     );
 
-                    // Batch transcription requires blob storage client
-                    if (!this.blobStorageClient) {
+                    // Check if chunked transcription service is available
+                    const chunkedService = getChunkedTranscriptionService();
+                    if (!chunkedService.isAvailable()) {
                       throw new Error(
                         `Audio file (${audioSizeMB}MB) exceeds 25MB Whisper limit. ` +
-                          `Batch transcription is not available - blobStorageClient not configured.`,
+                          `Chunked transcription is not available - FFmpeg/FFprobe not found.`,
                       );
                     }
 
-                    // Check if batch service is configured
-                    const batchService = new BatchTranscriptionService();
-                    if (!batchService.isConfigured()) {
-                      throw new Error(
-                        `Audio file (${audioSizeMB}MB) exceeds 25MB Whisper limit. ` +
-                          `Batch transcription is not configured (missing AZURE_SPEECH_KEY).`,
-                      );
-                    }
-
-                    // 1. Upload extracted audio to temp blob storage
-                    const tempBlobPath = `${context.user.id}/uploads/temp/${Date.now()}_transcription_audio.mp3`;
-                    const audioBuffer =
-                      await fs.promises.readFile(fileToTranscribe);
-
                     console.log(
-                      `[FileProcessor] Uploading audio to temp blob: ${tempBlobPath}`,
+                      `[FileProcessor] Starting chunked transcription job...`,
                     );
 
-                    await this.blobStorageClient.upload(
-                      tempBlobPath,
-                      audioBuffer,
-                      {
-                        blobHTTPHeaders: {
-                          blobContentType: 'audio/mpeg',
+                    // Start chunked transcription job (returns immediately)
+                    const { jobId, totalChunks } =
+                      await chunkedService.startJob(
+                        fileToTranscribe,
+                        filename,
+                        {
+                          language: file.transcriptionLanguage,
+                          prompt: file.transcriptionPrompt,
                         },
-                      },
-                    );
-
-                    // 2. Generate SAS URL for batch API access
-                    const sasUrl = await this.blobStorageClient.generateSasUrl(
-                      tempBlobPath,
-                      24, // 24 hour expiry
-                    );
+                      );
 
                     console.log(
-                      `[FileProcessor] Submitting batch transcription job...`,
+                      `[FileProcessor] Chunked job submitted: ${jobId} (${totalChunks} chunks)`,
                     );
 
-                    // 3. Submit batch transcription job
-                    const jobId = await batchService.submitTranscription(
-                      sasUrl,
-                      file.transcriptionLanguage || 'en-US',
-                    );
-
-                    console.log(
-                      `[FileProcessor] Batch job submitted: ${jobId}`,
-                    );
-
-                    // 4. Store pending transcription info (async - client will poll)
-                    // Note: Do NOT poll here - return immediately with pending state
-                    // Note: Do NOT delete blob or job - Azure needs them during transcription
-                    // Cleanup happens via /api/transcription/cleanup after client polling completes
+                    // Store pending transcription info (async - client will poll)
                     if (!context.processedContent) {
                       context.processedContent = {};
                     }
@@ -379,7 +349,8 @@ export class FileProcessor extends BasePipelineStage {
                     context.processedContent.pendingTranscriptions.push({
                       filename,
                       jobId,
-                      blobPath: tempBlobPath,
+                      totalChunks,
+                      jobType: 'chunked',
                     });
 
                     // Add placeholder transcript for UI display
@@ -389,7 +360,7 @@ export class FileProcessor extends BasePipelineStage {
                     });
 
                     console.log(
-                      `[FileProcessor] Batch transcription job queued for async processing: ${jobId}`,
+                      `[FileProcessor] Chunked transcription job queued for async processing: ${jobId}`,
                     );
                   }
                 } finally {
