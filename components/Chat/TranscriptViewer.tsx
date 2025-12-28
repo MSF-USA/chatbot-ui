@@ -18,6 +18,7 @@ import { translateText } from '@/lib/services/translation/translationService';
 
 import { getAutonym } from '@/lib/utils/app/locales';
 
+import { TRANSCRIPT_EXPIRY_DAYS } from '@/types/transcription';
 import { MessageTranslationState } from '@/types/translation';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
@@ -26,6 +27,48 @@ import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+
+/**
+ * Regex to match blob transcript references.
+ * Format: [Transcript: filename | blob:jobId | expires:ISO_TIMESTAMP]
+ */
+const BLOB_REFERENCE_REGEX =
+  /^\[Transcript:\s*(.+?)\s*\|\s*blob:([a-fA-F0-9-]+)\s*\|\s*expires:(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)\]$/;
+
+/** Polling interval in milliseconds */
+const POLL_INTERVAL_MS = 3000;
+
+/** Maximum polling attempts (20 minutes at 3s intervals = 400 attempts) */
+const MAX_POLL_ATTEMPTS = 400;
+
+interface BlobReference {
+  filename: string;
+  jobId: string;
+  expiresAt: Date;
+}
+
+/**
+ * Parses a blob reference string from transcript content.
+ * Returns null if not a blob reference.
+ */
+function parseBlobReference(content: string): BlobReference | null {
+  const match = content.trim().match(BLOB_REFERENCE_REGEX);
+  if (!match) return null;
+  return {
+    filename: match[1],
+    jobId: match[2],
+    expiresAt: new Date(match[3]),
+  };
+}
+
+/**
+ * Calculates days until expiration.
+ */
+function getDaysUntilExpiry(expiresAt: Date): number {
+  const now = new Date();
+  const diffMs = expiresAt.getTime() - now.getTime();
+  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+}
 
 interface TranscriptViewerProps {
   filename: string;
@@ -68,6 +111,34 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
   );
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
 
+  // Blob loading state
+  const [loadedTranscript, setLoadedTranscript] = useState<string | null>(null);
+  const [blobError, setBlobError] = useState<string | null>(null);
+  const [pollCount, setPollCount] = useState(0);
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Parse blob reference from transcript prop
+  const blobRef = useMemo(() => parseBlobReference(transcript), [transcript]);
+
+  // Calculate expiration state
+  const isExpired = blobRef
+    ? getDaysUntilExpiry(blobRef.expiresAt) <= 0
+    : false;
+  const daysUntilExpiry = blobRef
+    ? getDaysUntilExpiry(blobRef.expiresAt)
+    : null;
+  const showExpirationWarning =
+    daysUntilExpiry !== null && daysUntilExpiry > 0 && daysUntilExpiry <= 2;
+
+  // Derive loading state from other state variables (avoids setState in effect body)
+  const shouldPoll =
+    blobRef !== null &&
+    !isExpired &&
+    loadedTranscript === null &&
+    blobError === null &&
+    pollCount < MAX_POLL_ATTEMPTS;
+
   // Clean up audio URL when component unmounts
   useEffect(() => {
     return () => {
@@ -77,14 +148,97 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
     };
   }, [audioUrl]);
 
+  /**
+   * Fetches transcript content from blob storage.
+   * Returns true if successful or should stop, false if should retry.
+   */
+  const fetchTranscript = useCallback(async (): Promise<boolean> => {
+    if (!blobRef) return true;
+
+    try {
+      const response = await fetch(
+        `/api/transcription/content/${blobRef.jobId}`,
+      );
+
+      if (response.ok) {
+        const responseBody = await response.json();
+        const data = responseBody.data || responseBody;
+        if (isMountedRef.current) {
+          setLoadedTranscript(data.transcript);
+        }
+        return true; // Success - stop polling
+      }
+
+      if (response.status === 404) {
+        // Not found - could be still uploading
+        console.log(
+          `[TranscriptViewer] Blob not found for job ${blobRef.jobId}, will retry`,
+        );
+        return false; // Retry
+      }
+
+      // Other error - stop polling
+      if (isMountedRef.current) {
+        setBlobError(t('transcription.fetchError'));
+      }
+      return true;
+    } catch (err) {
+      console.error('[TranscriptViewer] Fetch error:', err);
+      // Network error - retry
+      return false;
+    }
+  }, [blobRef, t]);
+
+  /**
+   * Polling effect that fetches transcript and retries if not found.
+   * Only runs when shouldPoll is true (derived state).
+   */
+  useEffect(() => {
+    if (!shouldPoll) {
+      return;
+    }
+
+    isMountedRef.current = true;
+
+    const poll = async () => {
+      const success = await fetchTranscript();
+
+      if (!success && isMountedRef.current && pollCount < MAX_POLL_ATTEMPTS) {
+        // Schedule next poll
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            setPollCount((c) => c + 1);
+          }
+        }, POLL_INTERVAL_MS);
+      } else if (!success && pollCount >= MAX_POLL_ATTEMPTS - 1) {
+        // Max retries reached
+        if (isMountedRef.current) {
+          setBlobError(t('transcription.fetchError'));
+        }
+      }
+    };
+
+    poll();
+
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [shouldPoll, fetchTranscript, pollCount, t]);
+
   // Determine currently displayed transcript
+  // For blob references, use loadedTranscript; otherwise use transcript prop directly
   const displayedTranscript = useMemo(() => {
     const { currentLocale, translations } = translationState;
     if (currentLocale && translations[currentLocale]) {
       return translations[currentLocale].translatedText;
     }
-    return transcript;
-  }, [transcript, translationState]);
+    // If this is a blob reference, use loaded content; otherwise use prop directly
+    return loadedTranscript ?? (blobRef ? '' : transcript);
+  }, [transcript, translationState, loadedTranscript, blobRef]);
 
   // Get current view label (Original or language name)
   const currentViewLabel = useMemo(() => {
@@ -281,6 +435,48 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
       {loadingMessage && (
         <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
           {loadingMessage}
+        </div>
+      )}
+
+      {/* Blob loading state */}
+      {shouldPoll && !loadedTranscript && blobRef && (
+        <div className="text-gray-500 dark:text-gray-400 mb-3">
+          <div className="flex items-center gap-2">
+            <IconLoader2 size={16} className="animate-spin" />
+            <span className="animate-pulse">
+              {t('transcription.loadingTranscript', {
+                filename: blobRef.filename,
+              })}
+              {pollCount > 0 &&
+                ` (${t('transcription.attempt')} ${pollCount + 1})`}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Blob error state (expired or fetch failed) */}
+      {(blobError || isExpired) && blobRef && (
+        <div className="mb-3 rounded-md border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/20">
+          <p className="text-sm text-yellow-800 dark:text-yellow-200">
+            {isExpired
+              ? t('transcription.transcriptExpired', {
+                  filename: blobRef.filename,
+                  days: TRANSCRIPT_EXPIRY_DAYS,
+                })
+              : blobError}
+          </p>
+        </div>
+      )}
+
+      {/* Expiration warning for blob references */}
+      {showExpirationWarning && blobRef && loadedTranscript && (
+        <div className="mb-3 rounded-md border border-yellow-200 bg-yellow-50 p-2 dark:border-yellow-800 dark:bg-yellow-900/20">
+          <p className="text-xs text-yellow-800 dark:text-yellow-200">
+            {t('transcription.expirationWarning', {
+              filename: blobRef.filename,
+              days: daysUntilExpiry,
+            })}
+          </p>
         </div>
       )}
 
