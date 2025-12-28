@@ -200,6 +200,14 @@ export function useTranscriptionPolling(): void {
 
       const data: BatchTranscriptionStatusResponse = await response.json();
 
+      // Log progress for chunked transcription jobs
+      if (data.progress) {
+        console.log(
+          `[useTranscriptionPolling] Progress: ${data.progress.completed}/${data.progress.total} chunks ` +
+            `(${data.jobType || 'unknown'} job)`,
+        );
+      }
+
       // Handle success case
       if (data.status === 'Succeeded' && data.transcript) {
         console.log(
