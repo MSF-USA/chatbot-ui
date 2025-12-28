@@ -1,6 +1,7 @@
 import { RAGService } from '@/lib/services/ragService';
 
 import {
+  PendingTranscriptionInfo,
   TranscriptMetadata,
   appendMetadataToStream,
   createStreamEncoder,
@@ -20,6 +21,7 @@ import OpenAI from 'openai';
  * @param {object} [stopConversationRef] - Reference to stop conversation flag.
  * @param {TranscriptMetadata} [transcript] - Optional transcript metadata for audio/video transcriptions.
  * @param {Citation[]} [webSearchCitations] - Optional citations from web search (intelligent search mode).
+ * @param {PendingTranscriptionInfo[]} [pendingTranscriptions] - Optional pending batch transcription jobs.
  * @returns {ReadableStream} A processed stream with citation data appended.
  */
 export function createAzureOpenAIStreamProcessor(
@@ -28,6 +30,7 @@ export function createAzureOpenAIStreamProcessor(
   stopConversationRef?: { current: boolean },
   transcript?: TranscriptMetadata,
   webSearchCitations?: Citation[],
+  pendingTranscriptions?: PendingTranscriptionInfo[],
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
@@ -137,6 +140,7 @@ export function createAzureOpenAIStreamProcessor(
               citations,
               thinking,
               transcript: transcriptMetadata,
+              pendingTranscriptions,
             });
           }
 
