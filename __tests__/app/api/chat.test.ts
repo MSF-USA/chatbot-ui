@@ -411,11 +411,14 @@ describe('/api/chat - Integration Tests', () => {
 
   describe('Request Timeout', () => {
     it('should timeout long-running requests', async () => {
-      // Mock a slow handler that takes longer than timeout
+      // Use fake timers to simulate timeout without waiting 5+ minutes
+      vi.useFakeTimers();
+
+      // Mock a slow handler that never resolves (simulating hung request)
       mockCreateFn.mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
-            setTimeout(resolve, 65000); // 65 seconds (longer than 60s timeout)
+          new Promise(() => {
+            // Never resolves - simulates a hung request
           }),
       );
 
@@ -431,14 +434,24 @@ describe('/api/chat - Integration Tests', () => {
         stream: false,
       });
 
-      const response = await POST(request);
+      // Start the request (don't await yet)
+      const responsePromise = POST(request);
+
+      // Advance time past the 300s (5 minute) timeout
+      await vi.advanceTimersByTimeAsync(305000);
+
+      const response = await responsePromise;
+
+      // Restore real timers before assertions
+      vi.useRealTimers();
 
       expect(response.status).toBe(408);
       const data = await parseJsonResponse(response);
-      // Request timeout returns REQUEST_TIMEOUT code
-      expect(data.code).toBe(ErrorCode.REQUEST_TIMEOUT);
-      expect(data.message.toLowerCase()).toContain('timed out');
-    }, 70000); // Increase test timeout
+      // Pipeline stage timeout fires first when stages hang
+      // (stage timeouts are shorter than the overall request timeout)
+      expect(data.code).toBe(ErrorCode.PIPELINE_TIMEOUT);
+      expect(data.message.toLowerCase()).toContain('exceeded timeout');
+    });
   });
 
   describe('ServiceContainer Integration', () => {
