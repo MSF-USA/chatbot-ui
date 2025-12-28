@@ -212,6 +212,8 @@ export class StandardChatHandler extends BasePipelineStage {
             transcript,
             citations,
             tone: context.tone,
+            pendingTranscriptions:
+              context.processedContent?.pendingTranscriptions,
           });
 
           console.log('[StandardChatHandler] Chat execution completed');
