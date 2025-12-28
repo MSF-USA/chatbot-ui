@@ -64,16 +64,20 @@ interface ConversationStore {
    * Updates a message's content to replace a transcription placeholder with actual transcript.
    * Used for async batch transcription when the job completes after the message is sent.
    *
+   * Uses jobId-based matching for reliable updates (falls back to placeholder string matching).
+   *
    * @param conversationId - The conversation ID
    * @param messageIndex - The index of the assistant message with the placeholder
    * @param transcript - The actual transcript content
-   * @param filename - The filename to match in the placeholder
+   * @param filename - The filename for the transcript header
+   * @param jobId - Optional job ID for reliable message matching
    */
   updateMessageWithTranscript: (
     conversationId: string,
     messageIndex: number,
     transcript: string,
     filename: string,
+    jobId?: string,
   ) => void;
 }
 
@@ -227,6 +231,7 @@ export const useConversationStore = create<ConversationStore>()(
         messageIndex,
         transcript,
         filename,
+        jobId,
       ) =>
         set((state) => ({
           conversations: state.conversations.map((c) => {
@@ -238,17 +243,43 @@ export const useConversationStore = create<ConversationStore>()(
             // Handle assistant message groups (most likely case)
             if (isAssistantMessageGroup(entry)) {
               const updatedVersions = entry.versions.map((v) => {
-                // Replace placeholder with actual transcript
-                const placeholder = `[Transcription in progress: ${filename}]`;
-                if (typeof v.content === 'string') {
+                // Check if transcript is already formatted (e.g., from blob storage)
+                // Format: "[Transcript: filename | blob:jobId | expires:...]" or "[Transcript: filename]\n..."
+                const isPreformatted = transcript.startsWith('[Transcript:');
+                const formattedContent = isPreformatted
+                  ? transcript
+                  : `[Transcript: ${filename}]\n${transcript}`;
+
+                // Primary matching: by jobId in transcript metadata (most reliable)
+                if (jobId && v.transcript?.jobId === jobId) {
+                  console.log(
+                    `[ConversationStore] Matched message by jobId: ${jobId}`,
+                  );
                   return {
                     ...v,
-                    content: v.content.replace(
-                      placeholder,
-                      `[Transcript: ${filename}]\n${transcript}`,
-                    ),
+                    content: formattedContent,
+                    transcript: {
+                      ...v.transcript,
+                      transcript: transcript, // Update the stored transcript
+                    },
                   };
                 }
+
+                // Fallback: Replace placeholder with actual transcript (string matching)
+                const placeholder = `[Transcription in progress: ${filename}]`;
+                if (
+                  typeof v.content === 'string' &&
+                  v.content.includes(placeholder)
+                ) {
+                  console.log(
+                    `[ConversationStore] Matched message by placeholder text`,
+                  );
+                  return {
+                    ...v,
+                    content: v.content.replace(placeholder, formattedContent),
+                  };
+                }
+
                 return v;
               });
 
