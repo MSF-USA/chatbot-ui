@@ -77,3 +77,26 @@ export interface BatchTranscriptionStatusResponse {
   /** Human-readable status message */
   message?: string;
 }
+
+/**
+ * Reference to a transcript stored in blob storage.
+ *
+ * Used for large transcripts (>10KB) that are stored externally
+ * rather than inline in the message content.
+ */
+export interface TranscriptReference {
+  /** Original filename of the transcribed media */
+  filename: string;
+  /** Job ID for the transcription */
+  jobId: string;
+  /** Path to the transcript in blob storage */
+  blobPath: string;
+  /** ISO timestamp when the transcript expires */
+  expiresAt: string;
+}
+
+/** Size threshold above which transcripts are stored in blob storage (10KB) */
+export const TRANSCRIPT_BLOB_THRESHOLD = 10 * 1024;
+
+/** Number of days before transcript expires */
+export const TRANSCRIPT_EXPIRY_DAYS = 7;
