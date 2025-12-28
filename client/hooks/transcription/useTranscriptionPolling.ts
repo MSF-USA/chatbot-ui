@@ -93,6 +93,9 @@ export function useTranscriptionPolling(): void {
   const setConversationTranscriptionPending = useChatStore(
     (state) => state.setConversationTranscriptionPending,
   );
+  const updateTranscriptionProgress = useChatStore(
+    (state) => state.updateTranscriptionProgress,
+  );
 
   // Conversation store for updating messages
   const updateMessageWithTranscript = useConversationStore(
@@ -200,11 +203,15 @@ export function useTranscriptionPolling(): void {
 
       const data: BatchTranscriptionStatusResponse = await response.json();
 
-      // Log progress for chunked transcription jobs
+      // Update progress for chunked transcription jobs
       if (data.progress) {
         console.log(
           `[useTranscriptionPolling] Progress: ${data.progress.completed}/${data.progress.total} chunks ` +
             `(${data.jobType || 'unknown'} job)`,
+        );
+        updateTranscriptionProgress(
+          data.progress.completed,
+          data.progress.total,
         );
       }
 
@@ -321,6 +328,7 @@ export function useTranscriptionPolling(): void {
     pendingConversationTranscription,
     updateMessageWithTranscript,
     setConversationTranscriptionPending,
+    updateTranscriptionProgress,
     conversations,
     updateConversation,
   ]);
