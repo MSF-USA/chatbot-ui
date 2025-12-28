@@ -108,6 +108,25 @@ interface ChatStore {
   ) => Promise<void>;
   dismissModelSwitchPrompt: () => void;
   acceptModelSwitch: (alwaysSwitch?: boolean) => void;
+
+  // Pending transcription state (for async batch transcription)
+  pendingConversationTranscription: {
+    conversationId: string;
+    jobId: string;
+    messageIndex: number;
+    filename: string;
+    blobPath: string;
+    startedAt: number;
+  } | null;
+  setConversationTranscriptionPending: (
+    info: {
+      conversationId: string;
+      jobId: string;
+      messageIndex: number;
+      filename: string;
+      blobPath: string;
+    } | null,
+  ) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -133,6 +152,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   // Regeneration initial state
   regeneratingIndex: null,
+
+  // Pending transcription initial state
+  pendingConversationTranscription: null,
 
   // Actions
   setRegeneratingIndex: (index) => set({ regeneratingIndex: index }),
