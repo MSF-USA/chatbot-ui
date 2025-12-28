@@ -36,6 +36,7 @@ import { MessageTranslationState } from '@/types/translation';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
+import { TranscriptContent } from '@/components/Chat/ChatMessages/TranscriptContent';
 import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
 import { VersionNavigation } from '@/components/Chat/ChatMessages/VersionNavigation';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
@@ -44,6 +45,16 @@ import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithC
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import type { MermaidConfig } from 'mermaid';
+
+/**
+ * Checks if content is a blob transcript reference that should be loaded from storage.
+ * Format: [Transcript: filename | blob:jobId | expires:ISO_TIMESTAMP]
+ */
+function isBlobTranscriptReference(content: string): boolean {
+  return /^\[Transcript:\s*.+?\s*\|\s*blob:[a-f0-9-]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
+    content.trim(),
+  );
+}
 
 interface AssistantMessageProps {
   content: string;
@@ -470,18 +481,26 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="prose dark:prose-invert max-w-none w-full"
                 style={{ maxWidth: 'none' }}
               >
-                <StreamdownWithCodeButtons>
-                  <CitationStreamdown
-                    citations={citations}
-                    components={customMarkdownComponents}
-                    isAnimating={messageIsStreaming}
-                    controls={true}
-                    shikiTheme={['github-light', 'github-dark']}
-                    mermaidConfig={mermaidConfig}
-                  >
-                    {displayedContent}
-                  </CitationStreamdown>
-                </StreamdownWithCodeButtons>
+                {/* Check if content is a blob transcript reference that needs lazy loading */}
+                {isBlobTranscriptReference(displayedContent) ? (
+                  <TranscriptContent
+                    content={displayedContent}
+                    className="whitespace-pre-wrap"
+                  />
+                ) : (
+                  <StreamdownWithCodeButtons>
+                    <CitationStreamdown
+                      citations={citations}
+                      components={customMarkdownComponents}
+                      isAnimating={messageIsStreaming}
+                      controls={true}
+                      shikiTheme={['github-light', 'github-dark']}
+                      mermaidConfig={mermaidConfig}
+                    >
+                      {displayedContent}
+                    </CitationStreamdown>
+                  </StreamdownWithCodeButtons>
+                )}
               </div>
             )}
           </div>
