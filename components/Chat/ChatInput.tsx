@@ -65,9 +65,11 @@ import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
+import { TranscriptionProgressIndicator } from './TranscriptionProgressIndicator';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import { useChatInputStore } from '@/client/stores/chatInputStore';
+import { useChatStore } from '@/client/stores/chatStore';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
@@ -100,6 +102,12 @@ export const ChatInput = ({
   const { tones } = useTones();
   const { isArtifactOpen, fileName, language, closeArtifact } =
     useArtifactStore();
+
+  // Pending conversation transcription (for large files >25MB)
+  const pendingConversationTranscription = useChatStore(
+    (state) => state.pendingConversationTranscription,
+  );
+  const isTranscriptionLocked = pendingConversationTranscription !== null;
 
   // Chat input store
   const textFieldValue = useChatInputStore((state) => state.textFieldValue);
@@ -449,6 +457,7 @@ export const ChatInput = ({
   });
 
   const preventSubmission = (): boolean =>
+    isTranscriptionLocked ||
     shouldPreventSubmission(
       isTranscribing,
       isStreaming,
@@ -499,6 +508,16 @@ export const ChatInput = ({
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
               uploadProgress={uploadProgress}
+            />
+          </div>
+        )}
+
+        {/* Transcription Progress Indicator - Shows when large file transcription is pending */}
+        {pendingConversationTranscription && (
+          <div className="px-4 py-2">
+            <TranscriptionProgressIndicator
+              startedAt={pendingConversationTranscription.startedAt}
+              filename={pendingConversationTranscription.filename}
             />
           </div>
         )}
