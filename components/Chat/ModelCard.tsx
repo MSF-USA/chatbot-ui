@@ -7,6 +7,7 @@ interface ModelCardProps {
   isSelected: boolean;
   onClick: () => void;
   icon?: ReactNode;
+  typeIcon?: ReactNode;
   badge?: ReactNode;
   /** Show up/down reorder controls */
   showReorderControls?: boolean;
@@ -30,6 +31,7 @@ export const ModelCard: FC<ModelCardProps> = ({
   isSelected,
   onClick,
   icon,
+  typeIcon,
   badge,
   showReorderControls = false,
   canMoveUp = false,
@@ -95,6 +97,7 @@ export const ModelCard: FC<ModelCardProps> = ({
       >
         <div className="flex items-center gap-2">
           {icon}
+          {typeIcon}
           <span className="font-medium text-sm text-gray-900 dark:text-white">
             {name}
           </span>

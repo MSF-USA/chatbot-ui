@@ -21,6 +21,7 @@ import { AgentsTab } from './ModelSelect/AgentsTab';
 import { ModelDetailsPanel } from './ModelSelect/ModelDetailsPanel';
 import { ModelOrderControls } from './ModelSelect/ModelOrderControls';
 import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
+import { ModelTypeIcon } from './ModelSelect/ModelTypeIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
 
@@ -383,6 +384,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           onClick={() => handleModelSelect(model)}
                           icon={
                             <ModelProviderIcon provider={config?.provider} />
+                          }
+                          typeIcon={
+                            <ModelTypeIcon modelType={config?.modelType} />
                           }
                           showReorderControls={isEditingOrder}
                           canMoveUp={canMoveUp(model.id)}
