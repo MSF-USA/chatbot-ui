@@ -924,7 +924,19 @@
       "urdu": "אורדו",
       "vietnamese": "וייטנאמית",
       "welsh": "וולשית"
-    }
+    },
+    "inProgress": "תמלול בעבודה",
+    "processingFile": "מעבד: {filename}",
+    "timeRemaining": "זמן שנותר: {time}",
+    "maxDurationNote": "קבצים גדולים עשויים להימשך עד {minutes} דקות",
+    "timedOut": "התמלול פג תוקף לאחר {minutes} דקות",
+    "timedOutToast": "פג תוקף התמלול: {filename}",
+    "failed": "התמלול נכשל: {error}",
+    "failedToast": "התמלול נכשל: {filename}",
+    "unknownError": "שגיאה לא ידועה",
+    "completed": "התמלול הושלם",
+    "completedToast": "התמלול הושלם: {filename}",
+    "placeholder": "[תמלול בעבודה: {filename}]"
   },
   "transcriptionComplete": "התעתוק הושלם! הטקסט התווסף לשדה השיחה.",
   "No prompts found": "לא נמצאו הנחיות",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "חיפוש אינטרנט בזמן אמת"
+    },
+    "modelTypeIcons": {
+      "foundational": "מודל כללי מהיר ויעיל",
+      "reasoning": "הסקה מורחבת לבעיות מורכבות",
+      "omni": "מודל מולטי-מודלי עם יכולות נרחבות",
+      "agent": "סוכן עם כלים בזמן אמת וגישה לאינטרנט"
     }
   },
   "models": {

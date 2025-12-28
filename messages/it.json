@@ -924,7 +924,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamita",
       "welsh": "Gallese"
-    }
+    },
+    "inProgress": "Trascrizione in corso",
+    "processingFile": "Elaborazione: {filename}",
+    "timeRemaining": "Tempo rimanente: {time}",
+    "maxDurationNote": "I file di grandi dimensioni possono richiedere fino a {minutes} minuti",
+    "timedOut": "La trascrizione è scaduta dopo {minutes} minuti",
+    "timedOutToast": "Trascrizione scaduta: {filename}",
+    "failed": "Trascrizione non riuscita: {error}",
+    "failedToast": "Trascrizione non riuscita: {filename}",
+    "unknownError": "Errore sconosciuto",
+    "completed": "Trascrizione completata",
+    "completedToast": "Trascrizione completata: {filename}",
+    "placeholder": "[Trascrizione in corso: {filename}]"
   },
   "transcriptionComplete": "Trascrizione completata! Testo aggiunto al campo di input.",
   "No prompts found": "Nessun prompt trovato",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Ricerca web in tempo reale"
+    },
+    "modelTypeIcons": {
+      "foundational": "Modello generale veloce ed efficiente",
+      "reasoning": "Ragionamento avanzato per problemi complessi",
+      "omni": "Modello multimodale con ampie capacità",
+      "agent": "Agente con strumenti in tempo reale e accesso web"
     }
   },
   "models": {

@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Recherche web en temps réel"
+    },
+    "modelTypeIcons": {
+      "foundational": "Modèle général rapide et efficace",
+      "reasoning": "Raisonnement étendu pour les problèmes complexes",
+      "omni": "Modèle multimodal avec de larges capacités",
+      "agent": "Agent avec outils en temps réel et accès Web"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "Ourdou",
       "vietnamese": "Vietnamien",
       "welsh": "Gallois"
-    }
+    },
+    "inProgress": "Transcription en cours",
+    "processingFile": "Traitement : {filename}",
+    "timeRemaining": "Temps restant : {time}",
+    "maxDurationNote": "Les fichiers volumineux peuvent prendre jusqu’à {minutes} minutes",
+    "timedOut": "Transcription expirée après {minutes} minutes",
+    "timedOutToast": "Transcription expirée : {filename}",
+    "failed": "Échec de la transcription : {error}",
+    "failedToast": "Échec de la transcription : {filename}",
+    "unknownError": "Erreur inconnue",
+    "completed": "Transcription terminée",
+    "completedToast": "Transcription terminée : {filename}",
+    "placeholder": "[Transcription en cours : {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ajoutez vos instructions personnelles pour personnaliser les réponses de l'IA. Celles-ci sont combinées avec les directives principales afin de garantir des réponses utiles, précises et sûres.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Astuce : tapez « / » pour sélectionner un modèle d'invite enregistré."

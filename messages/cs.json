@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Vyhledávání na webu v reálném čase"
+    },
+    "modelTypeIcons": {
+      "foundational": "Rychlý a efektivní model pro obecné účely",
+      "reasoning": "Rozšířené uvažování pro složité problémy",
+      "omni": "Multimodální model se širokými schopnostmi",
+      "agent": "Agent s nástroji v reálném čase a přístupem na web"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "urdština",
       "vietnamese": "vietnamština",
       "welsh": "velština"
-    }
+    },
+    "inProgress": "Přepis probíhá",
+    "processingFile": "Zpracovává se: {filename}",
+    "timeRemaining": "Zbývající čas: {time}",
+    "maxDurationNote": "Velké soubory mohou trvat až {minutes} minut",
+    "timedOut": "Přepis vypršel po {minutes} minutách",
+    "timedOutToast": "Přepis vypršel: {filename}",
+    "failed": "Přepis selhal: {error}",
+    "failedToast": "Přepis selhal: {filename}",
+    "unknownError": "Neznámá chyba",
+    "completed": "Přepis dokončen",
+    "completedToast": "Přepis dokončen: {filename}",
+    "placeholder": "[Přepis probíhá: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními zásadami chování, které zajišťují užitečné, přesné a bezpečné odpovědi.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání."

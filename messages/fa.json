@@ -924,7 +924,19 @@
       "urdu": "اردو",
       "vietnamese": "ویتنامی",
       "welsh": "ولزی"
-    }
+    },
+    "inProgress": "رونویسی در حال انجام",
+    "processingFile": "در حال پردازش: {filename}",
+    "timeRemaining": "زمان باقی‌مانده: {time}",
+    "maxDurationNote": "فایل‌های بزرگ ممکن است تا {minutes} دقیقه طول بکشند",
+    "timedOut": "رونویسی پس از {minutes} دقیقه زمان‌بر شد",
+    "timedOutToast": "رونویسی با گذشت زمان پایان نیافت: {filename}",
+    "failed": "رونویسی ناموفق بود: {error}",
+    "failedToast": "رونویسی ناموفق بود: {filename}",
+    "unknownError": "خطای ناشناخته",
+    "completed": "رونویسی کامل شد",
+    "completedToast": "رونویسی کامل شد: {filename}",
+    "placeholder": "[رونویسی در حال انجام: {filename}]"
   },
   "transcriptionComplete": "تبدیل گفتار کامل شد! متن به ورودی چت اضافه شد.",
   "No prompts found": "هیچ پرامپتی یافت نشد",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "جستجوی وب لحظه‌ای"
+    },
+    "modelTypeIcons": {
+      "foundational": "مدل سریع و کارآمد با کاربرد عمومی",
+      "reasoning": "استدلال پیشرفته برای مسائل پیچیده",
+      "omni": "مدل چندرسانه‌ای با قابلیت‌های گسترده",
+      "agent": "نماینده با ابزارهای لحظه‌ای و دسترسی به وب"
     }
   },
   "models": {

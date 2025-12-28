@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "রিয়েল-টাইম ওয়েব সার্চ"
+    },
+    "modelTypeIcons": {
+      "foundational": "দ্রুত ও দক্ষ সাধারণ উদ্দেশ্যের মডেল",
+      "reasoning": "জটিল সমস্যার জন্য বাড়তি যুক্তি বিশ্লেষণ",
+      "omni": "বহুমাত্রিক সক্ষমতা সম্পন্ন মাল্টি-মোডাল মডেল",
+      "agent": "রিয়েল-টাইম টুল ও ওয়েব অ্যাক্সেসসহ এজেন্ট"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "উর্দু",
       "vietnamese": "ভিয়েতনামী",
       "welsh": "ওয়েলশ"
-    }
+    },
+    "inProgress": "ট্রান্সক্রিপশন চলছে",
+    "processingFile": "প্রসেসিং: {filename}",
+    "timeRemaining": "বাকি সময়: {time}",
+    "maxDurationNote": "বড় ফাইল সম্পূর্ণ হতে {minutes} মিনিট পর্যন্ত সময় লাগতে পারে",
+    "timedOut": "{minutes} মিনিট পরে ট্রান্সক্রিপশন টাইম আউট হয়েছে",
+    "timedOutToast": "ট্রান্সক্রিপশন টাইম আউট: {filename}",
+    "failed": "ট্রান্সক্রিপশন ব্যর্থ: {error}",
+    "failedToast": "ট্রান্সক্রিপশন ব্যর্থ: {filename}",
+    "unknownError": "অজানা ত্রুটি",
+    "completed": "ট্রান্সক্রিপশন সম্পন্ন",
+    "completedToast": "ট্রান্সক্রিপশন সম্পন্ন: {filename}",
+    "placeholder": "[ট্রান্সক্রিপশন চলছে: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI কিভাবে প্রতিক্রিয়া জানাবে তা কাস্টমাইজ করতে আপনার ব্যক্তিগত নির্দেশনা যোগ করুন। এগুলো মূল আচরণ নির্দেশিকার সঙ্গে একত্রিত হয়, যা সহায়ক, সঠিক ও নিরাপদ প্রতিক্রিয়া নিশ্চিত করে।",
   "Tip: Type \"/\" to select from saved prompt templates_": "টিপ: সংরক্ষিত প্রম্পট টেমপ্লেট থেকে নির্বাচন করতে \"/\" লিখুন।"

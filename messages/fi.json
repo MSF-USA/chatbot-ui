@@ -924,7 +924,19 @@
       "urdu": "urdu",
       "vietnamese": "vietnam",
       "welsh": "kymri"
-    }
+    },
+    "inProgress": "Puhtaaksikirjoitus käynnissä",
+    "processingFile": "Käsitellään: {filename}",
+    "timeRemaining": "Aikaa jäljellä: {time}",
+    "maxDurationNote": "Suuret tiedostot voivat kestää jopa {minutes} minuuttia",
+    "timedOut": "Puhtaaksikirjoitus aikakatkaistiin {minutes} minuutin jälkeen",
+    "timedOutToast": "Puhtaaksikirjoitus aikakatkaistiin: {filename}",
+    "failed": "Puhtaaksikirjoitus epäonnistui: {error}",
+    "failedToast": "Puhtaaksikirjoitus epäonnistui: {filename}",
+    "unknownError": "Tuntematon virhe",
+    "completed": "Puhtaaksikirjoitus valmis",
+    "completedToast": "Puhtaaksikirjoitus valmis: {filename}",
+    "placeholder": "[Puhtaaksikirjoitus käynnissä: {filename}]"
   },
   "transcriptionComplete": "Puhtaaksikirjoitus valmis! Teksti lisätty keskusteluun.",
   "No prompts found": "Kehotteita ei löytynyt",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Reaaliaikainen verkkohaku"
+    },
+    "modelTypeIcons": {
+      "foundational": "Nopea ja tehokas yleiskäyttöinen malli",
+      "reasoning": "Laajennettu päättely kyseen monimutkaisissa ongelmissa",
+      "omni": "Monimuotoinen malli laajalla osaamisella",
+      "agent": "Agentti reaaliaikaisilla työkaluilla ja verkkoyhteydellä"
     }
   },
   "models": {

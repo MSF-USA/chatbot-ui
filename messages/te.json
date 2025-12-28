@@ -928,7 +928,19 @@
       "urdu": "ఉర్దూ",
       "vietnamese": "వియత్నమీస్",
       "welsh": "వెల్ష్"
-    }
+    },
+    "inProgress": "లిప్యంతరణ కొనసాగుతుంది",
+    "processingFile": "ప్రాసెసింగ్: {filename}",
+    "timeRemaining": "మిగిలిన సమయం: {time}",
+    "maxDurationNote": "పెద్ద ఫైల్స్‌కు గరిష్ఠంగా {minutes} నిమిషాలు పట్టవచ్చు",
+    "timedOut": "లిప్యంతరణ {minutes} నిమిషాల తర్వాత టైమ్ అవుట్ అయింది",
+    "timedOutToast": "లిప్యంతరణ టైమ్ అవుట్: {filename}",
+    "failed": "లిప్యంతరణ విఫలమైంది: {error}",
+    "failedToast": "లిప్యంతరణ విఫలమైంది: {filename}",
+    "unknownError": "తెలియని లోపీ",
+    "completed": "లిప్యంతరణ పూర్తయింది",
+    "completedToast": "లిప్యంతరణ పూర్తయింది: {filename}",
+    "placeholder": "[లిప్యంతరణ కొనసాగుతోంది: {filename}]"
   },
   "importBackupParseError": "బ్యాకప్ ఫైల్‌ను విశ్లేషించడంలో విఫలమైంది. దయచేసి ఇది సరైన JSON కనుక నిర్ధారించండి.",
   "emptyState": {
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "రియల్‌టైమ్ వెబ్ శోధన"
+    },
+    "modelTypeIcons": {
+      "foundational": "వేగమైన మరియు సమర్థమైన సామాన్య ప్రయోజన మోడల్",
+      "reasoning": "సంక్లిష్ట సమస్యలకు విస్తృతమైన తార్కిక విశ్లేషణ",
+      "omni": "వివిధ సామర్థ్యాలున్న మల్టీ-మోడల్ మోడల్",
+      "agent": "వాస్తవ కాలం సాధనాలు & వెబ్ యాక్సెస్ ఉన్న ఏజెంట్"
     }
   },
   "models": {

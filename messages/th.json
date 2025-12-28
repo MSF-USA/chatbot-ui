@@ -924,7 +924,19 @@
       "urdu": "อูรดู",
       "vietnamese": "เวียดนาม",
       "welsh": "เวลส์"
-    }
+    },
+    "inProgress": "กำลังถอดเสียง",
+    "processingFile": "กำลังประมวลผล: {filename}",
+    "timeRemaining": "เวลาที่เหลือ: {time}",
+    "maxDurationNote": "ไฟล์ขนาดใหญ่อาจใช้เวลาถึง {minutes} นาที",
+    "timedOut": "หมดเวลาถอดเสียงหลัง {minutes} นาที",
+    "timedOutToast": "หมดเวลาถอดเสียง: {filename}",
+    "failed": "การถอดเสียงล้มเหลว: {error}",
+    "failedToast": "การถอดเสียงล้มเหลว: {filename}",
+    "unknownError": "ข้อผิดพลาดที่ไม่ทราบสาเหตุ",
+    "completed": "ถอดเสียงเสร็จสิ้น",
+    "completedToast": "ถอดเสียงเสร็จสิ้น: {filename}",
+    "placeholder": "[กำลังถอดเสียง: {filename}]"
   },
   "transcriptionComplete": "ถอดเสียงเสร็จสิ้น! ข้อความถูกเพิ่มในช่องแชทแล้ว",
   "No prompts found": "ไม่พบพรอมต์",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "ค้นหาข้อมูลบนเว็บแบบเรียลไทม์"
+    },
+    "modelTypeIcons": {
+      "foundational": "โมเดลทั่วไปที่รวดเร็วและมีประสิทธิภาพ",
+      "reasoning": "การให้เหตุผลขั้นสูงสำหรับปัญหาที่ซับซ้อน",
+      "omni": "โมเดลมัลติโหมดที่มีความสามารถหลากหลาย",
+      "agent": "เอเจนต์พร้อมเครื่องมือเรียลไทม์และเข้าถึงเว็บ"
     }
   },
   "models": {

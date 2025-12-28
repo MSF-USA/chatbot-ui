@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "실시간 웹 검색"
+    },
+    "modelTypeIcons": {
+      "foundational": "빠르고 효율적인 범용 모델",
+      "reasoning": "복잡한 문제를 위한 확장된 추론",
+      "omni": "다양한 기능의 멀티모달 모델",
+      "agent": "실시간 도구 및 웹 접근이 가능한 에이전트"
     }
   },
   "models": {
@@ -1169,7 +1175,19 @@
       "urdu": "우르두어",
       "vietnamese": "베트남어",
       "welsh": "웨일스어"
-    }
+    },
+    "inProgress": "전사 진행 중",
+    "processingFile": "처리 중: {filename}",
+    "timeRemaining": "남은 시간: {time}",
+    "maxDurationNote": "대용량 파일은 최대 {minutes}분 소요될 수 있습니다",
+    "timedOut": "{minutes}분 후 전사 시간이 초과되었습니다",
+    "timedOutToast": "전사 시간이 초과됨: {filename}",
+    "failed": "전사 실패: {error}",
+    "failedToast": "전사 실패: {filename}",
+    "unknownError": "알 수 없는 오류",
+    "completed": "전사 완료",
+    "completedToast": "전사 완료: {filename}",
+    "placeholder": "[전사 진행 중: {filename}]"
   },
   "migration": {
     "status": {

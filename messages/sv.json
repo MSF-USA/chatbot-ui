@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Sökning på webben i realtid"
+    },
+    "modelTypeIcons": {
+      "foundational": "Snabb och effektiv allmän modell",
+      "reasoning": "Utökat resonemang för komplexa problem",
+      "omni": "Multimodal modell med breda möjligheter",
+      "agent": "Agent med realtidsverktyg och webbtillgång"
     }
   },
   "models": {
@@ -1169,7 +1175,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamesiska",
       "welsh": "Walesiska"
-    }
+    },
+    "inProgress": "Transkribering pågår",
+    "processingFile": "Bearbetar: {filename}",
+    "timeRemaining": "Återstående tid: {time}",
+    "maxDurationNote": "Stora filer kan ta upp till {minutes} minuter",
+    "timedOut": "Transkribering avbröts efter {minutes} minuter",
+    "timedOutToast": "Transkribering avbröts: {filename}",
+    "failed": "Transkribering misslyckades: {error}",
+    "failedToast": "Transkribering misslyckades: {filename}",
+    "unknownError": "Okänt fel",
+    "completed": "Transkribering klar",
+    "completedToast": "Transkribering klar: {filename}",
+    "placeholder": "[Transkribering pågår: {filename}]"
   },
   "migration": {
     "status": {

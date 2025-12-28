@@ -982,6 +982,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Echtzeit-Websuche"
+    },
+    "modelTypeIcons": {
+      "foundational": "Schnelles und effizientes Allzweckmodell",
+      "reasoning": "Erweitertes Denkvermögen für komplexe Probleme",
+      "omni": "Multimodales Modell mit breiten Fähigkeiten",
+      "agent": "Agent mit Echtzeit-Tools & Webzugriff"
     }
   },
   "models": {
@@ -1166,7 +1172,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamesisch",
       "welsh": "Walisisch"
-    }
+    },
+    "inProgress": "Transkription läuft",
+    "processingFile": "Verarbeitung: {filename}",
+    "timeRemaining": "Verbleibende Zeit: {time}",
+    "maxDurationNote": "Große Dateien können bis zu {minutes} Minuten dauern",
+    "timedOut": "Transkription nach {minutes} Minuten abgebrochen",
+    "timedOutToast": "Transkription abgebrochen: {filename}",
+    "failed": "Transkription fehlgeschlagen: {error}",
+    "failedToast": "Transkription fehlgeschlagen: {filename}",
+    "unknownError": "Unbekannter Fehler",
+    "completed": "Transkription abgeschlossen",
+    "completedToast": "Transkription abgeschlossen: {filename}",
+    "placeholder": "[Transkription läuft: {filename}]"
   },
   "notFound": {
     "lostDog": "Verlorener Hund"

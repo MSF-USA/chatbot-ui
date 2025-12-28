@@ -896,7 +896,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnam",
       "welsh": "Wales"
-    }
+    },
+    "inProgress": "Transkripsi sedang berlangsung",
+    "processingFile": "Memproses: {filename}",
+    "timeRemaining": "Sisa waktu: {time}",
+    "maxDurationNote": "Berkas besar mungkin memerlukan hingga {minutes} menit",
+    "timedOut": "Transkripsi waktu habis setelah {minutes} menit",
+    "timedOutToast": "Transkripsi waktu habis: {filename}",
+    "failed": "Transkripsi gagal: {error}",
+    "failedToast": "Transkripsi gagal: {filename}",
+    "unknownError": "Kesalahan tidak diketahui",
+    "completed": "Transkripsi selesai",
+    "completedToast": "Transkripsi selesai: {filename}",
+    "placeholder": "[Transkripsi sedang berlangsung: {filename}]"
   },
   "transcriptionComplete": "Transkripsi selesai! Teks telah ditambahkan ke input chat.",
   "importBackupParseError": "Gagal mengurai file cadangan. Pastikan itu adalah JSON yang valid.",
@@ -1043,6 +1055,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Pencarian web waktu nyata"
+    },
+    "modelTypeIcons": {
+      "foundational": "Model serbaguna yang cepat & efisien",
+      "reasoning": "Penalaran lanjutan untuk masalah kompleks",
+      "omni": "Model multi-modal dengan kemampuan luas",
+      "agent": "Agen dengan alat real-time & akses web"
     }
   },
   "models": {

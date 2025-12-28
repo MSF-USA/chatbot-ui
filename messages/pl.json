@@ -928,7 +928,19 @@
       "urdu": "Urdu",
       "vietnamese": "Wietnamski",
       "welsh": "Walijski"
-    }
+    },
+    "inProgress": "Trwa transkrypcja",
+    "processingFile": "Przetwarzanie: {filename}",
+    "timeRemaining": "Pozostały czas: {time}",
+    "maxDurationNote": "Dla dużych plików może to potrwać do {minutes} minut",
+    "timedOut": "Transkrypcja przerwana po {minutes} minutach",
+    "timedOutToast": "Przekroczono czas transkrypcji: {filename}",
+    "failed": "Nieudana transkrypcja: {error}",
+    "failedToast": "Nieudana transkrypcja: {filename}",
+    "unknownError": "Nieznany błąd",
+    "completed": "Transkrypcja zakończona",
+    "completedToast": "Transkrypcja zakończona: {filename}",
+    "placeholder": "[Trwa transkrypcja: {filename}]"
   },
   "importBackupParseError": "Nie udało się przetworzyć pliku kopii zapasowej. Upewnij się, że jest to poprawny plik JSON.",
   "emptyState": {
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Wyszukiwanie w sieci w czasie rzeczywistym"
+    },
+    "modelTypeIcons": {
+      "foundational": "Szybki i wydajny model ogólnego zastosowania",
+      "reasoning": "Rozszerzone rozumowanie dla złożonych problemów",
+      "omni": "Model multimodalny o szerokich możliwościach",
+      "agent": "Agent z narzędziami w czasie rzeczywistym i dostępem do Internetu"
     }
   },
   "models": {

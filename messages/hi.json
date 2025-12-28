@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "रीयल-टाइम वेब सर्च"
+    },
+    "modelTypeIcons": {
+      "foundational": "तेज़ और कुशल सामान्य-उद्देश्य मॉडल",
+      "reasoning": "जटिल समस्याओं के लिए विस्तृत तर्कशक्ति",
+      "omni": "बहु-मोडल मॉडल जिसकी व्यापक क्षमताएँ हैं",
+      "agent": "रियल-टाइम टूल्स और वेब एक्सेस वाला एजेंट"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "उर्दू",
       "vietnamese": "वियतनामी",
       "welsh": "वेल्श"
-    }
+    },
+    "inProgress": "ट्रांसक्रिप्शन प्रगति में है",
+    "processingFile": "प्रोसेस कर रहा है: {filename}",
+    "timeRemaining": "शेष समय: {time}",
+    "maxDurationNote": "बड़े फ़ाइलों में {minutes} मिनट लग सकते हैं",
+    "timedOut": "ट्रांसक्रिप्शन {minutes} मिनट के बाद समय सीमा से बाहर हो गया",
+    "timedOutToast": "ट्रांसक्रिप्शन की समय सीमा समाप्त: {filename}",
+    "failed": "ट्रांसक्रिप्शन विफल: {error}",
+    "failedToast": "ट्रांसक्रिप्शन विफल: {filename}",
+    "unknownError": "अज्ञात त्रुटि",
+    "completed": "ट्रांसक्रिप्शन पूर्ण",
+    "completedToast": "ट्रांसक्रिप्शन पूर्ण: {filename}",
+    "placeholder": "[ट्रांसक्रिप्शन प्रगति में: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI की प्रतिक्रिया को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। इन्हें मुख्य व्यवहार दिशानिर्देशों के साथ जोड़ा जाता है ताकि प्रतिक्रियाएं सहायक, सटीक और सुरक्षित रहें।",
   "Tip: Type \"/\" to select from saved prompt templates_": "टिप: सहेजे गए प्रॉम्प्ट टेम्पलेट्स में से चुनने के लिए \"/\" टाइप करें।"

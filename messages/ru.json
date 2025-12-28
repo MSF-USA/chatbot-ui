@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Поиск в интернете в реальном времени"
+    },
+    "modelTypeIcons": {
+      "foundational": "Быстрая и эффективная универсальная модель",
+      "reasoning": "Расширенное рассуждение для сложных задач",
+      "omni": "Мультимодальная модель с широкими возможностями",
+      "agent": "Агент с инструментами в реальном времени и доступом к вебу"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "Урду",
       "vietnamese": "Вьетнамский",
       "welsh": "Валлийский"
-    }
+    },
+    "inProgress": "Транскрипция выполняется",
+    "processingFile": "Обработка: {filename}",
+    "timeRemaining": "Оставшееся время: {time}",
+    "maxDurationNote": "Обработка больших файлов может занять до {minutes} мин.",
+    "timedOut": "Транскрипция прервана по таймауту через {minutes} мин.",
+    "timedOutToast": "Транскрипция прервана по таймауту: {filename}",
+    "failed": "Ошибка транскрипции: {error}",
+    "failedToast": "Ошибка транскрипции: {filename}",
+    "unknownError": "Неизвестная ошибка",
+    "completed": "Транскрипция завершена",
+    "completedToast": "Транскрипция завершена: {filename}",
+    "placeholder": "[Транскрипция выполняется: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Добавьте свои инструкции, чтобы настроить ответы ИИ. Они будут дополнены основными правилами поведения, обеспечивающими полезные, точные и безопасные ответы.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Совет: введите «/», чтобы выбрать из сохранённых шаблонов запросов."

@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Pesquisa na web em tempo real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Modelo geral rápido e eficiente",
+      "reasoning": "Raciocínio avançado para problemas complexos",
+      "omni": "Modelo multimodal com amplas capacidades",
+      "agent": "Agente com ferramentas em tempo real e acesso à web"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamita",
       "welsh": "Galês"
-    }
+    },
+    "inProgress": "Transcrição em andamento",
+    "processingFile": "Processando: {filename}",
+    "timeRemaining": "Tempo restante: {time}",
+    "maxDurationNote": "Arquivos grandes podem levar até {minutes} minutos",
+    "timedOut": "Transcrição expirou após {minutes} minutos",
+    "timedOutToast": "Transcrição expirou: {filename}",
+    "failed": "Falha na transcrição: {error}",
+    "failedToast": "Falha na transcrição: {filename}",
+    "unknownError": "Erro desconhecido",
+    "completed": "Transcrição concluída",
+    "completedToast": "Transcrição concluída: {filename}",
+    "placeholder": "[Transcrição em andamento: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adicione suas instruções pessoais para personalizar as respostas da IA. Elas são combinadas com diretrizes principais de comportamento que garantem respostas úteis, precisas e seguras.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Dica: digite \"/\" para selecionar entre modelos de prompt salvos."

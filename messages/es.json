@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Búsqueda web en tiempo real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Modelo general rápido y eficiente",
+      "reasoning": "Razonamiento avanzado para problemas complejos",
+      "omni": "Modelo multimodal con amplias capacidades",
+      "agent": "Agente con herramientas en tiempo real y acceso web"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamita",
       "welsh": "Galés"
-    }
+    },
+    "inProgress": "Transcripción en curso",
+    "processingFile": "Procesando: {filename}",
+    "timeRemaining": "Tiempo restante: {time}",
+    "maxDurationNote": "Los archivos grandes pueden tardar hasta {minutes} minutos",
+    "timedOut": "La transcripción superó el tiempo límite tras {minutes} minutos",
+    "timedOutToast": "La transcripción superó el tiempo límite: {filename}",
+    "failed": "Error en la transcripción: {error}",
+    "failedToast": "Error en la transcripción: {filename}",
+    "unknownError": "Error desconocido",
+    "completed": "Transcripción completada",
+    "completedToast": "Transcripción completada: {filename}",
+    "placeholder": "[Transcripción en curso: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Agregue sus instrucciones personales para personalizar cómo responde la IA. Estas se combinan con las pautas principales de comportamiento que garantizan respuestas útiles, precisas y seguras.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Consejo: Escriba \"/\" para seleccionar entre las plantillas de mensajes guardadas."

@@ -928,7 +928,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnameză",
       "welsh": "Galeză"
-    }
+    },
+    "inProgress": "Transcriere în curs",
+    "processingFile": "Se procesează: {filename}",
+    "timeRemaining": "Timp rămas: {time}",
+    "maxDurationNote": "Fișierele mari pot dura până la {minutes} minute",
+    "timedOut": "Transcrierea a expirat după {minutes} minute",
+    "timedOutToast": "Transcriere expirată: {filename}",
+    "failed": "Transcriere eșuată: {error}",
+    "failedToast": "Transcriere eșuată: {filename}",
+    "unknownError": "Eroare necunoscută",
+    "completed": "Transcriere finalizată",
+    "completedToast": "Transcriere finalizată: {filename}",
+    "placeholder": "[Transcriere în curs: {filename}]"
   },
   "importBackupParseError": "Nu s-a putut analiza fișierul de backup. Asigurați-vă că este un fișier JSON valid.",
   "emptyState": {
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Căutare web în timp real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Model general rapid și eficient",
+      "reasoning": "Raționament extins pentru probleme complexe",
+      "omni": "Model multimodal cu capacități extinse",
+      "agent": "Agent cu instrumente în timp real și acces web"
     }
   },
   "models": {

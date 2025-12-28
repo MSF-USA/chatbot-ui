@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Gerçek zamanlı web araması"
+    },
+    "modelTypeIcons": {
+      "foundational": "Hızlı ve verimli genel amaçlı model",
+      "reasoning": "Karmaşık sorunlar için gelişmiş akıl yürütme",
+      "omni": "Geniş yeteneklere sahip çok modlu model",
+      "agent": "Gerçek zamanlı araçlar ve web erişimi olan ajan"
     }
   },
   "models": {
@@ -1169,7 +1175,19 @@
       "urdu": "Urduca",
       "vietnamese": "Vietnamca",
       "welsh": "Galce"
-    }
+    },
+    "inProgress": "Transkripsiyon devam ediyor",
+    "processingFile": "İşleniyor: {filename}",
+    "timeRemaining": "Kalan süre: {time}",
+    "maxDurationNote": "Büyük dosyalar {minutes} dakikaya kadar sürebilir",
+    "timedOut": "Transkripsiyon {minutes} dakika sonra zaman aşımına uğradı",
+    "timedOutToast": "Transkripsiyon zaman aşımına uğradı: {filename}",
+    "failed": "Transkripsiyon başarısız oldu: {error}",
+    "failedToast": "Transkripsiyon başarısız oldu: {filename}",
+    "unknownError": "Bilinmeyen hata",
+    "completed": "Transkripsiyon tamamlandı",
+    "completedToast": "Transkripsiyon tamamlandı: {filename}",
+    "placeholder": "[Transkripsiyon devam ediyor: {filename}]"
   },
   "migration": {
     "status": {

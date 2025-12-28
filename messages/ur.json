@@ -928,7 +928,19 @@
       "urdu": "اردو",
       "vietnamese": "ویتنامی",
       "welsh": "ویلش"
-    }
+    },
+    "inProgress": "تحریر جاری ہے",
+    "processingFile": "پراسسنگ ہو رہی ہے: {filename}",
+    "timeRemaining": "باقی وقت: {time}",
+    "maxDurationNote": "بڑے فائلوں کو مکمل ہونے میں {minutes} منٹ لگ سکتے ہیں",
+    "timedOut": "تحریر {minutes} منٹ بعد معطل ہوگئی",
+    "timedOutToast": "تحریر معطل ہوگئی: {filename}",
+    "failed": "تحریر ناکام: {error}",
+    "failedToast": "تحریر ناکام: {filename}",
+    "unknownError": "نامعلوم خرابی",
+    "completed": "تحریر مکمل ہوگئی",
+    "completedToast": "تحریر مکمل: {filename}",
+    "placeholder": "[تحریر جاری ہے: {filename}]"
   },
   "importBackupParseError": "بیک اپ فائل پارس کرنے میں ناکام۔ براہ کرم یقینی بنائیں کہ یہ درست JSON ہے۔",
   "emptyState": {
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "ریئل ٹائم ویب تلاش"
+    },
+    "modelTypeIcons": {
+      "foundational": "تیز اور مؤثر عمومی مقاصد کا ماڈل",
+      "reasoning": "پیچیدہ مسائل کے لیے توسیعی تجزیہ",
+      "omni": "وسیع صلاحیتوں کے ساتھ کثیر النوع ماڈل",
+      "agent": "حقیقی وقت کے ٹولز اور ویب رسائی والا ایجنٹ"
     }
   },
   "models": {

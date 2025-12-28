@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Utafutaji wa mtandaoni papo hapo"
+    },
+    "modelTypeIcons": {
+      "foundational": "Mfano wa jumla wenye kasi na ufanisi",
+      "reasoning": "Hoja za kina kwa matatizo changamano",
+      "omni": "Mfano wa aina nyingi wenye uwezo mpana",
+      "agent": "Wakala mwenye zana za wakati halisi na ufikiaji wa mtandao"
     }
   },
   "models": {
@@ -1169,7 +1175,19 @@
       "urdu": "Kiurdu",
       "vietnamese": "Kivietinamu",
       "welsh": "Kiwelisi"
-    }
+    },
+    "inProgress": "Uandishi wa maneno unaendelea",
+    "processingFile": "Inachakata: {filename}",
+    "timeRemaining": "Muda uliobaki: {time}",
+    "maxDurationNote": "Mafaili makubwa yanaweza kuchukua hadi dakika {minutes}",
+    "timedOut": "Uandishi wa maneno umekatishwa baada ya dakika {minutes}",
+    "timedOutToast": "Uandishi wa maneno umekatishwa: {filename}",
+    "failed": "Uandishi wa maneno umeshindwa: {error}",
+    "failedToast": "Uandishi wa maneno umeshindwa: {filename}",
+    "unknownError": "Hitilafu isiyojulikana",
+    "completed": "Uandishi wa maneno umekamilika",
+    "completedToast": "Uandishi wa maneno umekamilika: {filename}",
+    "placeholder": "[Uandishi wa maneno unaendelea: {filename}]"
   },
   "migration": {
     "status": {

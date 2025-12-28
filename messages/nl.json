@@ -1026,6 +1026,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Real-time webzoekopdracht"
+    },
+    "modelTypeIcons": {
+      "foundational": "Snel en efficiënt algemeen model",
+      "reasoning": "Uitgebreid redeneren voor complexe vraagstukken",
+      "omni": "Multimodaal model met brede mogelijkheden",
+      "agent": "Agent met realtime tools en webtoegang"
     }
   },
   "models": {
@@ -1169,7 +1175,19 @@
       "urdu": "Urdu",
       "vietnamese": "Vietnamees",
       "welsh": "Welsh"
-    }
+    },
+    "inProgress": "Transcriptie bezig",
+    "processingFile": "Bezig met verwerken: {filename}",
+    "timeRemaining": "Resterende tijd: {time}",
+    "maxDurationNote": "Grote bestanden kunnen tot {minutes} minuten duren",
+    "timedOut": "Transcriptie afgebroken na {minutes} minuten",
+    "timedOutToast": "Transcriptie afgebroken: {filename}",
+    "failed": "Transcriptie mislukt: {error}",
+    "failedToast": "Transcriptie mislukt: {filename}",
+    "unknownError": "Onbekende fout",
+    "completed": "Transcriptie voltooid",
+    "completedToast": "Transcriptie voltooid: {filename}",
+    "placeholder": "[Transcriptie bezig: {filename}]"
   },
   "migration": {
     "status": {

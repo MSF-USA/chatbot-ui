@@ -982,6 +982,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "በቅኝ ጊዜ የድህረገፅ ፍለጋ"
+    },
+    "modelTypeIcons": {
+      "foundational": "ፈጣን እና ውጤታማ አጠቃላይ ሞዴል",
+      "reasoning": "ለውስብስብ ችግኞች የተሰፋ ምስላ አነጋጋሪ ሞዴል",
+      "omni": "ጠቃሚ ችሎታዎች ያሉት የሚታወቀው አይነተኛ ሞዴል",
+      "agent": "በቅኝ ጊዜ መሳሪያዎችና የድህረ መረብ መዳረሻ ያለው agent"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "ኡርዱኛ",
       "vietnamese": "ቪትናምኛ",
       "welsh": "ዌልሽ"
-    }
+    },
+    "inProgress": "የጽሑፍ ማዋቀሪያ በሂደት ላይ ነው",
+    "processingFile": "በሂደት ላይ፡ {filename}",
+    "timeRemaining": "የቀረው ጊዜ፡ {time}",
+    "maxDurationNote": "ትልቅ ፋይሎች እስከ {minutes} ደቂቃዎች ሊወስዱ ይችላሉ",
+    "timedOut": "የጽሑፍ ማዋቀሪያ ከ {minutes} ደቂቃዎች በኋላ ቆሟል",
+    "timedOutToast": "የጽሑፍ ማዋቀሪያ ጊዜው አልቆ፡ {filename}",
+    "failed": "የጽሑፍ ማዋቀሪያ አልተሳካም፡ {error}",
+    "failedToast": "የጽሑፍ ማዋቀሪያ አልተሳካም፡ {filename}",
+    "unknownError": "ያልታወቀ ስህተት",
+    "completed": "የጽሑፍ ማዋቀሪያ ተጠናቋል",
+    "completedToast": "የጽሑፍ ማዋቀሪያ ተጠናቋል፡ {filename}",
+    "placeholder": "[የጽሑፍ ማዋቀሪያ በሂደት ላይ፡ {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "የእርስዎን የግል መመሪያዎች ያክሉ እና የAI ምላሽን ያስተካክሉ። እነዚህ ጥሩ፣ ትክክለኛ እና ደህና የሆኑ ምላሾችን ለመስጠት ከመሠረታዊ መመሪያዎች ጋር ይጣፉ።",
   "Tip: Type \"/\" to select from saved prompt templates_": "ምክር፦ \"/\" በመተግበር ከተቀመጡት ማስጠንቀቂያ አብነቶች ይምረጡ።"

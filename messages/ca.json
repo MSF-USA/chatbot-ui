@@ -924,7 +924,19 @@
       "urdu": "Urdú",
       "vietnamese": "Vietnamita",
       "welsh": "Gal·lès"
-    }
+    },
+    "inProgress": "Transcripció en curs",
+    "processingFile": "S'està processant: {filename}",
+    "timeRemaining": "Temps restant: {time}",
+    "maxDurationNote": "Els fitxers grans poden trigar fins a {minutes} minuts",
+    "timedOut": "La transcripció ha superat el temps límit després de {minutes} minuts",
+    "timedOutToast": "Temps límit excedit a la transcripció: {filename}",
+    "failed": "La transcripció ha fallat: {error}",
+    "failedToast": "La transcripció ha fallat: {filename}",
+    "unknownError": "Error desconegut",
+    "completed": "Transcripció finalitzada",
+    "completedToast": "Transcripció finalitzada: {filename}",
+    "placeholder": "[Transcripció en curs: {filename}]"
   },
   "transcriptionComplete": "Transcripció completa! Text afegit a l'entrada del xat.",
   "No prompts found": "No s'ha trobat cap prompt",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Cerca web en temps real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Model ràpid i eficient d'ús general",
+      "reasoning": "Capacitat de raonament ampliada per a problemes complexos",
+      "omni": "Model multimodal amb capacitats àmplies",
+      "agent": "Agent amb eines en temps real i accés web"
     }
   },
   "models": {

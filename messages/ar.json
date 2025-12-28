@@ -985,6 +985,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "بحث ويب في الوقت الفعلي"
+    },
+    "modelTypeIcons": {
+      "foundational": "نموذج عام سريع وفعّال",
+      "reasoning": "قدرات استدلال موسعة للمشكلات المعقدة",
+      "omni": "نموذج متعدد الوسائط بقدرات شاملة",
+      "agent": "وكيل بأدوات فورية وإمكانية الوصول إلى الويب"
     }
   },
   "models": {
@@ -1456,7 +1462,19 @@
       "urdu": "الأوردو",
       "vietnamese": "الفيتنامية",
       "welsh": "الويلزية"
-    }
+    },
+    "inProgress": "جاري تحويل النص",
+    "processingFile": "جارٍ المعالجة: {filename}",
+    "timeRemaining": "الوقت المتبقي: {time}",
+    "maxDurationNote": "قد تستغرق الملفات الكبيرة حتى {minutes} دقيقة",
+    "timedOut": "انتهت مهلة التحويل بعد {minutes} دقيقة",
+    "timedOutToast": "انتهت مهلة التحويل: {filename}",
+    "failed": "فشل في تحويل النص: {error}",
+    "failedToast": "فشل في تحويل النص: {filename}",
+    "unknownError": "خطأ غير معروف",
+    "completed": "تم تحويل النص",
+    "completedToast": "تم تحويل النص: {filename}",
+    "placeholder": "[جاري تحويل النص: {filename}]"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة.",
   "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ."

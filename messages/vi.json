@@ -927,7 +927,19 @@
       "urdu": "Tiếng Urdu",
       "vietnamese": "Tiếng Việt",
       "welsh": "Tiếng Wales"
-    }
+    },
+    "inProgress": "Đang chuyển lời",
+    "processingFile": "Đang xử lý: {filename}",
+    "timeRemaining": "Thời gian còn lại: {time}",
+    "maxDurationNote": "Tệp lớn có thể mất đến {minutes} phút",
+    "timedOut": "Hết thời gian sau {minutes} phút chuyển lời",
+    "timedOutToast": "Chuyển lời hết thời gian: {filename}",
+    "failed": "Chuyển lời thất bại: {error}",
+    "failedToast": "Chuyển lời thất bại: {filename}",
+    "unknownError": "Lỗi không xác định",
+    "completed": "Chuyển lời hoàn tất",
+    "completedToast": "Chuyển lời hoàn tất: {filename}",
+    "placeholder": "[Đang chuyển lời: {filename}]"
   },
   "transcriptionComplete": "Phiên âm hoàn tất! Văn bản đã được thêm vào ô nhập trò chuyện.",
   "importBackupParseError": "Không thể phân tích tệp sao lưu. Vui lòng đảm bảo tệp ở định dạng JSON hợp lệ.",
@@ -1051,6 +1063,12 @@
     },
     "knowledgeCutoff": {
       "realtime": "Tìm kiếm web theo thời gian thực"
+    },
+    "modelTypeIcons": {
+      "foundational": "Mô hình đa năng nhanh và hiệu quả",
+      "reasoning": "Nâng cao khả năng suy luận cho vấn đề phức tạp",
+      "omni": "Mô hình đa phương tiện với khả năng toàn diện",
+      "agent": "Tác nhân với công cụ thời gian thực & truy cập web"
     }
   },
   "models": {
