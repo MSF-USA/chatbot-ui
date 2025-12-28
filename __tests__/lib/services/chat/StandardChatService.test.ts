@@ -312,6 +312,7 @@ describe('StandardChatService', () => {
         undefined, // stopConversationRef
         undefined, // transcript (not provided in this test)
         undefined, // citations (not provided in this test)
+        undefined, // pendingTranscriptions (not provided in this test)
       );
     });
 
