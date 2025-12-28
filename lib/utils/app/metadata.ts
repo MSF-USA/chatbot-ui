@@ -108,6 +108,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
     thinking,
     transcript,
     action,
+    pendingTranscriptions,
     extractionMethod,
   };
 }
@@ -133,6 +134,8 @@ export function appendMetadataToStream(
   if (metadata.thinking) cleanMetadata.thinking = metadata.thinking;
   if (metadata.transcript) cleanMetadata.transcript = metadata.transcript;
   if (metadata.action) cleanMetadata.action = metadata.action;
+  if (metadata.pendingTranscriptions)
+    cleanMetadata.pendingTranscriptions = metadata.pendingTranscriptions;
 
   // Only append if we have actual metadata
   if (Object.keys(cleanMetadata).length > 0) {
