@@ -4,6 +4,11 @@
  * This hook automatically polls the transcription status endpoint for any
  * pending batch transcription jobs and updates the store when they complete.
  *
+ * Handles two types of transcription jobs:
+ * 1. Pre-submit jobs (from chatInputStore.pendingTranscriptions) - tracked before message is sent
+ * 2. Post-submit jobs (from chatStore.pendingConversationTranscription) - for large files (>25MB)
+ *    that are submitted and tracked after the message is already in the conversation
+ *
  * Polling intervals increase over time:
  * - 0-10s: every 2 seconds
  * - 10-60s: every 5 seconds
@@ -13,9 +18,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 
+import { generateConversationTitle } from '@/client/services/titleService';
+
 import { BatchTranscriptionStatusResponse } from '@/types/transcription';
 
 import { useChatInputStore } from '@/client/stores/chatInputStore';
+import { useChatStore } from '@/client/stores/chatStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 
 /** Polling intervals in milliseconds */
 const POLL_INTERVALS = {
@@ -58,7 +67,11 @@ function getPollingInterval(elapsedMs: number): number {
  * It will automatically start polling when there are pending jobs and stop
  * when all jobs are complete or failed.
  */
+/** Maximum time to wait for transcription (10 minutes) */
+const MAX_TRANSCRIPTION_TIME_MS = 10 * 60 * 1000;
+
 export function useTranscriptionPolling(): void {
+  // Pre-submit transcription tracking (chatInputStore)
   const pendingTranscriptions = useChatInputStore(
     (state) => state.pendingTranscriptions,
   );
@@ -72,6 +85,23 @@ export function useTranscriptionPolling(): void {
     (state) => state.setTextFieldValue,
   );
   const setFilePreviews = useChatInputStore((state) => state.setFilePreviews);
+
+  // Post-submit transcription tracking (chatStore - for large files >25MB)
+  const pendingConversationTranscription = useChatStore(
+    (state) => state.pendingConversationTranscription,
+  );
+  const setConversationTranscriptionPending = useChatStore(
+    (state) => state.setConversationTranscriptionPending,
+  );
+
+  // Conversation store for updating messages
+  const updateMessageWithTranscript = useConversationStore(
+    (state) => state.updateMessageWithTranscript,
+  );
+  const conversations = useConversationStore((state) => state.conversations);
+  const updateConversation = useConversationStore(
+    (state) => state.updateConversation,
+  );
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isPollingRef = useRef(false);
