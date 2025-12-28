@@ -17,48 +17,9 @@ import { isAudioVideoFile } from '@/lib/constants/fileTypes';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import fs from 'fs';
 
-/**
- * Polls a batch transcription job until completion.
- *
- * @param service - BatchTranscriptionService instance
- * @param jobId - Job ID to poll
- * @param maxWaitMs - Maximum wait time in milliseconds (default 10 minutes)
- * @returns Promise resolving to the transcript text
- * @throws Error if job fails or times out
- */
-async function pollBatchTranscription(
-  service: BatchTranscriptionService,
-  jobId: string,
-  maxWaitMs: number = 600000,
-): Promise<string> {
-  const startTime = Date.now();
-  const pollIntervals = [2000, 5000, 10000, 15000]; // Increasing intervals
-  let pollIndex = 0;
-
-  while (Date.now() - startTime < maxWaitMs) {
-    const status = await service.getStatus(jobId);
-
-    if (status.status === 'Succeeded') {
-      return await service.getTranscript(jobId);
-    }
-
-    if (status.status === 'Failed') {
-      throw new Error(
-        `Batch transcription failed: ${status.error || 'Unknown error'}`,
-      );
-    }
-
-    // Wait with increasing intervals
-    const waitMs =
-      pollIntervals[Math.min(pollIndex++, pollIntervals.length - 1)];
-    console.log(
-      `[FileProcessor] Batch transcription status: ${status.status}, waiting ${waitMs}ms...`,
-    );
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
-  }
-
-  throw new Error(`Batch transcription timed out after ${maxWaitMs / 1000}s`);
-}
+// Note: Synchronous polling was removed in favor of async client-side polling.
+// Batch transcription jobs are now submitted and returned immediately with pending state.
+// The frontend polls /api/transcription/status/[jobId] and updates the message when complete.
 
 /**
  * FileProcessor handles file content processing in the pipeline.
@@ -293,6 +254,16 @@ export class FileProcessor extends BasePipelineStage {
                       fileToTranscribe,
                       transcriptionOptions,
                     );
+
+                    // Whisper completed synchronously - add transcript immediately
+                    transcripts.push({
+                      filename,
+                      transcript,
+                    });
+
+                    console.log(
+                      `[FileProcessor] Transcription complete: ${transcript.length} chars`,
+                    );
                   } else {
                     // Batch transcription (asynchronous with polling, >25MB)
                     console.log(
@@ -335,78 +306,52 @@ export class FileProcessor extends BasePipelineStage {
                       },
                     );
 
-                    try {
-                      // 2. Generate SAS URL for batch API access
-                      const sasUrl =
-                        await this.blobStorageClient.generateSasUrl(
-                          tempBlobPath,
-                          24, // 24 hour expiry
-                        );
+                    // 2. Generate SAS URL for batch API access
+                    const sasUrl = await this.blobStorageClient.generateSasUrl(
+                      tempBlobPath,
+                      24, // 24 hour expiry
+                    );
 
-                      console.log(
-                        `[FileProcessor] Submitting batch transcription job...`,
-                      );
+                    console.log(
+                      `[FileProcessor] Submitting batch transcription job...`,
+                    );
 
-                      // 3. Submit batch transcription job
-                      const jobId = await batchService.submitTranscription(
-                        sasUrl,
-                        file.transcriptionLanguage || 'en-US',
-                      );
+                    // 3. Submit batch transcription job
+                    const jobId = await batchService.submitTranscription(
+                      sasUrl,
+                      file.transcriptionLanguage || 'en-US',
+                    );
 
-                      console.log(
-                        `[FileProcessor] Batch job submitted: ${jobId}`,
-                      );
+                    console.log(
+                      `[FileProcessor] Batch job submitted: ${jobId}`,
+                    );
 
-                      // 4. Poll until complete (synchronous polling)
-                      transcript = await pollBatchTranscription(
-                        batchService,
-                        jobId,
-                      );
-
-                      console.log(
-                        `[FileProcessor] Batch transcription complete: ${transcript.length} chars`,
-                      );
-
-                      // 5. Delete batch job (cleanup Azure resources)
-                      try {
-                        await batchService.deleteTranscription(jobId);
-                        console.log(
-                          `[FileProcessor] Deleted batch job: ${jobId}`,
-                        );
-                      } catch (deleteError) {
-                        console.warn(
-                          `[FileProcessor] Failed to delete batch job ${jobId}:`,
-                          deleteError,
-                        );
-                      }
-                    } finally {
-                      // 6. Delete temp blob (always cleanup)
-                      try {
-                        const blockBlobClient =
-                          this.blobStorageClient.getBlockBlobClient(
-                            tempBlobPath,
-                          );
-                        await blockBlobClient.delete();
-                        console.log(
-                          `[FileProcessor] Deleted temp blob: ${tempBlobPath}`,
-                        );
-                      } catch (blobDeleteError) {
-                        console.warn(
-                          `[FileProcessor] Failed to delete temp blob ${tempBlobPath}:`,
-                          blobDeleteError,
-                        );
-                      }
+                    // 4. Store pending transcription info (async - client will poll)
+                    // Note: Do NOT poll here - return immediately with pending state
+                    // Note: Do NOT delete blob or job - Azure needs them during transcription
+                    // Cleanup happens via /api/transcription/cleanup after client polling completes
+                    if (!context.processedContent) {
+                      context.processedContent = {};
                     }
+                    if (!context.processedContent.pendingTranscriptions) {
+                      context.processedContent.pendingTranscriptions = [];
+                    }
+                    context.processedContent.pendingTranscriptions.push({
+                      filename,
+                      jobId,
+                      blobPath: tempBlobPath,
+                    });
+
+                    // Add placeholder transcript for UI display
+                    transcripts.push({
+                      filename,
+                      transcript: `[Transcription in progress: ${filename}]`,
+                    });
+
+                    console.log(
+                      `[FileProcessor] Batch transcription job queued for async processing: ${jobId}`,
+                    );
                   }
-
-                  transcripts.push({
-                    filename,
-                    transcript,
-                  });
-
-                  console.log(
-                    `[FileProcessor] Transcription complete: ${transcript.length} chars`,
-                  );
                 } finally {
                   // Clean up extracted audio file if created
                   if (extractedAudioPath) {
