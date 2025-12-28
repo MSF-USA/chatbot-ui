@@ -51,7 +51,7 @@ import type { MermaidConfig } from 'mermaid';
  * Format: [Transcript: filename | blob:jobId | expires:ISO_TIMESTAMP]
  */
 function isBlobTranscriptReference(content: string): boolean {
-  return /^\[Transcript:\s*.+?\s*\|\s*blob:[a-f0-9-]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
+  return /^\[Transcript:\s*.+?\s*\|\s*blob:[a-fA-F0-9-]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
     content.trim(),
   );
 }
