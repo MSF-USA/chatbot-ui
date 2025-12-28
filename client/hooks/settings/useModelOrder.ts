@@ -83,12 +83,16 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
 
       case 'cutoff': {
         // Sort by knowledge cutoff date (newest first)
+        // Uses ISO format (e.g., "2025-12", "2025-01-20") which sorts correctly lexicographically
         return modelsCopy.sort((a, b) => {
           const configA = OpenAIModels[a.id as OpenAIModelID];
           const configB = OpenAIModels[b.id as OpenAIModelID];
-          const cutoffA = configA?.knowledgeCutoff ?? '';
-          const cutoffB = configB?.knowledgeCutoff ?? '';
-          // Descending order (newest first)
+          const cutoffA = configA?.knowledgeCutoffDate ?? '';
+          const cutoffB = configB?.knowledgeCutoffDate ?? '';
+          // Empty strings (special cases like real-time agents) sort last
+          if (!cutoffA && cutoffB) return 1;
+          if (cutoffA && !cutoffB) return -1;
+          // Descending order (newest first) - ISO format sorts correctly
           return cutoffB.localeCompare(cutoffA);
         });
       }
