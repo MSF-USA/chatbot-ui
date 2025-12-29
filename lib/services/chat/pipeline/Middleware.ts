@@ -135,6 +135,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       threadId,
       forcedAgentType,
       tone,
+      streamingSpeed,
     } = body;
 
     if (tone) {
@@ -158,6 +159,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       threadId,
       forcedAgentType,
       tone,
+      streamingSpeed,
     };
   } catch (error) {
     if (error instanceof PipelineError) {
