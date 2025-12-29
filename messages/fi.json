@@ -1540,5 +1540,25 @@
       "message": "Keskusteluja tyhjennettäessä tapahtui virhe. Yritä uudelleen."
     },
     "close": "Sulje"
+  },
+  "support": {
+    "selectOrganization": "Valitse organisaatiosi",
+    "organizationDescription": "Valitse MSF-organisaatiosi nähdäksesi oikean tukikontaktin",
+    "autoDetect": "Tunnista automaattisesti",
+    "resetToAutoDetect": "Palauta automaattiseen tunnistukseen",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Geneve)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Kenttä / Muu"
+    },
+    "emailSupport": "Sähkötuki",
+    "emailDescription": "Ota yhteyttä {organization} tukitiimiin",
+    "escalationTitle": "Kenttä- ja muu MSF-henkilöstö",
+    "escalationDescription": "Noudata organisaatiosi IT-escalointipolkua saadaksesi tukea",
+    "escalationShort": "Ota yhteyttä paikalliseen IT-tukeen",
+    "escalationStep1": "Ota ensin yhteyttä paikalliseen IT-tukeen",
+    "escalationStep2": "Jos asia ei ratkea, eskaloi Operatiivisen Keskuksen (OC) IT-osastolle",
+    "escalationStep3": "Jos asia on edelleen ratkaisematta, OC IT voi eskaloida SITS:lle (Shared IT Services)"
   }
 }

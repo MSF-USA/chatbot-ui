@@ -1540,5 +1540,25 @@
       "message": "S’ha produït un error mentre s’eliminaven les converses. Torneu-ho a intentar."
     },
     "close": "Tanca"
+  },
+  "support": {
+    "selectOrganization": "Selecciona la teva organització",
+    "organizationDescription": "Tria la teva organització MSF per veure el contacte d’assistència corresponent",
+    "autoDetect": "Detecció automàtica",
+    "resetToAutoDetect": "Restableix a detecció automàtica",
+    "organizations": {
+      "USA": "MSF EUA",
+      "OCG": "OCG (Ginebra)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Camp / Altres"
+    },
+    "emailSupport": "Assistència per correu electrònic",
+    "emailDescription": "Contacta amb l’equip d’assistència de {organization}",
+    "escalationTitle": "Personal de camp i altres de MSF",
+    "escalationDescription": "Segueix el recorregut d’escalada de TI de la teva organització per rebre assistència",
+    "escalationShort": "Contacta amb el teu suport informàtic local",
+    "escalationStep1": "Contacta primer amb el teu suport informàtic local",
+    "escalationStep2": "Si no es resol, escala-ho al departament de TI del Centre Operacional (OC)",
+    "escalationStep3": "Si encara no es resol, el TI de l’OC pot escalar-ho a SITS (Shared IT Services)"
   }
 }

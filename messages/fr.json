@@ -1540,5 +1540,25 @@
       "message": "Une erreur s'est produite lors de la suppression des conversations. Veuillez réessayer."
     },
     "close": "Fermer"
+  },
+  "support": {
+    "selectOrganization": "Sélectionnez votre organisation",
+    "organizationDescription": "Choisissez votre organisation MSF pour obtenir le contact support approprié",
+    "autoDetect": "Détection automatique",
+    "resetToAutoDetect": "Réinitialiser à la détection automatique",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genève)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Terrain / Autre"
+    },
+    "emailSupport": "Support par e-mail",
+    "emailDescription": "Contacter l’équipe support de {organization}",
+    "escalationTitle": "Personnel MSF terrain et autres",
+    "escalationDescription": "Suivez le processus d’escalade informatique de votre organisation pour le support",
+    "escalationShort": "Contactez votre support informatique local",
+    "escalationStep1": "Contactez d’abord votre support informatique local",
+    "escalationStep2": "Si le problème persiste, escaladez vers votre département informatique du centre opérationnel (OC)",
+    "escalationStep3": "Si le problème n’est toujours pas résolu, l’IT de l’OC peut escalader vers SITS (Shared IT Services)"
   }
 }

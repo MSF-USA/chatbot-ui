@@ -1540,5 +1540,25 @@
       "message": "אירעה שגיאה בעת ניקוי השיחות. נסה שוב."
     },
     "close": "סגור"
+  },
+  "support": {
+    "selectOrganization": "בחר את הארגון שלך",
+    "organizationDescription": "בחר את ארגון רופאים ללא גבולות שלך כדי לראות את איש הקשר המתאים לתמיכה",
+    "autoDetect": "זיהוי אוטומטי",
+    "resetToAutoDetect": "אפס לזיהוי אוטומטי",
+    "organizations": {
+      "USA": "רופאים ללא גבולות USA",
+      "OCG": "OCG (ז'נבה)",
+      "OCA": "OCA (אמסטרדם)",
+      "FIELD": "שטח / אחר"
+    },
+    "emailSupport": "תמיכה במייל",
+    "emailDescription": "צור קשר עם צוות התמיכה של {organization}",
+    "escalationTitle": "שטח ואנשי צוות MSF אחרים",
+    "escalationDescription": "עקוב אחר מסלול ההסלמה של מחלקת ה-IT בארגון שלך לקבלת תמיכה",
+    "escalationShort": "פנה לתמיכה המקומית שלך ב-IT",
+    "escalationStep1": "פנה קודם כל לתמיכה המקומית שלך ב-IT",
+    "escalationStep2": "אם לא נפתר, הסלם למחלקת ה-IT במרכז התפעולי (OC) שלך",
+    "escalationStep3": "אם עדיין לא נפתר, ה-IT של ה-OC יכול להסלים ל-SITS (Shared IT Services)"
   }
 }

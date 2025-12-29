@@ -1540,5 +1540,25 @@
       "message": "เกิดข้อผิดพลาดขณะลบบทสนทนา กรุณาลองใหม่อีกครั้ง"
     },
     "close": "ปิด"
+  },
+  "support": {
+    "selectOrganization": "เลือกองค์กรของคุณ",
+    "organizationDescription": "เลือกองค์กร MSF ของคุณเพื่อดูข้อมูลติดต่อฝ่ายสนับสนุนที่เหมาะสม",
+    "autoDetect": "ตรวจจับอัตโนมัติ",
+    "resetToAutoDetect": "รีเซ็ตเป็นตรวจจับอัตโนมัติ",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (เจนีวา)",
+      "OCA": "OCA (อัมสเตอร์ดัม)",
+      "FIELD": "ภาคสนาม / อื่น ๆ"
+    },
+    "emailSupport": "อีเมลสนับสนุน",
+    "emailDescription": "ติดต่อทีมสนับสนุน {organization}",
+    "escalationTitle": "บุคลากรภาคสนามและ MSF อื่น ๆ",
+    "escalationDescription": "ดำเนินการตามขั้นตอนแจ้งปัญหา IT ขององค์กรคุณเพื่อรับการสนับสนุน",
+    "escalationShort": "ติดต่อฝ่าย IT ในพื้นที่ของคุณ",
+    "escalationStep1": "ติดต่อฝ่าย IT ในพื้นที่ของคุณก่อน",
+    "escalationStep2": "หากยังไม่ได้รับการแก้ไข ให้แจ้งปัญหาไปยังแผนก IT ของศูนย์ปฏิบัติการ (OC)",
+    "escalationStep3": "หากยังไม่ได้รับการแก้ไข แผนก IT ของ OC สามารถแจ้งต่อไปยัง SITS (Shared IT Services)"
   }
 }

@@ -1540,5 +1540,25 @@
       "message": "清除对话时发生错误，请重试。"
     },
     "close": "关闭"
+  },
+  "support": {
+    "selectOrganization": "请选择您的组织",
+    "organizationDescription": "选择您的 MSF 组织以查看相应的支持联系方式",
+    "autoDetect": "自动检测",
+    "resetToAutoDetect": "重置为自动检测",
+    "organizations": {
+      "USA": "MSF 美国",
+      "OCG": "OCG（日内瓦）",
+      "OCA": "OCA（阿姆斯特丹）",
+      "FIELD": "现场 / 其他"
+    },
+    "emailSupport": "邮件支持",
+    "emailDescription": "联系 {organization} 支持团队",
+    "escalationTitle": "现场及其他 MSF 人员",
+    "escalationDescription": "请按照您的组织 IT 升级流程寻求支持",
+    "escalationShort": "联系您本地的 IT 支持",
+    "escalationStep1": "请首先联系您本地的 IT 支持",
+    "escalationStep2": "如未解决，请升级到您的运营中心（OC）IT 部门",
+    "escalationStep3": "如仍未解决，OC IT 可升级到 SITS（共享 IT 服务）"
   }
 }

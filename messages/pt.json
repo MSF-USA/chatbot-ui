@@ -1540,5 +1540,25 @@
       "message": "Ocorreu um erro ao limpar as conversas. Tente novamente."
     },
     "close": "Fechar"
+  },
+  "support": {
+    "selectOrganization": "Selecione sua organização",
+    "organizationDescription": "Escolha sua organização da MSF para ver o contato de suporte apropriado",
+    "autoDetect": "Detectar automaticamente",
+    "resetToAutoDetect": "Redefinir para detecção automática",
+    "organizations": {
+      "USA": "MSF EUA",
+      "OCG": "OCG (Genebra)",
+      "OCA": "OCA (Amsterdã)",
+      "FIELD": "Campo / Outros"
+    },
+    "emailSupport": "Suporte por e-mail",
+    "emailDescription": "Contatar a equipe de suporte da {organization}",
+    "escalationTitle": "Pessoal de Campo e Outros da MSF",
+    "escalationDescription": "Siga o fluxo de escalonamento de TI da sua organização para suporte",
+    "escalationShort": "Contate o suporte local de TI",
+    "escalationStep1": "Primeiro, contate o suporte local de TI",
+    "escalationStep2": "Se não resolvido, escale para o departamento de TI do Centro Operacional (OC)",
+    "escalationStep3": "Se ainda não resolvido, o TI do OC pode escalar para o SITS (Shared IT Services)"
   }
 }

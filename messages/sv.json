@@ -1540,5 +1540,25 @@
       "message": "Ett fel uppstod vid rensning av konversationer. Försök igen."
     },
     "close": "Stäng"
+  },
+  "support": {
+    "selectOrganization": "Välj din organisation",
+    "organizationDescription": "Välj din MSF-organisation för att se rätt supportkontakt",
+    "autoDetect": "Autoidentifiera",
+    "resetToAutoDetect": "Återställ till autoidentifiering",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genève)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Fält / Annat"
+    },
+    "emailSupport": "E-postsupport",
+    "emailDescription": "Kontakta supportteamet för {organization}",
+    "escalationTitle": "Fält & övrig MSF-personal",
+    "escalationDescription": "Följ din organisations IT-eskaleringsväg för support",
+    "escalationShort": "Kontakta din lokala IT-support",
+    "escalationStep1": "Kontakta först din lokala IT-support",
+    "escalationStep2": "Om det inte löser problemet, eskalera till ditt operativa centers IT-avdelning",
+    "escalationStep3": "Om det fortfarande inte är löst kan OC IT eskalera till SITS (Shared IT Services)"
   }
 }

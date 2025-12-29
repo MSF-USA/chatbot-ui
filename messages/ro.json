@@ -1540,5 +1540,25 @@
       "message": "A apărut o eroare la ștergerea conversațiilor. Vă rugăm să încercați din nou."
     },
     "close": "Închide"
+  },
+  "support": {
+    "selectOrganization": "Selectați organizația dumneavoastră",
+    "organizationDescription": "Alegeți organizația MSF pentru a vedea contactul corespunzător pentru suport",
+    "autoDetect": "Detectare automată",
+    "resetToAutoDetect": "Resetați la detectare automată",
+    "organizations": {
+      "USA": "MSF SUA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Teren / Altă organizație"
+    },
+    "emailSupport": "Suport prin e-mail",
+    "emailDescription": "Contactați echipa de suport {organization}",
+    "escalationTitle": "Personal de teren și alți angajați MSF",
+    "escalationDescription": "Urmați procedura de escaladare IT a organizației dumneavoastră pentru suport",
+    "escalationShort": "Contactați suportul IT local",
+    "escalationStep1": "Contactați mai întâi suportul IT local",
+    "escalationStep2": "Dacă problema nu este rezolvată, escaladați către departamentul IT al Centrului Operațional (OC)",
+    "escalationStep3": "Dacă încă nu este rezolvată, OC IT poate escalada către SITS (Shared IT Services)"
   }
 }

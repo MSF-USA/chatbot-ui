@@ -1540,5 +1540,25 @@
       "message": "Kulitokea hitilafu wakati wa kufuta mazungumzo. Tafadhali jaribu tena."
     },
     "close": "Funga"
+  },
+  "support": {
+    "selectOrganization": "Chagua shirika lako",
+    "organizationDescription": "Chagua shirika lako la MSF ili kuona mawasiliano sahihi ya msaada",
+    "autoDetect": "Tambua moja kwa moja",
+    "resetToAutoDetect": "Rudisha kwenye utambuzi otomatiki",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Eneo / Lingine"
+    },
+    "emailSupport": "Msaada kwa Barua Pepe",
+    "emailDescription": "Wasiliana na timu ya msaada ya {organization}",
+    "escalationTitle": "Wafanyakazi wa Msafara na Wengine wa MSF",
+    "escalationDescription": "Fuata njia ya usaidizi ya IT ya shirika lako",
+    "escalationShort": "Wasiliana na msaada wa IT wa eneo lako",
+    "escalationStep1": "Wasiliana kwanza na msaada wa IT wa eneo lako",
+    "escalationStep2": "Ikiwa haijatatuliwa, peleka kwa idara ya IT ya Kituo chako cha Uendeshaji (OC)",
+    "escalationStep3": "Ikiwa bado haijatatuliwa, OC IT inaweza kuelekeza kwa SITS (Shared IT Services)"
   }
 }

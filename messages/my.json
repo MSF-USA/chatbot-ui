@@ -1540,5 +1540,25 @@
       "message": "ဆွေးနွေးမှုများကို စင်ကြယ်စဉ်အတွင်း အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။ ထပ်မံကြိုးစားပါ။"
     },
     "close": "ပိတ်မည်"
+  },
+  "support": {
+    "selectOrganization": "သင့်အဖွဲ့အစည်းကိုရွေးပါ",
+    "organizationDescription": "သင့် MSF အဖွဲ့အစည်းကိုရွေးချယ်ပါ၊ ထောက်ခံမှုဆက်သွယ်ရမည့်နေရာကို ပြသပါမည်",
+    "autoDetect": "အလိုအလျောက် ရှာဖွေပါ",
+    "resetToAutoDetect": "အလိုအလျောက်ရှာဖွေမှုသို့ပြန်ထားမည်",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (ဂျနီဗา)",
+      "OCA": "OCA (အမ်စတာဒါမ်)",
+      "FIELD": "လယ်ပြင် / အခြား"
+    },
+    "emailSupport": "အီးမေးလ်ထောက်ပံ့မှု",
+    "emailDescription": "{organization} ထောက်ပံ့ရေးအဖွဲ့အား ဆက်သွယ်ပါ",
+    "escalationTitle": "လယ်ပြင်နှင့်အခြား MSF ဝန်ထမ်း",
+    "escalationDescription": "ထောက်ပံ့မှုအတွက် သင့်အဖွဲ့အစည်း၏ IT လမ်းကြောင်းအတိုင်းလိုက်နာပါ",
+    "escalationShort": "သင့်ဒေသခံ IT ထောက်ခံမှုအဖွဲ့ကို ဆက်သွယ်ပါ",
+    "escalationStep1": "ပထမဦးဆုံး သင့်ဒေသခံ IT ထောက်ခံမှုအဖွဲ့ကို ဆက်သွယ်ပါ",
+    "escalationStep2": "မဖြေရှင်းနိုင်ပါက၊ သင့် Operational Center (OC) ၏ IT ဌာနထံ တိုးမြှင့်ပေးပါ",
+    "escalationStep3": "တစ်ခုလုံး မဖြေရှင်းနိုင်ပါက OC IT သည် SITS (Shared IT Services) သို့ တိုးမြှင့်နိုင်ပါသည်"
   }
 }

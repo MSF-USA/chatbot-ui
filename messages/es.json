@@ -1540,5 +1540,25 @@
       "message": "Ocurrió un error al borrar las conversaciones. Inténtelo de nuevo."
     },
     "close": "Cerrar"
+  },
+  "support": {
+    "selectOrganization": "Seleccione su organización",
+    "organizationDescription": "Elija su organización de MSF para ver el contacto de soporte correspondiente",
+    "autoDetect": "Detección automática",
+    "resetToAutoDetect": "Restablecer a detección automática",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Ginebra)",
+      "OCA": "OCA (Ámsterdam)",
+      "FIELD": "Terreno / Otro"
+    },
+    "emailSupport": "Soporte por correo electrónico",
+    "emailDescription": "Contactar al equipo de soporte de {organization}",
+    "escalationTitle": "Personal de terreno y otros de MSF",
+    "escalationDescription": "Siga la vía de escalamiento de TI de su organización para soporte",
+    "escalationShort": "Contacte a su soporte de TI local",
+    "escalationStep1": "Contacte primero a su soporte de TI local",
+    "escalationStep2": "Si no se resuelve, escale al departamento de TI de su Centro Operacional (OC)",
+    "escalationStep3": "Si aún no se resuelve, el TI del OC puede escalar a SITS (Shared IT Services)"
   }
 }

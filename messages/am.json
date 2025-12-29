@@ -1540,5 +1540,25 @@
       "message": "ውይዮችን በመጽዳት ላይ ስህተት ተፈጥሯል። እባክዎ ደግመው ይሞክሩ።"
     },
     "close": "ዝጋ"
+  },
+  "support": {
+    "selectOrganization": "ድርጅትዎን ይምረጡ",
+    "organizationDescription": "በተገቢው የድጋፍ አድራሻ ለማየት የMSF ድርጅትዎን ይምረጡ",
+    "autoDetect": "በራስ-ሰር ማግኘት",
+    "resetToAutoDetect": "ወደ በራስ-ሰር ማግኘት ዳግም ያድሱ",
+    "organizations": {
+      "USA": "MSF ዩ.ኤስ.ኤ",
+      "OCG": "OCG (ጄኔቫ)",
+      "OCA": "OCA (አምስተርዳም)",
+      "FIELD": "መስክ / ሌላ"
+    },
+    "emailSupport": "በኢሜይል ድጋፍ",
+    "emailDescription": "የ{organization} ድጋፍ ቡድንን ያናግሩ",
+    "escalationTitle": "በመስክ እና ሌሎች MSF ሰራተኞች",
+    "escalationDescription": "ለድጋፍ የድርጅትዎን IT የእድገት መንገድ ይከተሉ",
+    "escalationShort": "ከአካባቢዎ የIT ድጋፍ ጋር ያነጋግሩ",
+    "escalationStep1": "መጀመሪያ ከአካባቢዎ የIT ድጋፍ ጋር ያነጋግሩ",
+    "escalationStep2": "አልተፈታም ከሆነ፣ ወደ የOC IT መድፈሻ ያስገቡ",
+    "escalationStep3": "አልተፈታም ከሆነ፣ OC IT ወደ SITS (Shared IT Services) ሊያስገቡ ይችላሉ"
   }
 }

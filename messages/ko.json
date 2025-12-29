@@ -1540,5 +1540,25 @@
       "message": "대화를 삭제하는 중 오류가 발생했습니다. 다시 시도해 주세요."
     },
     "close": "닫기"
+  },
+  "support": {
+    "selectOrganization": "소속 기관 선택",
+    "organizationDescription": "적절한 지원 연락처를 보려면 사용자의 MSF 기관을 선택하세요",
+    "autoDetect": "자동 감지",
+    "resetToAutoDetect": "자동 감지로 재설정",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (제네바)",
+      "OCA": "OCA (암스테르담)",
+      "FIELD": "현장 / 기타"
+    },
+    "emailSupport": "이메일 지원",
+    "emailDescription": "{organization} 지원팀에 문의",
+    "escalationTitle": "현장 및 기타 MSF 인원",
+    "escalationDescription": "지원이 필요할 때 소속 기관의 IT 지원 절차를 따르세요",
+    "escalationShort": "지역 IT 지원팀에 문의",
+    "escalationStep1": "먼저 지역 IT 지원팀에 문의하십시오",
+    "escalationStep2": "해결되지 않으면 운영센터(OC) IT 부서로 문의하십시오",
+    "escalationStep3": "여전히 해결되지 않으면, OC IT가 SITS(공유 IT 서비스)로 추가 문의할 수 있습니다"
   }
 }

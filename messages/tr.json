@@ -1540,5 +1540,25 @@
       "message": "Konuşmalar temizlenirken bir hata oluştu. Lütfen tekrar deneyin."
     },
     "close": "Kapat"
+  },
+  "support": {
+    "selectOrganization": "Kuruluşunuzu seçin",
+    "organizationDescription": "Uygun destek kişisini görmek için MSF kuruluşunuzu seçin",
+    "autoDetect": "Otomatik algıla",
+    "resetToAutoDetect": "Otomatik algılamaya sıfırla",
+    "organizations": {
+      "USA": "MSF ABD",
+      "OCG": "OCG (Cenevre)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Saha / Diğer"
+    },
+    "emailSupport": "E-posta Desteği",
+    "emailDescription": "{organization} destek ekibiyle iletişime geçin",
+    "escalationTitle": "Saha & Diğer MSF Personeli",
+    "escalationDescription": "Destek için kuruluşunuzun BT yönlendirme yolunu izleyin",
+    "escalationShort": "Yerel BT desteğinizle iletişime geçin",
+    "escalationStep1": "Önce yerel BT desteğinizle iletişime geçin",
+    "escalationStep2": "Çözülmezse, Operasyonel Merkezinizin (OC) BT departmanına yönlendirin",
+    "escalationStep3": "Hâlâ çözülmezse, OC BT ekibi konuyu SITS’e (Ortak BT Hizmetleri) yönlendirebilir"
   }
 }

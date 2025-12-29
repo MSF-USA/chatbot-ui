@@ -1540,5 +1540,25 @@
       "message": "Er is een fout opgetreden bij het wissen van gesprekken. Probeer het opnieuw."
     },
     "close": "Sluiten"
+  },
+  "support": {
+    "selectOrganization": "Selecteer uw organisatie",
+    "organizationDescription": "Kies uw MSF-organisatie om het juiste contact voor ondersteuning te zien",
+    "autoDetect": "Automatisch detecteren",
+    "resetToAutoDetect": "Reset naar automatisch detecteren",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genève)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Veld / Overig"
+    },
+    "emailSupport": "E-mailondersteuning",
+    "emailDescription": "Neem contact op met het ondersteuningsteam van {organization}",
+    "escalationTitle": "Veld & Overig MSF-personeel",
+    "escalationDescription": "Volg de IT-escalatieroute van uw organisatie voor ondersteuning",
+    "escalationShort": "Neem contact op met uw lokale IT-ondersteuning",
+    "escalationStep1": "Neem eerst contact op met uw lokale IT-ondersteuning",
+    "escalationStep2": "Als het niet is opgelost, escaleer naar de IT-afdeling van uw Operationeel Centrum (OC)",
+    "escalationStep3": "Als het nog steeds niet is opgelost, kan OC IT escaleren naar SITS (Shared IT Services)"
   }
 }

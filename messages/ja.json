@@ -1540,5 +1540,25 @@
       "message": "会話の削除中にエラーが発生しました。再度お試しください。"
     },
     "close": "閉じる"
+  },
+  "support": {
+    "selectOrganization": "組織を選択してください",
+    "organizationDescription": "適切なサポート連絡先を表示するため、MSF組織を選択してください",
+    "autoDetect": "自動検出",
+    "resetToAutoDetect": "自動検出にリセット",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG（ジュネーブ）",
+      "OCA": "OCA（アムステルダム）",
+      "FIELD": "フィールド／その他"
+    },
+    "emailSupport": "メールサポート",
+    "emailDescription": "{organization} のサポートチームに連絡",
+    "escalationTitle": "フィールドおよびその他のMSFスタッフ",
+    "escalationDescription": "サポートが必要な場合は、所属組織のITエスカレーション手順に従ってください",
+    "escalationShort": "所属のITサポートに連絡してください",
+    "escalationStep1": "まずは所属のITサポートに連絡してください",
+    "escalationStep2": "解決しない場合は、オペレーショナルセンター（OC）のIT部門にエスカレーションしてください",
+    "escalationStep3": "それでも解決しない場合は、OCのIT部門がSITS（Shared IT Services）にエスカレーションできます"
   }
 }

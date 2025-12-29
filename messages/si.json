@@ -1540,5 +1540,25 @@
       "message": "සංවාද මකාදැමීමේදී දෝෂයක් ඇතිවිය. කරුණාකර නැවත උත්සාහ කරන්න."
     },
     "close": "වසා දමන්න"
+  },
+  "support": {
+    "selectOrganization": "ඔබගේ සංවිධානය තේරීම",
+    "organizationDescription": "ඔප්පු සහය පත්‍රිකාව සඳහා ඔබේ MSF සංවිධානය තෝරන්න",
+    "autoDetect": "ස්වයං-හඳුනා ගැනීම",
+    "resetToAutoDetect": "ස්වයං-හඳුනා ගැනීමට නැවත සැකසීම",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (ජනීවා)",
+      "OCA": "OCA (ඇම්ස්ට්ර්ඩෑම්)",
+      "FIELD": "ක්ෂේත්‍ර / අනෙකුත්"
+    },
+    "emailSupport": "ඊමේල් සහාය",
+    "emailDescription": "{organization} සහාය කණ්ඩායම අමතන්න",
+    "escalationTitle": "ක්ෂේත්‍ර සහ අනෙකුත් MSF කාර්ය මණ්ඩලය",
+    "escalationDescription": "සහාය සඳහා ඔබේ සංවිධානයේ IT සිරිශි ශේණි මාර්ගය අනුගමනය කරන්න",
+    "escalationShort": "ඔබගේ ප්‍රාදේශීය IT සහාය අමතන්න",
+    "escalationStep1": "ප්‍රථමයෙන් ඔබේ ප්‍රාදේශීය IT සහාය අමතන්න",
+    "escalationStep2": "විසඳිය නොහොත්, ඔබගේ ක්‍රියාත්මක මධ්‍යස්ථානය (OC) IT අංශයට උසස් කරන්න",
+    "escalationStep3": "තවමත් විසඳා නොමැති නම්, OC IT විසින් SITS (Shared IT Services) වෙත උසස් කළ හැක"
   }
 }

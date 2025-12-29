@@ -1540,5 +1540,25 @@
       "message": "Wystąpił błąd podczas usuwania rozmów. Spróbuj ponownie."
     },
     "close": "Zamknij"
+  },
+  "support": {
+    "selectOrganization": "Wybierz swoją organizację",
+    "organizationDescription": "Wybierz swoją organizację MSF, aby zobaczyć odpowiedni kontakt do działu wsparcia",
+    "autoDetect": "Wykryj automatycznie",
+    "resetToAutoDetect": "Resetuj do automatycznego wykrywania",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genewa)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Teren / Inne"
+    },
+    "emailSupport": "Wsparcie e-mailowe",
+    "emailDescription": "Skontaktuj się z zespołem wsparcia {organization}",
+    "escalationTitle": "Pracownicy terenowi i inni pracownicy MSF",
+    "escalationDescription": "Postępuj zgodnie ze ścieżką eskalacji IT swojej organizacji, aby uzyskać wsparcie",
+    "escalationShort": "Skontaktuj się z lokalnym wsparciem IT",
+    "escalationStep1": "Najpierw skontaktuj się z lokalnym wsparciem IT",
+    "escalationStep2": "Jeśli problem nie zostanie rozwiązany, eskaluj do działu IT swojego Centrali Operacyjnej (OC)",
+    "escalationStep3": "Jeśli nadal nierozwiązane, dział IT OC może przekazać zgłoszenie do SITS (Shared IT Services)"
   }
 }

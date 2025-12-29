@@ -1540,5 +1540,25 @@
       "message": "Při mazání konverzací došlo k chybě. Zkuste to prosím znovu."
     },
     "close": "Zavřít"
+  },
+  "support": {
+    "selectOrganization": "Vyberte svou organizaci",
+    "organizationDescription": "Zvolte svou organizaci MSF pro zobrazení příslušného kontaktu na podporu",
+    "autoDetect": "Automatické rozpoznání",
+    "resetToAutoDetect": "Obnovit automatické rozpoznání",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Ženeva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Terén / Jiná"
+    },
+    "emailSupport": "Podpora e-mailem",
+    "emailDescription": "Kontaktujte podporu týmu {organization}",
+    "escalationTitle": "Terénní a ostatní zaměstnanci MSF",
+    "escalationDescription": "Řiďte se eskalačním postupem IT vaší organizace pro podporu",
+    "escalationShort": "Kontaktujte místní IT podporu",
+    "escalationStep1": "Nejprve kontaktujte místní IT podporu",
+    "escalationStep2": "Pokud není problém vyřešen, obraťte se na IT oddělení vašeho operačního centra (OC)",
+    "escalationStep3": "Pokud není problém stále vyřešen, OC IT může eskalovat na SITS (Shared IT Services)"
   }
 }

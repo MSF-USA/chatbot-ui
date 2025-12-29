@@ -1540,5 +1540,25 @@
       "message": "Terjadi kesalahan saat menghapus percakapan. Silakan coba lagi."
     },
     "close": "Tutup"
+  },
+  "support": {
+    "selectOrganization": "Pilih organisasi Anda",
+    "organizationDescription": "Pilih organisasi MSF Anda untuk melihat kontak dukungan yang sesuai",
+    "autoDetect": "Deteksi otomatis",
+    "resetToAutoDetect": "Reset ke deteksi otomatis",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Jenewa)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Lapangan / Lainnya"
+    },
+    "emailSupport": "Dukungan Email",
+    "emailDescription": "Hubungi tim dukungan {organization}",
+    "escalationTitle": "Personel MSF Lapangan & Lainnya",
+    "escalationDescription": "Ikuti prosedur eskalasi TI organisasi Anda untuk mendapatkan dukungan",
+    "escalationShort": "Hubungi dukungan TI lokal Anda",
+    "escalationStep1": "Hubungi dukungan TI lokal Anda terlebih dahulu",
+    "escalationStep2": "Jika belum terselesaikan, eskalasikan ke departemen TI Operational Center (OC) Anda",
+    "escalationStep3": "Jika masih belum terselesaikan, TI OC dapat mengeskalasikan ke SITS (Shared IT Services)"
   }
 }

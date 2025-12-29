@@ -1540,5 +1540,25 @@
       "message": "సంభాషణలు తొలగించడంలో పొరపాటు వచ్చింది. దయచేసి మళ్లీ ప్రయత్నించండి."
     },
     "close": "మూసివేయి"
+  },
+  "support": {
+    "selectOrganization": "మీ సంస్థను ఎంచుకోండి",
+    "organizationDescription": "సరైన సహాయ సంప్రదింపును చూసేందుకు మీ MSF సంస్థను ఎంచుకోండి",
+    "autoDetect": "ఆటో-డిటెక్ట్",
+    "resetToAutoDetect": "ఆటో-డిటెక్ట్‌కు రీసెట్ చేయండి",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (జెనీవా)",
+      "OCA": "OCA (ఆమ్స్టర్డాం)",
+      "FIELD": "ఫీల్డ్ / ఇతర"
+    },
+    "emailSupport": "ఇమెయిల్ సహాయం",
+    "emailDescription": "{organization} సహాయ బృందాన్ని సంప్రదించండి",
+    "escalationTitle": "ఫీల్డ్ & ఇతర MSF సిబ్బంది",
+    "escalationDescription": "సహాయానికి మీ సంస్థ యొక్క IT స్కలేషన్ మార్గాన్ని అనుసరించండి",
+    "escalationShort": "మీ స్థానిక IT సహాయကုటోని సంప్రదించండి",
+    "escalationStep1": "ముందుగా మీ స్థానిక IT సహాయాన్ని సంప్రదించండి",
+    "escalationStep2": "పరిష్కారం కాకపోతే, మీ OC (ఆపరేషనల్ సెంటర్) IT విభాగానికి స్కలేట్ చేయండి",
+    "escalationStep3": "ఇంకా పరిష్కారం కాకపోతే, OC IT వారు SITS (షేర్డ్ IT సర్వీసెస్) కు స్కలేట్ చేయవచ్చు"
   }
 }

@@ -1540,5 +1540,25 @@
       "message": "Beim Löschen der Unterhaltungen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
     },
     "close": "Schließen"
+  },
+  "support": {
+    "selectOrganization": "Wählen Sie Ihre Organisation aus",
+    "organizationDescription": "Wählen Sie Ihre MSF-Organisation, um den passenden Support-Kontakt anzuzeigen",
+    "autoDetect": "Automatisch erkennen",
+    "resetToAutoDetect": "Auf automatische Erkennung zurücksetzen",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genf)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Feld / Sonstige"
+    },
+    "emailSupport": "E-Mail-Support",
+    "emailDescription": "Kontaktieren Sie das Support-Team von {organization}",
+    "escalationTitle": "Feld- & andere MSF-Mitarbeitende",
+    "escalationDescription": "Folgen Sie dem IT-Eskalationsweg Ihrer Organisation für Support",
+    "escalationShort": "Wenden Sie sich an Ihren lokalen IT-Support",
+    "escalationStep1": "Wenden Sie sich zuerst an Ihren lokalen IT-Support",
+    "escalationStep2": "Wenn das Problem weiterhin besteht, wenden Sie sich an die IT-Abteilung Ihres Operational Center (OC)",
+    "escalationStep3": "Wenn weiterhin ungelöst, kann das OC IT das Anliegen an SITS (Shared IT Services) weiterleiten"
   }
 }

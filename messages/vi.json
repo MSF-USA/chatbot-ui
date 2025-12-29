@@ -1540,5 +1540,25 @@
       "message": "Đã xảy ra lỗi khi xóa các cuộc hội thoại. Vui lòng thử lại."
     },
     "close": "Đóng"
+  },
+  "support": {
+    "selectOrganization": "Chọn tổ chức của bạn",
+    "organizationDescription": "Chọn tổ chức MSF của bạn để xem thông tin liên hệ hỗ trợ phù hợp",
+    "autoDetect": "Tự động phát hiện",
+    "resetToAutoDetect": "Đặt lại về tự động phát hiện",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Dự án / Khác"
+    },
+    "emailSupport": "Hỗ trợ qua email",
+    "emailDescription": "Liên hệ đội hỗ trợ của {organization}",
+    "escalationTitle": "Nhân viên MSF tại dự án & Khác",
+    "escalationDescription": "Làm theo quy trình chuyển cấp IT của tổ chức bạn để được hỗ trợ",
+    "escalationShort": "Liên hệ bộ phận IT địa phương của bạn",
+    "escalationStep1": "Trước tiên, hãy liên hệ bộ phận IT địa phương của bạn",
+    "escalationStep2": "Nếu chưa được giải quyết, chuyển cấp lên phòng IT Trung Tâm Điều Hành (OC) của bạn",
+    "escalationStep3": "Nếu vẫn chưa được giải quyết, phòng IT OC có thể chuyển cấp lên SITS (Shared IT Services)"
   }
 }

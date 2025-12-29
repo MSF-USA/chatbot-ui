@@ -1540,5 +1540,25 @@
       "message": "گفتگو صاف کرتے وقت خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔"
     },
     "close": "بند کریں"
+  },
+  "support": {
+    "selectOrganization": "اپنی تنظیم منتخب کریں",
+    "organizationDescription": "مناسب معاونت کے رابطے کے لیے اپنی MSF تنظیم منتخب کریں",
+    "autoDetect": "خودکار شناخت",
+    "resetToAutoDetect": "خودکار شناخت پر ری سیٹ کریں",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (جنیوا)",
+      "OCA": "OCA (ایمسٹردم)",
+      "FIELD": "فیلڈ / دیگر"
+    },
+    "emailSupport": "ای میل سپورٹ",
+    "emailDescription": "{organization} کے سپورٹ ٹیم سے رابطہ کریں",
+    "escalationTitle": "فیلڈ اور دیگر MSF عملہ",
+    "escalationDescription": "مدد کے لیے اپنی تنظیم کے IT ایسکلیشن راستے کی پیروی کریں",
+    "escalationShort": "اپنے مقامی IT سپورٹ سے رابطہ کریں",
+    "escalationStep1": "پہلے اپنے مقامی IT سپورٹ سے رابطہ کریں",
+    "escalationStep2": "اگر مسئلہ حل نہ ہو تو اپنے Operational Center (OC) کے IT شعبہ کو اطلاع دیں",
+    "escalationStep3": "اگر اب بھی مسئلہ حل نہ ہو، تو OC IT شعبہ SITS (شیئرڈ IT سروسز) کو اطلاع دے سکتا ہے"
   }
 }

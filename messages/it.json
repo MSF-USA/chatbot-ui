@@ -1540,5 +1540,25 @@
       "message": "Si è verificato un errore durante la rimozione delle conversazioni. Riprova."
     },
     "close": "Chiudi"
+  },
+  "support": {
+    "selectOrganization": "Seleziona la tua organizzazione",
+    "organizationDescription": "Scegli la tua organizzazione MSF per visualizzare il contatto di supporto appropriato",
+    "autoDetect": "Rilevamento automatico",
+    "resetToAutoDetect": "Reimposta su rilevamento automatico",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Ginevra)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Terreno / Altro"
+    },
+    "emailSupport": "Supporto e-mail",
+    "emailDescription": "Contatta il team di supporto di {organization}",
+    "escalationTitle": "Personale MSF del Terreno e Altro",
+    "escalationDescription": "Segui il percorso di escalation IT della tua organizzazione per il supporto",
+    "escalationShort": "Contatta il supporto IT locale",
+    "escalationStep1": "Contatta prima il tuo supporto IT locale",
+    "escalationStep2": "Se non risolto, inoltra all'ufficio IT del tuo Centro Operativo (OC)",
+    "escalationStep3": "Se ancora non risolto, l’IT dell’OC può inoltrare a SITS (Shared IT Services)"
   }
 }

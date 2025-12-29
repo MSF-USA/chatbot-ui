@@ -1540,5 +1540,25 @@
       "message": "बातचीतें साफ़ करते समय त्रुटि हुई। कृपया पुनः प्रयास करें।"
     },
     "close": "बंद करें"
+  },
+  "support": {
+    "selectOrganization": "अपना संगठन चुनें",
+    "organizationDescription": "उपयुक्त सहायता संपर्क देखने के लिए अपना MSF संगठन चुनें",
+    "autoDetect": "स्वतः-पहचानें",
+    "resetToAutoDetect": "स्वतः-पहचान पर रीसेट करें",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (जेनेवा)",
+      "OCA": "OCA (एम्स्टर्डम)",
+      "FIELD": "फील्ड / अन्य"
+    },
+    "emailSupport": "ईमेल सहायता",
+    "emailDescription": "{organization} सहायता टीम से संपर्क करें",
+    "escalationTitle": "फील्ड व अन्य MSF कर्मी",
+    "escalationDescription": "सहायता के लिए अपने संगठन के IT एस्केलेशन प्रक्रिया का पालन करें",
+    "escalationShort": "अपने स्थानीय IT सहायता से संपर्क करें",
+    "escalationStep1": "पहले अपने स्थानीय IT सहायता से संपर्क करें",
+    "escalationStep2": "यदि समस्या हल न हो, तो अपने ऑपरेशनल सेंटर (OC) IT विभाग तक पहुंचाएं",
+    "escalationStep3": "यदि अब भी हल न हो, तो OC IT, SITS (शेयर्ड IT सर्विसेज़) तक एस्केलेट कर सकता है"
   }
 }
