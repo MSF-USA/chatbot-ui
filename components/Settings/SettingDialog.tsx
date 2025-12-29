@@ -15,7 +15,7 @@ import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
 import { SearchMode } from '@/types/searchMode';
-import { Settings } from '@/types/settings';
+import { DEFAULT_STREAMING_SPEED, Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
 import { MigrationDialog } from '../Migration/MigrationDialog';
@@ -57,6 +57,7 @@ export function SettingDialog() {
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
       displayNamePreference: 'firstName',
       customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
     },
   });
 
@@ -203,6 +204,7 @@ export function SettingDialog() {
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
       displayNamePreference: 'firstName',
       customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
     };
     setTheme(defaultTheme);
     setTemperature(0.5);
