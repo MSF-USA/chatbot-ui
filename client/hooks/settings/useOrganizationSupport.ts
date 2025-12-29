@@ -67,8 +67,8 @@ export function useOrganizationSupport(): OrganizationSupportState {
 
   // Detect organization from user's email
   const detectedOrganization = useMemo(
-    () => detectOrganizationFromEmail(session?.user?.email),
-    [session?.user?.email],
+    () => detectOrganizationFromEmail(session?.user?.mail),
+    [session?.user?.mail],
   );
 
   // Determine effective organization (user preference takes precedence)
