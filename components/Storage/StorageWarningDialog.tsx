@@ -87,12 +87,15 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    const newEstimate =
-      clearMode === 'keepRecent'
-        ? calculateSpaceByCount(keepCount)
-        : calculateSpaceByDays(olderThanDays);
+    // Defer state updates to avoid synchronous cascading renders
+    queueMicrotask(() => {
+      const newEstimate =
+        clearMode === 'keepRecent'
+          ? calculateSpaceByCount(keepCount)
+          : calculateSpaceByDays(olderThanDays);
 
-    setEstimate(newEstimate);
+      setEstimate(newEstimate);
+    });
   }, [
     isOpen,
     clearMode,
@@ -105,9 +108,12 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
   // Reset state when dialog opens
   useEffect(() => {
     if (isOpen) {
-      setState('warning');
-      setClearResult(null);
-      refresh();
+      // Defer state updates to avoid synchronous cascading renders
+      queueMicrotask(() => {
+        setState('warning');
+        setClearResult(null);
+        refresh();
+      });
     }
   }, [isOpen, refresh]);
 
