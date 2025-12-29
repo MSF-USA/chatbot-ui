@@ -169,6 +169,10 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
   const toggleViewMode = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setViewMode(viewMode === 'cards' ? 'list' : 'cards');
+    // Auto-expand when toggling view mode if not already expanded
+    if (!isExpanded) {
+      setIsExpanded(true);
+    }
   };
 
   if (uniqueCitations.length === 0) return null;
