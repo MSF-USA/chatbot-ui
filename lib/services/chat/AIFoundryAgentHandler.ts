@@ -49,6 +49,7 @@ export class AIFoundryAgentHandler {
     user: Session['user'],
     botId: string | undefined,
     threadId?: string,
+    streamingSpeed?: { charsPerBatch: number; delayMs: number },
   ): Promise<Response> {
     const startTime = Date.now();
 
@@ -267,17 +268,24 @@ export class AIFoundryAgentHandler {
               let streamBuffer = '';
               let controllerClosed = false;
 
+              // Use configurable streaming speed or defaults
+              const charsPerBatch = streamingSpeed?.charsPerBatch ?? 3;
+              const delayMs = streamingSpeed?.delayMs ?? 8;
+
               // Background task to stream buffered content smoothly
-              // Sends 3 characters every 8ms for a consistent output rate
+              // Sends configured characters every configured ms for a consistent output rate
               const smoothStream = async () => {
                 while (!controllerClosed) {
                   if (streamBuffer.length > 0) {
-                    const charsToSend = Math.min(3, streamBuffer.length);
+                    const charsToSend = Math.min(
+                      charsPerBatch,
+                      streamBuffer.length,
+                    );
                     const toSend = streamBuffer.slice(0, charsToSend);
                     streamBuffer = streamBuffer.slice(charsToSend);
                     controller.enqueue(encoder.encode(toSend));
                   }
-                  await new Promise((resolve) => setTimeout(resolve, 8));
+                  await new Promise((resolve) => setTimeout(resolve, delayMs));
                 }
               };
 
