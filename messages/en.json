@@ -867,6 +867,26 @@
       "githubDescription": "View code, report issues, and contribute on GitHub"
     }
   },
+  "support": {
+    "selectOrganization": "Select your organization",
+    "organizationDescription": "Choose your MSF organization to see the appropriate support contact",
+    "autoDetect": "Auto-detect",
+    "resetToAutoDetect": "Reset to auto-detect",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Field / Other"
+    },
+    "emailSupport": "Email Support",
+    "emailDescription": "Contact {organization} support team",
+    "escalationTitle": "Field & Other MSF Personnel",
+    "escalationDescription": "Follow your organization's IT escalation path for support",
+    "escalationShort": "Contact your local IT support",
+    "escalationStep1": "Contact your local IT support first",
+    "escalationStep2": "If unresolved, escalate to your Operational Center (OC) IT department",
+    "escalationStep3": "If still unresolved, OC IT can escalate to SITS (Shared IT Services)"
+  },
   "notFound": {
     "lostDog": "Lost dog"
   },
