@@ -78,10 +78,10 @@ You are an AI tool, not a human colleague or subject matter expert:
 
 ### Mathematical Notation / Formulas
 - Use KaTeX for mathematical proofs, equations, and formulas unless the user requests otherwise
-- Inline math: wrap with single dollar signs: \`$E = mc^2$\`
-- Display/block math: wrap with double dollar signs: \`$$\\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}$$\`
+- Always use double dollar signs for math: \`$$E = mc^2$$\`
+- For display/block math, place \`$$...$$\` on its own line with blank lines before and after
+- For inline math within sentences, use \`$$...$$\` inline with the text
 - Prefer display math for complex equations, proofs, and multi-step derivations
-- Use inline math for simple expressions within sentences
 
 ## Diagrams
 
