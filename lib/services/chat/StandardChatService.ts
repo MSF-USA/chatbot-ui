@@ -23,6 +23,14 @@ import { AnthropicFoundry } from '@anthropic-ai/foundry-sdk';
 import OpenAI, { AzureOpenAI } from 'openai';
 
 /**
+ * Streaming speed configuration for smooth text output.
+ */
+export interface StreamingSpeedConfig {
+  charsPerBatch: number;
+  delayMs: number;
+}
+
+/**
  * Request parameters for standard chat.
  */
 export interface StandardChatRequest {
@@ -39,6 +47,7 @@ export interface StandardChatRequest {
   citations?: Citation[]; // Web search citations to include in response
   tone?: Tone; // Full tone object from client
   pendingTranscriptions?: PendingTranscriptionInfo[]; // Async batch transcription jobs
+  streamingSpeed?: StreamingSpeedConfig; // Smooth streaming speed configuration
 }
 
 /**
@@ -140,6 +149,7 @@ export class StandardChatService {
         request.user,
         request.transcript,
         request.citations,
+        request.streamingSpeed,
       );
     }
 
@@ -185,6 +195,7 @@ export class StandardChatService {
         request.transcript, // transcript metadata
         request.citations, // web search citations
         request.pendingTranscriptions, // async batch transcription jobs
+        request.streamingSpeed, // smooth streaming speed configuration
       );
 
       return new Response(processedStream, {
@@ -217,6 +228,7 @@ export class StandardChatService {
     user: Session['user'],
     transcript?: TranscriptMetadata,
     citations?: Citation[],
+    streamingSpeed?: StreamingSpeedConfig,
   ): Promise<Response> {
     // Validate Anthropic client is configured
     if (!this.anthropicFoundryClient) {
@@ -260,6 +272,7 @@ export class StandardChatService {
         undefined, // stopConversationRef
         transcript,
         citations,
+        streamingSpeed,
       );
 
       return new Response(processedStream, {
