@@ -36,6 +36,7 @@ export const OrganizationSelector: FC<OrganizationSelectorProps> = ({
   className = '',
   showResetButton = true,
   compact = false,
+  serverDetectedOrganization,
 }) => {
   const t = useTranslations();
   const {
@@ -44,7 +45,7 @@ export const OrganizationSelector: FC<OrganizationSelectorProps> = ({
     isOverridden,
     setOrganizationPreference,
     resetToAutoDetect,
-  } = useOrganizationSupport();
+  } = useOrganizationSupport({ serverDetectedOrganization });
 
   /**
    * Gets the translated display name for an organization.
