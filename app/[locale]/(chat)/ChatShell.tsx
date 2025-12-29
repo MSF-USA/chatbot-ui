@@ -52,14 +52,17 @@ export function ChatShell({ children }: { children: React.ReactNode }) {
     // Don't show storage warning if migration dialog is showing
     if (showMigrationDialog) return;
 
-    // Check if storage warning should be shown
-    const { shouldShow, currentThreshold } = shouldShowStorageWarning();
-    if (shouldShow && currentThreshold) {
-      setShowStorageWarning(true);
-      setStorageThreshold(
-        currentThreshold as 'WARNING' | 'CRITICAL' | 'EMERGENCY',
-      );
-    }
+    // Defer state updates to avoid synchronous cascading renders
+    queueMicrotask(() => {
+      // Check if storage warning should be shown
+      const { shouldShow, currentThreshold } = shouldShowStorageWarning();
+      if (shouldShow && currentThreshold) {
+        setShowStorageWarning(true);
+        setStorageThreshold(
+          currentThreshold as 'WARNING' | 'CRITICAL' | 'EMERGENCY',
+        );
+      }
+    });
   }, [showMigrationDialog]);
 
   const handleMigrationComplete = () => {
