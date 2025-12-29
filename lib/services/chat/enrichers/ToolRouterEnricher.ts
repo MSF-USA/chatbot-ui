@@ -144,6 +144,10 @@ export class ToolRouterEnricher extends BasePipelineStage {
         console.log(
           `[ToolRouterEnricher] Search completed: ${searchResult.text.length} chars, ${searchResult.citations?.length || 0} citations`,
         );
+        console.log(
+          '[ToolRouterEnricher] Search result citations detail:',
+          JSON.stringify(searchResult.citations, null, 2),
+        );
 
         // Add search results as a system message before the last user message
         const citationReferences = searchResult.citations
@@ -166,6 +170,10 @@ export class ToolRouterEnricher extends BasePipelineStage {
         ];
 
         // Store citations in metadata for later use
+        console.log(
+          '[ToolRouterEnricher] Storing citations in context.processedContent.metadata:',
+          searchResult.citations?.length || 0,
+        );
         return {
           ...context,
           enrichedMessages,

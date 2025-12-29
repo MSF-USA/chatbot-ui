@@ -212,6 +212,18 @@ export class StandardChatHandler extends BasePipelineStage {
               sanitizeForLog(citations.length),
               'citations',
             );
+            console.log(
+              '[StandardChatHandler] Citation URLs:',
+              citations.map((c: { url?: string }) => c.url),
+            );
+            console.log(
+              '[StandardChatHandler] Citation titles:',
+              citations.map((c: { title?: string }) => c.title),
+            );
+          } else {
+            console.log(
+              '[StandardChatHandler] No citations found in context.processedContent.metadata',
+            );
           }
 
           // Execute chat

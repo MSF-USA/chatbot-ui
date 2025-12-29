@@ -287,9 +287,36 @@ export class AIFoundryAgentHandler {
                           ) {
                             let textChunk = contentPart.text.value;
 
-                            // Convert citation format on the fly
+                            // DEBUG: Log text chunks that might contain citation markers
+                            if (
+                              textChunk.includes('【') ||
+                              textChunk.includes('†')
+                            ) {
+                              console.log(
+                                '[AIFoundryAgentHandler] Text chunk with potential markers:',
+                                textChunk,
+                              );
+                            }
+
+                            // Convert Azure AI agent citation markers to simple [N] format.
+                            //
+                            // Azure agents return citations in two formats:
+                            // - Short: 【3:0†source】 (just the word "source")
+                            // - Long:  【3:0†Title†URL】 (embedded title and URL)
+                            //
+                            // Regex breakdown: /【(\d+):(\d+)†[^】]+】/g
+                            // - 【        : Opening bracket (Chinese left lenticular bracket)
+                            // - (\d+)    : First number (source index)
+                            // - :        : Literal colon
+                            // - (\d+)    : Second number (sub-index)
+                            // - †        : Dagger symbol separator
+                            // - [^】]+   : Any characters except closing bracket (matches "source" or "Title†URL")
+                            // - 】       : Closing bracket (Chinese right lenticular bracket)
+                            //
+                            // Each unique marker is assigned a sequential number [1], [2], etc.
+                            // The citationMap tracks marker->number mapping for deduplication.
                             textChunk = textChunk.replace(
-                              /【(\d+):(\d+)†source】/g,
+                              /【(\d+):(\d+)†[^】]+】/g,
                               (match: string) => {
                                 if (!citationMap.has(match)) {
                                   citationMap.set(match, citationIndex);
@@ -315,6 +342,12 @@ export class AIFoundryAgentHandler {
                     console.log(
                       '[AIFoundryAgentHandler] Final citationMap (inline markers to numbers):',
                       Array.from(citationMap.entries()),
+                    );
+
+                    // DEBUG: Log raw event data structure
+                    console.log(
+                      '[AIFoundryAgentHandler] thread.message.completed raw data:',
+                      JSON.stringify(eventMessage.data, null, 2),
                     );
 
                     // Extract citations from annotations
@@ -388,12 +421,29 @@ export class AIFoundryAgentHandler {
                       );
                     }
                   } else if (eventMessage.event === 'thread.run.completed') {
+                    // DEBUG: Log citation state before appending metadata
+                    console.log(
+                      '[AIFoundryAgentHandler] thread.run.completed - citationMap size:',
+                      citationMap.size,
+                    );
+                    console.log(
+                      '[AIFoundryAgentHandler] thread.run.completed - citations array:',
+                      JSON.stringify(citations, null, 2),
+                    );
+                    console.log(
+                      '[AIFoundryAgentHandler] thread.run.completed - hasCompletedMessage:',
+                      hasCompletedMessage,
+                    );
+
                     // Append metadata at the very end using utility function
                     // No need to deduplicate - citationMap already ensured uniqueness
                     appendMetadataToStream(controller, {
                       citations: citations.length > 0 ? citations : undefined,
                       threadId: isNewThread ? thread.id : undefined,
                     });
+                    console.log(
+                      '[AIFoundryAgentHandler] Metadata appended to stream',
+                    );
                   } else if (eventMessage.event === 'error') {
                     controller.error(
                       new Error(
