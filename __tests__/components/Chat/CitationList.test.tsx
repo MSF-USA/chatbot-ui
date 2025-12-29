@@ -397,7 +397,8 @@ describe('CitationList', () => {
         <CitationList citations={citationsWithDifferentDomains} />,
       );
 
-      const favicons = container.querySelectorAll('img[alt*="favicon"]');
+      // Query for images with title attribute (header favicons have title for hover)
+      const favicons = container.querySelectorAll('img[title]');
       // Should show 2 unique domains (news.com and techcrunch.com)
       expect(favicons.length).toBe(2);
     });
@@ -428,7 +429,8 @@ describe('CitationList', () => {
         <CitationList citations={duplicateDomainCitations} />,
       );
 
-      const favicons = container.querySelectorAll('img[alt*="favicon"]');
+      // Query for images with title attribute (header favicons have title for hover)
+      const favicons = container.querySelectorAll('img[title]');
       expect(favicons.length).toBe(1);
     });
 
