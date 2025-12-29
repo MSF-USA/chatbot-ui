@@ -75,8 +75,6 @@ export class StandardChatHandler extends BasePipelineStage {
       },
       async (span) => {
         try {
-          console.log('[StandardChatHandler] Executing chat request');
-
           // Extract transcript metadata if available (for audio/video transcriptions)
           const transcript = context.processedContent?.transcripts?.[0]
             ? {
@@ -244,8 +242,6 @@ export class StandardChatHandler extends BasePipelineStage {
               context.processedContent?.pendingTranscriptions,
             streamingSpeed: context.streamingSpeed,
           });
-
-          console.log('[StandardChatHandler] Chat execution completed');
 
           // Record metrics
           const duration = Date.now() - startTime;
