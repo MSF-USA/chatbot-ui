@@ -207,12 +207,14 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
           <div className="flex items-center gap-1 ml-3 pl-3 border-l border-gray-300 dark:border-gray-600">
             {visibleFavicons.map((citation) => {
               const hostname = new URL(citation.url).hostname;
+              const displayDomain = hostname.replace(/^www\./, '');
               return (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={citation.url}
                   src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
-                  alt={`${hostname} favicon`}
+                  alt={`${displayDomain}`}
+                  title={displayDomain}
                   width={14}
                   height={14}
                   className="rounded-sm opacity-70 group-hover:opacity-100 transition-opacity duration-200"
