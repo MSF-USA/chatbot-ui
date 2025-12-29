@@ -109,7 +109,10 @@ export function useStorageWarning(): UseStorageWarningReturn {
     // Only run in browser environment
     if (typeof window === 'undefined') return;
 
-    refresh();
+    // Defer state updates to avoid synchronous cascading renders
+    queueMicrotask(() => {
+      refresh();
+    });
   }, [refresh]);
 
   /**
