@@ -1280,6 +1280,59 @@
       "items": "items"
     }
   },
+  "storageWarning": {
+    "title": {
+      "warning": "Storage Running Low",
+      "critical": "Storage Almost Full",
+      "emergency": "Storage Full"
+    },
+    "message": {
+      "warning": "Your browser storage is at {percent}% capacity.",
+      "critical": "Your browser storage is critically low at {percent}% capacity.",
+      "emergency": "Your browser storage is almost completely full at {percent}%!"
+    },
+    "consequence": "If storage fills up, you may lose access to new conversations and the app may stop working correctly.",
+    "storageUsage": "Storage Usage",
+    "optionsToFreeSpace": "Options to free up space",
+    "clearOption": {
+      "keepRecent": "Keep most recent conversations",
+      "olderThan": "Clear conversations older than",
+      "days": {
+        "7": "7 days",
+        "14": "14 days",
+        "30": "30 days",
+        "60": "60 days",
+        "90": "90 days"
+      }
+    },
+    "estimate": {
+      "willRemove": "This will remove {count} conversations",
+      "willFree": "Estimated space freed: {size}"
+    },
+    "action": {
+      "exportFirst": "Export Data First",
+      "clearNow": "Clear Now",
+      "dismiss": "Dismiss",
+      "cancel": "Cancel"
+    },
+    "confirm": {
+      "title": "Confirm Clear",
+      "message": "This will permanently delete {count} conversations. This cannot be undone."
+    },
+    "clearing": {
+      "title": "Clearing Storage",
+      "message": "Please wait while conversations are being removed..."
+    },
+    "success": {
+      "title": "Storage Cleared",
+      "message": "Successfully removed {count} conversations, freeing {size}."
+    },
+    "error": {
+      "title": "Clear Failed",
+      "message": "An error occurred while clearing conversations. Please try again."
+    },
+    "close": "Close"
+  },
   "fileUpload": {
     "uploading": "Uploading...",
     "transcribing": "Transcribing...",
