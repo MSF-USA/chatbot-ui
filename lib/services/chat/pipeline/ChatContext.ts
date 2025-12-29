@@ -115,6 +115,12 @@ export interface ChatContext {
   /** Tone configuration (voice/writing style) */
   tone?: Tone;
 
+  /** Streaming speed configuration for smooth text output */
+  streamingSpeed?: {
+    charsPerBatch: number;
+    delayMs: number;
+  };
+
   // ========================================
   // CONTENT ANALYSIS (Populated by middleware)
   // ========================================
