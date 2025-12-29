@@ -223,12 +223,6 @@ export class AgentChatService {
             span.setAttribute('parse.citations_count', citations.length);
             span.setStatus({ code: SpanStatusCode.OK });
 
-            console.log('[AgentChatService] parseAgentResponse final result:', {
-              textLength: fullText.length,
-              citationCount: citations.length,
-              citations: JSON.stringify(citations),
-            });
-
             return { text: fullText.trim(), citations };
           } finally {
             reader.releaseLock();
