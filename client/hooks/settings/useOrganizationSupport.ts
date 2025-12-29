@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
 
 import { detectOrganizationFromEmail } from '@/lib/utils/shared/organization';
@@ -12,27 +13,6 @@ import {
 } from '@/types/organization';
 
 import { useSettingsStore } from '@/client/stores/settingsStore';
-
-/**
- * Options for the useOrganizationSupport hook.
- *
- * This hook intentionally does NOT use useSession() to avoid requiring
- * SessionProvider. Instead, callers provide either userEmail (from useSession
- * in their own component) or serverDetectedOrganization (from server component).
- */
-export interface UseOrganizationSupportOptions {
-  /**
-   * User's email address for organization detection.
-   * Pass this from useSession().data?.user?.mail when SessionProvider is available.
-   */
-  userEmail?: string | null;
-
-  /**
-   * Server-detected organization, used when SessionProvider is not available
-   * (e.g., pages outside the (chat) route group).
-   */
-  serverDetectedOrganization?: MSFOrganization;
-}
 
 /**
  * Return type for the useOrganizationSupport hook.
@@ -57,24 +37,18 @@ export interface OrganizationSupportState {
  * Combines auto-detection from the user's email domain with the ability
  * to manually override the organization preference.
  *
- * NOTE: This hook does NOT use useSession() internally to avoid requiring
- * SessionProvider. Callers must provide either userEmail or serverDetectedOrganization.
+ * NOTE: This hook uses useSession() and requires SessionProvider.
+ * Use OrganizationSupportWrapper to provide SessionProvider in pages
+ * that don't already have it.
  *
- * @param options - Configuration with userEmail or serverDetectedOrganization
  * @returns Organization support state including effective org, contact config, and actions
  *
  * @example
- * // With userEmail (when SessionProvider is available)
- * const { data: session } = useSession();
- * const { contactConfig } = useOrganizationSupport({
- *   userEmail: session?.user?.mail,
- * });
- *
- * @example
- * // With server-detected org (for pages without SessionProvider)
- * const { contactConfig } = useOrganizationSupport({
- *   serverDetectedOrganization: serverDetectedOrg,
- * });
+ * const {
+ *   effectiveOrganization,
+ *   contactConfig,
+ *   setOrganizationPreference,
+ * } = useOrganizationSupport();
  *
  * // Display contact info
  * if (contactConfig.hasEmailSupport) {
@@ -82,11 +56,12 @@ export interface OrganizationSupportState {
  * } else {
  *   console.log('Instructions:', contactConfig.escalationInstructions);
  * }
+ *
+ * // Let user override
+ * setOrganizationPreference('OCG');
  */
-export function useOrganizationSupport(
-  options: UseOrganizationSupportOptions = {},
-): OrganizationSupportState {
-  const { userEmail, serverDetectedOrganization } = options;
+export function useOrganizationSupport(): OrganizationSupportState {
+  const { data: session } = useSession();
   const organizationPreference = useSettingsStore(
     (state) => state.organizationPreference,
   );
@@ -94,23 +69,11 @@ export function useOrganizationSupport(
     (state) => state.setOrganizationPreference,
   );
 
-  // Detect organization from user's email, or use server-provided fallback
-  const detectedOrganization = useMemo(() => {
-    // If userEmail is provided, use it for detection
-    if (userEmail) {
-      return detectOrganizationFromEmail(userEmail);
-    }
-    // Fallback to server-detected org when no email available
-    if (serverDetectedOrganization) {
-      return {
-        organization: serverDetectedOrganization,
-        confidence: 'high' as const,
-        source: 'email_domain' as const,
-      };
-    }
-    // Default fallback
-    return detectOrganizationFromEmail(null);
-  }, [userEmail, serverDetectedOrganization]);
+  // Detect organization from user's email
+  const detectedOrganization = useMemo(
+    () => detectOrganizationFromEmail(session?.user?.mail),
+    [session?.user?.mail],
+  );
 
   // Determine effective organization (user preference takes precedence)
   const effectiveOrganization = useMemo(

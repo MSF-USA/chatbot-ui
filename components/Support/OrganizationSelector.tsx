@@ -18,8 +18,6 @@ interface OrganizationSelectorProps {
   showResetButton?: boolean;
   /** Compact mode for inline usage */
   compact?: boolean;
-  /** Server-detected organization for contexts without SessionProvider */
-  serverDetectedOrganization?: MSFOrganization;
 }
 
 /**
@@ -36,7 +34,6 @@ export const OrganizationSelector: FC<OrganizationSelectorProps> = ({
   className = '',
   showResetButton = true,
   compact = false,
-  serverDetectedOrganization,
 }) => {
   const t = useTranslations();
   const {
@@ -45,7 +42,7 @@ export const OrganizationSelector: FC<OrganizationSelectorProps> = ({
     isOverridden,
     setOrganizationPreference,
     resetToAutoDetect,
-  } = useOrganizationSupport({ serverDetectedOrganization });
+  } = useOrganizationSupport();
 
   /**
    * Gets the translated display name for an organization.
