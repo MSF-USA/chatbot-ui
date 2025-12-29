@@ -5,6 +5,7 @@ import {
   OpenAIModel,
   OpenAIModelID,
 } from '@/types/openai';
+import { MSFOrganization } from '@/types/organization';
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
 import {
@@ -54,6 +55,9 @@ interface SettingsStore {
   customModelOrder: string[];
   modelUsageStats: Record<string, number>;
 
+  // Organization preference for support contacts (null = auto-detect)
+  organizationPreference: MSFOrganization | null;
+
   // Actions
   setTemperature: (temperature: number) => void;
   setSystemPrompt: (prompt: string) => void;
@@ -88,6 +92,9 @@ interface SettingsStore {
   incrementModelUsage: (modelId: string) => void;
   resetModelOrder: () => void;
 
+  // Organization Actions
+  setOrganizationPreference: (org: MSFOrganization | null) => void;
+
   // Reset
   resetSettings: () => void;
 }
@@ -118,6 +125,9 @@ export const useSettingsStore = create<SettingsStore>()(
       modelOrderMode: 'usage',
       customModelOrder: [],
       modelUsageStats: {},
+
+      // Organization preference (null = auto-detect from email)
+      organizationPreference: null,
 
       // Actions
       setTemperature: (temperature) => set({ temperature }),
@@ -241,6 +251,9 @@ export const useSettingsStore = create<SettingsStore>()(
           customModelOrder: [],
         }),
 
+      // Organization Actions
+      setOrganizationPreference: (org) => set({ organizationPreference: org }),
+
       resetSettings: () =>
         set({
           temperature: DEFAULT_TEMPERATURE,
@@ -255,11 +268,12 @@ export const useSettingsStore = create<SettingsStore>()(
           modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
+          organizationPreference: null,
         }),
     }),
     {
       name: 'settings-storage',
-      version: 6, // Increment this when schema changes to trigger migrations
+      version: 7, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -276,6 +290,7 @@ export const useSettingsStore = create<SettingsStore>()(
         modelOrderMode: state.modelOrderMode,
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
+        organizationPreference: state.organizationPreference,
       }),
       migrate: (persistedState, version) => {
         const state = persistedState as Record<string, unknown>;
@@ -288,6 +303,11 @@ export const useSettingsStore = create<SettingsStore>()(
         // Version 5 → 6: Add streamingSpeed with default values
         if (version < 6 && !state.streamingSpeed) {
           state.streamingSpeed = DEFAULT_STREAMING_SPEED;
+        }
+
+        // Version 6 → 7: Add organizationPreference (null = auto-detect)
+        if (version < 7 && state.organizationPreference === undefined) {
+          state.organizationPreference = null;
         }
 
         return state;
