@@ -287,7 +287,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
 
       try {
         const response = await translateText({
-          sourceText: transcript,
+          sourceText: loadedTranscript ?? transcript,
           targetLocale,
         });
 
@@ -323,7 +323,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
         }, 3000);
       }
     },
-    [transcript, translationState.translations, t],
+    [transcript, loadedTranscript, translationState.translations, t],
   );
 
   // TTS handler (consistent with AssistantMessage pattern)
@@ -559,27 +559,31 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
                 {t('transcript.download')}
               </button>
 
-              {/* TTS button */}
-              <button
-                onClick={audioUrl ? handleCloseAudio : handleTTS}
-                disabled={isGeneratingAudio}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
-                  isGeneratingAudio
-                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-                title={
-                  audioUrl ? t('transcript.stopAudio') : t('transcript.listen')
-                }
-              >
-                {isGeneratingAudio ? (
-                  <IconLoader2 size={14} className="animate-spin" />
-                ) : audioUrl ? (
-                  <IconVolumeOff size={14} />
-                ) : (
-                  <IconVolume size={14} />
-                )}
-              </button>
+              {/* TTS button - hidden for blob transcripts (too long for TTS) */}
+              {!blobRef && (
+                <button
+                  onClick={audioUrl ? handleCloseAudio : handleTTS}
+                  disabled={isGeneratingAudio}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                    isGeneratingAudio
+                      ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                  title={
+                    audioUrl
+                      ? t('transcript.stopAudio')
+                      : t('transcript.listen')
+                  }
+                >
+                  {isGeneratingAudio ? (
+                    <IconLoader2 size={14} className="animate-spin" />
+                  ) : audioUrl ? (
+                    <IconVolumeOff size={14} />
+                  ) : (
+                    <IconVolume size={14} />
+                  )}
+                </button>
+              )}
 
               {/* Translate button */}
               <button
