@@ -1482,5 +1482,58 @@
     "createTonesHint": "Unda matono kwenye Vitendo vya Haraka"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ongeza maelekezo yako binafsi kubinafsisha jinsi AI inavyojibu. Haya yanaunganishwa na miongozo ya msingi ili kuhakikisha majibu ni ya msaada, sahihi na salama.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Dokezo: Andika \"/\" kuchagua kutoka kwenye templeti za maelekezo zilizohifadhiwa."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Dokezo: Andika \"/\" kuchagua kutoka kwenye templeti za maelekezo zilizohifadhiwa.",
+  "storageWarning": {
+    "title": {
+      "warning": "Hifadhi Inakaribia Kujaa",
+      "critical": "Hifadhi Karibu Imejaa",
+      "emergency": "Hifadhi Imejaa"
+    },
+    "message": {
+      "warning": "Hifadhi ya kivinjari chako imefika {percent}% ya uwezo wake.",
+      "critical": "Hifadhi ya kivinjari chako iko chini sana kwa {percent}% ya uwezo wake.",
+      "emergency": "Hifadhi ya kivinjari chako karibu imejaa kabisa kwa {percent}%!"
+    },
+    "consequence": "Ikiwa hifadhi itajaa, unaweza kupoteza ufikiaji wa mazungumzo mapya na programu inaweza kuacha kufanya kazi ipasavyo.",
+    "storageUsage": "Matumizi ya Hifadhi",
+    "optionsToFreeSpace": "Chaguzi za kuachia nafasi",
+    "clearOption": {
+      "keepRecent": "Hifadhi mazungumzo ya hivi karibuni zaidi",
+      "olderThan": "Futa mazungumzo yenye umri zaidi ya",
+      "days": {
+        "7": "Siku 7",
+        "14": "Siku 14",
+        "30": "Siku 30",
+        "60": "Siku 60",
+        "90": "Siku 90"
+      }
+    },
+    "estimate": {
+      "willRemove": "Hii itafuta mazungumzo {count}",
+      "willFree": "Nafasi inayokadiriwa kuachiliwa: {size}"
+    },
+    "action": {
+      "exportFirst": "Hamisha Data Kwanza",
+      "clearNow": "Futa Sasa",
+      "dismiss": "Funga",
+      "cancel": "Ghairi"
+    },
+    "confirm": {
+      "title": "Thibitisha Kufuta",
+      "message": "Hii itafuta kabisa mazungumzo {count}. Hili haliwezi kutenduliwa."
+    },
+    "clearing": {
+      "title": "Inafuta Hifadhi",
+      "message": "Tafadhali subiri mazungumzo yakifutwa..."
+    },
+    "success": {
+      "title": "Hifadhi Imefutwa",
+      "message": "Mafanikio! Mazungumzo {count} yameondolewa, {size} imeachiliwa."
+    },
+    "error": {
+      "title": "Kufuta Kimeshindwa",
+      "message": "Kulitokea hitilafu wakati wa kufuta mazungumzo. Tafadhali jaribu tena."
+    },
+    "close": "Funga"
+  }
 }

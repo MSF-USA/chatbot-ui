@@ -1482,5 +1482,58 @@
     "createTonesHint": "Buat nada di Aksi Cepat"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Tambahkan instruksi pribadi Anda untuk menyesuaikan respons AI. Instruksi ini akan digabungkan dengan pedoman utama untuk memastikan respons yang bermanfaat, akurat, dan aman.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Ketik \"/\" untuk memilih dari template prompt yang tersimpan."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Ketik \"/\" untuk memilih dari template prompt yang tersimpan.",
+  "storageWarning": {
+    "title": {
+      "warning": "Penyimpanan Hampir Habis",
+      "critical": "Penyimpanan Hampir Penuh",
+      "emergency": "Penyimpanan Penuh"
+    },
+    "message": {
+      "warning": "Penyimpanan browser Anda telah mencapai {percent}% kapasitas.",
+      "critical": "Penyimpanan browser Anda sangat rendah di {percent}% kapasitas.",
+      "emergency": "Penyimpanan browser Anda hampir sepenuhnya penuh di {percent}%!"
+    },
+    "consequence": "Jika penyimpanan penuh, Anda mungkin kehilangan akses ke percakapan baru dan aplikasi bisa berhenti berfungsi dengan benar.",
+    "storageUsage": "Penggunaan Penyimpanan",
+    "optionsToFreeSpace": "Opsi untuk mengosongkan ruang",
+    "clearOption": {
+      "keepRecent": "Simpan percakapan terbaru",
+      "olderThan": "Hapus percakapan yang lebih lama dari",
+      "days": {
+        "7": "7 hari",
+        "14": "14 hari",
+        "30": "30 hari",
+        "60": "60 hari",
+        "90": "90 hari"
+      }
+    },
+    "estimate": {
+      "willRemove": "Ini akan menghapus {count} percakapan",
+      "willFree": "Perkiraan ruang yang dilepaskan: {size}"
+    },
+    "action": {
+      "exportFirst": "Ekspor Data Terlebih Dahulu",
+      "clearNow": "Hapus Sekarang",
+      "dismiss": "Abaikan",
+      "cancel": "Batal"
+    },
+    "confirm": {
+      "title": "Konfirmasi Penghapusan",
+      "message": "Ini akan menghapus {count} percakapan secara permanen. Tindakan ini tidak dapat dibatalkan."
+    },
+    "clearing": {
+      "title": "Menghapus Penyimpanan",
+      "message": "Mohon tunggu, percakapan sedang dihapus..."
+    },
+    "success": {
+      "title": "Penyimpanan Berhasil Dihapus",
+      "message": "Berhasil menghapus {count} percakapan dan membebaskan {size}."
+    },
+    "error": {
+      "title": "Penghapusan Gagal",
+      "message": "Terjadi kesalahan saat menghapus percakapan. Silakan coba lagi."
+    },
+    "close": "Tutup"
+  }
 }

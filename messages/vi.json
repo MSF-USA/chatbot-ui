@@ -1482,5 +1482,58 @@
     "createTonesHint": "Tạo giọng điệu trong Quick Actions"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Thêm hướng dẫn cá nhân của bạn để tùy chỉnh cách AI phản hồi. Các hướng dẫn này sẽ được kết hợp với các quy tắc hành vi cốt lõi nhằm đảm bảo phản hồi hữu ích, chính xác và an toàn.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Mẹo: Gõ \"/\" để chọn từ các mẫu gợi ý đã lưu."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Mẹo: Gõ \"/\" để chọn từ các mẫu gợi ý đã lưu.",
+  "storageWarning": {
+    "title": {
+      "warning": "Bộ nhớ sắp đầy",
+      "critical": "Bộ nhớ gần đầy",
+      "emergency": "Bộ nhớ đã đầy"
+    },
+    "message": {
+      "warning": "Bộ nhớ trình duyệt của bạn đã sử dụng {percent}%.",
+      "critical": "Bộ nhớ trình duyệt của bạn đang ở mức rất thấp, đã sử dụng {percent}%.",
+      "emergency": "Bộ nhớ trình duyệt của bạn gần như đầy hoàn toàn ở mức {percent}%!"
+    },
+    "consequence": "Nếu bộ nhớ đầy, bạn có thể mất quyền truy cập vào các cuộc hội thoại mới và ứng dụng có thể không hoạt động đúng.",
+    "storageUsage": "Tình trạng sử dụng bộ nhớ",
+    "optionsToFreeSpace": "Tùy chọn giải phóng dung lượng",
+    "clearOption": {
+      "keepRecent": "Giữ lại các cuộc hội thoại gần nhất",
+      "olderThan": "Xóa các cuộc hội thoại cũ hơn",
+      "days": {
+        "7": "7 ngày",
+        "14": "14 ngày",
+        "30": "30 ngày",
+        "60": "60 ngày",
+        "90": "90 ngày"
+      }
+    },
+    "estimate": {
+      "willRemove": "Việc này sẽ xóa {count} cuộc hội thoại",
+      "willFree": "Dung lượng dự kiến được giải phóng: {size}"
+    },
+    "action": {
+      "exportFirst": "Xuất dữ liệu trước",
+      "clearNow": "Xóa ngay",
+      "dismiss": "Đóng",
+      "cancel": "Hủy"
+    },
+    "confirm": {
+      "title": "Xác nhận xóa",
+      "message": "Việc này sẽ xóa vĩnh viễn {count} cuộc hội thoại. Thao tác này không thể hoàn tác."
+    },
+    "clearing": {
+      "title": "Đang xóa bộ nhớ",
+      "message": "Vui lòng chờ các cuộc hội thoại đang được xóa..."
+    },
+    "success": {
+      "title": "Đã xóa bộ nhớ",
+      "message": "Đã xóa thành công {count} cuộc hội thoại, giải phóng {size}."
+    },
+    "error": {
+      "title": "Xóa không thành công",
+      "message": "Đã xảy ra lỗi khi xóa các cuộc hội thoại. Vui lòng thử lại."
+    },
+    "close": "Đóng"
+  }
 }

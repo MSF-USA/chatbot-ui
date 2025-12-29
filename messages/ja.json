@@ -1482,5 +1482,58 @@
     "createTonesHint": "クイックアクションでトーンを作成"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AIの応答をカスタマイズするための個別指示を追加できます。これらは、役立つ・正確・安全な応答を保証するための基本的なガイドラインと組み合わされます。",
-  "Tip: Type \"/\" to select from saved prompt templates_": "ヒント：「/」を入力すると保存されたプロンプトテンプレートから選択できます。"
+  "Tip: Type \"/\" to select from saved prompt templates_": "ヒント：「/」を入力すると保存されたプロンプトテンプレートから選択できます。",
+  "storageWarning": {
+    "title": {
+      "warning": "ストレージが不足しています",
+      "critical": "ストレージがほぼ満杯です",
+      "emergency": "ストレージが満杯です"
+    },
+    "message": {
+      "warning": "ブラウザのストレージが{percent}%使用されています。",
+      "critical": "ブラウザのストレージが危険なレベルで{percent}%使用されています。",
+      "emergency": "ブラウザのストレージがほぼ完全に満杯です（{percent}%）！"
+    },
+    "consequence": "ストレージが満杯になると、新しい会話にアクセスできなくなったり、アプリが正しく動作しなくなる可能性があります。",
+    "storageUsage": "ストレージ使用量",
+    "optionsToFreeSpace": "空き容量を増やす方法",
+    "clearOption": {
+      "keepRecent": "最新の会話を残す",
+      "olderThan": "以下より古い会話を削除",
+      "days": {
+        "7": "7日",
+        "14": "14日",
+        "30": "30日",
+        "60": "60日",
+        "90": "90日"
+      }
+    },
+    "estimate": {
+      "willRemove": "{count}件の会話が削除されます",
+      "willFree": "推定解放容量：{size}"
+    },
+    "action": {
+      "exportFirst": "先にデータをエクスポート",
+      "clearNow": "今すぐ削除",
+      "dismiss": "閉じる",
+      "cancel": "キャンセル"
+    },
+    "confirm": {
+      "title": "削除の確認",
+      "message": "{count}件の会話が完全に削除されます。この操作は元に戻せません。"
+    },
+    "clearing": {
+      "title": "ストレージ削除中",
+      "message": "会話を削除しています。お待ちください..."
+    },
+    "success": {
+      "title": "ストレージを削除しました",
+      "message": "{count}件の会話を削除し、{size}の空き容量を確保しました。"
+    },
+    "error": {
+      "title": "削除に失敗しました",
+      "message": "会話の削除中にエラーが発生しました。再度お試しください。"
+    },
+    "close": "閉じる"
+  }
 }

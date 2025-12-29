@@ -1482,5 +1482,58 @@
     "createTonesHint": "Creați tonuri în Acțiuni rapide"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adăugați instrucțiunile personale pentru a personaliza modul în care răspunde AI. Acestea sunt combinate cu liniile directoare de bază care asigură răspunsuri utile, corecte și sigure.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate.",
+  "storageWarning": {
+    "title": {
+      "warning": "Spațiu de stocare redus",
+      "critical": "Spațiul de stocare aproape plin",
+      "emergency": "Spațiu de stocare plin"
+    },
+    "message": {
+      "warning": "Spațiul de stocare al browserului este la {percent}% din capacitate.",
+      "critical": "Spațiul de stocare al browserului este critic de scăzut, la {percent}% din capacitate.",
+      "emergency": "Spațiul de stocare al browserului este aproape complet plin, la {percent}%!"
+    },
+    "consequence": "Dacă spațiul de stocare se umple, este posibil să pierdeți accesul la noi conversații, iar aplicația poate înceta să funcționeze corect.",
+    "storageUsage": "Utilizare spațiu de stocare",
+    "optionsToFreeSpace": "Opțiuni pentru eliberarea spațiului",
+    "clearOption": {
+      "keepRecent": "Păstrează cele mai recente conversații",
+      "olderThan": "Șterge conversațiile mai vechi de",
+      "days": {
+        "7": "7 zile",
+        "14": "14 zile",
+        "30": "30 de zile",
+        "60": "60 de zile",
+        "90": "90 de zile"
+      }
+    },
+    "estimate": {
+      "willRemove": "Aceasta va elimina {count} conversații",
+      "willFree": "Spațiu estimat eliberat: {size}"
+    },
+    "action": {
+      "exportFirst": "Exportați datele mai întâi",
+      "clearNow": "Șterge acum",
+      "dismiss": "Ignoră",
+      "cancel": "Anulează"
+    },
+    "confirm": {
+      "title": "Confirmare ștergere",
+      "message": "Aceasta va șterge definitiv {count} conversații. Acțiunea nu poate fi anulată."
+    },
+    "clearing": {
+      "title": "Se șterge spațiul de stocare",
+      "message": "Vă rugăm să așteptați cât timp conversațiile sunt eliminate..."
+    },
+    "success": {
+      "title": "Spațiul de stocare a fost șters",
+      "message": "Au fost eliminate cu succes {count} conversații, eliberând {size}."
+    },
+    "error": {
+      "title": "Ștergerea a eșuat",
+      "message": "A apărut o eroare la ștergerea conversațiilor. Vă rugăm să încercați din nou."
+    },
+    "close": "Închide"
+  }
 }

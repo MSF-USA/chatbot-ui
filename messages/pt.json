@@ -1482,5 +1482,58 @@
     "expirationWarning": "A transcrição de {filename} irá expirar em {days} dia(s). Copie o conteúdo se precisar mantê-lo."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adicione suas instruções pessoais para personalizar as respostas da IA. Elas são combinadas com diretrizes principais de comportamento que garantem respostas úteis, precisas e seguras.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Dica: digite \"/\" para selecionar entre modelos de prompt salvos."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Dica: digite \"/\" para selecionar entre modelos de prompt salvos.",
+  "storageWarning": {
+    "title": {
+      "warning": "Armazenamento quase cheio",
+      "critical": "Armazenamento quase totalmente cheio",
+      "emergency": "Armazenamento cheio"
+    },
+    "message": {
+      "warning": "O armazenamento do seu navegador está em {percent}% da capacidade.",
+      "critical": "O armazenamento do seu navegador está criticamente baixo em {percent}% da capacidade.",
+      "emergency": "O armazenamento do seu navegador está quase completamente cheio em {percent}%!"
+    },
+    "consequence": "Se o armazenamento lotar, você pode perder acesso a novas conversas e o aplicativo pode parar de funcionar corretamente.",
+    "storageUsage": "Uso do Armazenamento",
+    "optionsToFreeSpace": "Opções para liberar espaço",
+    "clearOption": {
+      "keepRecent": "Manter as conversas mais recentes",
+      "olderThan": "Limpar conversas com mais de",
+      "days": {
+        "7": "7 dias",
+        "14": "14 dias",
+        "30": "30 dias",
+        "60": "60 dias",
+        "90": "90 dias"
+      }
+    },
+    "estimate": {
+      "willRemove": "Isso removerá {count} conversas",
+      "willFree": "Espaço estimado a ser liberado: {size}"
+    },
+    "action": {
+      "exportFirst": "Exportar dados antes",
+      "clearNow": "Limpar agora",
+      "dismiss": "Ignorar",
+      "cancel": "Cancelar"
+    },
+    "confirm": {
+      "title": "Confirmar limpeza",
+      "message": "Isto irá excluir permanentemente {count} conversas. Esta ação não pode ser desfeita."
+    },
+    "clearing": {
+      "title": "Limpando armazenamento",
+      "message": "Aguarde enquanto as conversas estão sendo removidas..."
+    },
+    "success": {
+      "title": "Armazenamento limpo",
+      "message": "{count} conversas removidas com sucesso, liberando {size}."
+    },
+    "error": {
+      "title": "Falha ao limpar",
+      "message": "Ocorreu um erro ao limpar as conversas. Tente novamente."
+    },
+    "close": "Fechar"
+  }
 }

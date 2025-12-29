@@ -1482,5 +1482,58 @@
     "expirationWarning": "የ {filename} ትርጓሜ በ {days} ቀን(ዎች) ውስጥ ይያያዝ። ያስፈልጋችሁ ከሆነ ይውሰዱት።"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "የእርስዎን የግል መመሪያዎች ያክሉ እና የAI ምላሽን ያስተካክሉ። እነዚህ ጥሩ፣ ትክክለኛ እና ደህና የሆኑ ምላሾችን ለመስጠት ከመሠረታዊ መመሪያዎች ጋር ይጣፉ።",
-  "Tip: Type \"/\" to select from saved prompt templates_": "ምክር፦ \"/\" በመተግበር ከተቀመጡት ማስጠንቀቂያ አብነቶች ይምረጡ።"
+  "Tip: Type \"/\" to select from saved prompt templates_": "ምክር፦ \"/\" በመተግበር ከተቀመጡት ማስጠንቀቂያ አብነቶች ይምረጡ።",
+  "storageWarning": {
+    "title": {
+      "warning": "አከማቻው ይቀንሳል",
+      "critical": "አከማቻው የሚበቃ ላይ ነው",
+      "emergency": "አከማቻው ተሞልቷል"
+    },
+    "message": {
+      "warning": "የአንተ አሰሳ አከማቻ {percent}% ሞልቷል።",
+      "critical": "የአንተ አሰሳ አከማቻ በተጣራ ደረጃ {percent}% ላይ ነው።",
+      "emergency": "የአንተ አሰሳ አከማቻ በግምት ሞልቷል {percent}%!"
+    },
+    "consequence": "አከማቻው ከተሞላ ወዲህ ከአዳዲስ ውይዮች ጋር መዳረሻ ማግኘት አይችሉም እና መተግበሪያው ትክክል ሊሰራ አይችልም።",
+    "storageUsage": "የአከማቻ አጠቃቀም",
+    "optionsToFreeSpace": "ቦታ ለማፍታት አማራጮች",
+    "clearOption": {
+      "keepRecent": "በቅርቡ የደረሱትን ውይዮች ይያዙ",
+      "olderThan": "ከዚህ በበለጠ ያለፉትን ውይዮች አጥፉ",
+      "days": {
+        "7": "7 ቀናት",
+        "14": "14 ቀናት",
+        "30": "30 ቀናት",
+        "60": "60 ቀናት",
+        "90": "90 ቀናት"
+      }
+    },
+    "estimate": {
+      "willRemove": "ይህ {count} ውይዮችን ያስወግዳል",
+      "willFree": "የሚፈቀዱት በግምት ቦታ: {size}"
+    },
+    "action": {
+      "exportFirst": "መመዝገቢያውን በመጀመሪያ ያውጡ",
+      "clearNow": "አሁን ያጽዱ",
+      "dismiss": "ዝም ይበሉ",
+      "cancel": "ይቅር"
+    },
+    "confirm": {
+      "title": "አጽዳ ያረጋግጡ",
+      "message": "ይህ {count} ውይዮችን ለዘላለም ያጠፋል። ይህ አይታወስም።"
+    },
+    "clearing": {
+      "title": "አከማቻን በመጽዳት ላይ",
+      "message": "ውይዮቹ ሲወገዱ እባክዎ ይጠብቁ..."
+    },
+    "success": {
+      "title": "አከማቻ ተጸዳ",
+      "message": "{count} ውይዮች በተሳካ ሁኔታ ተወግደዋል፣ {size} ቦታ ተፈቅዷል።"
+    },
+    "error": {
+      "title": "ማጽዳት አልተሳካም",
+      "message": "ውይዮችን በመጽዳት ላይ ስህተት ተፈጥሯል። እባክዎ ደግመው ይሞክሩ።"
+    },
+    "close": "ዝጋ"
+  }
 }

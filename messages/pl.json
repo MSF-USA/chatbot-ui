@@ -1482,5 +1482,58 @@
     "createTonesHint": "Utwórz tony w Szybkich działaniach"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Dodaj własne instrukcje, aby dostosować sposób, w jaki AI odpowiada. Zostaną one połączone z głównymi wytycznymi, które zapewniają pomocne, dokładne i bezpieczne odpowiedzi.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Porada: wpisz „/”, aby wybrać z zapisanych szablonów podpowiedzi."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Porada: wpisz „/”, aby wybrać z zapisanych szablonów podpowiedzi.",
+  "storageWarning": {
+    "title": {
+      "warning": "Mało miejsca w pamięci",
+      "critical": "Prawie pełna pamięć",
+      "emergency": "Brak miejsca w pamięci"
+    },
+    "message": {
+      "warning": "Pamięć przeglądarki jest zapełniona w {percent}%.",
+      "critical": "Pamięć przeglądarki jest krytycznie niska i wynosi {percent}%.",
+      "emergency": "Pamięć przeglądarki jest prawie całkowicie zapełniona ({percent}%)!"
+    },
+    "consequence": "Jeśli pamięć się zapełni, możesz utracić dostęp do nowych rozmów, a aplikacja może przestać działać prawidłowo.",
+    "storageUsage": "Zużycie pamięci",
+    "optionsToFreeSpace": "Opcje zwolnienia miejsca",
+    "clearOption": {
+      "keepRecent": "Zachowaj najnowsze rozmowy",
+      "olderThan": "Usuń rozmowy starsze niż",
+      "days": {
+        "7": "7 dni",
+        "14": "14 dni",
+        "30": "30 dni",
+        "60": "60 dni",
+        "90": "90 dni"
+      }
+    },
+    "estimate": {
+      "willRemove": "Usuniętych zostanie {count} rozmów",
+      "willFree": "Szacunkowa ilość zwolnionego miejsca: {size}"
+    },
+    "action": {
+      "exportFirst": "Najpierw wyeksportuj dane",
+      "clearNow": "Usuń teraz",
+      "dismiss": "Odrzuć",
+      "cancel": "Anuluj"
+    },
+    "confirm": {
+      "title": "Potwierdź usunięcie",
+      "message": "Usuniętych zostanie trwale {count} rozmów. Tej operacji nie można cofnąć."
+    },
+    "clearing": {
+      "title": "Czyszczenie pamięci",
+      "message": "Poczekaj, trwa usuwanie rozmów..."
+    },
+    "success": {
+      "title": "Pamięć wyczyszczona",
+      "message": "Pomyślnie usunięto {count} rozmów, zwolniono {size}."
+    },
+    "error": {
+      "title": "Nieudane czyszczenie",
+      "message": "Wystąpił błąd podczas usuwania rozmów. Spróbuj ponownie."
+    },
+    "close": "Zamknij"
+  }
 }

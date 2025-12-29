@@ -1482,5 +1482,58 @@
     "expirationWarning": "La transcription pour {filename} expirera dans {days} jour(s). Copiez le contenu si vous souhaitez le conserver."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ajoutez vos instructions personnelles pour personnaliser les réponses de l'IA. Celles-ci sont combinées avec les directives principales afin de garantir des réponses utiles, précises et sûres.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Astuce : tapez « / » pour sélectionner un modèle d'invite enregistré."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Astuce : tapez « / » pour sélectionner un modèle d'invite enregistré.",
+  "storageWarning": {
+    "title": {
+      "warning": "Stockage presque plein",
+      "critical": "Stockage presque saturé",
+      "emergency": "Stockage saturé"
+    },
+    "message": {
+      "warning": "Le stockage de votre navigateur est utilisé à {percent}%.",
+      "critical": "Le stockage de votre navigateur est extrêmement bas à {percent}%.",
+      "emergency": "Le stockage de votre navigateur est presque entièrement saturé à {percent}% !"
+    },
+    "consequence": "Si le stockage est plein, vous risquez de perdre l'accès aux nouvelles conversations et l'application pourrait ne plus fonctionner correctement.",
+    "storageUsage": "Utilisation du stockage",
+    "optionsToFreeSpace": "Options pour libérer de l'espace",
+    "clearOption": {
+      "keepRecent": "Conserver les conversations les plus récentes",
+      "olderThan": "Supprimer les conversations plus anciennes que",
+      "days": {
+        "7": "7 jours",
+        "14": "14 jours",
+        "30": "30 jours",
+        "60": "60 jours",
+        "90": "90 jours"
+      }
+    },
+    "estimate": {
+      "willRemove": "Cela supprimera {count} conversations",
+      "willFree": "Espace libéré estimé : {size}"
+    },
+    "action": {
+      "exportFirst": "Exporter les données d'abord",
+      "clearNow": "Supprimer maintenant",
+      "dismiss": "Ignorer",
+      "cancel": "Annuler"
+    },
+    "confirm": {
+      "title": "Confirmer la suppression",
+      "message": "Cela supprimera définitivement {count} conversations. Cette opération est irréversible."
+    },
+    "clearing": {
+      "title": "Suppression en cours",
+      "message": "Veuillez patienter pendant la suppression des conversations..."
+    },
+    "success": {
+      "title": "Stockage vidé",
+      "message": "{count} conversations supprimées avec succès, libérant {size}."
+    },
+    "error": {
+      "title": "Échec de la suppression",
+      "message": "Une erreur s'est produite lors de la suppression des conversations. Veuillez réessayer."
+    },
+    "close": "Fermer"
+  }
 }

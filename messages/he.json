@@ -1482,5 +1482,58 @@
     "createTonesHint": "צור טונים בפעולות מהירות"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "הוסיפו הוראות אישיות כדי להתאים את תגובת הבינה המלאכותית. הוראות אלו משולבות עם הנחיות ליבה שמבטיחות תגובות מועילות, מדויקות ובטוחות.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "עצה: הקלידו \"/\" כדי לבחור מהתבניות השמורות."
+  "Tip: Type \"/\" to select from saved prompt templates_": "עצה: הקלידו \"/\" כדי לבחור מהתבניות השמורות.",
+  "storageWarning": {
+    "title": {
+      "warning": "השטח אחסון בדפדפן אוזל",
+      "critical": "השטח אחסון בדפדפן כמעט מלא",
+      "emergency": "השטח אחסון בדפדפן מלא"
+    },
+    "message": {
+      "warning": "השטח אחסון בדפדפן נמצא בשימוש של ‎{percent}%.",
+      "critical": "השטח אחסון בדפדפן נמוך במיוחד – ‎{percent}% תפוס.",
+      "emergency": "השטח אחסון בדפדפן כמעט מלא לחלוטין – ‎{percent}%!"
+    },
+    "consequence": "אם השטח יתמלא, ייתכן שלא תהיה גישה לשיחות חדשות והאפליקציה לא תפעל כראוי.",
+    "storageUsage": "שימוש אחסון",
+    "optionsToFreeSpace": "אפשרויות לפינוי מקום",
+    "clearOption": {
+      "keepRecent": "השאר שיחות אחרונות",
+      "olderThan": "מחק שיחות מלפני",
+      "days": {
+        "7": "7 ימים",
+        "14": "14 ימים",
+        "30": "30 ימים",
+        "60": "60 ימים",
+        "90": "90 ימים"
+      }
+    },
+    "estimate": {
+      "willRemove": "פעולה זו תמחק ‎{count} שיחות",
+      "willFree": "הערכת שטח שיתפנה: ‎{size}"
+    },
+    "action": {
+      "exportFirst": "ייצא נתונים תחילה",
+      "clearNow": "נקה כעת",
+      "dismiss": "התעלם",
+      "cancel": "ביטול"
+    },
+    "confirm": {
+      "title": "אישור ניקוי",
+      "message": "פעולה זו תמחק לצמיתות ‎{count} שיחות. לא ניתן לשחזר זאת."
+    },
+    "clearing": {
+      "title": "מנקה אחסון",
+      "message": "אנא המתן להסרת השיחות..."
+    },
+    "success": {
+      "title": "האחסון נוקה",
+      "message": "‎{count} שיחות הוסרו בהצלחה, התפנה ‎{size}."
+    },
+    "error": {
+      "title": "הניקוי נכשל",
+      "message": "אירעה שגיאה בעת ניקוי השיחות. נסה שוב."
+    },
+    "close": "סגור"
+  }
 }

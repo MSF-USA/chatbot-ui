@@ -1482,5 +1482,58 @@
     "createTonesHint": "빠른 작업에서 톤을 생성하세요"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI의 응답 방식을 맞춤화하려면 개인 지침을 추가하세요. 이는 유용하고 정확하며 안전한 응답을 보장하는 기본 행동 지침과 함께 적용됩니다.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "팁: \"/\"를 입력하면 저장된 프롬프트 템플릿을 선택할 수 있습니다."
+  "Tip: Type \"/\" to select from saved prompt templates_": "팁: \"/\"를 입력하면 저장된 프롬프트 템플릿을 선택할 수 있습니다.",
+  "storageWarning": {
+    "title": {
+      "warning": "저장 공간 부족",
+      "critical": "저장 공간 거의 가득 참",
+      "emergency": "저장 공간 가득 참"
+    },
+    "message": {
+      "warning": "브라우저 저장 공간이 {percent}% 사용 중입니다.",
+      "critical": "브라우저 저장 공간이 {percent}%로 매우 부족합니다.",
+      "emergency": "브라우저 저장 공간이 거의 {percent}%까지 가득 찼습니다!"
+    },
+    "consequence": "저장 공간이 가득 차면 새 대화에 접근하지 못할 수 있으며 앱이 정상적으로 작동하지 않을 수 있습니다.",
+    "storageUsage": "저장 공간 사용량",
+    "optionsToFreeSpace": "공간 확보 옵션",
+    "clearOption": {
+      "keepRecent": "가장 최근 대화는 유지",
+      "olderThan": "이전 날짜 대화 삭제",
+      "days": {
+        "7": "7일",
+        "14": "14일",
+        "30": "30일",
+        "60": "60일",
+        "90": "90일"
+      }
+    },
+    "estimate": {
+      "willRemove": "{count}개의 대화가 삭제됩니다",
+      "willFree": "예상 확보 공간: {size}"
+    },
+    "action": {
+      "exportFirst": "데이터 먼저 내보내기",
+      "clearNow": "지금 삭제",
+      "dismiss": "닫기",
+      "cancel": "취소"
+    },
+    "confirm": {
+      "title": "삭제 확인",
+      "message": "이 작업은 {count}개의 대화를 영구적으로 삭제합니다. 이 작업은 되돌릴 수 없습니다."
+    },
+    "clearing": {
+      "title": "저장 공간 삭제 중",
+      "message": "대화를 삭제하는 중입니다. 잠시만 기다려 주세요..."
+    },
+    "success": {
+      "title": "저장 공간 삭제 완료",
+      "message": "{count}개의 대화를 삭제하고 {size}의 공간을 확보했습니다."
+    },
+    "error": {
+      "title": "삭제 실패",
+      "message": "대화를 삭제하는 중 오류가 발생했습니다. 다시 시도해 주세요."
+    },
+    "close": "닫기"
+  }
 }

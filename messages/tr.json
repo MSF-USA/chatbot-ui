@@ -1482,5 +1482,58 @@
     "createTonesHint": "Hızlı Eylemler'de tonlar oluşturun"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Yapay zekanın nasıl yanıt vereceğini özelleştirmek için kişisel talimatlarınızı ekleyin. Bunlar, yardımcı, doğru ve güvenli yanıtları garanti altına alan temel davranış yönergeleriyle birleştirilir.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "İpucu: Kayıtlı istem şablonlarından seçmek için \"/\" yazın."
+  "Tip: Type \"/\" to select from saved prompt templates_": "İpucu: Kayıtlı istem şablonlarından seçmek için \"/\" yazın.",
+  "storageWarning": {
+    "title": {
+      "warning": "Depolama Alanı Azalıyor",
+      "critical": "Depolama Alanı Neredeyse Dolu",
+      "emergency": "Depolama Alanı Dolu"
+    },
+    "message": {
+      "warning": "Tarayıcı depolamanızın % {percent}'i dolu.",
+      "critical": "Tarayıcı depolamanızın kapasitesi kritik düzeyde: % {percent}.",
+      "emergency": "Tarayıcı depolamanız neredeyse tamamen dolu: %{percent}!"
+    },
+    "consequence": "Depolama alanı dolarsa yeni konuşmalara erişiminizi kaybedebilir ve uygulama düzgün çalışmayabilir.",
+    "storageUsage": "Depolama Kullanımı",
+    "optionsToFreeSpace": "Alan boşaltma seçenekleri",
+    "clearOption": {
+      "keepRecent": "En son konuşmaları koru",
+      "olderThan": "Şu tarihten eski konuşmaları sil",
+      "days": {
+        "7": "7 gün",
+        "14": "14 gün",
+        "30": "30 gün",
+        "60": "60 gün",
+        "90": "90 gün"
+      }
+    },
+    "estimate": {
+      "willRemove": "Bu işlem {count} konuşmayı kaldıracak",
+      "willFree": "Tahmini boşaltılacak alan: {size}"
+    },
+    "action": {
+      "exportFirst": "Önce Verileri Dışa Aktar",
+      "clearNow": "Şimdi Temizle",
+      "dismiss": "Kapat",
+      "cancel": "İptal"
+    },
+    "confirm": {
+      "title": "Temizlemeyi Onayla",
+      "message": "Bu işlem {count} konuşmayı kalıcı olarak silecek. Bu işlem geri alınamaz."
+    },
+    "clearing": {
+      "title": "Depolama Temizleniyor",
+      "message": "Konuşmalar silinirken lütfen bekleyin..."
+    },
+    "success": {
+      "title": "Depolama Temizlendi",
+      "message": "{count} konuşma başarıyla silindi ve {size} boşaltıldı."
+    },
+    "error": {
+      "title": "Temizleme Başarısız",
+      "message": "Konuşmalar temizlenirken bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "close": "Kapat"
+  }
 }

@@ -1482,5 +1482,58 @@
     "expirationWarning": "ستنتهي صلاحية النص لـ {filename} خلال {days} يوم/أيام. يُرجى نسخ المحتوى إذا كنت بحاجة للاحتفاظ به."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ."
+  "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ.",
+  "storageWarning": {
+    "title": {
+      "warning": "سعة التخزين منخفضة",
+      "critical": "التخزين شبه ممتلئ",
+      "emergency": "التخزين ممتلئ"
+    },
+    "message": {
+      "warning": "مساحة التخزين في متصفحك مستخدمة بنسبة {percent}%.",
+      "critical": "مساحة التخزين في متصفحك منخفضة بشكل حرج بنسبة {percent}%.",
+      "emergency": "مساحة التخزين في متصفحك شبه ممتلئة تمامًا بنسبة {percent}%!"
+    },
+    "consequence": "إذا امتلأت مساحة التخزين، قد تفقد إمكانية الوصول إلى المحادثات الجديدة وقد يتوقف التطبيق عن العمل بشكل صحيح.",
+    "storageUsage": "استهلاك التخزين",
+    "optionsToFreeSpace": "خيارات لتوفير مساحة",
+    "clearOption": {
+      "keepRecent": "الاحتفاظ بأحدث المحادثات",
+      "olderThan": "حذف المحادثات الأقدم من",
+      "days": {
+        "7": "٧ أيام",
+        "14": "١٤ يومًا",
+        "30": "٣٠ يومًا",
+        "60": "٦٠ يومًا",
+        "90": "٩٠ يومًا"
+      }
+    },
+    "estimate": {
+      "willRemove": "سيتم حذف {count} من المحادثات",
+      "willFree": "المساحة المقدرة التي سيتم توفيرها: {size}"
+    },
+    "action": {
+      "exportFirst": "تصدير البيانات أولاً",
+      "clearNow": "احذف الآن",
+      "dismiss": "تجاهل",
+      "cancel": "إلغاء"
+    },
+    "confirm": {
+      "title": "تأكيد الحذف",
+      "message": "سيتم حذف {count} من المحادثات بشكل دائم. لا يمكن التراجع عن هذا الإجراء."
+    },
+    "clearing": {
+      "title": "جاري حذف التخزين",
+      "message": "يرجى الانتظار ريثما يتم حذف المحادثات..."
+    },
+    "success": {
+      "title": "تم حذف التخزين",
+      "message": "تم حذف {count} من المحادثات بنجاح، وتوفير مساحة قدرها {size}."
+    },
+    "error": {
+      "title": "فشل الحذف",
+      "message": "حدث خطأ أثناء حذف المحادثات. يرجى المحاولة مرة أخرى."
+    },
+    "close": "إغلاق"
+  }
 }

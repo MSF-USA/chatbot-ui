@@ -1482,5 +1482,58 @@
     "expirationWarning": "Přepis pro {filename} vyprší za {days} den/dny. Zkopírujte obsah, pokud jej potřebujete zachovat."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními zásadami chování, které zajišťují užitečné, přesné a bezpečné odpovědi.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání.",
+  "storageWarning": {
+    "title": {
+      "warning": "Dochází místo v úložišti",
+      "critical": "Úložiště téměř plné",
+      "emergency": "Úložiště je plné"
+    },
+    "message": {
+      "warning": "Úložiště vašeho prohlížeče je zaplněno na {percent}%.",
+      "critical": "Úložiště vašeho prohlížeče je kriticky nízké: {percent}% kapacity.",
+      "emergency": "Úložiště vašeho prohlížeče je téměř zcela plné: {percent}%!"
+    },
+    "consequence": "Pokud se úložiště zaplní, můžete ztratit přístup k novým konverzacím a aplikace nemusí fungovat správně.",
+    "storageUsage": "Využití úložiště",
+    "optionsToFreeSpace": "Možnosti uvolnění místa",
+    "clearOption": {
+      "keepRecent": "Ponechat nejnovější konverzace",
+      "olderThan": "Smazat konverzace starší než",
+      "days": {
+        "7": "7 dní",
+        "14": "14 dní",
+        "30": "30 dní",
+        "60": "60 dní",
+        "90": "90 dní"
+      }
+    },
+    "estimate": {
+      "willRemove": "Tímto odstraníte {count} konverzací",
+      "willFree": "Odhadované uvolněné místo: {size}"
+    },
+    "action": {
+      "exportFirst": "Nejprve exportovat data",
+      "clearNow": "Vymazat nyní",
+      "dismiss": "Zavřít",
+      "cancel": "Zrušit"
+    },
+    "confirm": {
+      "title": "Potvrdit vymazání",
+      "message": "Tímto trvale smažete {count} konverzací. Nelze vrátit zpět."
+    },
+    "clearing": {
+      "title": "Mazání úložiště",
+      "message": "Čekejte prosím, odstraňují se konverzace..."
+    },
+    "success": {
+      "title": "Úložiště vymazáno",
+      "message": "Úspěšně odstraněno {count} konverzací, uvolněno {size}."
+    },
+    "error": {
+      "title": "Vymazání se nezdařilo",
+      "message": "Při mazání konverzací došlo k chybě. Zkuste to prosím znovu."
+    },
+    "close": "Zavřít"
+  }
 }

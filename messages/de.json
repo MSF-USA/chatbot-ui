@@ -1482,5 +1482,58 @@
     "createTonesHint": "Tonfälle in den Schnellaktionen erstellen"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Fügen Sie persönliche Anweisungen hinzu, um die Antworten der KI anzupassen. Diese werden mit den zentralen Verhaltensrichtlinien kombiniert, um hilfreiche, genaue und sichere Antworten zu gewährleisten.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Tipp: Geben Sie \"/\" ein, um gespeicherte Vorlagen auszuwählen."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tipp: Geben Sie \"/\" ein, um gespeicherte Vorlagen auszuwählen.",
+  "storageWarning": {
+    "title": {
+      "warning": "Speicher wird knapp",
+      "critical": "Speicher fast voll",
+      "emergency": "Speicher voll"
+    },
+    "message": {
+      "warning": "Der Browser-Speicher ist zu {percent}% belegt.",
+      "critical": "Der Browser-Speicher ist kritisch niedrig bei {percent}% Kapazität.",
+      "emergency": "Der Browser-Speicher ist nahezu vollständig belegt ({percent}%)!"
+    },
+    "consequence": "Wenn der Speicher voll ist, könnten Sie den Zugriff auf neue Unterhaltungen verlieren und die App funktioniert möglicherweise nicht mehr korrekt.",
+    "storageUsage": "Speicherverbrauch",
+    "optionsToFreeSpace": "Optionen zum Freigeben von Speicherplatz",
+    "clearOption": {
+      "keepRecent": "Neueste Unterhaltungen behalten",
+      "olderThan": "Unterhaltungen löschen, die älter sind als",
+      "days": {
+        "7": "7 Tage",
+        "14": "14 Tage",
+        "30": "30 Tage",
+        "60": "60 Tage",
+        "90": "90 Tage"
+      }
+    },
+    "estimate": {
+      "willRemove": "Dies entfernt {count} Unterhaltungen",
+      "willFree": "Voraussichtlich freier Speicherplatz: {size}"
+    },
+    "action": {
+      "exportFirst": "Daten zuerst exportieren",
+      "clearNow": "Jetzt löschen",
+      "dismiss": "Schließen",
+      "cancel": "Abbrechen"
+    },
+    "confirm": {
+      "title": "Löschen bestätigen",
+      "message": "Dies wird {count} Unterhaltungen dauerhaft löschen. Dies kann nicht rückgängig gemacht werden."
+    },
+    "clearing": {
+      "title": "Speicher wird gelöscht",
+      "message": "Bitte warten, Unterhaltungen werden entfernt..."
+    },
+    "success": {
+      "title": "Speicher geleert",
+      "message": "{count} Unterhaltungen erfolgreich entfernt, {size} freigegeben."
+    },
+    "error": {
+      "title": "Löschen fehlgeschlagen",
+      "message": "Beim Löschen der Unterhaltungen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "close": "Schließen"
+  }
 }

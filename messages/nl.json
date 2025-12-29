@@ -1482,5 +1482,58 @@
     "createTonesHint": "Maak tonen aan in Snelle acties"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Voeg uw persoonlijke instructies toe om aan te passen hoe de AI reageert. Deze worden gecombineerd met de basisrichtlijnen om behulpzame, nauwkeurige en veilige antwoorden te garanderen.",
-  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Typ \"/\" om te kiezen uit opgeslagen promptsjablonen."
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Typ \"/\" om te kiezen uit opgeslagen promptsjablonen.",
+  "storageWarning": {
+    "title": {
+      "warning": "Opslagruimte bijna vol",
+      "critical": "Opslagruimte bijna helemaal vol",
+      "emergency": "Opslagruimte vol"
+    },
+    "message": {
+      "warning": "De opslagruimte van uw browser is voor {percent}% gevuld.",
+      "critical": "De opslagruimte van uw browser is kritiek laag: {percent}% gevuld.",
+      "emergency": "De opslagruimte van uw browser is vrijwel volledig vol ({percent}%)!"
+    },
+    "consequence": "Als de opslagruimte vol is, kunt u mogelijk geen nieuwe gesprekken meer openen en werkt de app mogelijk niet meer correct.",
+    "storageUsage": "Opslaggebruik",
+    "optionsToFreeSpace": "Opties om ruimte vrij te maken",
+    "clearOption": {
+      "keepRecent": "Meest recente gesprekken behouden",
+      "olderThan": "Gesprekken wissen ouder dan",
+      "days": {
+        "7": "7 dagen",
+        "14": "14 dagen",
+        "30": "30 dagen",
+        "60": "60 dagen",
+        "90": "90 dagen"
+      }
+    },
+    "estimate": {
+      "willRemove": "Dit verwijdert {count} gesprekken",
+      "willFree": "Geschatte vrije ruimte: {size}"
+    },
+    "action": {
+      "exportFirst": "Eerst gegevens exporteren",
+      "clearNow": "Nu wissen",
+      "dismiss": "Negeren",
+      "cancel": "Annuleren"
+    },
+    "confirm": {
+      "title": "Wissen bevestigen",
+      "message": "Dit verwijdert {count} gesprekken permanent. Dit kan niet ongedaan worden gemaakt."
+    },
+    "clearing": {
+      "title": "Opslagruimte wordt geleegd",
+      "message": "Even geduld terwijl gesprekken worden verwijderd..."
+    },
+    "success": {
+      "title": "Opslagruimte geleegd",
+      "message": "Succesvol {count} gesprekken verwijderd, {size} vrijgemaakt."
+    },
+    "error": {
+      "title": "Wissen mislukt",
+      "message": "Er is een fout opgetreden bij het wissen van gesprekken. Probeer het opnieuw."
+    },
+    "close": "Sluiten"
+  }
 }
