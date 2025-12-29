@@ -31,7 +31,7 @@ export default async function HelpPage({ params }: PageProps) {
   const { locale } = await params;
 
   // Detect organization from user's email for server-side rendering
-  const detectedOrg = detectOrganizationFromEmail(session?.user?.email);
+  const detectedOrg = detectOrganizationFromEmail(session?.user?.mail);
 
   // Determine initial locale - use user's locale if available, otherwise English
   const initialLocale = AVAILABLE_FAQ_LOCALES.includes(locale as any)
