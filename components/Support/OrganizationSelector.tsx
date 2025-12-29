@@ -18,6 +18,8 @@ interface OrganizationSelectorProps {
   showResetButton?: boolean;
   /** Compact mode for inline usage */
   compact?: boolean;
+  /** Server-detected organization for contexts without SessionProvider */
+  serverDetectedOrganization?: MSFOrganization;
 }
 
 /**
