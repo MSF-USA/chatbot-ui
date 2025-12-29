@@ -343,9 +343,6 @@ export class AIFoundryAgentHandler {
                               (match: string) => {
                                 if (!citationMap.has(match)) {
                                   citationMap.set(match, citationIndex);
-                                  console.log(
-                                    `[AIFoundryAgentHandler] New citation marker: ${match} -> [${citationIndex}]`,
-                                  );
                                   citationIndex++;
                                 }
                                 return `[${citationMap.get(match)}]`;
@@ -381,17 +378,6 @@ export class AIFoundryAgentHandler {
                   ) {
                     hasCompletedMessage = true;
 
-                    console.log(
-                      '[AIFoundryAgentHandler] Final citationMap (inline markers to numbers):',
-                      Array.from(citationMap.entries()),
-                    );
-
-                    // DEBUG: Log raw event data structure
-                    console.log(
-                      '[AIFoundryAgentHandler] thread.message.completed raw data:',
-                      JSON.stringify(eventMessage.data, null, 2),
-                    );
-
                     // Extract citations from annotations
                     const messageData = eventMessage.data as {
                       content?: Array<{
@@ -407,11 +393,6 @@ export class AIFoundryAgentHandler {
                     if (messageData?.content?.[0]?.text?.annotations) {
                       const annotations =
                         messageData.content[0].text.annotations;
-
-                      console.log(
-                        '[AIFoundryAgentHandler] Raw annotations from agent:',
-                        JSON.stringify(annotations, null, 2),
-                      );
 
                       // Build a map from citation marker to annotation
                       const markerToAnnotation = new Map<
@@ -451,32 +432,13 @@ export class AIFoundryAgentHandler {
                         });
 
                         if (!urlCitation) {
-                          console.log(
-                            `[AIFoundryAgentHandler] Warning: No annotation found for marker ${marker}, using placeholder`,
+                          console.warn(
+                            `[AIFoundryAgentHandler] No annotation found for marker ${marker}, using placeholder`,
                           );
                         }
                       }
-
-                      console.log(
-                        '[AIFoundryAgentHandler] Processed citations (matched to citationMap):',
-                        JSON.stringify(citations, null, 2),
-                      );
                     }
                   } else if (eventMessage.event === 'thread.run.completed') {
-                    // DEBUG: Log citation state before appending metadata
-                    console.log(
-                      '[AIFoundryAgentHandler] thread.run.completed - citationMap size:',
-                      citationMap.size,
-                    );
-                    console.log(
-                      '[AIFoundryAgentHandler] thread.run.completed - citations array:',
-                      JSON.stringify(citations, null, 2),
-                    );
-                    console.log(
-                      '[AIFoundryAgentHandler] thread.run.completed - hasCompletedMessage:',
-                      hasCompletedMessage,
-                    );
-
                     // Flush any remaining marker buffer to stream buffer
                     if (markerBuffer) {
                       streamBuffer += markerBuffer;
@@ -494,9 +456,6 @@ export class AIFoundryAgentHandler {
                       citations: citations.length > 0 ? citations : undefined,
                       threadId: isNewThread ? thread.id : undefined,
                     });
-                    console.log(
-                      '[AIFoundryAgentHandler] Metadata appended to stream',
-                    );
                   } else if (eventMessage.event === 'error') {
                     controllerClosed = true;
                     controller.error(
