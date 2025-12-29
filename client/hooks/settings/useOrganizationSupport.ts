@@ -15,6 +15,17 @@ import {
 import { useSettingsStore } from '@/client/stores/settingsStore';
 
 /**
+ * Options for the useOrganizationSupport hook.
+ */
+export interface UseOrganizationSupportOptions {
+  /**
+   * Server-detected organization, used as fallback when SessionProvider
+   * is not available (e.g., pages outside the (chat) route group).
+   */
+  serverDetectedOrganization?: MSFOrganization;
+}
+
+/**
  * Return type for the useOrganizationSupport hook.
  */
 export interface OrganizationSupportState {
@@ -37,14 +48,18 @@ export interface OrganizationSupportState {
  * Combines auto-detection from the user's email domain with the ability
  * to manually override the organization preference.
  *
+ * @param options - Optional configuration including server-detected organization
  * @returns Organization support state including effective org, contact config, and actions
  *
  * @example
- * const {
- *   effectiveOrganization,
- *   contactConfig,
- *   setOrganizationPreference,
- * } = useOrganizationSupport();
+ * // Basic usage (requires SessionProvider)
+ * const { contactConfig } = useOrganizationSupport();
+ *
+ * @example
+ * // With server-detected fallback (for pages without SessionProvider)
+ * const { contactConfig } = useOrganizationSupport({
+ *   serverDetectedOrganization: serverDetectedOrg,
+ * });
  *
  * // Display contact info
  * if (contactConfig.hasEmailSupport) {
@@ -56,7 +71,10 @@ export interface OrganizationSupportState {
  * // Let user override
  * setOrganizationPreference('OCG');
  */
-export function useOrganizationSupport(): OrganizationSupportState {
+export function useOrganizationSupport(
+  options: UseOrganizationSupportOptions = {},
+): OrganizationSupportState {
+  const { serverDetectedOrganization } = options;
   const { data: session } = useSession();
   const organizationPreference = useSettingsStore(
     (state) => state.organizationPreference,
@@ -65,11 +83,23 @@ export function useOrganizationSupport(): OrganizationSupportState {
     (state) => state.setOrganizationPreference,
   );
 
-  // Detect organization from user's email
-  const detectedOrganization = useMemo(
-    () => detectOrganizationFromEmail(session?.user?.mail),
-    [session?.user?.mail],
-  );
+  // Detect organization from user's email, or use server-provided fallback
+  const detectedOrganization = useMemo(() => {
+    // If session has email, use it for detection
+    if (session?.user?.mail) {
+      return detectOrganizationFromEmail(session.user.mail);
+    }
+    // Fallback to server-detected org when no session (outside SessionProvider)
+    if (serverDetectedOrganization) {
+      return {
+        organization: serverDetectedOrganization,
+        confidence: 'high' as const,
+        source: 'email_domain' as const,
+      };
+    }
+    // Default fallback
+    return detectOrganizationFromEmail(null);
+  }, [session?.user?.mail, serverDetectedOrganization]);
 
   // Determine effective organization (user preference takes precedence)
   const effectiveOrganization = useMemo(
