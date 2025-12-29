@@ -46,13 +46,15 @@ interface HelpPageClientProps {
 }
 
 export function HelpPageClient({
-  detectedOrganization: _serverDetectedOrg,
+  detectedOrganization: serverDetectedOrg,
   faqTranslations,
   initialLocale,
   availableLocales,
 }: HelpPageClientProps) {
-  // Use the hook which checks localStorage for user override preference
-  const { contactConfig } = useOrganizationSupport();
+  // Use the hook with server-detected org as fallback (no SessionProvider on this page)
+  const { contactConfig } = useOrganizationSupport({
+    serverDetectedOrganization: serverDetectedOrg,
+  });
   const t = useTranslations();
   const [expandedSection, setExpandedSection] = useState<SectionType>('faq');
   const [searchQuery, setSearchQuery] = useState('');
@@ -605,7 +607,9 @@ export function HelpPageClient({
                       {t('support.organizationDescription')}
                     </p>
                   </div>
-                  <OrganizationSelector />
+                  <OrganizationSelector
+                    serverDetectedOrganization={serverDetectedOrg}
+                  />
                 </div>
 
                 {/* Quick Contact Options */}
