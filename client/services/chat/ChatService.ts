@@ -3,6 +3,7 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { StreamingSpeedConfig } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 import { apiClient } from '../api';
@@ -65,6 +66,7 @@ export class ChatService {
       isEditorOpen?: boolean;
       tone?: Tone;
       signal?: AbortSignal;
+      streamingSpeed?: StreamingSpeedConfig;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     return apiClient.postStream(
@@ -83,6 +85,7 @@ export class ChatService {
         forcedAgentType: options?.forcedAgentType,
         isEditorOpen: options?.isEditorOpen,
         tone: options?.tone,
+        streamingSpeed: options?.streamingSpeed,
       },
       {
         signal: options?.signal,
