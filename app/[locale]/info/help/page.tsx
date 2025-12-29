@@ -1,3 +1,7 @@
+import { detectOrganizationFromEmail } from '@/lib/utils/shared/organization';
+
+import { MSFOrganization } from '@/types/organization';
+
 import { HelpPageClient } from './HelpPageClient';
 
 import { auth } from '@/auth';
@@ -25,10 +29,9 @@ const faqTranslations: Record<string, any> = {
 export default async function HelpPage({ params }: PageProps) {
   const session = await auth();
   const { locale } = await params;
-  const isUSUser = session?.user?.region === 'US';
-  const supportEmail = isUSUser
-    ? 'ai@newyork.msf.org'
-    : 'ai.team@amsterdam.msf.org';
+
+  // Detect organization from user's email for server-side rendering
+  const detectedOrg = detectOrganizationFromEmail(session?.user?.email);
 
   // Determine initial locale - use user's locale if available, otherwise English
   const initialLocale = AVAILABLE_FAQ_LOCALES.includes(locale as any)
@@ -37,8 +40,7 @@ export default async function HelpPage({ params }: PageProps) {
 
   return (
     <HelpPageClient
-      isUSUser={isUSUser}
-      supportEmail={supportEmail}
+      detectedOrganization={detectedOrg.organization as MSFOrganization}
       faqTranslations={faqTranslations}
       initialLocale={initialLocale}
       availableLocales={[...AVAILABLE_FAQ_LOCALES]}
