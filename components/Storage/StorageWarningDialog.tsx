@@ -52,7 +52,7 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
   severity,
   onClearComplete,
 }) => {
-  const t = useTranslations('storage');
+  const t = useTranslations('storageWarning');
   const {
     storageUsage,
     calculateSpaceByCount,
@@ -233,24 +233,24 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
                   <SeverityIcon className={`w-5 h-5 ${config.iconColor}`} />
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t(`warning.title.${severity.toLowerCase()}`)}
+                  {t(`title.${severity.toLowerCase()}`)}
                 </h2>
               </div>
 
               {/* Message */}
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                {t(`warning.message.${severity.toLowerCase()}`, {
+                {t(`message.${severity.toLowerCase()}`, {
                   percent: storageUsage.percentUsed.toFixed(1),
                 })}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                {t('warning.consequence')}
+                {t('consequence')}
               </p>
 
               {/* Storage bar */}
               <div className="mb-4">
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  <span>{t('Storage Usage')}</span>
+                  <span>{t('storageUsage')}</span>
                   <span>
                     {formatBytes(storageUsage.currentUsage)} /{' '}
                     {formatBytes(storageUsage.maxUsage)}
@@ -277,7 +277,7 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
                 className={`rounded-lg p-3 mb-4 border ${config.borderColor} ${config.bgColor}`}
               >
                 <p className={`text-xs font-medium mb-3 ${config.textColor}`}>
-                  {t('Options to free up space')}
+                  {t('optionsToFreeSpace')}
                 </p>
 
                 {/* Clear mode selection */}
@@ -504,7 +504,7 @@ export const StorageWarningDialog: FC<StorageWarningDialogProps> = ({
                 onClick={handleComplete}
                 className="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Close')}
+                {t('close')}
               </button>
             </div>
           </>
