@@ -253,25 +253,40 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
 
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+          isExpanded
+            ? viewMode === 'cards'
+              ? 'max-h-[200px] opacity-100'
+              : 'max-h-[400px] opacity-100'
+            : 'max-h-0 opacity-0'
         }`}
       >
-        <div
-          ref={scrollContainerRef}
-          className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
-          style={{ scrollBehavior: 'auto' }}
-          onMouseMove={handleReactMouseMove}
-          onMouseLeave={handleReactMouseLeave}
-        >
-          {uniqueCitations.map((citation, index) => (
-            <div
-              key={citation.number || citation.url || index}
-              className="flex-shrink-0"
-            >
-              <CitationItem citation={citation} />
-            </div>
-          ))}
-        </div>
+        {viewMode === 'cards' ? (
+          <div
+            ref={scrollContainerRef}
+            className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
+            style={{ scrollBehavior: 'auto' }}
+            onMouseMove={handleReactMouseMove}
+            onMouseLeave={handleReactMouseLeave}
+          >
+            {uniqueCitations.map((citation, index) => (
+              <div
+                key={citation.number || citation.url || index}
+                className="flex-shrink-0"
+              >
+                <CitationItem citation={citation} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 pt-3 overflow-y-auto max-h-[350px]">
+            {uniqueCitations.map((citation, index) => (
+              <CitationListItem
+                key={citation.number || citation.url || index}
+                citation={citation}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
