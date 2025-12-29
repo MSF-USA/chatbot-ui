@@ -2,6 +2,7 @@ import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
+import { StreamingSpeedConfig } from './settings';
 import { Tone } from './tone';
 
 export enum MessageType {
@@ -169,6 +170,7 @@ export interface ChatBody {
   forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
   isEditorOpen?: boolean; // Indicates if code editor is currently open
   tone?: Tone; // Full tone object (if tone is selected)
+  streamingSpeed?: StreamingSpeedConfig; // Smooth streaming speed configuration
 }
 
 export interface Conversation {
