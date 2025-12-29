@@ -40,7 +40,7 @@ const AZURE_SUPPORTED_CONTENT_TYPES = [
  * - Uses Azure OpenAI SDK
  * - Supports reasoning_effort parameter (GPT-5, o3)
  * - Supports verbosity parameter (GPT-5 only)
- * - Standard system message handling
+ * - Smart system prompt handling: merges into user message for reasoning/omni models
  * - Automatically sanitizes unsupported content types (like file_url)
  */
 export class AzureOpenAIHandler extends ModelHandler {
@@ -107,6 +107,71 @@ export class AzureOpenAIHandler extends ModelHandler {
     });
   }
 
+  /**
+   * Determines if the model should avoid system prompts.
+   * OpenAI reasoning and omni models perform better with instructions in user messages.
+   *
+   * @param modelConfig - The model configuration
+   * @returns True if system prompt should be merged into user message
+   */
+  private shouldAvoidSystemPrompt(modelConfig: OpenAIModel): boolean {
+    // Explicit flag takes precedence (for edge cases)
+    if (modelConfig.avoidSystemPrompt !== undefined) {
+      return modelConfig.avoidSystemPrompt;
+    }
+    // Reasoning and omni models don't properly process system prompts
+    return (
+      modelConfig.modelType === 'reasoning' || modelConfig.modelType === 'omni'
+    );
+  }
+
+  /**
+   * Merges system prompt into first user message for models that don't support system prompts.
+   * This ensures instructions are followed by reasoning/omni models.
+   *
+   * @param messages - The sanitized messages
+   * @param systemPrompt - The system prompt to merge
+   * @returns Messages with system prompt merged into first user message
+   */
+  private mergeSystemPromptIntoMessages(
+    messages: Message[],
+    systemPrompt: string,
+  ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
+    const firstUserIndex = messages.findIndex((m) => m.role === 'user');
+
+    return messages.map(
+      (msg, index): OpenAI.Chat.Completions.ChatCompletionMessageParam => {
+        // Only modify the first user message
+        if (index !== firstUserIndex || msg.role !== 'user') {
+          return { role: msg.role, content: msg.content as any };
+        }
+
+        const content = msg.content;
+
+        // Handle string content
+        if (typeof content === 'string') {
+          return {
+            role: msg.role,
+            content: `${systemPrompt}\n\n${content}`,
+          };
+        }
+
+        // Handle array content (multimodal messages)
+        if (Array.isArray(content)) {
+          const newContent = content.map((item: any) => {
+            if (item.type === 'text' && 'text' in item) {
+              return { ...item, text: `${systemPrompt}\n\n${item.text}` };
+            }
+            return { ...item };
+          });
+          return { role: msg.role, content: newContent as any };
+        }
+
+        return { role: msg.role, content: msg.content as any };
+      },
+    );
+  }
+
   prepareMessages(
     messages: Message[],
     systemPrompt: string | undefined,
@@ -114,12 +179,21 @@ export class AzureOpenAIHandler extends ModelHandler {
   ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
     // Sanitize messages to remove unsupported content types (like file_url)
     const sanitizedMessages = this.sanitizeMessages(messages);
+    const effectiveSystemPrompt = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+
+    // Reasoning/omni models: merge system prompt into first user message
+    if (this.shouldAvoidSystemPrompt(modelConfig)) {
+      return this.mergeSystemPromptIntoMessages(
+        sanitizedMessages,
+        effectiveSystemPrompt,
+      );
+    }
 
     // Standard approach: system message at the beginning
     return [
       {
         role: 'system',
-        content: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+        content: effectiveSystemPrompt,
       },
       ...(sanitizedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
     ];
