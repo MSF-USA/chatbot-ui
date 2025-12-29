@@ -40,6 +40,7 @@ export default async function HelpPage({ params }: PageProps) {
 
   return (
     <HelpPageClient
+      session={session}
       detectedOrganization={detectedOrg.organization as MSFOrganization}
       faqTranslations={faqTranslations}
       initialLocale={initialLocale}
