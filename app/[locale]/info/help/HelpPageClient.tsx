@@ -17,14 +17,15 @@ import {
 import { useEffect, useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 
+import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-
-import { useOrganizationSupport } from '@/client/hooks/settings/useOrganizationSupport';
 
 import { MSFOrganization } from '@/types/organization';
 
 import { OrganizationSelector } from '@/components/Support/OrganizationSelector';
+import { OrganizationSupportWrapper } from '@/components/Support/OrganizationSupportWrapper';
+import { SupportContactSection } from '@/components/Support/SupportContactSection';
 
 import { EXTERNAL_LINKS } from '@/lib/constants/externalLinks';
 import privacyData from '@/lib/data/privacyPolicy.json';
@@ -38,6 +39,8 @@ interface FAQItem {
 }
 
 interface HelpPageClientProps {
+  /** Session from server-side auth() call */
+  session: Session | null;
   /** Organization detected from server-side email analysis */
   detectedOrganization: MSFOrganization;
   faqTranslations: Record<string, FAQItem[]>;
@@ -46,15 +49,12 @@ interface HelpPageClientProps {
 }
 
 export function HelpPageClient({
-  detectedOrganization: serverDetectedOrg,
+  session,
+  detectedOrganization: _serverDetectedOrg,
   faqTranslations,
   initialLocale,
   availableLocales,
 }: HelpPageClientProps) {
-  // Use the hook with server-detected org as fallback (no SessionProvider on this page)
-  const { contactConfig } = useOrganizationSupport({
-    serverDetectedOrganization: serverDetectedOrg,
-  });
   const t = useTranslations();
   const [expandedSection, setExpandedSection] = useState<SectionType>('faq');
   const [searchQuery, setSearchQuery] = useState('');
@@ -597,102 +597,34 @@ export function HelpPageClient({
                   </div>
                 </div>
 
-                {/* Organization Selector */}
-                <div className="flex flex-row justify-between items-center p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50">
-                  <div>
-                    <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                      {t('support.selectOrganization')}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('support.organizationDescription')}
-                    </p>
-                  </div>
-                  <OrganizationSelector
-                    serverDetectedOrganization={serverDetectedOrg}
-                  />
-                </div>
-
-                {/* Quick Contact Options */}
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {t('help.contact.otherWays')}
-                    </h3>
+                {/* Wrap organization-related content with SessionProvider */}
+                <OrganizationSupportWrapper session={session}>
+                  {/* Organization Selector */}
+                  <div className="flex flex-row justify-between items-center p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50">
+                    <div>
+                      <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
+                        {t('support.selectOrganization')}
+                      </h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {t('support.organizationDescription')}
+                      </p>
+                    </div>
+                    <OrganizationSelector />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    {/* Email Support - shown when org has email support */}
-                    {contactConfig.hasEmailSupport ? (
-                      <a
-                        href={`mailto:${contactConfig.email}`}
-                        className="group relative overflow-hidden border-2 border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-lg transition-all bg-white dark:bg-gray-900/50"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex-shrink-0 p-2.5 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/40 rounded-lg group-hover:scale-110 transition-transform">
-                            <IconMail
-                              size={24}
-                              className="text-purple-600 dark:text-purple-400"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                              {t('help.contact.emailSupport')}
-                            </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-                              {t('support.emailDescription', {
-                                organization: contactConfig.displayName,
-                              })}
-                            </p>
-                            <span className="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400">
-                              {contactConfig.email}
-                              <IconExternalLink size={14} />
-                            </span>
-                          </div>
-                        </div>
-                      </a>
-                    ) : (
-                      /* Escalation Instructions - shown for Field/Other */
-                      <div className="border-2 border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/10 rounded-xl p-4">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 p-2.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                            <IconInfoCircle
-                              size={24}
-                              className="text-amber-600 dark:text-amber-400"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-base font-bold text-gray-900 dark:text-white mb-2">
-                              {t('support.escalationTitle')}
-                            </h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                              {t('support.escalationDescription')}
-                            </p>
-                            <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                              <li className="flex items-start gap-2">
-                                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-200 dark:bg-amber-800/50 text-amber-800 dark:text-amber-200 rounded-full text-xs font-bold">
-                                  1
-                                </span>
-                                {t('support.escalationStep1')}
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-200 dark:bg-amber-800/50 text-amber-800 dark:text-amber-200 rounded-full text-xs font-bold">
-                                  2
-                                </span>
-                                {t('support.escalationStep2')}
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-200 dark:bg-amber-800/50 text-amber-800 dark:text-amber-200 rounded-full text-xs font-bold">
-                                  3
-                                </span>
-                                {t('support.escalationStep3')}
-                              </li>
-                            </ol>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                  {/* Quick Contact Options */}
+                  <div className="mt-8">
+                    <div className="flex items-center gap-2 mb-5">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                        {t('help.contact.otherWays')}
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <SupportContactSection />
+                    </div>
                   </div>
-                </div>
+                </OrganizationSupportWrapper>
 
                 {/* Additional Resources */}
                 <div>
