@@ -1,6 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
 
 import { detectOrganizationFromEmail } from '@/lib/utils/shared/organization';
@@ -16,11 +15,21 @@ import { useSettingsStore } from '@/client/stores/settingsStore';
 
 /**
  * Options for the useOrganizationSupport hook.
+ *
+ * This hook intentionally does NOT use useSession() to avoid requiring
+ * SessionProvider. Instead, callers provide either userEmail (from useSession
+ * in their own component) or serverDetectedOrganization (from server component).
  */
 export interface UseOrganizationSupportOptions {
   /**
-   * Server-detected organization, used as fallback when SessionProvider
-   * is not available (e.g., pages outside the (chat) route group).
+   * User's email address for organization detection.
+   * Pass this from useSession().data?.user?.mail when SessionProvider is available.
+   */
+  userEmail?: string | null;
+
+  /**
+   * Server-detected organization, used when SessionProvider is not available
+   * (e.g., pages outside the (chat) route group).
    */
   serverDetectedOrganization?: MSFOrganization;
 }
@@ -48,15 +57,21 @@ export interface OrganizationSupportState {
  * Combines auto-detection from the user's email domain with the ability
  * to manually override the organization preference.
  *
- * @param options - Optional configuration including server-detected organization
+ * NOTE: This hook does NOT use useSession() internally to avoid requiring
+ * SessionProvider. Callers must provide either userEmail or serverDetectedOrganization.
+ *
+ * @param options - Configuration with userEmail or serverDetectedOrganization
  * @returns Organization support state including effective org, contact config, and actions
  *
  * @example
- * // Basic usage (requires SessionProvider)
- * const { contactConfig } = useOrganizationSupport();
+ * // With userEmail (when SessionProvider is available)
+ * const { data: session } = useSession();
+ * const { contactConfig } = useOrganizationSupport({
+ *   userEmail: session?.user?.mail,
+ * });
  *
  * @example
- * // With server-detected fallback (for pages without SessionProvider)
+ * // With server-detected org (for pages without SessionProvider)
  * const { contactConfig } = useOrganizationSupport({
  *   serverDetectedOrganization: serverDetectedOrg,
  * });
@@ -67,15 +82,11 @@ export interface OrganizationSupportState {
  * } else {
  *   console.log('Instructions:', contactConfig.escalationInstructions);
  * }
- *
- * // Let user override
- * setOrganizationPreference('OCG');
  */
 export function useOrganizationSupport(
   options: UseOrganizationSupportOptions = {},
 ): OrganizationSupportState {
-  const { serverDetectedOrganization } = options;
-  const { data: session } = useSession();
+  const { userEmail, serverDetectedOrganization } = options;
   const organizationPreference = useSettingsStore(
     (state) => state.organizationPreference,
   );
@@ -85,11 +96,11 @@ export function useOrganizationSupport(
 
   // Detect organization from user's email, or use server-provided fallback
   const detectedOrganization = useMemo(() => {
-    // If session has email, use it for detection
-    if (session?.user?.mail) {
-      return detectOrganizationFromEmail(session.user.mail);
+    // If userEmail is provided, use it for detection
+    if (userEmail) {
+      return detectOrganizationFromEmail(userEmail);
     }
-    // Fallback to server-detected org when no session (outside SessionProvider)
+    // Fallback to server-detected org when no email available
     if (serverDetectedOrganization) {
       return {
         organization: serverDetectedOrganization,
@@ -99,7 +110,7 @@ export function useOrganizationSupport(
     }
     // Default fallback
     return detectOrganizationFromEmail(null);
-  }, [session?.user?.mail, serverDetectedOrganization]);
+  }, [userEmail, serverDetectedOrganization]);
 
   // Determine effective organization (user preference takes precedence)
   const effectiveOrganization = useMemo(
