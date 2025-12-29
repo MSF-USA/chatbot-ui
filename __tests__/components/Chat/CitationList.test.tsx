@@ -552,7 +552,7 @@ describe('CitationList', () => {
       });
     });
 
-    it('toggle does not trigger expand/collapse', async () => {
+    it('toggle does not collapse when already expanded', async () => {
       const { container } = render(<CitationList citations={mockCitations} />);
 
       // Expand first
@@ -571,6 +571,25 @@ describe('CitationList', () => {
       await waitFor(() => {
         const citationsContainer = container.querySelector('.overflow-hidden');
         expect(citationsContainer).toHaveClass('opacity-100');
+      });
+    });
+
+    it('auto-expands when toggling view mode while collapsed', async () => {
+      const { container } = render(<CitationList citations={mockCitations} />);
+
+      // Start collapsed
+      const citationsContainer = container.querySelector('.overflow-hidden');
+      expect(citationsContainer).toHaveClass('max-h-0');
+
+      // Click toggle without expanding first
+      const toggleButton = screen.getByTitle(/switch to/i);
+      fireEvent.click(toggleButton);
+
+      // Should auto-expand
+      await waitFor(() => {
+        const expandedContainer = container.querySelector('.overflow-hidden');
+        expect(expandedContainer).toHaveClass('opacity-100');
+        expect(expandedContainer).not.toHaveClass('max-h-0');
       });
     });
 
