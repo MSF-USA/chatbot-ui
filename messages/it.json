@@ -835,7 +835,12 @@
     "Custom Display Name": "Nome visualizzato personalizzato",
     "Custom Display Name Placeholder": "Inserisci il nome preferito",
     "howShouldWeAddressYou": "Come desidera essere chiamato/a?",
-    "displayNamePreview": "Anteprima: \"{greeting}\""
+    "displayNamePreview": "Anteprima: \"{greeting}\"",
+    "Streaming Speed": "Velocità di streaming",
+    "Slow": "Lento",
+    "Normal": "Normale",
+    "Fast": "Veloce",
+    "Controls how smoothly text appears during AI responses": "Controlla la fluidità con cui il testo appare durante le risposte dell'AI"
   },
   "notFound": {
     "lostDog": "Cane smarrito"

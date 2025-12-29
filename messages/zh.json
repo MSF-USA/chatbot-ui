@@ -860,7 +860,12 @@
     "Custom Display Name": "自定义显示名称",
     "Custom Display Name Placeholder": "请输入您偏好的名称",
     "howShouldWeAddressYou": "我们该如何称呼您？",
-    "displayNamePreview": "预览：“{greeting}”"
+    "displayNamePreview": "预览：“{greeting}”",
+    "Streaming Speed": "流式速度",
+    "Slow": "慢速",
+    "Normal": "正常",
+    "Fast": "快速",
+    "Controls how smoothly text appears during AI responses": "控制 AI 回复时文本显示的流畅度"
   },
   "notFound": {
     "lostDog": "迷路的狗"

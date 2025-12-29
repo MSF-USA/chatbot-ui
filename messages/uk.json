@@ -777,7 +777,12 @@
     "Custom Display Name": "Власне відображуване ім’я",
     "Custom Display Name Placeholder": "Введіть бажане ім’я",
     "howShouldWeAddressYou": "Як до вас звертатися?",
-    "displayNamePreview": "Попередній перегляд: \"{greeting}\""
+    "displayNamePreview": "Попередній перегляд: \"{greeting}\"",
+    "Streaming Speed": "Швидкість відтворення",
+    "Slow": "Повільно",
+    "Normal": "Нормально",
+    "Fast": "Швидко",
+    "Controls how smoothly text appears during AI responses": "Визначає плавність появи тексту у відповідях ШІ"
   },
   "notFound": {
     "lostDog": "Загублений пес"

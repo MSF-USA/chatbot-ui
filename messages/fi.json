@@ -835,7 +835,12 @@
     "Custom Display Name": "Mukautettu näyttönimi",
     "Custom Display Name Placeholder": "Anna haluamasi nimi",
     "howShouldWeAddressYou": "Miten haluat, että puhuttelemme sinua?",
-    "displayNamePreview": "Esikatselu: \"{greeting}\""
+    "displayNamePreview": "Esikatselu: \"{greeting}\"",
+    "Streaming Speed": "Suoratoiston nopeus",
+    "Slow": "Hidas",
+    "Normal": "Normaali",
+    "Fast": "Nopea",
+    "Controls how smoothly text appears during AI responses": "Säätää, kuinka sujuvasti teksti ilmestyy tekoälyn vastauksissa"
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

@@ -860,7 +860,12 @@
     "Custom Display Name": "Anpassat visningsnamn",
     "Custom Display Name Placeholder": "Ange önskat namn",
     "howShouldWeAddressYou": "Hur vill du bli tilltalad?",
-    "displayNamePreview": "Förhandsgranskning: \"{greeting}\""
+    "displayNamePreview": "Förhandsgranskning: \"{greeting}\"",
+    "Streaming Speed": "Strömningshastighet",
+    "Slow": "Långsam",
+    "Normal": "Normal",
+    "Fast": "Snabb",
+    "Controls how smoothly text appears during AI responses": "Styr hur smidigt text visas under AI-svar"
   },
   "notFound": {
     "lostDog": "Förlorad hund"

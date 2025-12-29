@@ -860,7 +860,12 @@
     "Custom Display Name": "Özel Görünen Ad",
     "Custom Display Name Placeholder": "Tercih ettiğiniz adı girin",
     "howShouldWeAddressYou": "Size nasıl hitap etmemizi istersiniz?",
-    "displayNamePreview": "Önizleme: \"{greeting}\""
+    "displayNamePreview": "Önizleme: \"{greeting}\"",
+    "Streaming Speed": "Yayın Hızı",
+    "Slow": "Yavaş",
+    "Normal": "Normal",
+    "Fast": "Hızlı",
+    "Controls how smoothly text appears during AI responses": "AI yanıtlarında metnin ne kadar akıcı görüneceğini ayarlar"
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

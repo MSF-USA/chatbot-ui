@@ -860,7 +860,12 @@
     "Custom Display Name": "कस्टम दर्शाया जाने वाला नाम",
     "Custom Display Name Placeholder": "अपना पसंदीदा नाम दर्ज करें",
     "howShouldWeAddressYou": "हम आपको किस नाम से संबोधित करें?",
-    "displayNamePreview": "पूर्वावलोकन: \"{greeting}\""
+    "displayNamePreview": "पूर्वावलोकन: \"{greeting}\"",
+    "Streaming Speed": "स्ट्रीमिंग गति",
+    "Slow": "धीमा",
+    "Normal": "सामान्य",
+    "Fast": "तेज़",
+    "Controls how smoothly text appears during AI responses": "AI प्रतिक्रियाओं के दौरान पाठ कितनी सहजता से दिखे, इसे नियंत्रित करता है"
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"

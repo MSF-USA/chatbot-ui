@@ -860,7 +860,12 @@
     "Custom Display Name": "Benutzerdefinierter Anzeigename",
     "Custom Display Name Placeholder": "Geben Sie Ihren bevorzugten Namen ein",
     "howShouldWeAddressYou": "Wie dürfen wir Sie ansprechen?",
-    "displayNamePreview": "Vorschau: „{greeting}“"
+    "displayNamePreview": "Vorschau: „{greeting}“",
+    "Streaming Speed": "Streaming-Geschwindigkeit",
+    "Slow": "Langsam",
+    "Normal": "Normal",
+    "Fast": "Schnell",
+    "Controls how smoothly text appears during AI responses": "Steuert, wie flüssig Text während KI-Antworten angezeigt wird"
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

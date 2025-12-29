@@ -860,7 +860,12 @@
     "Custom Display Name": "カスタム表示名",
     "Custom Display Name Placeholder": "ご希望の名前を入力してください",
     "howShouldWeAddressYou": "どのようにお呼びすればよいですか？",
-    "displayNamePreview": "プレビュー: 「{greeting}」"
+    "displayNamePreview": "プレビュー: 「{greeting}」",
+    "Streaming Speed": "ストリーミング速度",
+    "Slow": "遅い",
+    "Normal": "標準",
+    "Fast": "速い",
+    "Controls how smoothly text appears during AI responses": "AIの応答中にテキストがどれだけ滑らかに表示されるかを制御します"
   },
   "notFound": {
     "lostDog": "迷子の犬"

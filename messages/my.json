@@ -835,7 +835,12 @@
     "Custom Display Name": "ကိုယ်သတ်မှတ်ပြသမည်နာမည်",
     "Custom Display Name Placeholder": "သင့်လိုချင်သောနာမည် ထည့်ပါ",
     "howShouldWeAddressYou": "ကျွန်ုပ်တို့ ဘယ်လိုခေါ်ကြမလဲ?",
-    "displayNamePreview": "စမ်းကြည့်မှု- \"{greeting}\""
+    "displayNamePreview": "စမ်းကြည့်မှု- \"{greeting}\"",
+    "Streaming Speed": "သီးနှောင့်နဲ့လုပ်ဆောင်မှု အမြန်နှုန်း",
+    "Slow": "နှေး",
+    "Normal": "သာမန်",
+    "Fast": "မြန်",
+    "Controls how smoothly text appears during AI responses": "AI ဖြေဆိုမှုအတွင်း စာသား ပေါ်လာမှု၏ မျှတမှုကို ထိန်းချုပ်သည်"
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"

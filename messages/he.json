@@ -835,7 +835,12 @@
     "Custom Display Name": "שם תצוגה מותאם אישית",
     "Custom Display Name Placeholder": "הזן את השם המועדף עליך",
     "howShouldWeAddressYou": "כיצד לפנות אליך?",
-    "displayNamePreview": "תצוגה מקדימה: \"{greeting}\""
+    "displayNamePreview": "תצוגה מקדימה: \"{greeting}\"",
+    "Streaming Speed": "מהירות הזרמה",
+    "Slow": "איטי",
+    "Normal": "רגיל",
+    "Fast": "מהיר",
+    "Controls how smoothly text appears during AI responses": "שולט עד כמה בצורה חלקה מופיע הטקסט במהלך תגובות ה-AI"
   },
   "notFound": {
     "lostDog": "כלב אבוד"

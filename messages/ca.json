@@ -835,7 +835,12 @@
     "Custom Display Name": "Nom mostrat personalitzat",
     "Custom Display Name Placeholder": "Introdueix el nom que prefereixis",
     "howShouldWeAddressYou": "Com t’hem d’anomenar?",
-    "displayNamePreview": "Previsualització: \"{greeting}\""
+    "displayNamePreview": "Previsualització: \"{greeting}\"",
+    "Streaming Speed": "Velocitat de transmissió",
+    "Slow": "Lenta",
+    "Normal": "Normal",
+    "Fast": "Ràpida",
+    "Controls how smoothly text appears during AI responses": "Controla com de suaument apareix el text durant les respostes de la IA"
   },
   "notFound": {
     "lostDog": "Gos perdut"

@@ -858,7 +858,12 @@
     "Custom Display Name": "Nume afișat personalizat",
     "Custom Display Name Placeholder": "Introduceți numele preferat",
     "howShouldWeAddressYou": "Cum doriți să vă adresăm?",
-    "displayNamePreview": "Previzualizare: „{greeting}”"
+    "displayNamePreview": "Previzualizare: „{greeting}”",
+    "Streaming Speed": "Viteza de redare",
+    "Slow": "Încet",
+    "Normal": "Normal",
+    "Fast": "Rapid",
+    "Controls how smoothly text appears during AI responses": "Controlează cât de cursiv apare textul în timpul răspunsurilor AI"
   },
   "notFound": {
     "lostDog": "Câine pierdut"

@@ -860,7 +860,12 @@
     "Custom Display Name": "사용자 지정 표시 이름",
     "Custom Display Name Placeholder": "원하는 이름을 입력하세요.",
     "howShouldWeAddressYou": "어떻게 불러드릴까요?",
-    "displayNamePreview": "미리보기: \"{greeting}\""
+    "displayNamePreview": "미리보기: \"{greeting}\"",
+    "Streaming Speed": "스트리밍 속도",
+    "Slow": "느림",
+    "Normal": "보통",
+    "Fast": "빠름",
+    "Controls how smoothly text appears during AI responses": "AI 응답 중 텍스트가 얼마나 부드럽게 표시되는지 제어합니다"
   },
   "notFound": {
     "lostDog": "잃어버린 개"

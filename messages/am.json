@@ -809,7 +809,12 @@
     "Custom Display Name": "በተግባር የታየው ስም",
     "Custom Display Name Placeholder": "የሚመርጡትን ስም ያስገቡ",
     "howShouldWeAddressYou": "እንዴት እንድንጠራዎት እንፈልጋለን?",
-    "displayNamePreview": "ቅድመ እይታ፡ \"{greeting}\""
+    "displayNamePreview": "ቅድመ እይታ፡ \"{greeting}\"",
+    "Streaming Speed": "የስትሪሚንግ ፍጥነት",
+    "Slow": "የሚዘገይ",
+    "Normal": "መደበኛ",
+    "Fast": "ፈጣን",
+    "Controls how smoothly text appears during AI responses": "በAI ምላሾች ውስጥ ጽሑፉ በምንኛ በቀላሉ እንዲታይ ይቆጣጠራል"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

@@ -860,7 +860,12 @@
     "Custom Display Name": "Настраиваемое отображаемое имя",
     "Custom Display Name Placeholder": "Введите предпочитаемое имя",
     "howShouldWeAddressYou": "Как к вам обращаться?",
-    "displayNamePreview": "Просмотр: «{greeting}»"
+    "displayNamePreview": "Просмотр: «{greeting}»",
+    "Streaming Speed": "Скорость отображения",
+    "Slow": "Медленно",
+    "Normal": "Обычно",
+    "Fast": "Быстро",
+    "Controls how smoothly text appears during AI responses": "Определяет плавность появления текста в ответах ИИ"
   },
   "notFound": {
     "lostDog": "Потерянная собака"

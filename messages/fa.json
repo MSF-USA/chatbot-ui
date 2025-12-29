@@ -785,7 +785,12 @@
     "Custom Display Name": "نام نمایشی سفارشی",
     "Custom Display Name Placeholder": "نام دلخواه خود را وارد کنید",
     "howShouldWeAddressYou": "مایلیم شما را چگونه خطاب کنیم؟",
-    "displayNamePreview": "پیش‌نمایش: «{greeting}»"
+    "displayNamePreview": "پیش‌نمایش: «{greeting}»",
+    "Streaming Speed": "سرعت پخش",
+    "Slow": "کند",
+    "Normal": "عادی",
+    "Fast": "سریع",
+    "Controls how smoothly text appears during AI responses": "نحوه نمایش روان متن هنگام پاسخ‌های هوش مصنوعی را کنترل می‌کند"
   },
   "notFound": {
     "lostDog": "سگ گمشده"

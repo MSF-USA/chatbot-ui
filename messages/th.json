@@ -777,7 +777,12 @@
     "Custom Display Name": "ชื่อที่กำหนดเอง",
     "Custom Display Name Placeholder": "กรอกชื่อที่คุณต้องการ",
     "howShouldWeAddressYou": "เราควรเรียกคุณว่าอะไร?",
-    "displayNamePreview": "ตัวอย่าง: \"{greeting}\""
+    "displayNamePreview": "ตัวอย่าง: \"{greeting}\"",
+    "Streaming Speed": "ความเร็วในการสตรีม",
+    "Slow": "ช้า",
+    "Normal": "ปกติ",
+    "Fast": "เร็ว",
+    "Controls how smoothly text appears during AI responses": "ควบคุมความลื่นไหลของข้อความที่แสดงระหว่างการตอบกลับของ AI"
   },
   "notFound": {
     "lostDog": "สุนัขหาย"

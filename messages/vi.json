@@ -830,7 +830,12 @@
     "Custom Display Name": "Tên hiển thị tùy chỉnh",
     "Custom Display Name Placeholder": "Nhập tên bạn muốn sử dụng",
     "howShouldWeAddressYou": "Chúng tôi nên xưng hô với bạn như thế nào?",
-    "displayNamePreview": "Xem trước: \"{greeting}\""
+    "displayNamePreview": "Xem trước: \"{greeting}\"",
+    "Streaming Speed": "Tốc độ truyền phát",
+    "Slow": "Chậm",
+    "Normal": "Bình thường",
+    "Fast": "Nhanh",
+    "Controls how smoothly text appears during AI responses": "Điều chỉnh độ mượt khi văn bản xuất hiện trong phản hồi của AI"
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

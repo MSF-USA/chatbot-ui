@@ -859,7 +859,12 @@
     "Custom Display Name": "حسبِ مرضی نام",
     "Custom Display Name Placeholder": "اپنا پسندیدہ نام درج کریں",
     "howShouldWeAddressYou": "ہم آپ کو کس طرح مخاطب کریں؟",
-    "displayNamePreview": "پیش منظر: \"{greeting}\""
+    "displayNamePreview": "پیش منظر: \"{greeting}\"",
+    "Streaming Speed": "اسٹریمنگ رفتار",
+    "Slow": "آہستہ",
+    "Normal": "معمول",
+    "Fast": "تیز",
+    "Controls how smoothly text appears during AI responses": "یہ کنٹرول کرتا ہے کہ AI کے جوابات میں متن کتنی روانی سے ظاہر ہو"
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"

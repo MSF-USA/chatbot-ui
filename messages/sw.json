@@ -860,7 +860,12 @@
     "Custom Display Name": "Jina Maalum Linaloonekana",
     "Custom Display Name Placeholder": "Weka jina lako unalopendelea",
     "howShouldWeAddressYou": "Tukuhitaje?",
-    "displayNamePreview": "Hakikisho: \"{greeting}\""
+    "displayNamePreview": "Hakikisho: \"{greeting}\"",
+    "Streaming Speed": "Kasi ya Utiririshaji",
+    "Slow": "Polepole",
+    "Normal": "Kawaida",
+    "Fast": "Haraka",
+    "Controls how smoothly text appears during AI responses": "Hudhibiti jinsi maandishi yanavyoonekana kwa urahisi wakati wa majibu ya AI"
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

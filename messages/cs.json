@@ -860,7 +860,12 @@
     "Custom Display Name": "Vlastní zobrazované jméno",
     "Custom Display Name Placeholder": "Zadejte preferované jméno",
     "howShouldWeAddressYou": "Jak Vás máme oslovovat?",
-    "displayNamePreview": "Náhled: „{greeting}“"
+    "displayNamePreview": "Náhled: „{greeting}“",
+    "Streaming Speed": "Rychlost streamování",
+    "Slow": "Pomalá",
+    "Normal": "Normální",
+    "Fast": "Rychlá",
+    "Controls how smoothly text appears during AI responses": "Určuje, jak plynule se text zobrazuje během odpovědí AI"
   },
   "notFound": {
     "lostDog": "Ztracený pes"

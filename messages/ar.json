@@ -812,7 +812,12 @@
     "Custom Display Name": "اسم عرض مخصص",
     "Custom Display Name Placeholder": "أدخل الاسم الذي تفضله",
     "howShouldWeAddressYou": "كيف نُناديك؟",
-    "displayNamePreview": "معاينة: \"{greeting}\""
+    "displayNamePreview": "معاينة: \"{greeting}\"",
+    "Streaming Speed": "سرعة البث",
+    "Slow": "بطيء",
+    "Normal": "عادي",
+    "Fast": "سريع",
+    "Controls how smoothly text appears during AI responses": "يتحكم في سلاسة ظهور النص أثناء ردود الذكاء الاصطناعي"
   },
   "notFound": {
     "lostDog": "كلب ضائع"

@@ -827,7 +827,12 @@
     "Custom Display Name": "අභිරුචි පෙන්වන නම",
     "Custom Display Name Placeholder": "ඔබ අභිප්‍රේත නම ඇතුළත් කරන්න",
     "howShouldWeAddressYou": "ඔබට අපි කෙසේ වශයෙන් චමත්කාර කරන්නද?",
-    "displayNamePreview": "පෙරදසුන: \"{greeting}\""
+    "displayNamePreview": "පෙරදසුන: \"{greeting}\"",
+    "Streaming Speed": "ප්‍රවහන වේගය",
+    "Slow": "තිරසාර",
+    "Normal": "සාමාන්‍ය",
+    "Fast": "වේගවත්",
+    "Controls how smoothly text appears during AI responses": "AI ප්‍රතිචාරවලදී පෙළය කඩිනමින් පෙනෙන ආකාරය පාලනය කරයි"
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"

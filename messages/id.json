@@ -827,7 +827,12 @@
     "Custom Display Name": "Nama Tampilan Khusus",
     "Custom Display Name Placeholder": "Masukkan nama pilihan Anda",
     "howShouldWeAddressYou": "Bagaimana kami harus menyapa Anda?",
-    "displayNamePreview": "Pratinjau: \"{greeting}\""
+    "displayNamePreview": "Pratinjau: \"{greeting}\"",
+    "Streaming Speed": "Kecepatan Streaming",
+    "Slow": "Lambat",
+    "Normal": "Normal",
+    "Fast": "Cepat",
+    "Controls how smoothly text appears during AI responses": "Mengatur seberapa mulus teks ditampilkan selama respons AI"
   },
   "notFound": {
     "lostDog": "Anjing hilang"

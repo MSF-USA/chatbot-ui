@@ -858,7 +858,12 @@
     "Custom Display Name": "అనుకూల ప్రదర్శించే పేరు",
     "Custom Display Name Placeholder": "మీ ఇష్టమైన పేరును నమోదు చేయండి",
     "howShouldWeAddressYou": "మీరు మా ద్వారా ఎలా గుర్తించబడాలనుకుంటున్నారు?",
-    "displayNamePreview": "ప్రివ్యూకు: \"{greeting}\""
+    "displayNamePreview": "ప్రివ్యూకు: \"{greeting}\"",
+    "Streaming Speed": "స్ట్రీమింగ్ వేగం",
+    "Slow": "నెల్లగా",
+    "Normal": "సాధారణంగా",
+    "Fast": "త్వరగా",
+    "Controls how smoothly text appears during AI responses": "AI ప్రతిస్పందనలో వచనం ఎంత తేలికగా ప్రదర్శించబడుతుందో నియంత్రిస్తుంది"
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"

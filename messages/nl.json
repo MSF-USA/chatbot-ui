@@ -825,7 +825,12 @@
     "Custom Display Name": "Aangepaste weergavenaam",
     "Custom Display Name Placeholder": "Voer uw gewenste naam in",
     "howShouldWeAddressYou": "Hoe mogen wij u aanspreken?",
-    "displayNamePreview": "Voorbeeld: \"{greeting}\""
+    "displayNamePreview": "Voorbeeld: \"{greeting}\"",
+    "Streaming Speed": "Streamingssnelheid",
+    "Slow": "Traag",
+    "Normal": "Normaal",
+    "Fast": "Snel",
+    "Controls how smoothly text appears during AI responses": "Bepaalt hoe soepel tekst verschijnt tijdens AI-antwoorden"
   },
   "notFound": {
     "lostDog": "Verloren hond"
