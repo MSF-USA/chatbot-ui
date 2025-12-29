@@ -233,14 +233,18 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
 
               {/* Preview */}
               <div className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">
-                {t('settings.displayNamePreview', {
-                  name:
-                    getUserDisplayName(
-                      user,
-                      displayNamePreference,
-                      customDisplayName,
-                    ) || 'User',
-                })}
+                {(() => {
+                  const previewName = getUserDisplayName(
+                    user,
+                    displayNamePreference,
+                    customDisplayName,
+                  );
+                  return t('settings.displayNamePreview', {
+                    greeting: previewName
+                      ? t('emptyState.greetingWithName', { name: previewName })
+                      : t('emptyState.greeting'),
+                  });
+                })()}
               </div>
             </div>
           </div>
