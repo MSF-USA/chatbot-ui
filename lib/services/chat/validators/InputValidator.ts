@@ -107,6 +107,14 @@ const ToneSchema = z.object({
 });
 
 /**
+ * Zod schema for streaming speed configuration.
+ */
+const StreamingSpeedSchema = z.object({
+  charsPerBatch: z.number().int().min(1).max(20),
+  delayMs: z.number().int().min(1).max(100),
+});
+
+/**
  * Zod schema for the main chat request body.
  */
 const ChatBodySchema = z
@@ -133,6 +141,7 @@ const ChatBodySchema = z
     threadId: z.string().max(100, 'Thread ID too long').optional(),
     forcedAgentType: z.string().max(50, 'Agent type too long').optional(),
     tone: ToneSchema.optional(), // Full tone object from client
+    streamingSpeed: StreamingSpeedSchema.optional(), // Smooth streaming speed configuration
   })
   .strict(); // Reject unknown properties
 
