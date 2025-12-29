@@ -260,6 +260,30 @@ export class AIFoundryAgentHandler {
               const citationMap = new Map<string, number>();
               let hasCompletedMessage = false;
 
+              // Two-stage buffering for citation markers and smooth streaming:
+              // - markerBuffer: Accumulates text to handle markers split across chunks
+              // - streamBuffer: Holds processed text for smooth output
+              let markerBuffer = '';
+              let streamBuffer = '';
+              let controllerClosed = false;
+
+              // Background task to stream buffered content smoothly
+              // Sends 3 characters every 8ms for a consistent output rate
+              const smoothStream = async () => {
+                while (!controllerClosed) {
+                  if (streamBuffer.length > 0) {
+                    const charsToSend = Math.min(3, streamBuffer.length);
+                    const toSend = streamBuffer.slice(0, charsToSend);
+                    streamBuffer = streamBuffer.slice(charsToSend);
+                    controller.enqueue(encoder.encode(toSend));
+                  }
+                  await new Promise((resolve) => setTimeout(resolve, 8));
+                }
+              };
+
+              // Start the smooth streaming background task
+              smoothStream();
+
               try {
                 for await (const eventMessage of streamEventMessages) {
                   // Handle different event types
@@ -285,20 +309,12 @@ export class AIFoundryAgentHandler {
                             contentPart.type === 'text' &&
                             contentPart.text?.value
                           ) {
-                            let textChunk = contentPart.text.value;
+                            const textChunk = contentPart.text.value;
 
-                            // DEBUG: Log text chunks that might contain citation markers
-                            if (
-                              textChunk.includes('【') ||
-                              textChunk.includes('†')
-                            ) {
-                              console.log(
-                                '[AIFoundryAgentHandler] Text chunk with potential markers:',
-                                textChunk,
-                              );
-                            }
+                            // Stage 1: Accumulate text in marker buffer
+                            markerBuffer += textChunk;
 
-                            // Convert Azure AI agent citation markers to simple [N] format.
+                            // Stage 2: Process complete citation markers in accumulated buffer
                             //
                             // Azure agents return citations in two formats:
                             // - Short: 【3:0†source】 (just the word "source")
@@ -310,12 +326,11 @@ export class AIFoundryAgentHandler {
                             // - :        : Literal colon
                             // - (\d+)    : Second number (sub-index)
                             // - †        : Dagger symbol separator
-                            // - [^】]+   : Any characters except closing bracket (matches "source" or "Title†URL")
+                            // - [^】]+   : Any characters except closing bracket
                             // - 】       : Closing bracket (Chinese right lenticular bracket)
                             //
-                            // Each unique marker is assigned a sequential number [1], [2], etc.
-                            // The citationMap tracks marker->number mapping for deduplication.
-                            textChunk = textChunk.replace(
+                            // Each unique marker gets a sequential number [1], [2], etc.
+                            const processedBuffer = markerBuffer.replace(
                               /【(\d+):(\d+)†[^】]+】/g,
                               (match: string) => {
                                 if (!citationMap.has(match)) {
@@ -329,7 +344,26 @@ export class AIFoundryAgentHandler {
                               },
                             );
 
-                            controller.enqueue(encoder.encode(textChunk));
+                            // Stage 3: Check for incomplete markers at end of buffer
+                            // If there's an opening bracket without a closing one, keep it
+                            const lastOpenBracket =
+                              processedBuffer.lastIndexOf('【');
+                            const lastCloseBracket =
+                              processedBuffer.lastIndexOf('】');
+
+                            if (lastOpenBracket > lastCloseBracket) {
+                              // Incomplete marker at end - keep it in buffer, send the rest
+                              streamBuffer += processedBuffer.slice(
+                                0,
+                                lastOpenBracket,
+                              );
+                              markerBuffer =
+                                processedBuffer.slice(lastOpenBracket);
+                            } else {
+                              // All markers complete - send everything
+                              streamBuffer += processedBuffer;
+                              markerBuffer = '';
+                            }
                           }
                         },
                       );
@@ -435,6 +469,17 @@ export class AIFoundryAgentHandler {
                       hasCompletedMessage,
                     );
 
+                    // Flush any remaining marker buffer to stream buffer
+                    if (markerBuffer) {
+                      streamBuffer += markerBuffer;
+                      markerBuffer = '';
+                    }
+
+                    // Wait for stream buffer to drain before appending metadata
+                    while (streamBuffer.length > 0) {
+                      await new Promise((resolve) => setTimeout(resolve, 10));
+                    }
+
                     // Append metadata at the very end using utility function
                     // No need to deduplicate - citationMap already ensured uniqueness
                     appendMetadataToStream(controller, {
@@ -445,16 +490,20 @@ export class AIFoundryAgentHandler {
                       '[AIFoundryAgentHandler] Metadata appended to stream',
                     );
                   } else if (eventMessage.event === 'error') {
+                    controllerClosed = true;
                     controller.error(
                       new Error(
                         `Agent error: ${JSON.stringify(eventMessage.data)}`,
                       ),
                     );
                   } else if (eventMessage.event === 'done') {
+                    // Stop the smooth streaming loop and close
+                    controllerClosed = true;
                     controller.close();
                   }
                 }
               } catch (error) {
+                controllerClosed = true;
                 controller.error(error);
               }
             },
