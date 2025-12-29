@@ -829,8 +829,8 @@
     "None": "Không",
     "Custom Display Name": "Tên hiển thị tùy chỉnh",
     "Custom Display Name Placeholder": "Nhập tên bạn muốn sử dụng",
-    "displayNamePreview": "Xem trước: \"Tôi có thể giúp gì cho bạn, {name}?\"",
-    "howShouldWeAddressYou": "Chúng tôi nên xưng hô với bạn như thế nào?"
+    "howShouldWeAddressYou": "Chúng tôi nên xưng hô với bạn như thế nào?",
+    "displayNamePreview": "Xem trước: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

@@ -834,8 +834,8 @@
     "None": "Cap",
     "Custom Display Name": "Nom mostrat personalitzat",
     "Custom Display Name Placeholder": "Introdueix el nom que prefereixis",
-    "displayNamePreview": "Previsualització: \"En què et puc ajudar, {name}?\"",
-    "howShouldWeAddressYou": "Com t’hem d’anomenar?"
+    "howShouldWeAddressYou": "Com t’hem d’anomenar?",
+    "displayNamePreview": "Previsualització: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Gos perdut"

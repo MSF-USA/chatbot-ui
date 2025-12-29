@@ -858,8 +858,8 @@
     "None": "کوئی نہیں",
     "Custom Display Name": "حسبِ مرضی نام",
     "Custom Display Name Placeholder": "اپنا پسندیدہ نام درج کریں",
-    "displayNamePreview": "پیش منظر: \"میں کس طرح مدد کر سکتا ہوں، {name}?\"",
-    "howShouldWeAddressYou": "ہم آپ کو کس طرح مخاطب کریں؟"
+    "howShouldWeAddressYou": "ہم آپ کو کس طرح مخاطب کریں؟",
+    "displayNamePreview": "پیش منظر: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"

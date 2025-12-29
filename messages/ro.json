@@ -857,8 +857,8 @@
     "None": "Niciunul",
     "Custom Display Name": "Nume afișat personalizat",
     "Custom Display Name Placeholder": "Introduceți numele preferat",
-    "displayNamePreview": "Previzualizare: \"Cu ce vă pot ajuta, {name}?\"",
-    "howShouldWeAddressYou": "Cum doriți să vă adresăm?"
+    "howShouldWeAddressYou": "Cum doriți să vă adresăm?",
+    "displayNamePreview": "Previzualizare: „{greeting}”"
   },
   "notFound": {
     "lostDog": "Câine pierdut"

@@ -826,8 +826,8 @@
     "None": "Tidak Ada",
     "Custom Display Name": "Nama Tampilan Khusus",
     "Custom Display Name Placeholder": "Masukkan nama pilihan Anda",
-    "displayNamePreview": "Pratinjau: \"Bagaimana saya dapat membantu, {name}?\"",
-    "howShouldWeAddressYou": "Bagaimana kami harus menyapa Anda?"
+    "howShouldWeAddressYou": "Bagaimana kami harus menyapa Anda?",
+    "displayNamePreview": "Pratinjau: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Anjing hilang"

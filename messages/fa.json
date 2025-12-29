@@ -784,8 +784,8 @@
     "None": "هیچ‌کدام",
     "Custom Display Name": "نام نمایشی سفارشی",
     "Custom Display Name Placeholder": "نام دلخواه خود را وارد کنید",
-    "displayNamePreview": "پیش‌نمایش: «چگونه می‌توانم کمک کنم، {name}؟»",
-    "howShouldWeAddressYou": "مایلیم شما را چگونه خطاب کنیم؟"
+    "howShouldWeAddressYou": "مایلیم شما را چگونه خطاب کنیم؟",
+    "displayNamePreview": "پیش‌نمایش: «{greeting}»"
   },
   "notFound": {
     "lostDog": "سگ گمشده"

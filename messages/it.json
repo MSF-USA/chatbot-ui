@@ -834,8 +834,8 @@
     "None": "Nessuno",
     "Custom Display Name": "Nome visualizzato personalizzato",
     "Custom Display Name Placeholder": "Inserisci il nome preferito",
-    "displayNamePreview": "Anteprima: \"Come posso aiutarti, {name}?\"",
-    "howShouldWeAddressYou": "Come desidera essere chiamato/a?"
+    "howShouldWeAddressYou": "Come desidera essere chiamato/a?",
+    "displayNamePreview": "Anteprima: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Cane smarrito"

@@ -834,8 +834,8 @@
     "None": "Ei mitään",
     "Custom Display Name": "Mukautettu näyttönimi",
     "Custom Display Name Placeholder": "Anna haluamasi nimi",
-    "displayNamePreview": "Esikatselu: \"Miten voin auttaa, {name}?\"",
-    "howShouldWeAddressYou": "Miten haluat, että puhuttelemme sinua?"
+    "howShouldWeAddressYou": "Miten haluat, että puhuttelemme sinua?",
+    "displayNamePreview": "Esikatselu: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

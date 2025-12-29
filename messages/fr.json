@@ -859,8 +859,8 @@
     "None": "Aucun",
     "Custom Display Name": "Nom affiché personnalisé",
     "Custom Display Name Placeholder": "Entrez le nom de votre choix",
-    "displayNamePreview": "Aperçu : « Comment puis-je vous aider, {name} ? »",
-    "howShouldWeAddressYou": "Comment devons-nous vous adresser ?"
+    "howShouldWeAddressYou": "Comment devons-nous vous adresser ?",
+    "displayNamePreview": "Aperçu : « {greeting} »"
   },
   "notFound": {
     "lostDog": "Chien perdu"

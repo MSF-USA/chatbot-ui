@@ -859,8 +859,8 @@
     "None": "Yok",
     "Custom Display Name": "Özel Görünen Ad",
     "Custom Display Name Placeholder": "Tercih ettiğiniz adı girin",
-    "displayNamePreview": "Önizleme: \"Nasıl yardımcı olabilirim, {name}?\"",
-    "howShouldWeAddressYou": "Size nasıl hitap etmemizi istersiniz?"
+    "howShouldWeAddressYou": "Size nasıl hitap etmemizi istersiniz?",
+    "displayNamePreview": "Önizleme: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

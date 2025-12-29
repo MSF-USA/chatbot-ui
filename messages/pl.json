@@ -856,8 +856,8 @@
     "None": "Brak",
     "Custom Display Name": "Własna wyświetlana nazwa",
     "Custom Display Name Placeholder": "Wpisz preferowaną nazwę",
-    "displayNamePreview": "Podgląd: „Jak mogę pomóc, {name}?”",
-    "howShouldWeAddressYou": "Jak powinniśmy się do Ciebie zwracać?"
+    "howShouldWeAddressYou": "Jak powinniśmy się do Ciebie zwracać?",
+    "displayNamePreview": "Podgląd: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Zagubiony pies"

@@ -859,8 +859,8 @@
     "None": "Ingen",
     "Custom Display Name": "Anpassat visningsnamn",
     "Custom Display Name Placeholder": "Ange önskat namn",
-    "displayNamePreview": "Förhandsvisning: \"Hur kan jag hjälpa till, {name}?\"",
-    "howShouldWeAddressYou": "Hur vill du bli tilltalad?"
+    "howShouldWeAddressYou": "Hur vill du bli tilltalad?",
+    "displayNamePreview": "Förhandsgranskning: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Förlorad hund"

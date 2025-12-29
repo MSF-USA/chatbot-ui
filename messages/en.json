@@ -912,7 +912,7 @@
     "None": "None",
     "Custom Display Name": "Custom Display Name",
     "Custom Display Name Placeholder": "Enter your preferred name",
-    "displayNamePreview": "Preview: \"How can I help, {name}?\"",
+    "displayNamePreview": "Preview: \"{greeting}\"",
     "howShouldWeAddressYou": "How should we address you?",
     "App Settings": "App Settings",
     "Scan to Install": "Scan to Install",

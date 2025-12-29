@@ -859,8 +859,8 @@
     "None": "없음",
     "Custom Display Name": "사용자 지정 표시 이름",
     "Custom Display Name Placeholder": "원하는 이름을 입력하세요.",
-    "displayNamePreview": "미리보기: \"무엇을 도와드릴까요, {name}?\"",
-    "howShouldWeAddressYou": "어떻게 불러드릴까요?"
+    "howShouldWeAddressYou": "어떻게 불러드릴까요?",
+    "displayNamePreview": "미리보기: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "잃어버린 개"

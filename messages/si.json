@@ -826,8 +826,8 @@
     "None": "කිසිවක් නැත",
     "Custom Display Name": "අභිරුචි පෙන්වන නම",
     "Custom Display Name Placeholder": "ඔබ අභිප්‍රේත නම ඇතුළත් කරන්න",
-    "displayNamePreview": "පූර්වදසුන: \"මට උපකාර කළ හැක්කේ කෙසේද, {name}?\"",
-    "howShouldWeAddressYou": "ඔබට අපි කෙසේ වශයෙන් චමත්කාර කරන්නද?"
+    "howShouldWeAddressYou": "ඔබට අපි කෙසේ වශයෙන් චමත්කාර කරන්නද?",
+    "displayNamePreview": "පෙරදසුන: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"

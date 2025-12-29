@@ -859,8 +859,8 @@
     "None": "कोई नहीं",
     "Custom Display Name": "कस्टम दर्शाया जाने वाला नाम",
     "Custom Display Name Placeholder": "अपना पसंदीदा नाम दर्ज करें",
-    "displayNamePreview": "पूर्वावलोकन: \"मैं आपकी कैसे मदद कर सकता हूँ, {name}?\"",
-    "howShouldWeAddressYou": "हम आपको किस नाम से संबोधित करें?"
+    "howShouldWeAddressYou": "हम आपको किस नाम से संबोधित करें?",
+    "displayNamePreview": "पूर्वावलोकन: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"

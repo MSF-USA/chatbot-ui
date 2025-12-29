@@ -824,8 +824,8 @@
     "None": "Geen",
     "Custom Display Name": "Aangepaste weergavenaam",
     "Custom Display Name Placeholder": "Voer uw gewenste naam in",
-    "displayNamePreview": "Voorbeeld: \"Hoe kan ik helpen, {name}?\"",
-    "howShouldWeAddressYou": "Hoe mogen wij u aanspreken?"
+    "howShouldWeAddressYou": "Hoe mogen wij u aanspreken?",
+    "displayNamePreview": "Voorbeeld: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Verloren hond"

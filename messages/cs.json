@@ -859,8 +859,8 @@
     "None": "Žádné",
     "Custom Display Name": "Vlastní zobrazované jméno",
     "Custom Display Name Placeholder": "Zadejte preferované jméno",
-    "displayNamePreview": "Náhled: \"Jak vám mohu pomoci, {name}?\"",
-    "howShouldWeAddressYou": "Jak Vás máme oslovovat?"
+    "howShouldWeAddressYou": "Jak Vás máme oslovovat?",
+    "displayNamePreview": "Náhled: „{greeting}“"
   },
   "notFound": {
     "lostDog": "Ztracený pes"

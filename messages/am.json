@@ -808,8 +808,8 @@
     "None": "ምንም የለም",
     "Custom Display Name": "በተግባር የታየው ስም",
     "Custom Display Name Placeholder": "የሚመርጡትን ስም ያስገቡ",
-    "displayNamePreview": "ቅድመ እይታ፡ \"እንዴት ልረዳዎ, {name}?\"",
-    "howShouldWeAddressYou": "እንዴት እንድንጠራዎት እንፈልጋለን?"
+    "howShouldWeAddressYou": "እንዴት እንድንጠራዎት እንፈልጋለን?",
+    "displayNamePreview": "ቅድመ እይታ፡ \"{greeting}\""
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

@@ -811,8 +811,8 @@
     "None": "بدون",
     "Custom Display Name": "اسم عرض مخصص",
     "Custom Display Name Placeholder": "أدخل الاسم الذي تفضله",
-    "displayNamePreview": "معاينة: \"كيف يمكنني المساعدة، {name}?\"",
-    "howShouldWeAddressYou": "كيف نُناديك؟"
+    "howShouldWeAddressYou": "كيف نُناديك؟",
+    "displayNamePreview": "معاينة: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "كلب ضائع"

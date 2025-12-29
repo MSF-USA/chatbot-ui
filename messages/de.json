@@ -859,8 +859,8 @@
     "None": "Keiner",
     "Custom Display Name": "Benutzerdefinierter Anzeigename",
     "Custom Display Name Placeholder": "Geben Sie Ihren bevorzugten Namen ein",
-    "displayNamePreview": "Vorschau: \"Wie kann ich helfen, {name}?\"",
-    "howShouldWeAddressYou": "Wie dürfen wir Sie ansprechen?"
+    "howShouldWeAddressYou": "Wie dürfen wir Sie ansprechen?",
+    "displayNamePreview": "Vorschau: „{greeting}“"
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

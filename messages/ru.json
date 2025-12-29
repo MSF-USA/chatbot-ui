@@ -859,8 +859,8 @@
     "None": "Нет",
     "Custom Display Name": "Настраиваемое отображаемое имя",
     "Custom Display Name Placeholder": "Введите предпочитаемое имя",
-    "displayNamePreview": "Пример: «Чем могу помочь, {name}?»",
-    "howShouldWeAddressYou": "Как к вам обращаться?"
+    "howShouldWeAddressYou": "Как к вам обращаться?",
+    "displayNamePreview": "Просмотр: «{greeting}»"
   },
   "notFound": {
     "lostDog": "Потерянная собака"

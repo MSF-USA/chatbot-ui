@@ -834,8 +834,8 @@
     "None": "မရွေးထားပါ",
     "Custom Display Name": "ကိုယ်သတ်မှတ်ပြသမည်နာမည်",
     "Custom Display Name Placeholder": "သင့်လိုချင်သောနာမည် ထည့်ပါ",
-    "displayNamePreview": "နမူနာ - \"ဘာကြောင့်ကူညီပေးရမလဲ၊ {name}?\"",
-    "howShouldWeAddressYou": "ကျွန်ုပ်တို့ ဘယ်လိုခေါ်ကြမလဲ?"
+    "howShouldWeAddressYou": "ကျွန်ုပ်တို့ ဘယ်လိုခေါ်ကြမလဲ?",
+    "displayNamePreview": "စမ်းကြည့်မှု- \"{greeting}\""
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"

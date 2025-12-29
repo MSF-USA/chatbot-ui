@@ -776,8 +776,8 @@
     "None": "ไม่มี",
     "Custom Display Name": "ชื่อที่กำหนดเอง",
     "Custom Display Name Placeholder": "กรอกชื่อที่คุณต้องการ",
-    "displayNamePreview": "ตัวอย่าง: \"ฉันสามารถช่วยอะไรคุณได้บ้าง, {name}?\"",
-    "howShouldWeAddressYou": "เราควรเรียกคุณว่าอะไร?"
+    "howShouldWeAddressYou": "เราควรเรียกคุณว่าอะไร?",
+    "displayNamePreview": "ตัวอย่าง: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "สุนัขหาย"

@@ -857,8 +857,8 @@
     "None": "ఏమీ లేదు",
     "Custom Display Name": "అనుకూల ప్రదర్శించే పేరు",
     "Custom Display Name Placeholder": "మీ ఇష్టమైన పేరును నమోదు చేయండి",
-    "displayNamePreview": "ప్రీవ్యూ: \"నేను ఎలా సహాయం చేయగలను, {name}?\"",
-    "howShouldWeAddressYou": "మీరు మా ద్వారా ఎలా గుర్తించబడాలనుకుంటున్నారు?"
+    "howShouldWeAddressYou": "మీరు మా ద్వారా ఎలా గుర్తించబడాలనుకుంటున్నారు?",
+    "displayNamePreview": "ప్రివ్యూకు: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"

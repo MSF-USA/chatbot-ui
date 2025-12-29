@@ -859,8 +859,8 @@
     "None": "なし",
     "Custom Display Name": "カスタム表示名",
     "Custom Display Name Placeholder": "ご希望の名前を入力してください",
-    "displayNamePreview": "プレビュー：「どのようにお手伝いできますか、{name}？」",
-    "howShouldWeAddressYou": "どのようにお呼びすればよいですか？"
+    "howShouldWeAddressYou": "どのようにお呼びすればよいですか？",
+    "displayNamePreview": "プレビュー: 「{greeting}」"
   },
   "notFound": {
     "lostDog": "迷子の犬"

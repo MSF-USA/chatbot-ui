@@ -859,8 +859,8 @@
     "None": "Nenhum",
     "Custom Display Name": "Nome de Exibição Personalizado",
     "Custom Display Name Placeholder": "Insira o nome de sua preferência",
-    "displayNamePreview": "Pré-visualização: \"Como posso ajudar, {name}?\"",
-    "howShouldWeAddressYou": "Como devemos chamá-lo(a)?"
+    "howShouldWeAddressYou": "Como devemos chamá-lo(a)?",
+    "displayNamePreview": "Pré-visualização: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Cão perdido"

@@ -834,8 +834,8 @@
     "None": "ללא",
     "Custom Display Name": "שם תצוגה מותאם אישית",
     "Custom Display Name Placeholder": "הזן את השם המועדף עליך",
-    "displayNamePreview": "תצוגה מקדימה: \"איך אפשר לעזור, {name}?\"",
-    "howShouldWeAddressYou": "כיצד לפנות אליך?"
+    "howShouldWeAddressYou": "כיצד לפנות אליך?",
+    "displayNamePreview": "תצוגה מקדימה: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "כלב אבוד"

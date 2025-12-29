@@ -776,8 +776,8 @@
     "None": "Не вказано",
     "Custom Display Name": "Власне відображуване ім’я",
     "Custom Display Name Placeholder": "Введіть бажане ім’я",
-    "displayNamePreview": "Попередній перегляд: «Чим можу допомогти, {name}?»",
-    "howShouldWeAddressYou": "Як до вас звертатися?"
+    "howShouldWeAddressYou": "Як до вас звертатися?",
+    "displayNamePreview": "Попередній перегляд: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Загублений пес"

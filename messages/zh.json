@@ -859,8 +859,8 @@
     "None": "无",
     "Custom Display Name": "自定义显示名称",
     "Custom Display Name Placeholder": "请输入您偏好的名称",
-    "displayNamePreview": "预览：“我能帮您什么，{name}？”",
-    "howShouldWeAddressYou": "我们该如何称呼您？"
+    "howShouldWeAddressYou": "我们该如何称呼您？",
+    "displayNamePreview": "预览：“{greeting}”"
   },
   "notFound": {
     "lostDog": "迷路的狗"

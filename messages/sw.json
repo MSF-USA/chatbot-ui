@@ -859,8 +859,8 @@
     "None": "Hakuna",
     "Custom Display Name": "Jina Maalum Linaloonekana",
     "Custom Display Name Placeholder": "Weka jina lako unalopendelea",
-    "displayNamePreview": "Onyesho: \"Ninawezaje kusaidia, {name}?\"",
-    "howShouldWeAddressYou": "Tukuhitaje?"
+    "howShouldWeAddressYou": "Tukuhitaje?",
+    "displayNamePreview": "Hakikisho: \"{greeting}\""
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"
