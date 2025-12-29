@@ -470,11 +470,27 @@ describe('CitationList', () => {
         <CitationList citations={citationsWithDifferentDomains} />,
       );
 
-      const favicon = container.querySelector('img[alt*="favicon"]');
+      const favicon = container.querySelector('img');
       expect(favicon).toHaveAttribute(
         'src',
         expect.stringContaining('google.com/s2/favicons'),
       );
+    });
+
+    it('displays domain name on hover (title attribute)', () => {
+      const { container } = render(
+        <CitationList citations={citationsWithDifferentDomains} />,
+      );
+
+      const favicons = container.querySelectorAll('img[title]');
+      expect(favicons.length).toBe(2);
+
+      // Check that favicons have title attributes with domain names
+      const titles = Array.from(favicons).map((img) =>
+        img.getAttribute('title'),
+      );
+      expect(titles).toContain('news.com');
+      expect(titles).toContain('techcrunch.com');
     });
   });
 
