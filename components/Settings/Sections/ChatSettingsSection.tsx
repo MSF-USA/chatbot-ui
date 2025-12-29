@@ -104,6 +104,68 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                   }
                 />
               </div>
+
+              {/* Streaming Speed Setting */}
+              <div className="mt-4">
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Streaming Speed')}
+                </div>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={state.streamingSpeed?.delayMs === 12}
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 2, delayMs: 12 },
+                        })
+                      }
+                    />
+                    {t('settings.Slow')}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={
+                        state.streamingSpeed?.delayMs === 8 ||
+                        !state.streamingSpeed
+                      }
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 3, delayMs: 8 },
+                        })
+                      }
+                    />
+                    {t('settings.Normal')}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={state.streamingSpeed?.delayMs === 4}
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 5, delayMs: 4 },
+                        })
+                      }
+                    />
+                    {t('settings.Fast')}
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {t(
+                    'settings.Controls how smoothly text appears during AI responses',
+                  )}
+                </p>
+              </div>
             </div>
           )}
         </div>
