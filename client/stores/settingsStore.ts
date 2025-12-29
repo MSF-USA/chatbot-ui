@@ -7,7 +7,11 @@ import {
 } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
-import { DisplayNamePreference } from '@/types/settings';
+import {
+  DEFAULT_STREAMING_SPEED,
+  DisplayNamePreference,
+  StreamingSpeedConfig,
+} from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 import { create } from 'zustand';
@@ -43,6 +47,7 @@ interface SettingsStore {
   prompts: Prompt[];
   tones: Tone[];
   customAgents: CustomAgent[];
+  streamingSpeed: StreamingSpeedConfig;
 
   // Model ordering state
   modelOrderMode: ModelOrderMode;
@@ -57,6 +62,7 @@ interface SettingsStore {
   setAutoSwitchOnFailure: (enabled: boolean) => void;
   setDisplayNamePreference: (preference: DisplayNamePreference) => void;
   setCustomDisplayName: (name: string) => void;
+  setStreamingSpeed: (config: StreamingSpeedConfig) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
@@ -106,6 +112,7 @@ export const useSettingsStore = create<SettingsStore>()(
       prompts: [],
       tones: [],
       customAgents: [],
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
 
       // Model ordering initial state
       modelOrderMode: 'usage',
@@ -128,6 +135,8 @@ export const useSettingsStore = create<SettingsStore>()(
         set({ displayNamePreference: preference }),
 
       setCustomDisplayName: (name) => set({ customDisplayName: name }),
+
+      setStreamingSpeed: (config) => set({ streamingSpeed: config }),
 
       setModels: (models) => set({ models }),
 
@@ -242,6 +251,7 @@ export const useSettingsStore = create<SettingsStore>()(
           prompts: [],
           tones: [],
           customAgents: [],
+          streamingSpeed: DEFAULT_STREAMING_SPEED,
           modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
@@ -249,7 +259,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 5, // Increment this when schema changes to trigger migrations
+      version: 6, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -262,6 +272,7 @@ export const useSettingsStore = create<SettingsStore>()(
         prompts: state.prompts,
         tones: state.tones,
         customAgents: state.customAgents,
+        streamingSpeed: state.streamingSpeed,
         modelOrderMode: state.modelOrderMode,
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
@@ -272,6 +283,11 @@ export const useSettingsStore = create<SettingsStore>()(
         // Version 4 → 5: Convert 'default' mode to 'usage'
         if (version < 5 && state.modelOrderMode === 'default') {
           state.modelOrderMode = 'usage';
+        }
+
+        // Version 5 → 6: Add streamingSpeed with default values
+        if (version < 6 && !state.streamingSpeed) {
+          state.streamingSpeed = DEFAULT_STREAMING_SPEED;
         }
 
         return state;
