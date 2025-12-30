@@ -39,6 +39,9 @@ const serverEnvSchema = z.object({
   AZURE_AI_FOUNDRY_ENDPOINT: z.string().url().optional(),
   AZURE_AI_FOUNDRY_OPENAI_ENDPOINT: z.string().url().optional(),
 
+  // Azure Translator (Document Translation) - falls back to AI Foundry endpoint in service layer
+  AZURE_TRANSLATOR_ENDPOINT: z.string().url().optional(),
+
   // Azure Blob Storage (uses Entra ID authentication via DefaultAzureCredential)
   AZURE_BLOB_STORAGE_NAME: z.string().optional(),
   AZURE_BLOB_STORAGE_NAME_EU: z.string().optional(),
