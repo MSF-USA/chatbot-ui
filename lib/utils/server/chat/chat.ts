@@ -218,6 +218,11 @@ const processImageUrl = async (
   contentSection: ImageMessageContent,
   user: Session['user'],
 ): Promise<string> => {
+  // If already a base64 data URL, no conversion needed
+  if (contentSection.image_url.url.startsWith('data:')) {
+    return contentSection.image_url.url;
+  }
+
   const id: string | undefined = contentSection.image_url.url.split('/').pop();
   if (!id || id.trim().length === 0) {
     throw new Error(`Image ID ${id} is not valid`);
