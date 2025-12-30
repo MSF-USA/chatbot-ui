@@ -68,6 +68,8 @@ export class ChatService {
       signal?: AbortSignal;
       streamingSpeed?: StreamingSpeedConfig;
       includeUserInfoInPrompt?: boolean;
+      preferredName?: string;
+      userContext?: string;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     return apiClient.postStream(
@@ -88,6 +90,8 @@ export class ChatService {
         tone: options?.tone,
         streamingSpeed: options?.streamingSpeed,
         includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
+        preferredName: options?.preferredName,
+        userContext: options?.userContext,
       },
       {
         signal: options?.signal,
@@ -117,6 +121,8 @@ export class ChatService {
       forcedAgentType?: string;
       tone?: Tone;
       includeUserInfoInPrompt?: boolean;
+      preferredName?: string;
+      userContext?: string;
     },
   ): Promise<{ text: string; metadata?: any }> {
     return apiClient.post('/api/chat', {
@@ -133,6 +139,8 @@ export class ChatService {
       forcedAgentType: options?.forcedAgentType,
       tone: options?.tone,
       includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
+      preferredName: options?.preferredName,
+      userContext: options?.userContext,
     });
   }
 }
