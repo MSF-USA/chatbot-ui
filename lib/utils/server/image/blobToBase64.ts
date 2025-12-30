@@ -174,6 +174,10 @@ export async function convertBlobUrlToBase64(
 /**
  * Converts multiple blob URLs to base64 in parallel.
  *
+ * @deprecated Use getBlobBase64String from '@/lib/utils/server/blob/blob' with
+ * Promise.all instead. This function silently catches errors and returns
+ * original URLs, which leads to failures when those URLs reach the LLM API.
+ *
  * @param images - Array of image objects with URL and detail
  * @param user - The user session
  * @returns Promise resolving to array of images with base64 URLs
