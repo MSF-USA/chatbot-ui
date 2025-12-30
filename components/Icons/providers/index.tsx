@@ -4,4 +4,4 @@ export { XAIIcon } from './XAIIcon';
 export { MetaIcon } from './MetaIcon';
 export { AzureAIIcon } from './AzureAIIcon';
 export { AzureOpenAIIcon } from './AzureOpenAIIcon';
-export { ClaudeAIIcon } from './ClaudeAIIcon';
+export { ClaudeAIIcon, ClaudeAIIconBrand } from './ClaudeAIIcon';
