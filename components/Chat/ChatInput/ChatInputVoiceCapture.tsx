@@ -266,9 +266,14 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
           title={t('chat.clickToStopRecording')}
         >
           <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-red-500" />
-          <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
-            {t('chat.stopRecording')}
-          </span>
+          <div className="flex flex-col items-start">
+            <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
+              {t('chat.voiceInputRecording')}
+            </span>
+            <span className="text-xs text-red-500 dark:text-red-400/70 whitespace-nowrap">
+              {t('chat.voiceInputTapToStop')}
+            </span>
+          </div>
         </button>
       ) : (
         <div className="group relative">
