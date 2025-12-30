@@ -3,7 +3,7 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
-import { StreamingSpeedConfig } from '@/types/settings';
+import { DisplayNamePreference, StreamingSpeedConfig } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 import { apiClient } from '../api';
@@ -70,6 +70,8 @@ export class ChatService {
       includeUserInfoInPrompt?: boolean;
       preferredName?: string;
       userContext?: string;
+      displayNamePreference?: DisplayNamePreference;
+      customDisplayName?: string;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     return apiClient.postStream(
@@ -92,6 +94,8 @@ export class ChatService {
         includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
         preferredName: options?.preferredName,
         userContext: options?.userContext,
+        displayNamePreference: options?.displayNamePreference,
+        customDisplayName: options?.customDisplayName,
       },
       {
         signal: options?.signal,
@@ -123,6 +127,8 @@ export class ChatService {
       includeUserInfoInPrompt?: boolean;
       preferredName?: string;
       userContext?: string;
+      displayNamePreference?: DisplayNamePreference;
+      customDisplayName?: string;
     },
   ): Promise<{ text: string; metadata?: any }> {
     return apiClient.post('/api/chat', {
@@ -141,6 +147,8 @@ export class ChatService {
       includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
       preferredName: options?.preferredName,
       userContext: options?.userContext,
+      displayNamePreference: options?.displayNamePreference,
+      customDisplayName: options?.customDisplayName,
     });
   }
 }
