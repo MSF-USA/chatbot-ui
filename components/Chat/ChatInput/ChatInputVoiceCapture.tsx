@@ -163,41 +163,36 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
     setIsTranscribing(true);
     try {
       const filename = 'audio.webm';
-      const mimeType = 'audio/x-matroska';
+      const mimeType = audioBlob.type || 'audio/webm';
 
-      // Encode filename and MIME type
       const encodedFileName = encodeURIComponent(filename);
       const encodedMimeType = encodeURIComponent(mimeType);
 
-      // Convert blob to base64
-      const base64Chunk = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(audioBlob);
-      });
+      // Upload using FormData (binary, not base64)
+      const formData = new FormData();
+      formData.append('file', audioBlob, filename);
 
-      // Remove the data URL prefix (e.g., "data:audio/webm;base64,")
-      const base64Data = base64Chunk.split(',')[1];
-
-      // Upload the audioBlob to the server
       const uploadResponse = await fetch(
         `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
         {
           method: 'POST',
-          body: base64Data,
-          headers: {
-            'x-file-name': encodedFileName,
-          },
+          body: formData,
         },
       );
 
       if (!uploadResponse.ok) {
-        throw new Error('Failed to upload audio');
+        const errorData = await uploadResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to upload audio');
       }
 
       const uploadResult = await uploadResponse.json();
-      const fileURI = uploadResult.uri;
-      const fileID = encodeURIComponent(fileURI.split('/').pop());
+      const fileURI = uploadResult.data?.uri;
+
+      if (!fileURI) {
+        throw new Error('Failed to get file URI from upload response');
+      }
+
+      const fileID = encodeURIComponent(fileURI.split('/').pop()!);
 
       // Call the transcribe endpoint
       const transcribeResponse = await fetch(`/api/file/${fileID}/transcribe`, {
@@ -205,10 +200,19 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
       });
 
       if (!transcribeResponse.ok) {
-        throw new Error('Failed to transcribe audio');
+        const errorData = await transcribeResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to transcribe audio');
       }
 
       const transcribeResult = await transcribeResponse.json();
+
+      // Voice capture audio is always small enough for synchronous transcription
+      if (transcribeResult.async) {
+        throw new Error(
+          'Audio file too large for voice capture. Please use the file upload option for large audio files.',
+        );
+      }
+
       const transcript = transcribeResult.transcript;
 
       setTextFieldValue((prevText) =>
