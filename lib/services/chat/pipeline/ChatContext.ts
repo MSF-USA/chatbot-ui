@@ -100,6 +100,12 @@ export interface ChatContext {
   /** Whether to include user info in system prompt */
   includeUserInfoInPrompt?: boolean;
 
+  /** User's preferred name (overrides profile displayName) */
+  preferredName?: string;
+
+  /** Additional user context for the AI */
+  userContext?: string;
+
   // ========================================
   // FEATURE FLAGS
   // ========================================
