@@ -5,6 +5,7 @@ import { ModelSelector } from '@/lib/services/shared';
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { DisplayNamePreference } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 /**
@@ -105,6 +106,12 @@ export interface ChatContext {
 
   /** Additional user context for the AI */
   userContext?: string;
+
+  /** Display name preference from General Settings (for deriving name fallback) */
+  displayNamePreference?: DisplayNamePreference;
+
+  /** Custom display name from General Settings */
+  customDisplayName?: string;
 
   // ========================================
   // FEATURE FLAGS
