@@ -153,6 +153,8 @@ export interface SystemPromptUserInfo {
   title?: string;
   email?: string;
   department?: string;
+  /** Additional user-provided context about themselves */
+  additionalContext?: string;
 }
 
 /**
@@ -205,15 +207,25 @@ function buildDynamicContext(options: SystemPromptOptions): string {
 
   // Include user info if provided
   if (options.userInfo) {
-    const { name, title, email, department } = options.userInfo;
+    const { name, title, email, department, additionalContext } =
+      options.userInfo;
     const userParts: string[] = [];
     if (name) userParts.push(`- Name: ${name}`);
     if (title) userParts.push(`- Title: ${title}`);
     if (email) userParts.push(`- Email: ${email}`);
     if (department) userParts.push(`- Department: ${department}`);
 
-    if (userParts.length > 0) {
-      parts.push('\n## About the Current User\n' + userParts.join('\n'));
+    if (userParts.length > 0 || additionalContext) {
+      let userSection = '';
+      if (userParts.length > 0) {
+        userSection = '\n## About the Current User\n' + userParts.join('\n');
+      }
+      if (additionalContext) {
+        userSection +=
+          userParts.length > 0 ? '\n\n' : '\n## About the Current User\n';
+        userSection += `Additional context:\n${additionalContext}`;
+      }
+      parts.push(userSection);
     }
   }
 
