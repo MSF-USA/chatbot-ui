@@ -411,6 +411,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       includeUserInfoInPrompt: settings.includeUserInfoInPrompt,
       preferredName: settings.preferredName,
       userContext: settings.userContext,
+      displayNamePreference: settings.displayNamePreference,
+      customDisplayName: settings.customDisplayName,
     });
   },
 
