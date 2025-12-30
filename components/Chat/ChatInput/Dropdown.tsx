@@ -28,7 +28,11 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
-import { AssistantMessageGroup } from '@/types/chat';
+import {
+  AssistantMessageGroup,
+  FileMessageContent,
+  Message,
+} from '@/types/chat';
 import { DocumentTranslationReference } from '@/types/documentTranslation';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
@@ -166,7 +170,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     documentTranslateInputRef.current?.click();
   }, [closeDropdown]);
 
-  // Handle document translation completion - add as assistant message
+  // Handle document translation completion - add user message with file + assistant message
   const handleDocumentTranslationComplete = useCallback(
     (reference: DocumentTranslationReference) => {
       if (!selectedConversation) {
@@ -176,7 +180,20 @@ const Dropdown: React.FC<DropdownProps> = ({
         return;
       }
 
-      // Format the reference string
+      // 1. Create user message showing the original uploaded file
+      const fileContent: FileMessageContent = {
+        type: 'file_url',
+        url: reference.originalFileUrl,
+        originalFilename: reference.originalFilename,
+      };
+
+      const userMessage: Message = {
+        role: 'user',
+        content: [fileContent],
+        messageType: 'FILE',
+      };
+
+      // 2. Create assistant message with the translation reference
       const referenceText = formatTranslationReference(
         reference.translatedFilename,
         reference.targetLanguage,
@@ -185,7 +202,6 @@ const Dropdown: React.FC<DropdownProps> = ({
         reference.expiresAt,
       );
 
-      // Create an assistant message group with the translation reference
       const assistantMessage: AssistantMessageGroup = {
         type: 'assistant_group',
         versions: [
@@ -198,14 +214,27 @@ const Dropdown: React.FC<DropdownProps> = ({
         activeIndex: 0,
       };
 
-      // Add the message to the conversation
+      // 3. Add both messages to the conversation
       const updatedMessages = [
         ...selectedConversation.messages,
+        userMessage,
         assistantMessage,
       ];
-      updateConversation(selectedConversation.id, {
+
+      // 4. Build updates object - include title if conversation is untitled
+      const updates: { messages: typeof updatedMessages; name?: string } = {
         messages: updatedMessages,
-      });
+      };
+
+      // Auto-title empty conversations
+      if (
+        !selectedConversation.name ||
+        selectedConversation.name === 'New Conversation'
+      ) {
+        updates.name = `Translation: ${reference.originalFilename}`;
+      }
+
+      updateConversation(selectedConversation.id, updates);
 
       // Close modal
       setIsDocumentTranslateOpen(false);
