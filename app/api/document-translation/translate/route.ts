@@ -187,9 +187,19 @@ export async function POST(request: NextRequest) {
       session.user,
     );
 
+    // Store original document in blob storage (for user message display)
+    const originalBlobPath = `${session.user.id}/translations/${jobId}_original.${fileExtension}`;
+    const contentType = getDocumentContentType(document.name);
+
+    await blobStorage.upload(originalBlobPath, new Uint8Array(documentBuffer), {
+      blobHTTPHeaders: {
+        blobContentType: contentType,
+        blobContentDisposition: `attachment; filename="${encodeURIComponent(document.name)}"`,
+      },
+    });
+
     // Store translated document in blob storage
     const blobPath = `${session.user.id}/translations/${jobId}.${fileExtension}`;
-    const contentType = getDocumentContentType(document.name);
 
     await blobStorage.upload(blobPath, translatedBuffer, {
       blobHTTPHeaders: {
@@ -203,11 +213,15 @@ export async function POST(request: NextRequest) {
     expiresAt.setDate(expiresAt.getDate() + TRANSLATION_EXPIRY_DAYS);
 
     console.log(
-      `[DocumentTranslation] Stored translation for job ${jobId}: ${blobPath} (${translatedBuffer.length} bytes)`,
+      `[DocumentTranslation] Stored translation for job ${jobId}: original=${originalBlobPath}, translated=${blobPath}`,
     );
+
+    // Build original file URL
+    const originalFileUrl = `/api/document-translation/content/${jobId}?filename=${encodeURIComponent(document.name)}&ext=${fileExtension}&original=true`;
 
     const reference: DocumentTranslationReference = {
       originalFilename: document.name,
+      originalFileUrl,
       translatedFilename,
       jobId,
       blobPath,
