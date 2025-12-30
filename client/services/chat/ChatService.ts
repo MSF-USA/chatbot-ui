@@ -1,12 +1,76 @@
 'use client';
 
-import { Message } from '@/types/chat';
+import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
+
+import { ImageMessageContent, Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 import { DisplayNamePreference, StreamingSpeedConfig } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 import { apiClient } from '../api';
+
+/**
+ * Converts image URL references in messages to base64 data URLs.
+ * This is necessary because the LLM API cannot access our internal URLs.
+ * The conversion happens at API call time, not at storage time, so
+ * localStorage keeps the small file references.
+ *
+ * @param messages - Array of messages potentially containing image references
+ * @returns Messages with image URLs converted to base64
+ */
+async function convertImagesToBase64(messages: Message[]): Promise<Message[]> {
+  return Promise.all(
+    messages.map(async (message) => {
+      // Only process array content (images are in array format)
+      if (!Array.isArray(message.content)) {
+        return message;
+      }
+
+      // Process each content block
+      const convertedContent = await Promise.all(
+        message.content.map(async (item) => {
+          // Only convert image_url items
+          if (item.type !== 'image_url') {
+            return item;
+          }
+
+          const imageItem = item as ImageMessageContent;
+
+          // Already base64 - no conversion needed
+          if (imageItem.image_url.url.startsWith('data:')) {
+            return imageItem;
+          }
+
+          // Fetch base64 from server
+          try {
+            const base64Url =
+              await fetchImageBase64FromMessageContent(imageItem);
+            return {
+              ...imageItem,
+              image_url: {
+                ...imageItem.image_url,
+                url: base64Url,
+              },
+            };
+          } catch (error) {
+            console.error(
+              '[ChatService] Failed to convert image to base64:',
+              error,
+            );
+            // Return original on error - server will fail with clear error
+            return imageItem;
+          }
+        }),
+      );
+
+      return {
+        ...message,
+        content: convertedContent,
+      };
+    }),
+  );
+}
 
 /**
  * Unified Chat Service
