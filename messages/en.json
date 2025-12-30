@@ -1002,7 +1002,18 @@
     "deleteLegacyConfirm": "Are you sure you want to delete all legacy data? This action cannot be undone.",
     "Deleting": "Deleting",
     "Confirm Delete": "Confirm Delete",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "aboutYou": {
+      "title": "About You",
+      "shareBasicInfo": "Share basic info with AI",
+      "shareBasicInfoDescription": "When enabled, the AI will know your name, title, and department from your profile",
+      "preferredName": "Preferred Name",
+      "preferredNamePlaceholder": "How would you like to be called?",
+      "preferredNameDescription": "Override your display name. Leave blank to use your profile name",
+      "additionalContext": "Additional Context",
+      "additionalContextPlaceholder": "E.g., I work in field operations, prefer concise responses, often ask about medical protocols...",
+      "additionalContextDescription": "Any other information you'd like the AI to know about you"
+    }
   },
   "emptyState": {
     "greeting": "How can I help?",
