@@ -57,6 +57,26 @@ import { GLOSSARY_ACCEPT_TYPES } from '@/lib/constants/fileTypes';
  * - Custom output filename
  */
 
+/**
+ * Document Translation Modal Component
+ *
+ * Provides UI for selecting translation options:
+ * - Target language (searchable dropdown with 80+ languages)
+ * - Optional source language (auto-detect if omitted)
+ * - Optional glossary file upload
+ * - Custom output filename
+ */
+
+/**
+ * Document Translation Modal Component
+ *
+ * Provides UI for selecting translation options:
+ * - Target language (searchable dropdown with 80+ languages)
+ * - Optional source language (auto-detect if omitted)
+ * - Optional glossary file upload
+ * - Custom output filename
+ */
+
 interface ChatInputDocumentTranslateProps {
   /** Whether the modal is open */
   isOpen: boolean;
@@ -461,7 +481,7 @@ const ChatInputDocumentTranslate: FC<ChatInputDocumentTranslateProps> = ({
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                 {t('documentTranslation.glossaryHelp')}{' '}
                 <a
-                  href="https://learn.microsoft.com/en-us/azure/ai-services/translator/document-translation/how-to-guides/use-glossaries"
+                  href="https://learn.microsoft.com/en-us/azure/ai-services/translator/document-translation/how-to-guides/create-use-glossaries"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-blue-500 hover:text-blue-600 hover:underline"
