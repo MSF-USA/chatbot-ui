@@ -356,20 +356,20 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               } w-full md:w-80 flex-shrink-0 overflow-y-auto md:border-e border-gray-200 dark:border-gray-700 md:pe-4`}
             >
               <div className="space-y-4">
-                {/* Model Order Controls */}
-                <ModelOrderControls
-                  orderMode={orderMode}
-                  onOrderModeChange={setOrderMode}
-                  onReset={resetOrder}
-                  isEditing={isEditingOrder}
-                  onToggleEdit={handleToggleEditOrder}
-                />
-
                 {/* Base Models */}
                 <div>
-                  <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                    {t('modelSelect.sections.baseModels')}
-                  </h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                      {t('modelSelect.sections.baseModels')}
+                    </h4>
+                    <ModelOrderControls
+                      orderMode={orderMode}
+                      onOrderModeChange={setOrderMode}
+                      onReset={resetOrder}
+                      isEditing={isEditingOrder}
+                      onToggleEdit={handleToggleEditOrder}
+                    />
+                  </div>
                   <div className="space-y-2">
                     {orderedModels.map((model) => {
                       const config = OpenAIModels[model.id as OpenAIModelID];
