@@ -295,6 +295,12 @@ export async function buildChatContext(req: NextRequest): Promise<ChatContext> {
     ...createRateLimitMiddleware(context),
   };
 
+  // Build system prompt after auth (so user info is available)
+  context = {
+    ...context,
+    ...createSystemPromptMiddleware(context),
+  };
+
   context = {
     ...context,
     ...createContentAnalysisMiddleware(context),
