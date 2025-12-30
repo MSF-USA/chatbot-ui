@@ -6,9 +6,8 @@ import {
   extractAudioFromVideo,
   isFFmpegAvailable,
 } from '@/lib/utils/server/audio/audioExtractor';
-import { BlobStorage } from '@/lib/utils/server/blob/blob';
+import { BlobStorage, getBlobBase64String } from '@/lib/utils/server/blob/blob';
 import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
-import { convertImagesToBase64 } from '@/lib/utils/server/image/blobToBase64';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { getChunkedTranscriptionService } from '../../transcription/chunkedTranscriptionService';
@@ -447,13 +446,30 @@ export class FileProcessor extends BasePipelineStage {
           );
 
           // STEP 5: Convert images to base64 for LLM consumption
-          // LLMs cannot access private Azure blob URLs directly
+          // Uses getBlobBase64String which handles both data URL strings and binary content
           let convertedImages = images;
           if (images.length > 0) {
             console.log(
               `[FileProcessor] Converting ${images.length} image(s) to base64...`,
             );
-            convertedImages = await convertImagesToBase64(images, context.user);
+            convertedImages = await Promise.all(
+              images.map(async (image) => {
+                // Skip if already a base64 data URL
+                if (image.url.startsWith('data:')) {
+                  return image;
+                }
+
+                // Extract filename from URL (works for both /api/file/{id} and blob URLs)
+                const filename = image.url.split('/').pop() || image.url;
+                const base64Url = await getBlobBase64String(
+                  context.user.id ?? 'anonymous',
+                  filename,
+                  'images',
+                  context.user,
+                );
+                return { url: base64Url, detail: image.detail };
+              }),
+            );
             console.log(
               `[FileProcessor] Converted ${convertedImages.length} image(s) to base64`,
             );
