@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Rychlejší, ale ukládá data konverzace v cloudu",
       "privacyInfoTitle": "Důležité informace o soukromí",
       "privacyInfoDescription": "Celá vaše konverzace bude odeslána agentovi Azure AI Foundry.",
-      "learnMoreDataStorage": "Více informací o ukládání dat"
+      "learnMoreDataStorage": "Více informací o ukládání dat",
+      "privacyEnabled": "Vyhledávání se zaměřením na soukromí je zapnuto",
+      "learnPrivacy": "Zjistěte, jak je vaše soukromí chráněno"
     },
     "customAgent": {
       "label": "Vlastní agent:",

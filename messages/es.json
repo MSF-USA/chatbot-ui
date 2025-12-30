@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Más rápido pero almacena datos de conversación en la nube",
       "privacyInfoTitle": "Información Importante de Privacidad",
       "privacyInfoDescription": "Tu conversación completa será enviada al agente de Azure AI Foundry.",
-      "learnMoreDataStorage": "Más información sobre almacenamiento de datos"
+      "learnMoreDataStorage": "Más información sobre almacenamiento de datos",
+      "privacyEnabled": "Búsqueda con enfoque en la privacidad activada",
+      "learnPrivacy": "Descubra cómo se protege su privacidad"
     },
     "customAgent": {
       "label": "Agente Personalizado:",

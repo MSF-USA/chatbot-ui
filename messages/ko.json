@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "빠르지만 대화 데이터를 클라우드에 저장",
       "privacyInfoTitle": "중요한 개인정보 보호 정보",
       "privacyInfoDescription": "전체 대화가 Azure AI Foundry 에이전트로 전송됩니다.",
-      "learnMoreDataStorage": "데이터 저장에 대해 자세히 알아보기"
+      "learnMoreDataStorage": "데이터 저장에 대해 자세히 알아보기",
+      "privacyEnabled": "개인정보 보호 중심 검색 활성화됨",
+      "learnPrivacy": "개인정보 보호 방법 알아보기"
     },
     "customAgent": {
       "label": "사용자 정의 에이전트:",

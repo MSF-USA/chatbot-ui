@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "ပိုမြန်ပေမယ့် စကားပြောသည့်ဒေတာကို cloud ထဲသို့ သိမ်းဆည်းထားသည်",
       "privacyInfoTitle": "ကိုယ်ရေးလုံခြုံမှုနှင့် ဆိုင်သောအရေးကြီးသောအချက်",
       "privacyInfoDescription": "သင်၏ စကားပြောချက် အပြည့်အစုံကို Azure AI Foundry agent သို့ ပို့ပါမည်။",
-      "learnMoreDataStorage": "ဒေတာသိမ်းဆည်းမှုအကြောင်း နောက်ထပ်သိရန်"
+      "learnMoreDataStorage": "ဒေတာသိမ်းဆည်းမှုအကြောင်း နောက်ထပ်သိရန်",
+      "privacyEnabled": "သီးသန့်လုံခြုံမှုအလေးပေးသော ရှာဖွေရေး ဖွင့်ထားသည်",
+      "learnPrivacy": "သင့်၏သီးသန့်လုံခြုံမှုကို မည်သို့ကာကွယ်ထားသည်ကိုသိလိုပါသလား"
     },
     "customAgent": {
       "label": "Custom Agent:",

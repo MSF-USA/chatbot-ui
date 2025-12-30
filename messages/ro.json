@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Mai rapid, dar stochează datele conversației în cloud",
       "privacyInfoTitle": "Informații importante despre confidențialitate",
       "privacyInfoDescription": "Întreaga dvs. conversație va fi trimisă către agentul Azure AI Foundry.",
-      "learnMoreDataStorage": "Aflați mai multe despre stocarea datelor"
+      "learnMoreDataStorage": "Aflați mai multe despre stocarea datelor",
+      "privacyEnabled": "Căutare axată pe confidențialitate activată",
+      "learnPrivacy": "Află cum este protejată confidențialitatea ta"
     },
     "customAgent": {
       "label": "Agent personalizat:",

@@ -1052,7 +1052,9 @@
       "privacyInfoDescription": "آپ کا ڈیٹا کیسے محفوظ ہے",
       "routingLabel": "روٹنگ",
       "learnMoreDataStorage": "ڈیٹا اسٹوریج کے بارے میں مزید جانیں",
-      "whatsDifference": "کیا فرق ہے؟"
+      "whatsDifference": "کیا فرق ہے؟",
+      "privacyEnabled": "رازداری پر مبنی تلاش فعال ہے",
+      "learnPrivacy": "جانیے کہ آپ کی رازداری کیسے محفوظ رکھی جاتی ہے"
     },
     "sections": {
       "baseModels": "بنیادی ماڈلز"

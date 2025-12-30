@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "ඉක්මන් නමුත් කතාබස් දත්ත වලාකුළේ සුරක්ෂිත වේ",
       "privacyInfoTitle": "වැදගත් පෞද්ගලිකත්ව තොරතුරු",
       "privacyInfoDescription": "ඔබගේ සම්පූර්ණ කතාබස් Azure AI Foundry නියෝජිතයා වෙත යවනු ලැබේ.",
-      "learnMoreDataStorage": "දත්ත සංරක්ෂණය ගැන වැඩිදුර දැනගන්න"
+      "learnMoreDataStorage": "දත්ත සංරක්ෂණය ගැන වැඩිදුර දැනගන්න",
+      "privacyEnabled": "ප්‍රායවරණයට අවධානය යොමු කළ සෙව්ව සක්‍රීයයි",
+      "learnPrivacy": "ඔබේ පෞද්ගලිකත්වය ආරක්ෂා වන ආකාරය සොයන්න"
     },
     "customAgent": {
       "label": "අභිරුචි නියෝජිතයා:",

@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Snabbare men lagrar chattdata i molnet",
       "privacyInfoTitle": "Viktig integritetsinformation",
       "privacyInfoDescription": "Hela konversationen skickas till Azure AI Foundry-agenten.",
-      "learnMoreDataStorage": "Läs mer om datalagring"
+      "learnMoreDataStorage": "Läs mer om datalagring",
+      "privacyEnabled": "Sekretessfokuserad sökning aktiverad",
+      "learnPrivacy": "Läs mer om hur din integritet skyddas"
     },
     "customAgent": {
       "label": "Anpassad agent:",

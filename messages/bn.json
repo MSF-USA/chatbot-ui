@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "দ্রুত কিন্তু ক্লাউডে কথোপকথন ডেটা সঞ্চয় করে",
       "privacyInfoTitle": "গুরুত্বপূর্ণ গোপনীয়তা তথ্য",
       "privacyInfoDescription": "আপনার সম্পূর্ণ কথোপকথন Azure AI Foundry এজেন্টে পাঠানো হবে।",
-      "learnMoreDataStorage": "ডেটা সঞ্চয়স্থান সম্পর্কে আরও জানুন"
+      "learnMoreDataStorage": "ডেটা সঞ্চয়স্থান সম্পর্কে আরও জানুন",
+      "privacyEnabled": "গোপনীয়তা-কেন্দ্রিক অনুসন্ধান চালু রয়েছে",
+      "learnPrivacy": "আপনার গোপনীয়তা কীভাবে সুরক্ষিত হয় তা জানুন"
     },
     "customAgent": {
       "label": "কাস্টম এজেন্ট:",

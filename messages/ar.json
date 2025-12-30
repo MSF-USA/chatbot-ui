@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "أسرع ولكن يخزن بيانات المحادثة في السحابة",
       "privacyInfoTitle": "معلومات خصوصية مهمة",
       "privacyInfoDescription": "سيتم إرسال محادثتك بالكامل إلى وكيل Azure AI Foundry.",
-      "learnMoreDataStorage": "تعرف على المزيد حول تخزين البيانات"
+      "learnMoreDataStorage": "تعرف على المزيد حول تخزين البيانات",
+      "privacyEnabled": "تم تفعيل البحث مع التركيز على الخصوصية",
+      "learnPrivacy": "اعرف كيف يتم حماية خصوصيتك"
     },
     "customAgent": {
       "label": "وكيل مخصص:",

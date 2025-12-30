@@ -1000,7 +1000,9 @@
       "privacyInfoTitle": "Privacy-informatie",
       "privacyInfoDescription": "Leer hoe uw gegevens worden behandeld",
       "learnMoreDataStorage": "Meer informatie over gegevensopslag",
-      "whatsDifference": "Wat is het verschil?"
+      "whatsDifference": "Wat is het verschil?",
+      "privacyEnabled": "Privacygerichte zoekopdracht ingeschakeld",
+      "learnPrivacy": "Lees hoe uw privacy wordt beschermd"
     },
     "customAgent": {
       "label": "Aangepaste agent",

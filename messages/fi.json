@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Nopeampi, mutta tallentaa keskustelut pilvipalveluun",
       "privacyInfoTitle": "Tärkeää tietosuojatietoa",
       "privacyInfoDescription": "Koko keskustelusi lähetetään Azure AI Foundry -agentille.",
-      "learnMoreDataStorage": "Lue lisää tietojen tallennuksesta"
+      "learnMoreDataStorage": "Lue lisää tietojen tallennuksesta",
+      "privacyEnabled": "Yksityisyyttä korostava haku käytössä",
+      "learnPrivacy": "Lue lisää yksityisyytesi suojauksesta"
     },
     "customAgent": {
       "label": "Mukautettu agentti:",

@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Nhanh hơn nhưng lưu dữ liệu trò chuyện trên đám mây",
       "privacyInfoTitle": "Thông tin bảo mật quan trọng",
       "privacyInfoDescription": "Toàn bộ cuộc trò chuyện của bạn sẽ được gửi đến Azure AI Foundry agent.",
-      "learnMoreDataStorage": "Tìm hiểu thêm về lưu trữ dữ liệu"
+      "learnMoreDataStorage": "Tìm hiểu thêm về lưu trữ dữ liệu",
+      "privacyEnabled": "Đã bật chế độ tìm kiếm bảo mật quyền riêng tư",
+      "learnPrivacy": "Tìm hiểu cách quyền riêng tư của bạn được bảo vệ"
     },
     "customAgent": {
       "label": "Tùy chỉnh Agent:",

@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Més ràpid però desa dades de la conversa al núvol",
       "privacyInfoTitle": "Informació important sobre la privacitat",
       "privacyInfoDescription": "La teva conversa sencera s'enviarà a l'agent d'Azure AI Foundry.",
-      "learnMoreDataStorage": "Més informació sobre l'emmagatzematge de dades"
+      "learnMoreDataStorage": "Més informació sobre l'emmagatzematge de dades",
+      "privacyEnabled": "S'ha activat la cerca amb enfocament en la privadesa",
+      "learnPrivacy": "Descobreix com es protegeix la teva privadesa"
     },
     "customAgent": {
       "label": "Agent personalitzat:",

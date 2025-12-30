@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Быстрее, но хранит данные разговора в облаке",
       "privacyInfoTitle": "Важная информация о конфиденциальности",
       "privacyInfoDescription": "Весь ваш разговор будет отправлен агенту Azure AI Foundry.",
-      "learnMoreDataStorage": "Узнать больше о хранении данных"
+      "learnMoreDataStorage": "Узнать больше о хранении данных",
+      "privacyEnabled": "Поиск с акцентом на конфиденциальность включён",
+      "learnPrivacy": "Узнайте, как защищается ваша конфиденциальность"
     },
     "customAgent": {
       "label": "Пользовательский агент:",

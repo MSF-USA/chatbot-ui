@@ -1044,7 +1044,9 @@
       "privacyInfoDescription": "Bagaimana data Anda dilindungi",
       "routingLabel": "Routing",
       "learnMoreDataStorage": "Pelajari lebih lanjut tentang penyimpanan data",
-      "whatsDifference": "Apa bedanya?"
+      "whatsDifference": "Apa bedanya?",
+      "privacyEnabled": "Pencarian berfokus privasi diaktifkan",
+      "learnPrivacy": "Pelajari bagaimana privasi Anda dilindungi"
     },
     "sections": {
       "baseModels": "Model Dasar"

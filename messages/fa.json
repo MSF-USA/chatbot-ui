@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "سریع‌تر اما اطلاعات گفتگو را در فضای ابری ذخیره می‌کند",
       "privacyInfoTitle": "اطلاعات مهم درباره حریم خصوصی",
       "privacyInfoDescription": "کل مکالمه شما به عامل Azure AI Foundry ارسال خواهد شد.",
-      "learnMoreDataStorage": "اطلاعات بیشتر درباره ذخیره‌سازی داده‌ها"
+      "learnMoreDataStorage": "اطلاعات بیشتر درباره ذخیره‌سازی داده‌ها",
+      "privacyEnabled": "جستجوی متمرکز بر حریم خصوصی فعال شد",
+      "learnPrivacy": "اطلاع از نحوه حفظ حریم خصوصی شما"
     },
     "customAgent": {
       "label": "عامل سفارشی:",

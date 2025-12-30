@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "तेज़ लेकिन क्लाउड में बातचीत डेटा संग्रहीत करता है",
       "privacyInfoTitle": "महत्वपूर्ण गोपनीयता जानकारी",
       "privacyInfoDescription": "आपकी पूरी बातचीत Azure AI Foundry एजेंट को भेजी जाएगी।",
-      "learnMoreDataStorage": "डेटा संग्रहण के बारे में और जानें"
+      "learnMoreDataStorage": "डेटा संग्रहण के बारे में और जानें",
+      "privacyEnabled": "गोपनीयता-केंद्रित खोज सक्रिय की गई",
+      "learnPrivacy": "जानें आपकी गोपनीयता कैसे सुरक्षित है"
     },
     "customAgent": {
       "label": "कस्टम एजेंट:",

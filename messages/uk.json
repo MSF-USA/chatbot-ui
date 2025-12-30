@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Швидше, але зберігає дані розмов у хмарі",
       "privacyInfoTitle": "Важлива інформація щодо конфіденційності",
       "privacyInfoDescription": "Ваша повна розмова буде надіслана агенту Azure AI Foundry.",
-      "learnMoreDataStorage": "Дізнатися більше про зберігання даних"
+      "learnMoreDataStorage": "Дізнатися більше про зберігання даних",
+      "privacyEnabled": "Увімкнено режим конфіденційного пошуку",
+      "learnPrivacy": "Дізнайтеся, як захищено вашу конфіденційність"
     },
     "customAgent": {
       "label": "Власний агент:",

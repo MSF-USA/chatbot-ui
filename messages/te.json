@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "ద్రుతగతిలో కానీ సంభాషణ డేటాను క్లౌడ్ లో నిక్షిప్తం చేస్తుంది",
       "privacyInfoTitle": "ముఖ్యమైన గోప్యతా సమాచారం",
       "privacyInfoDescription": "మీ పూర్తి సంభాషణ Azure AI Foundry ఏజెంట్ కు పంపబడుతుంది.",
-      "learnMoreDataStorage": "డేటా నిల్వ గురించి మరింత తెలుసుకోండి"
+      "learnMoreDataStorage": "డేటా నిల్వ గురించి మరింత తెలుసుకోండి",
+      "privacyEnabled": "గోప్యతాపరమైన శోధన Sack Enabled",
+      "learnPrivacy": "మీ గోప్యత ఎలా రక్షించబడుతోందో తెలుసుకోండి"
     },
     "customAgent": {
       "label": "కస్టమ్ ఏజెంట్:",

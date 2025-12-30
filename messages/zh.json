@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "更快但在云中存储对话数据",
       "privacyInfoTitle": "重要隐私信息",
       "privacyInfoDescription": "您的整个对话将被发送到 Azure AI Foundry 代理。",
-      "learnMoreDataStorage": "了解有关数据存储的更多信息"
+      "learnMoreDataStorage": "了解有关数据存储的更多信息",
+      "privacyEnabled": "已启用隐私保护搜索",
+      "learnPrivacy": "了解您的隐私如何受到保护"
     },
     "customAgent": {
       "label": "自定义代理：",

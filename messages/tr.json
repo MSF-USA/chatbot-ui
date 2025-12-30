@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Daha hızlı ama sohbet verilerini bulutta saklar",
       "privacyInfoTitle": "Önemli gizlilik bilgisi",
       "privacyInfoDescription": "Tüm konuşma Azure AI Foundry Ajanına gönderilir.",
-      "learnMoreDataStorage": "Veri depolama hakkında daha fazla bilgi edinin"
+      "learnMoreDataStorage": "Veri depolama hakkında daha fazla bilgi edinin",
+      "privacyEnabled": "Gizlilik odaklı arama etkin",
+      "learnPrivacy": "Gizliliğinizin nasıl korunduğunu öğrenin"
     },
     "customAgent": {
       "label": "Özel Ajan:",

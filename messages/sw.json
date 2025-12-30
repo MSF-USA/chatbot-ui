@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "Haraka lakini huhifadhi data ya mazungumzo kwenye wingu",
       "privacyInfoTitle": "Taarifa Muhimu ya Faragha",
       "privacyInfoDescription": "Mazungumzo yako yote yatatumwa kwa wakala wa Azure AI Foundry.",
-      "learnMoreDataStorage": "Jifunze zaidi kuhusu hifadhi ya data"
+      "learnMoreDataStorage": "Jifunze zaidi kuhusu hifadhi ya data",
+      "privacyEnabled": "Utafutaji unaolenga faragha umewezeshwa",
+      "learnPrivacy": "Jifunze jinsi faragha yako inalindwa"
     },
     "customAgent": {
       "label": "Wakala Maalum:",

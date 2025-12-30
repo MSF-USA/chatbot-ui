@@ -956,7 +956,9 @@
       "azureAgentModeDescription": "ፈጣን ግን የውይይት ውሂብን በደመና ውስጥ ያከማቻል",
       "privacyInfoTitle": "አስፈላጊ የግላዊነት መረጃ",
       "privacyInfoDescription": "ሙሉ ውይይትዎ ወደ Azure AI Foundry ወኪል ይላካል።",
-      "learnMoreDataStorage": "ስለ ውሂብ ማከማቻ የበለጠ ይወቁ"
+      "learnMoreDataStorage": "ስለ ውሂብ ማከማቻ የበለጠ ይወቁ",
+      "privacyEnabled": "የግላዊነት ጥበቃ ያለው ፍለጋ ተከፍቷል",
+      "learnPrivacy": "ግላዊነትዎ እንዴት እንደሚጠበቅ ይማሩ"
     },
     "customAgent": {
       "label": "ብጁ ወኪል:",

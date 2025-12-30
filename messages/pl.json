@@ -1042,7 +1042,9 @@
       "azureAgentModeDescription": "Szybszy, ale przechowuje dane rozmowy w chmurze",
       "privacyInfoTitle": "Ważna informacja o prywatności",
       "privacyInfoDescription": "Cała Twoja rozmowa zostanie wysłana do agenta Azure AI Foundry.",
-      "learnMoreDataStorage": "Dowiedz się więcej o przechowywaniu danych"
+      "learnMoreDataStorage": "Dowiedz się więcej o przechowywaniu danych",
+      "privacyEnabled": "Włączono wyszukiwanie z ochroną prywatności",
+      "learnPrivacy": "Dowiedz się, jak chroniona jest Twoja prywatność"
     },
     "customAgent": {
       "label": "Własny agent:",

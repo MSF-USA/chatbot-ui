@@ -959,7 +959,9 @@
       "azureAgentModeDescription": "高速ですがクラウドに会話データを保存",
       "privacyInfoTitle": "重要なプライバシー情報",
       "privacyInfoDescription": "会話全体がAzure AI Foundryエージェントに送信されます。",
-      "learnMoreDataStorage": "データストレージについて詳しく学ぶ"
+      "learnMoreDataStorage": "データストレージについて詳しく学ぶ",
+      "privacyEnabled": "プライバシー重視の検索が有効になっています",
+      "learnPrivacy": "プライバシー保護の方法について詳しく見る"
     },
     "customAgent": {
       "label": "カスタムエージェント：",
