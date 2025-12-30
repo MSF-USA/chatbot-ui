@@ -2,8 +2,6 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
-
 import { buildMessageContent } from '@/lib/utils/shared/chat/contentBuilder';
 import { validateMessageSubmission } from '@/lib/utils/shared/chat/validation';
 
@@ -13,10 +11,8 @@ import {
   FileMessageContent,
   FilePreview,
   ImageFieldValue,
-  ImageMessageContent,
   Message,
   MessageType,
-  TextMessageContent,
 } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
@@ -90,69 +86,6 @@ const mergeTranscriptionOptions = (
   });
 
   return merged.length === 1 ? merged[0] : merged;
-};
-
-/**
- * Converts image URLs in message content to base64 data URLs.
- * LLMs cannot access our server URLs or private blob storage URLs,
- * so we must send base64-encoded images directly.
- *
- * @param content - The message content (string or array of content blocks)
- * @returns The content with image URLs converted to base64
- */
-const convertImagesToBase64InContent = async (
-  content: Message['content'],
-): Promise<Message['content']> => {
-  // String content has no images to convert
-  if (typeof content === 'string') return content;
-
-  // Non-array content, return as-is
-  if (!Array.isArray(content)) return content;
-
-  // Process each content block
-  const convertedContent = await Promise.all(
-    content.map(
-      async (
-        item,
-      ): Promise<
-        TextMessageContent | FileMessageContent | ImageMessageContent
-      > => {
-        // Only process image_url items
-        if (item.type !== 'image_url') {
-          return item as TextMessageContent | FileMessageContent;
-        }
-
-        const imageItem = item as ImageMessageContent;
-
-        // Already a base64 data URL - no conversion needed
-        if (imageItem.image_url.url.startsWith('data:')) {
-          return imageItem;
-        }
-
-        // Fetch base64 from server using the same mechanism as image display
-        try {
-          const base64Url = await fetchImageBase64FromMessageContent(imageItem);
-
-          return {
-            ...imageItem,
-            image_url: {
-              ...imageItem.image_url,
-              url: base64Url,
-            },
-          };
-        } catch (error) {
-          console.error(
-            '[useMessageSender] Failed to convert image to base64:',
-            error,
-          );
-          // Return original on error - backend will try to handle it
-          return imageItem;
-        }
-      },
-    ),
-  );
-
-  return convertedContent;
 };
 
 /**
@@ -243,6 +176,8 @@ export function useMessageSender({
     }
 
     // Build content with filtered file field value (if artifact is being edited)
+    // Content contains file references (e.g., /api/file/abc123.png) - NOT base64
+    // The backend (ImageProcessor/FileProcessor) handles converting to base64 for the LLM
     const content = buildMessageContent(
       submitType,
       textFieldValue,
@@ -251,14 +186,10 @@ export function useMessageSender({
       null,
     );
 
-    // Convert image URLs to base64 before sending
-    // LLMs cannot access our URLs - they need inline base64 data
-    const contentWithBase64 = await convertImagesToBase64InContent(content);
-
     onSend(
       {
         role: 'user',
-        content: contentWithBase64,
+        content,
         messageType: mapSubmitTypeToMessageType(submitType ?? 'TEXT'),
         toneId: selectedToneId,
         promptId: usedPromptId,
