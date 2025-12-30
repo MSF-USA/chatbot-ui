@@ -28,6 +28,7 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
+import { AssistantMessageGroup } from '@/types/chat';
 import { DocumentTranslationReference } from '@/types/documentTranslation';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
@@ -36,6 +37,7 @@ import ChatInputDocumentTranslate from '@/components/Chat/ChatInput/ChatInputDoc
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import { formatTranslationReference } from '@/components/Chat/DocumentTranslationViewer';
 import ImageIcon from '@/components/Icons/image';
 
 import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
@@ -85,7 +87,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     (state) => state.setSelectedToneId,
   );
   const filePreviews = useChatInputStore((state) => state.filePreviews);
-  const { selectedConversation } = useConversations();
+  const { selectedConversation, updateConversation } = useConversations();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -164,16 +166,51 @@ const Dropdown: React.FC<DropdownProps> = ({
     documentTranslateInputRef.current?.click();
   }, [closeDropdown]);
 
-  // Handle document translation completion
+  // Handle document translation completion - add as assistant message
   const handleDocumentTranslationComplete = useCallback(
     (reference: DocumentTranslationReference) => {
-      // Set the text field with the translation reference for sending
-      const referenceText = `[Translation: ${reference.translatedFilename} | lang:${reference.targetLanguage} | blob:${reference.jobId} | ext:${reference.fileExtension} | expires:${reference.expiresAt}]`;
-      setTextFieldValue(referenceText);
+      if (!selectedConversation) {
+        console.error('[DocumentTranslation] No conversation selected');
+        setIsDocumentTranslateOpen(false);
+        setDocumentToTranslate(null);
+        return;
+      }
+
+      // Format the reference string
+      const referenceText = formatTranslationReference(
+        reference.translatedFilename,
+        reference.targetLanguage,
+        reference.jobId,
+        reference.fileExtension,
+        reference.expiresAt,
+      );
+
+      // Create an assistant message group with the translation reference
+      const assistantMessage: AssistantMessageGroup = {
+        versions: [
+          {
+            content: referenceText,
+            role: 'assistant',
+            messageType: 'text',
+          },
+        ],
+        activeIndex: 0,
+      };
+
+      // Add the message to the conversation
+      const updatedMessages = [
+        ...selectedConversation.messages,
+        assistantMessage,
+      ];
+      updateConversation(selectedConversation.id, {
+        messages: updatedMessages,
+      });
+
+      // Close modal
       setIsDocumentTranslateOpen(false);
       setDocumentToTranslate(null);
     },
-    [setTextFieldValue],
+    [selectedConversation, updateConversation],
   );
 
   // Helper function to toggle search mode (always sets to ALWAYS when enabled)
