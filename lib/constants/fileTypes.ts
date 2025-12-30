@@ -70,3 +70,73 @@ export function isAudioVideoFileByTypeOrName(
  */
 export const TRANSCRIPTION_ACCEPT_TYPES =
   'audio/*,video/*,.mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm,.mkv,.mov,.avi,.flv,.wmv';
+
+/**
+ * Document file extensions supported for Azure Document Translation.
+ * These formats support synchronous single-file translation.
+ */
+export const DOCUMENT_TRANSLATION_EXTENSIONS = [
+  '.txt',
+  '.html',
+  '.htm',
+  '.docx',
+  '.xlsx',
+  '.pptx',
+  '.pdf',
+  '.msg',
+  '.xlf',
+  '.xliff',
+  '.csv',
+  '.tsv',
+  '.tab',
+  '.mhtml',
+  '.mht',
+] as const;
+
+/**
+ * Glossary file extensions supported for document translation.
+ */
+export const GLOSSARY_EXTENSIONS = ['.csv', '.tsv', '.xlf', '.xliff'] as const;
+
+/**
+ * Accept attribute value for file inputs that accept documents for translation.
+ */
+export const DOCUMENT_TRANSLATION_ACCEPT_TYPES =
+  '.txt,.html,.htm,.docx,.xlsx,.pptx,.pdf,.msg,.xlf,.xliff,.csv,.tsv,.tab,.mhtml,.mht';
+
+/**
+ * Accept attribute value for glossary file inputs.
+ */
+export const GLOSSARY_ACCEPT_TYPES = '.csv,.tsv,.xlf,.xliff';
+
+/**
+ * Checks if a filename has a document extension supported for translation.
+ *
+ * @param filename - The filename to check
+ * @returns True if the file can be translated
+ */
+export function isDocumentTranslatableFile(filename: string): boolean {
+  if (!filename) return false;
+
+  const parts = filename.split('.');
+  if (parts.length < 2) return false;
+
+  const ext = '.' + parts.pop()?.toLowerCase();
+  return DOCUMENT_TRANSLATION_EXTENSIONS.includes(ext as any);
+}
+
+/**
+ * Checks if a filename has a glossary extension.
+ *
+ * @param filename - The filename to check
+ * @returns True if the file can be used as a glossary
+ */
+export function isGlossaryFile(filename: string): boolean {
+  if (!filename) return false;
+
+  const parts = filename.split('.');
+  if (parts.length < 2) return false;
+
+  const ext = '.' + parts.pop()?.toLowerCase();
+  return GLOSSARY_EXTENSIONS.includes(ext as any);
+}
