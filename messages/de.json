@@ -883,8 +883,10 @@
       "preferredNameDescription": "Überschreibt Ihren Anzeigenamen. Feld leer lassen, um Ihren Profilnamen zu verwenden",
       "additionalContext": "Zusätzlicher Kontext",
       "additionalContextPlaceholder": "Z.B. Ich arbeite im Feldeinsatz, bevorzuge prägnante Antworten, stelle oft Fragen zu medizinischen Protokollen...",
-      "additionalContextDescription": "Weitere Informationen, die die KI über Sie wissen sollte"
-    }
+      "additionalContextDescription": "Weitere Informationen, die die KI über Sie wissen sollte",
+      "preferredNameDescriptionWithSync": "So spricht die KI Sie an. Lassen Sie dieses Feld leer, um den Anzeigenamen aus den allgemeinen Einstellungen zu verwenden."
+    },
+    "displayNameUIOnly": "Dies steuert, wie Ihr Name in der App angezeigt wird. Die KI sieht dies nur, wenn Sie das Teilen in den Chateinstellungen aktivieren."
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

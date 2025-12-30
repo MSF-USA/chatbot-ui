@@ -858,8 +858,10 @@
       "preferredNameDescription": "Sostituisci il nome visualizzato. Lascia vuoto per usare il nome del profilo",
       "additionalContext": "Contesto aggiuntivo",
       "additionalContextPlaceholder": "Es.: lavoro nelle operazioni sul campo, preferisco risposte concise, chiedo spesso di protocolli medici...",
-      "additionalContextDescription": "Qualsiasi altra informazione che vorresti condividere con l’AI su di te"
-    }
+      "additionalContextDescription": "Qualsiasi altra informazione che vorresti condividere con l’AI su di te",
+      "preferredNameDescriptionWithSync": "Come l'IA si rivolgerà a te. Lascia vuoto per usare il tuo nome visualizzato dalle Impostazioni generali."
+    },
+    "displayNameUIOnly": "Questo controlla come il tuo nome appare nell'app. L'IA non lo vede a meno che tu non abiliti la condivisione nelle Impostazioni della chat."
   },
   "notFound": {
     "lostDog": "Cane smarrito"

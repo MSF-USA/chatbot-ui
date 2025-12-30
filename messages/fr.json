@@ -883,8 +883,10 @@
       "preferredNameDescription": "Remplacez le nom affiché. Laissez vide pour utiliser le nom de votre profil",
       "additionalContext": "Contexte supplémentaire",
       "additionalContextPlaceholder": "Ex. : Je travaille aux opérations terrain, je préfère des réponses concises, je pose souvent des questions sur les protocoles médicaux...",
-      "additionalContextDescription": "Tout autre renseignement que vous souhaitez partager avec l'IA à votre sujet"
-    }
+      "additionalContextDescription": "Tout autre renseignement que vous souhaitez partager avec l'IA à votre sujet",
+      "preferredNameDescriptionWithSync": "Comment l'IA s'adressera à vous. Laissez vide pour utiliser votre nom d'affichage des paramètres généraux."
+    },
+    "displayNameUIOnly": "Cela contrôle l'affichage de votre nom dans l'application. L'IA n'y a pas accès, sauf si vous activez le partage dans les paramètres de discussion."
   },
   "notFound": {
     "lostDog": "Chien perdu"

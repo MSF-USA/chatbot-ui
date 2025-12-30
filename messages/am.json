@@ -832,8 +832,10 @@
       "preferredNameDescription": "የሚታየውን ስምዎ ይቀይሩ። የመገለጫውን ስም ለመጠቀም ባዶ ይተዉት",
       "additionalContext": "ተጨማሪ አገናኝት",
       "additionalContextPlaceholder": "ለምሳሌ፦ በመስክ ኦፕሬሽኖች እሰራለሁ፣ አጭር መልሶችን እፈልጋለሁ፣ በተደጋጋሚ የህክምና ፕሮቶኮሎች እበዛባለሁ...",
-      "additionalContextDescription": "AI ስለ እርስዎ ማወቅ የሚችለው ማንኛውም ተጨማሪ መረጃ"
-    }
+      "additionalContextDescription": "AI ስለ እርስዎ ማወቅ የሚችለው ማንኛውም ተጨማሪ መረጃ",
+      "preferredNameDescriptionWithSync": "AI በሚጠራዎ ጊዜ የሚጠቀምበት ስም። ክፍት ብትተዉ፣ ከአጠቃላይ ቅንብሮች የተወሰነውን የስም አሳይ ይጠቀማል።"
+    },
+    "displayNameUIOnly": "ይህ ስምዎ በመተግበሪያው ላይ እንዴት እንደሚታይ ይቆጣጠራል። በChat ቅንብሮች ግልጽ ማድረግን ሲከፍቱ ብቻ ይህን AI ማየት ይችላል።"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

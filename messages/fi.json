@@ -858,8 +858,10 @@
       "preferredNameDescription": "Korvaa näyttönimesi. Jätä tyhjäksi käyttääksesi profiilin nimeäsi",
       "additionalContext": "Lisätietoa",
       "additionalContextPlaceholder": "Esim. työskentelen kenttätoiminnassa, suosin ytimekkäitä vastauksia, kysyn usein lääketieteellisistä protokollista...",
-      "additionalContextDescription": "Muu tieto, jonka haluat tekoälyn tietävän sinusta"
-    }
+      "additionalContextDescription": "Muu tieto, jonka haluat tekoälyn tietävän sinusta",
+      "preferredNameDescriptionWithSync": "Miten AI puhuttelee sinua. Jätä tyhjäksi käyttääksesi Yleisasetuksissa valittua näyttönimeäsi."
+    },
+    "displayNameUIOnly": "Tämä määrittää, miten nimesi näkyy sovelluksessa. AI ei näe tätä, ellei jakamista ole otettu käyttöön Keskusteluasetuksissa."
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

@@ -858,8 +858,10 @@
       "preferredNameDescription": "עקוף את שם התצוגה שלך. השאר ריק כדי להשתמש בשם מהפרופיל",
       "additionalContext": "הקשר נוסף",
       "additionalContextPlaceholder": "לדוגמה: אני עובד/ת בתפעול שטח, מעדיף/ה תשובות תמציתיות, מרבה לשאול על פרוטוקולים רפואיים...",
-      "additionalContextDescription": "כל מידע נוסף שתרצה שה-AI יידע עליך"
-    }
+      "additionalContextDescription": "כל מידע נוסף שתרצה שה-AI יידע עליך",
+      "preferredNameDescriptionWithSync": "איך ה-AI יפנה אליך. השאר ריק כדי להשתמש בשם התצוגה שלך מהגדרות כלליות."
+    },
+    "displayNameUIOnly": "זה קובע כיצד שמך יוצג באפליקציה. ה-AI לא רואה זאת אלא אם תפעיל שיתוף בהגדרות הצ'אט."
   },
   "notFound": {
     "lostDog": "כלב אבוד"

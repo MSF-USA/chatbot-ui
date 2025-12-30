@@ -883,8 +883,10 @@
       "preferredNameDescription": "Görünen adınızı geçersiz kılar. Profil adınızı kullanmak için boş bırakın",
       "additionalContext": "Ek Bağlam",
       "additionalContextPlaceholder": "Örn. Saha operasyonlarında çalışıyorum, kısa yanıtları tercih ederim, sıkça tıbbi protokolleri sorarım...",
-      "additionalContextDescription": "Yapay zekanın sizinle ilgili bilmesini istediğiniz diğer bilgiler"
-    }
+      "additionalContextDescription": "Yapay zekanın sizinle ilgili bilmesini istediğiniz diğer bilgiler",
+      "preferredNameDescriptionWithSync": "Yapay zekanın size nasıl hitap edeceği. Boş bırakırsanız Genel Ayarlar'daki görünen adınız kullanılır."
+    },
+    "displayNameUIOnly": "Bu, adınızın uygulamada nasıl görüneceğini belirler. Sohbet Ayarlarında paylaşımı etkinleştirmediğiniz sürece yapay zeka bunu görmez."
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

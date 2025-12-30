@@ -853,8 +853,10 @@
       "preferredNameDescription": "Ghi đè tên hiển thị của bạn. Để trống nếu muốn dùng tên hồ sơ",
       "additionalContext": "Ngữ cảnh bổ sung",
       "additionalContextPlaceholder": "Ví dụ: Tôi làm ở bộ phận hiện trường, thích câu trả lời ngắn gọn, thường hỏi về quy trình y tế...",
-      "additionalContextDescription": "Bất kỳ thông tin nào khác bạn muốn AI biết về bạn"
-    }
+      "additionalContextDescription": "Bất kỳ thông tin nào khác bạn muốn AI biết về bạn",
+      "preferredNameDescriptionWithSync": "Cách AI sẽ xưng hô với bạn. Để trống nếu muốn dùng tên hiển thị từ Cài đặt Chung."
+    },
+    "displayNameUIOnly": "Điều này kiểm soát cách tên của bạn hiển thị trong ứng dụng. AI sẽ không nhìn thấy tên này trừ khi bạn bật chia sẻ trong Cài đặt Trò chuyện."
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

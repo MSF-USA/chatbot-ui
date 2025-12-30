@@ -850,8 +850,10 @@
       "preferredNameDescription": "Ganti nama tampilan Anda. Biarkan kosong untuk menggunakan nama profil",
       "additionalContext": "Konteks Tambahan",
       "additionalContextPlaceholder": "Misal: Saya bekerja di operasi lapangan, lebih suka jawaban singkat, sering bertanya tentang protokol medis...",
-      "additionalContextDescription": "Informasi lain yang ingin Anda bagikan ke AI tentang diri Anda"
-    }
+      "additionalContextDescription": "Informasi lain yang ingin Anda bagikan ke AI tentang diri Anda",
+      "preferredNameDescriptionWithSync": "Cara AI akan memanggil Anda. Biarkan kosong untuk menggunakan nama tampilan dari Pengaturan Umum."
+    },
+    "displayNameUIOnly": "Ini mengatur bagaimana nama Anda ditampilkan di aplikasi. AI tidak akan melihat ini kecuali Anda mengaktifkan berbagi di Pengaturan Chat."
   },
   "notFound": {
     "lostDog": "Anjing hilang"

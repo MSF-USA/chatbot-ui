@@ -883,8 +883,10 @@
       "preferredNameDescription": "표시 이름을 변경합니다. 비워두면 프로필 이름이 사용됩니다.",
       "additionalContext": "추가 정보",
       "additionalContextPlaceholder": "예: 현장 운영팀에서 근무, 간결한 답변 선호, 의료 지침 관련 질문 자주 함 등...",
-      "additionalContextDescription": "AI가 알고 있으면 좋을 기타 정보"
-    }
+      "additionalContextDescription": "AI가 알고 있으면 좋을 기타 정보",
+      "preferredNameDescriptionWithSync": "AI가 귀하를 부를 때 사용할 이름입니다. 입력하지 않으면 일반 설정의 표시 이름이 사용됩니다."
+    },
+    "displayNameUIOnly": "앱에서 이름이 표시되는 방식을 설정합니다. AI는 채팅 설정에서 공유를 활성화하지 않는 한 이 정보를 볼 수 없습니다."
   },
   "notFound": {
     "lostDog": "잃어버린 개"

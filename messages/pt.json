@@ -883,8 +883,10 @@
       "preferredNameDescription": "Substitua o nome de exibição. Deixe em branco para usar o nome do seu perfil",
       "additionalContext": "Contexto Adicional",
       "additionalContextPlaceholder": "Ex.: Trabalho em operações de campo, prefiro respostas concisas, costumo perguntar sobre protocolos médicos...",
-      "additionalContextDescription": "Qualquer outra informação que você gostaria que a IA soubesse sobre você"
-    }
+      "additionalContextDescription": "Qualquer outra informação que você gostaria que a IA soubesse sobre você",
+      "preferredNameDescriptionWithSync": "Como a IA irá se dirigir a você. Deixe em branco para usar o nome exibido nas Configurações Gerais."
+    },
+    "displayNameUIOnly": "Isso controla como seu nome aparece no aplicativo. A IA não vê esta informação, a menos que você ative o compartilhamento nas Configurações de Chat."
   },
   "notFound": {
     "lostDog": "Cão perdido"

@@ -880,8 +880,10 @@
       "preferredNameDescription": "Zastąp nazwę wyświetlaną. Pozostaw puste, aby użyć nazwy z profilu",
       "additionalContext": "Dodatkowy kontekst",
       "additionalContextPlaceholder": "Np. pracuję w terenie, preferuję zwięzłe odpowiedzi, często pytam o protokoły medyczne...",
-      "additionalContextDescription": "Każda inna informacja, którą chciał(a)byś, aby AI o Tobie wiedziała"
-    }
+      "additionalContextDescription": "Każda inna informacja, którą chciał(a)byś, aby AI o Tobie wiedziała",
+      "preferredNameDescriptionWithSync": "Jak AI będzie się do Ciebie zwracać. Pozostaw puste, aby użyć imienia wyświetlanego w Ustawieniach ogólnych."
+    },
+    "displayNameUIOnly": "To ustawienie kontroluje, jak Twoje imię będzie wyświetlane w aplikacji. AI nie widzi tej informacji, chyba że włączysz udostępnianie w Ustawieniach czatu."
   },
   "notFound": {
     "lostDog": "Zagubiony pies"

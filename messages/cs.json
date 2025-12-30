@@ -883,8 +883,10 @@
       "preferredNameDescription": "Přepište své zobrazované jméno. Nechte prázdné, pokud chcete použít jméno z profilu",
       "additionalContext": "Další kontext",
       "additionalContextPlaceholder": "Např. pracuji v terénních operacích, preferuji stručné odpovědi, často se ptám na lékařské protokoly...",
-      "additionalContextDescription": "Jakékoli další informace, které chcete, aby AI o vás věděla"
-    }
+      "additionalContextDescription": "Jakékoli další informace, které chcete, aby AI o vás věděla",
+      "preferredNameDescriptionWithSync": "Jak vás bude AI oslovovat. Pokud necháte prázdné, použije se vaše zobrazované jméno z obecných nastavení."
+    },
+    "displayNameUIOnly": "Toto určuje, jak se vaše jméno zobrazuje v aplikaci. AI ho neuvidí, pokud v nastavení chatu nepovolíte sdílení."
   },
   "notFound": {
     "lostDog": "Ztracený pes"

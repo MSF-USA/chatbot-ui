@@ -881,8 +881,10 @@
       "preferredNameDescription": "Suprascrie numele afișat. Lasă necompletat pentru a folosi numele din profil",
       "additionalContext": "Context suplimentar",
       "additionalContextPlaceholder": "Ex.: Lucrez în operațiuni de teren, prefer răspunsuri concise, întreb des despre protocoale medicale...",
-      "additionalContextDescription": "Orice altă informație pe care ai dori ca AI-ul să o știe despre tine"
-    }
+      "additionalContextDescription": "Orice altă informație pe care ai dori ca AI-ul să o știe despre tine",
+      "preferredNameDescriptionWithSync": "Cum vă va adresa AI-ul. Lăsați necompletat pentru a folosi numele afișat din Setările generale."
+    },
+    "displayNameUIOnly": "Aceasta controlează modul în care apare numele dumneavoastră în aplicație. AI-ul nu îl vede decât dacă activați partajarea în Setările chatului."
   },
   "notFound": {
     "lostDog": "Câine pierdut"

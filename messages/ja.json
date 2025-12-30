@@ -883,8 +883,10 @@
       "preferredNameDescription": "表示名を上書きします。未入力の場合はプロフィールの名前が使用されます",
       "additionalContext": "追加情報",
       "additionalContextPlaceholder": "例：フィールドオペレーション担当、簡潔な回答を希望、医療プロトコルについてよく質問します...",
-      "additionalContextDescription": "AIに知っておいてほしいその他の情報"
-    }
+      "additionalContextDescription": "AIに知っておいてほしいその他の情報",
+      "preferredNameDescriptionWithSync": "AIがあなたをどのように呼ぶかを設定します。未入力の場合は、一般設定の表示名が使われます。"
+    },
+    "displayNameUIOnly": "これはアプリ上でのあなたの名前の表示方法を設定します。AIは、チャット設定で共有を有効にしない限り、この情報を見ることはありません。"
   },
   "notFound": {
     "lostDog": "迷子の犬"

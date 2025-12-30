@@ -858,8 +858,10 @@
       "preferredNameDescription": "Substitueix el nom que es mostra. Deixa-ho en blanc per utilitzar el nom del perfil",
       "additionalContext": "Context addicional",
       "additionalContextPlaceholder": "Per exemple, treballo en operacions de camp, prefereixo respostes concises, sovint pregunto sobre protocols mèdics...",
-      "additionalContextDescription": "Qualsevol altra informació que vulguis que la IA sàpiga sobre tu"
-    }
+      "additionalContextDescription": "Qualsevol altra informació que vulguis que la IA sàpiga sobre tu",
+      "preferredNameDescriptionWithSync": "Com s'adreçarà la IA a tu. Deixa-ho en blanc per utilitzar el nom visible de la configuració general."
+    },
+    "displayNameUIOnly": "Això controla com apareix el teu nom a l'aplicació. La IA no el veurà tret que activis el compartir a la configuració del xat."
   },
   "notFound": {
     "lostDog": "Gos perdut"

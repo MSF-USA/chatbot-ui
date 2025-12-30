@@ -883,8 +883,10 @@
       "preferredNameDescription": "覆盖您的显示名称。若留空，则使用您的个人资料名称",
       "additionalContext": "补充说明",
       "additionalContextPlaceholder": "如：我在外勤工作，喜欢简明回复，经常咨询医疗规范...",
-      "additionalContextDescription": "您希望 AI 了解的其他信息"
-    }
+      "additionalContextDescription": "您希望 AI 了解的其他信息",
+      "preferredNameDescriptionWithSync": "AI 称呼您的方式。若留空，将使用通用设置中的显示姓名。"
+    },
+    "displayNameUIOnly": "此项用于控制您的姓名在应用中的显示方式。除非您在聊天设置中启用共享，否则 AI 不会看到此信息。"
   },
   "notFound": {
     "lostDog": "迷路的狗"

@@ -883,8 +883,10 @@
       "preferredNameDescription": "Ersätt ditt visningsnamn. Lämna tomt för att använda profilnamnet",
       "additionalContext": "Ytterligare kontext",
       "additionalContextPlaceholder": "T.ex. Jag arbetar inom fältverksamhet, föredrar kortfattade svar, frågar ofta om medicinska protokoll...",
-      "additionalContextDescription": "Annan information du vill att AI:n ska känna till om dig"
-    }
+      "additionalContextDescription": "Annan information du vill att AI:n ska känna till om dig",
+      "preferredNameDescriptionWithSync": "Hur AI:n kommer att tilltala dig. Lämna tomt för att använda ditt visningsnamn från Allmänna inställningar."
+    },
+    "displayNameUIOnly": "Detta styr hur ditt namn visas i appen. AI:n ser inte detta om du inte aktiverar delning i chattinställningarna."
   },
   "notFound": {
     "lostDog": "Förlorad hund"

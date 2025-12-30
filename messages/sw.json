@@ -883,8 +883,10 @@
       "preferredNameDescription": "Badilisha jina linaloonekana. Acha wazi kutumia jina la wasifu wako",
       "additionalContext": "Maelezo ya Ziada",
       "additionalContextPlaceholder": "Mfano, nafanya kazi kwenye operesheni za mashambani, napendelea majibu mafupi, mara nyingi nauliza kuhusu taratibu za matibabu...",
-      "additionalContextDescription": "Taarifa nyingine yoyote ungependa AI ijue kukuhusu"
-    }
+      "additionalContextDescription": "Taarifa nyingine yoyote ungependa AI ijue kukuhusu",
+      "preferredNameDescriptionWithSync": "Jinsi AI itakavyokuita. Acha wazi ili kutumia jina lako la kuonyeshwa kutoka Mipangilio ya Jumla."
+    },
+    "displayNameUIOnly": "Hii inadhibiti jinsi jina lako linaonekana kwenye programu. AI haiwezi kuona hili isipokuwa kama umewezeshwa kushiriki kwenye Mipangilio ya Gumzo."
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

@@ -848,8 +848,10 @@
       "preferredNameDescription": "Overschrijf uw weergavenaam. Laat leeg om uw profielnaam te gebruiken",
       "additionalContext": "Aanvullende context",
       "additionalContextPlaceholder": "Bijv. Ik werk bij veldoperaties, geef de voorkeur aan beknopte antwoorden, vraag vaak naar medische protocollen...",
-      "additionalContextDescription": "Andere informatie die u wilt dat de AI over u weet"
-    }
+      "additionalContextDescription": "Andere informatie die u wilt dat de AI over u weet",
+      "preferredNameDescriptionWithSync": "Hoe de AI u aanspreekt. Laat leeg om uw weergavenaam uit de algemene instellingen te gebruiken."
+    },
+    "displayNameUIOnly": "Hiermee bepaalt u hoe uw naam in de app wordt weergegeven. De AI ziet dit niet, tenzij u delen inschakelt in Chatinstellingen."
   },
   "notFound": {
     "lostDog": "Verloren hond"
