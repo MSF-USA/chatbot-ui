@@ -19,6 +19,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
   );
   const t = useTranslations();
   const [hasMicrophone, setHasMicrophone] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
