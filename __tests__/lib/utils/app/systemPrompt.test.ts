@@ -1,11 +1,13 @@
 import {
   BASE_SYSTEM_PROMPT,
   DEFAULT_USER_PROMPT,
+  SystemPromptOptions,
+  SystemPromptUserInfo,
   buildSystemPrompt,
   extractUserPrompt,
 } from '@/lib/utils/app/systemPrompt';
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('systemPrompt', () => {
   describe('constants', () => {
@@ -184,6 +186,179 @@ describe('systemPrompt', () => {
       const result2 = buildSystemPrompt(userPrompt);
 
       expect(result1).toBe(result2);
+    });
+  });
+
+  describe('dynamic context', () => {
+    const fixedDate = new Date('2024-12-30T14:30:00Z');
+
+    describe('date/time inclusion', () => {
+      it('should include current date/time in prompt', () => {
+        const result = buildSystemPrompt({ currentDateTime: fixedDate });
+
+        expect(result).toContain('# Dynamic Context');
+        expect(result).toContain('Current date and time:');
+        expect(result).toContain('Monday');
+        expect(result).toContain('December');
+        expect(result).toContain('30');
+        expect(result).toContain('2024');
+      });
+
+      it('should include date/time with string parameter (backward compat)', () => {
+        const result = buildSystemPrompt('Custom prompt');
+
+        expect(result).toContain('# Dynamic Context');
+        expect(result).toContain('Current date and time:');
+      });
+
+      it('should include date/time when called with no arguments', () => {
+        const result = buildSystemPrompt();
+
+        expect(result).toContain('# Dynamic Context');
+        expect(result).toContain('Current date and time:');
+      });
+
+      it('should use provided currentDateTime instead of current time', () => {
+        const specificDate = new Date('2025-06-15T09:00:00Z');
+        const result = buildSystemPrompt({ currentDateTime: specificDate });
+
+        expect(result).toContain('June');
+        expect(result).toContain('15');
+        expect(result).toContain('2025');
+      });
+    });
+
+    describe('user info inclusion', () => {
+      const userInfo: SystemPromptUserInfo = {
+        name: 'Jane Doe',
+        title: 'Field Coordinator',
+        email: 'jane.doe@msf.org',
+        department: 'Operations',
+      };
+
+      it('should include user info when provided', () => {
+        const result = buildSystemPrompt({
+          currentDateTime: fixedDate,
+          userInfo,
+        });
+
+        expect(result).toContain('## About the Current User');
+        expect(result).toContain('- Name: Jane Doe');
+        expect(result).toContain('- Title: Field Coordinator');
+        expect(result).toContain('- Email: jane.doe@msf.org');
+        expect(result).toContain('- Department: Operations');
+      });
+
+      it('should include only provided user info fields', () => {
+        const partialUserInfo: SystemPromptUserInfo = {
+          name: 'John Smith',
+          department: 'Medical',
+        };
+
+        const result = buildSystemPrompt({
+          currentDateTime: fixedDate,
+          userInfo: partialUserInfo,
+        });
+
+        expect(result).toContain('- Name: John Smith');
+        expect(result).toContain('- Department: Medical');
+        expect(result).not.toContain('- Title:');
+        expect(result).not.toContain('- Email:');
+      });
+
+      it('should not include user section when userInfo is undefined', () => {
+        const result = buildSystemPrompt({ currentDateTime: fixedDate });
+
+        expect(result).not.toContain('## About the Current User');
+        expect(result).not.toContain('- Name:');
+      });
+
+      it('should not include user section when all userInfo fields are undefined', () => {
+        const emptyUserInfo: SystemPromptUserInfo = {};
+
+        const result = buildSystemPrompt({
+          currentDateTime: fixedDate,
+          userInfo: emptyUserInfo,
+        });
+
+        expect(result).not.toContain('## About the Current User');
+      });
+    });
+
+    describe('options object support', () => {
+      it('should accept options object with userPrompt', () => {
+        const result = buildSystemPrompt({
+          userPrompt: 'Custom instructions',
+          currentDateTime: fixedDate,
+        });
+
+        expect(result).toContain('Custom instructions');
+        expect(result).toContain('# User Instructions');
+      });
+
+      it('should use DEFAULT_USER_PROMPT when options.userPrompt is empty', () => {
+        const result = buildSystemPrompt({
+          userPrompt: '',
+          currentDateTime: fixedDate,
+        });
+
+        expect(result).toContain(DEFAULT_USER_PROMPT);
+      });
+
+      it('should handle empty options object', () => {
+        const result = buildSystemPrompt({});
+
+        expect(result).toContain(BASE_SYSTEM_PROMPT);
+        expect(result).toContain('# Dynamic Context');
+        expect(result).toContain(DEFAULT_USER_PROMPT);
+      });
+    });
+
+    describe('backward compatibility', () => {
+      it('should work with string parameter (legacy usage)', () => {
+        const result = buildSystemPrompt('Legacy prompt');
+
+        expect(result).toContain(BASE_SYSTEM_PROMPT);
+        expect(result).toContain('Legacy prompt');
+        expect(result).toContain('# Dynamic Context');
+      });
+
+      it('should work with undefined parameter', () => {
+        const result = buildSystemPrompt(undefined);
+
+        expect(result).toContain(BASE_SYSTEM_PROMPT);
+        expect(result).toContain(DEFAULT_USER_PROMPT);
+      });
+
+      it('should maintain extractUserPrompt compatibility with new format', () => {
+        const options: SystemPromptOptions = {
+          userPrompt: 'Test prompt with options',
+          currentDateTime: fixedDate,
+          userInfo: { name: 'Test User' },
+        };
+
+        const combined = buildSystemPrompt(options);
+        const extracted = extractUserPrompt(combined);
+
+        expect(extracted).toBe('Test prompt with options');
+      });
+    });
+
+    describe('prompt structure', () => {
+      it('should have correct section order', () => {
+        const result = buildSystemPrompt({
+          userPrompt: 'Custom prompt',
+          currentDateTime: fixedDate,
+          userInfo: { name: 'Test' },
+        });
+
+        const baseIndex = result.indexOf('# Core Behavior');
+        const dynamicIndex = result.indexOf('# Dynamic Context');
+        const userIndex = result.indexOf('# User Instructions');
+
+        expect(baseIndex).toBeLessThan(dynamicIndex);
+        expect(dynamicIndex).toBeLessThan(userIndex);
+      });
     });
   });
 });
