@@ -24,6 +24,11 @@ export const getBase64FromImageURL = async (
   imageUrl: string,
   init?: RequestInit | undefined,
 ): Promise<string> => {
+  // If already a data URL (base64), return as-is
+  if (imageUrl.startsWith('data:')) {
+    return imageUrl;
+  }
+
   // Validate URL format
   let url: URL;
   try {
