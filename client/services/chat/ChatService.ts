@@ -67,6 +67,7 @@ export class ChatService {
       tone?: Tone;
       signal?: AbortSignal;
       streamingSpeed?: StreamingSpeedConfig;
+      includeUserInfoInPrompt?: boolean;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     return apiClient.postStream(
@@ -86,6 +87,7 @@ export class ChatService {
         isEditorOpen: options?.isEditorOpen,
         tone: options?.tone,
         streamingSpeed: options?.streamingSpeed,
+        includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
       },
       {
         signal: options?.signal,
@@ -114,6 +116,7 @@ export class ChatService {
       searchMode?: SearchMode;
       forcedAgentType?: string;
       tone?: Tone;
+      includeUserInfoInPrompt?: boolean;
     },
   ): Promise<{ text: string; metadata?: any }> {
     return apiClient.post('/api/chat', {
@@ -129,6 +132,7 @@ export class ChatService {
       searchMode: options?.searchMode,
       forcedAgentType: options?.forcedAgentType,
       tone: options?.tone,
+      includeUserInfoInPrompt: options?.includeUserInfoInPrompt,
     });
   }
 }
