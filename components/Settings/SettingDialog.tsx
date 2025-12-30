@@ -58,6 +58,9 @@ export function SettingDialog() {
       displayNamePreference: 'firstName',
       customDisplayName: '',
       streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false,
+      preferredName: '',
+      userContext: '',
     },
   });
 
