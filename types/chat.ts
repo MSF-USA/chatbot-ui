@@ -2,7 +2,7 @@ import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
-import { StreamingSpeedConfig } from './settings';
+import { DisplayNamePreference, StreamingSpeedConfig } from './settings';
 import { Tone } from './tone';
 
 export enum MessageType {
@@ -174,6 +174,8 @@ export interface ChatBody {
   includeUserInfoInPrompt?: boolean; // Include user name/title/dept in system prompt
   preferredName?: string; // User's preferred name (overrides profile displayName)
   userContext?: string; // Additional user context for the AI
+  displayNamePreference?: DisplayNamePreference; // For deriving name fallback
+  customDisplayName?: string; // Custom display name from General Settings
 }
 
 export interface Conversation {
