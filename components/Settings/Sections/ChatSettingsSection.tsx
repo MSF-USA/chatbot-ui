@@ -171,6 +171,111 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
           )}
         </div>
 
+        {/* About You Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsAboutYouExpanded(!isAboutYouExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconUser
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.aboutYou.title')}
+              </h3>
+            </div>
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isAboutYouExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {isAboutYouExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+              {/* Toggle: Include user info */}
+              <label className="flex items-center gap-3 mt-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-neutral-600 dark:accent-neutral-400"
+                  checked={state.includeUserInfoInPrompt || false}
+                  onChange={(e) =>
+                    dispatch({
+                      field: 'includeUserInfoInPrompt',
+                      value: e.target.checked,
+                    })
+                  }
+                />
+                <span className="text-sm text-black dark:text-neutral-200">
+                  {t('settings.aboutYou.shareBasicInfo')}
+                </span>
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-7">
+                {t('settings.aboutYou.shareBasicInfoDescription')}
+              </p>
+
+              {/* Conditional fields when enabled */}
+              {state.includeUserInfoInPrompt && (
+                <div className="mt-4 space-y-4 ml-7">
+                  {/* Preferred Name */}
+                  <div>
+                    <label className="text-sm font-medium text-black dark:text-neutral-200">
+                      {t('settings.aboutYou.preferredName')}
+                    </label>
+                    <input
+                      type="text"
+                      value={state.preferredName || ''}
+                      onChange={(e) =>
+                        dispatch({
+                          field: 'preferredName',
+                          value: e.target.value,
+                        })
+                      }
+                      placeholder={
+                        user?.displayName ||
+                        t('settings.aboutYou.preferredNamePlaceholder')
+                      }
+                      maxLength={100}
+                      className="mt-1 w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-2 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {t('settings.aboutYou.preferredNameDescription')}
+                    </p>
+                  </div>
+
+                  {/* Additional Context */}
+                  <div>
+                    <label className="text-sm font-medium text-black dark:text-neutral-200">
+                      {t('settings.aboutYou.additionalContext')}
+                    </label>
+                    <textarea
+                      value={state.userContext || ''}
+                      onChange={(e) =>
+                        dispatch({
+                          field: 'userContext',
+                          value: e.target.value,
+                        })
+                      }
+                      placeholder={t(
+                        'settings.aboutYou.additionalContextPlaceholder',
+                      )}
+                      maxLength={2000}
+                      rows={4}
+                      className="mt-1 w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-2 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100 resize-none"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {t('settings.aboutYou.additionalContextDescription')}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <hr className="border-gray-300 dark:border-neutral-700" />
         <span className="block text-[12px] text-black/50 dark:text-white/50">
           {t(
