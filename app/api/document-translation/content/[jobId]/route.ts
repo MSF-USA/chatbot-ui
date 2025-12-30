@@ -49,6 +49,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const searchParams = request.nextUrl.searchParams;
   const filename = searchParams.get('filename') || 'translated_document';
   const ext = searchParams.get('ext') || 'txt';
+  const isOriginal = searchParams.get('original') === 'true';
 
   try {
     // Initialize blob storage
@@ -66,8 +67,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       session.user,
     );
 
-    // Build blob path (must match user's translations folder)
-    const blobPath = `${session.user.id}/translations/${jobId}.${ext}`;
+    // Build blob path (original or translated)
+    const blobPath = isOriginal
+      ? `${session.user.id}/translations/${jobId}_original.${ext}`
+      : `${session.user.id}/translations/${jobId}.${ext}`;
 
     // Check if blob exists
     const exists = await blobStorage.blobExists(blobPath);
@@ -88,7 +91,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const contentType = getDocumentContentType(filename);
 
     console.log(
-      `[DocumentTranslation] Downloaded translation for job ${jobId}: ${blobPath} (${content.length} bytes)`,
+      `[DocumentTranslation] Downloaded ${isOriginal ? 'original' : 'translated'} file for job ${jobId}: ${blobPath} (${content.length} bytes)`,
     );
 
     // Return the file as a binary response (convert Buffer to Uint8Array for NextResponse compatibility)
