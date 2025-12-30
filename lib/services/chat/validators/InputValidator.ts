@@ -11,6 +11,30 @@ import { Tone } from '@/types/tone';
 import { z } from 'zod';
 
 /**
+ * Custom URL validator that accepts both HTTP(S) URLs and data: URLs.
+ * This is needed because:
+ * - Blob storage URLs are HTTP(S) and should be validated normally
+ * - Base64 data URLs (data:image/...) are valid for images in conversation history
+ *
+ * @param errorMessage - The error message to display on validation failure
+ */
+const urlOrDataUrl = (errorMessage: string) =>
+  z.string().refine(
+    (val) => {
+      // Accept data: URLs (base64 encoded images/files)
+      if (val.startsWith('data:')) return true;
+      // Otherwise, validate as standard URL
+      try {
+        new URL(val);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    { message: errorMessage },
+  );
+
+/**
  * Zod schema for message content blocks.
  * Uses a lenient schema to support various content formats.
  */
@@ -25,13 +49,13 @@ const MessageContentSchema = z.union([
       z.object({
         type: z.literal('image_url'),
         image_url: z.object({
-          url: z.string().url('Invalid image URL'),
+          url: urlOrDataUrl('Invalid image URL'),
           detail: z.enum(['auto', 'low', 'high']).optional(),
         }),
       }),
       z.object({
         type: z.literal('file_url'),
-        url: z.string().url('Invalid file URL'),
+        url: urlOrDataUrl('Invalid file URL'),
       }),
       z.object({
         type: z.literal('thinking'),
