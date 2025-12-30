@@ -142,6 +142,7 @@ const ChatBodySchema = z
     forcedAgentType: z.string().max(50, 'Agent type too long').optional(),
     tone: ToneSchema.optional(), // Full tone object from client
     streamingSpeed: StreamingSpeedSchema.optional(), // Smooth streaming speed configuration
+    includeUserInfoInPrompt: z.boolean().optional(), // Include user info in system prompt
   })
   .strict(); // Reject unknown properties
 
