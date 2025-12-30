@@ -242,9 +242,21 @@ export const createSystemPromptMiddleware = (
 
   // Add user info if enabled and user is available
   if (context.includeUserInfoInPrompt && context.user) {
+    // Compute effective name with fallback chain:
+    // 1. Chat Settings preferredName (explicit override)
+    // 2. General Settings derived name (displayNamePreference + customDisplayName)
+    // 3. Profile displayName (fallback)
+    const effectiveName =
+      context.preferredName ||
+      getUserDisplayName(
+        context.user,
+        context.displayNamePreference,
+        context.customDisplayName,
+      ) ||
+      context.user.displayName;
+
     options.userInfo = {
-      // Use preferredName if provided, otherwise fall back to profile displayName
-      name: context.preferredName || context.user.displayName,
+      name: effectiveName,
       title: context.user.jobTitle,
       email: context.user.mail,
       department: context.user.department,
