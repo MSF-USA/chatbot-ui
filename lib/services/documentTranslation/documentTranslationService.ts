@@ -1,0 +1,192 @@
+/**
+ * Azure Document Translation Service
+ *
+ * Provides synchronous document translation using Azure Cognitive Services
+ * Translator Document Translation API.
+ *
+ * Supports Word, Excel, PowerPoint, PDF, HTML, and other document formats.
+ * @see https://learn.microsoft.com/en-us/azure/ai-services/translator/document-translation/overview
+ */
+import {
+  DocumentTranslationOptions,
+  getDocumentContentType,
+  getGlossaryContentType,
+} from '@/types/documentTranslation';
+
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+
+/** Azure Translator API version for document translation */
+const API_VERSION = '2024-05-01';
+
+/**
+ * Service for translating documents using Azure Document Translation API.
+ * Uses synchronous single-file translation for optimal user experience.
+ */
+export class DocumentTranslationService {
+  private endpoint: string;
+  private tokenProvider: () => Promise<string>;
+
+  /**
+   * Creates a new DocumentTranslationService instance.
+   *
+   * @throws Error if AZURE_TRANSLATOR_ENDPOINT environment variable is not set
+   */
+  constructor() {
+    const endpoint = process.env.AZURE_TRANSLATOR_ENDPOINT;
+    if (!endpoint) {
+      throw new Error(
+        'AZURE_TRANSLATOR_ENDPOINT environment variable is not configured. ' +
+          'Set it to your Azure Translator resource endpoint (e.g., https://your-translator.cognitiveservices.azure.com)',
+      );
+    }
+    this.endpoint = endpoint.replace(/\/$/, ''); // Remove trailing slash if present
+
+    // Use DefaultAzureCredential for managed identity / local dev auth
+    const credential = new DefaultAzureCredential();
+    const scope = 'https://cognitiveservices.azure.com/.default';
+    this.tokenProvider = getBearerTokenProvider(credential, scope);
+  }
+
+  /**
+   * Translates a document using Azure Document Translation API (synchronous).
+   *
+   * @param documentBuffer - Binary content of the document to translate
+   * @param filename - Original filename (used for content-type detection)
+   * @param options - Translation options including target language
+   * @param glossaryBuffer - Optional glossary file content
+   * @param glossaryFilename - Optional glossary filename (for content-type detection)
+   * @returns Promise resolving to the translated document as a Buffer
+   * @throws Error if translation fails
+   */
+  async translateDocument(
+    documentBuffer: Buffer,
+    filename: string,
+    options: DocumentTranslationOptions,
+    glossaryBuffer?: Buffer,
+    glossaryFilename?: string,
+  ): Promise<Buffer> {
+    const token = await this.tokenProvider();
+
+    // Build request URL with query parameters
+    const url = new URL(`${this.endpoint}/translator/document:translate`);
+    url.searchParams.set('api-version', API_VERSION);
+    url.searchParams.set('targetLanguage', options.targetLanguage);
+
+    if (options.sourceLanguage) {
+      url.searchParams.set('sourceLanguage', options.sourceLanguage);
+    }
+
+    if (options.category) {
+      url.searchParams.set('category', options.category);
+    }
+
+    // Prepare multipart form data
+    const formData = new FormData();
+
+    // Add the document
+    const documentContentType = getDocumentContentType(filename);
+    const documentBlob = new Blob([documentBuffer], {
+      type: documentContentType,
+    });
+    formData.append('document', documentBlob, filename);
+
+    // Add glossary if provided
+    if (glossaryBuffer && glossaryFilename) {
+      const glossaryContentType = getGlossaryContentType(glossaryFilename);
+      const glossaryBlob = new Blob([glossaryBuffer], {
+        type: glossaryContentType,
+      });
+      formData.append('glossary', glossaryBlob, glossaryFilename);
+    }
+
+    console.log(
+      `[DocumentTranslation] Translating ${filename} to ${options.targetLanguage}`,
+      {
+        documentSize: documentBuffer.length,
+        hasGlossary: !!glossaryBuffer,
+        sourceLanguage: options.sourceLanguage || 'auto-detect',
+      },
+    );
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // Note: Content-Type is automatically set by FormData
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      let errorMessage = `Document translation failed: HTTP ${response.status}`;
+
+      try {
+        const errorJson = JSON.parse(errorBody);
+        if (errorJson.error?.message) {
+          errorMessage = errorJson.error.message;
+        } else if (errorJson.message) {
+          errorMessage = errorJson.message;
+        }
+      } catch {
+        // If parsing fails, use the raw error body if available
+        if (errorBody) {
+          errorMessage = `${errorMessage} - ${errorBody.substring(0, 500)}`;
+        }
+      }
+
+      console.error('[DocumentTranslation] Translation failed:', {
+        status: response.status,
+        error: errorMessage,
+        filename,
+        targetLanguage: options.targetLanguage,
+      });
+
+      throw new Error(errorMessage);
+    }
+
+    // Response is the translated document as binary stream
+    const arrayBuffer = await response.arrayBuffer();
+    const translatedBuffer = Buffer.from(arrayBuffer);
+
+    console.log('[DocumentTranslation] Translation successful:', {
+      originalSize: documentBuffer.length,
+      translatedSize: translatedBuffer.length,
+      filename,
+      targetLanguage: options.targetLanguage,
+    });
+
+    return translatedBuffer;
+  }
+
+  /**
+   * Checks if the service is properly configured.
+   *
+   * @returns True if the endpoint is configured
+   */
+  isConfigured(): boolean {
+    return !!this.endpoint;
+  }
+
+  /**
+   * Gets the configured endpoint (for debugging/logging).
+   *
+   * @returns The Azure Translator endpoint URL
+   */
+  getEndpoint(): string {
+    return this.endpoint;
+  }
+}
+
+/**
+ * Creates a new DocumentTranslationService instance.
+ * Factory function for consistent service instantiation.
+ *
+ * @returns A new DocumentTranslationService instance
+ */
+export function createDocumentTranslationService(): DocumentTranslationService {
+  return new DocumentTranslationService();
+}
