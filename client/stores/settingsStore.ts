@@ -133,6 +133,8 @@ export const useSettingsStore = create<SettingsStore>()(
       customAgents: [],
       streamingSpeed: DEFAULT_STREAMING_SPEED,
       includeUserInfoInPrompt: false, // Default off for privacy
+      preferredName: '',
+      userContext: '',
 
       // Model ordering initial state
       modelOrderMode: 'usage',
@@ -163,6 +165,10 @@ export const useSettingsStore = create<SettingsStore>()(
 
       setIncludeUserInfoInPrompt: (enabled) =>
         set({ includeUserInfoInPrompt: enabled }),
+
+      setPreferredName: (name) => set({ preferredName: name }),
+
+      setUserContext: (context) => set({ userContext: context }),
 
       setModels: (models) => set({ models }),
 
@@ -282,6 +288,8 @@ export const useSettingsStore = create<SettingsStore>()(
           customAgents: [],
           streamingSpeed: DEFAULT_STREAMING_SPEED,
           includeUserInfoInPrompt: false,
+          preferredName: '',
+          userContext: '',
           modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
@@ -290,7 +298,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 8, // Increment this when schema changes to trigger migrations
+      version: 9, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -305,6 +313,8 @@ export const useSettingsStore = create<SettingsStore>()(
         customAgents: state.customAgents,
         streamingSpeed: state.streamingSpeed,
         includeUserInfoInPrompt: state.includeUserInfoInPrompt,
+        preferredName: state.preferredName,
+        userContext: state.userContext,
         modelOrderMode: state.modelOrderMode,
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
@@ -331,6 +341,12 @@ export const useSettingsStore = create<SettingsStore>()(
         // Version 7 → 8: Add includeUserInfoInPrompt (default: false for privacy)
         if (version < 8 && state.includeUserInfoInPrompt === undefined) {
           state.includeUserInfoInPrompt = false;
+        }
+
+        // Version 8 → 9: Add preferredName and userContext
+        if (version < 9) {
+          if (state.preferredName === undefined) state.preferredName = '';
+          if (state.userContext === undefined) state.userContext = '';
         }
 
         return state;
