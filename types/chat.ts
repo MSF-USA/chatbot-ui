@@ -171,6 +171,7 @@ export interface ChatBody {
   isEditorOpen?: boolean; // Indicates if code editor is currently open
   tone?: Tone; // Full tone object (if tone is selected)
   streamingSpeed?: StreamingSpeedConfig; // Smooth streaming speed configuration
+  includeUserInfoInPrompt?: boolean; // Include user name/title/dept in system prompt
 }
 
 export interface Conversation {
