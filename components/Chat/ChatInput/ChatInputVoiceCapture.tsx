@@ -72,8 +72,9 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start(100); // Capture data every 100ms to prevent audio cutoff
 
-      // Empty the chunks
+      // Empty the chunks and reset transcription index
       audioChunksRef.current = [];
+      lastTranscribedChunkIndexRef.current = 0;
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -128,8 +129,24 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
               silenceStartTimeRef.current = Date.now();
             } else {
               const silentDuration = Date.now() - silenceStartTimeRef.current;
+
+              // Trigger transcription on shorter silence (while continuing to record)
+              if (
+                silentDuration > TRANSCRIBE_SILENCE_DURATION &&
+                !isTranscribingSegment
+              ) {
+                const hasUntranscribedChunks =
+                  audioChunksRef.current.length >
+                  lastTranscribedChunkIndexRef.current;
+
+                if (hasUntranscribedChunks) {
+                  transcribeSegment();
+                  silenceStartTimeRef.current = Date.now(); // Reset timer after triggering
+                }
+              }
+
+              // Stop recording on longer silence
               if (silentDuration > MAX_SILENT_DURATION) {
-                // Stop recording due to silence
                 stopRecording();
               }
             }
