@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "العودة إلى النماذج",
-      "knowledgeCutoff": "تاريخ قطع المعرفة: {cutoff}"
+      "knowledgeCutoff": "تاريخ قطع المعرفة: {cutoff}",
+      "knowledgeCutoffLabel": "حدود المعرفة"
     },
     "modelTypes": {
       "foundational": "أساسي",

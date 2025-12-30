@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Tillbaka till modeller",
-      "knowledgeCutoff": "Kunskapsavstängning: {cutoff}"
+      "knowledgeCutoff": "Kunskapsavstängning: {cutoff}",
+      "knowledgeCutoffLabel": "Kunskapsgräns"
     },
     "modelTypes": {
       "foundational": "Grundläggande",

@@ -1010,7 +1010,8 @@
     },
     "header": {
       "backToModels": "Terug naar modellen",
-      "knowledgeCutoff": "Kennisgrens"
+      "knowledgeCutoff": "Kennisgrens",
+      "knowledgeCutoffLabel": "Kennisgrens"
     },
     "modelTypes": {
       "foundational": "Basis",

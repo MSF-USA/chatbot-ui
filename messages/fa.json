@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "بازگشت به مدل‌ها",
-      "knowledgeCutoff": "حذف دانش: {cutoff}"
+      "knowledgeCutoff": "حذف دانش: {cutoff}",
+      "knowledgeCutoffLabel": "بازه دانشی"
     },
     "modelTypes": {
       "foundational": "پایه‌ای",

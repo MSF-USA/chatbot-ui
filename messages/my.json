@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "မော်ဒယ်များသို့ ပြန်သွားရန်",
-      "knowledgeCutoff": "Knowledge cutoff: {cutoff}"
+      "knowledgeCutoff": "Knowledge cutoff: {cutoff}",
+      "knowledgeCutoffLabel": "အသိပညာကန့်သတ်ချိန်"
     },
     "modelTypes": {
       "foundational": "အခြေခံ",

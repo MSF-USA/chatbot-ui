@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Modellere geri dön",
-      "knowledgeCutoff": "Bilgi kesme tarihi: {cutoff}"
+      "knowledgeCutoff": "Bilgi kesme tarihi: {cutoff}",
+      "knowledgeCutoffLabel": "Bilgi sınırı"
     },
     "modelTypes": {
       "foundational": "Temel",

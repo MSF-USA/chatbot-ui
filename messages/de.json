@@ -966,7 +966,8 @@
     },
     "header": {
       "backToModels": "Zurück zu Modellen",
-      "knowledgeCutoff": "Wissensstichtag: {cutoff}"
+      "knowledgeCutoff": "Wissensstichtag: {cutoff}",
+      "knowledgeCutoffLabel": "Wissensstand"
     },
     "modelTypes": {
       "foundational": "Grundlegend",

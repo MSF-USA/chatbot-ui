@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Повернутися до моделей",
-      "knowledgeCutoff": "Актуальність знань: {cutoff}"
+      "knowledgeCutoff": "Актуальність знань: {cutoff}",
+      "knowledgeCutoffLabel": "Дата останнього оновлення знань"
     },
     "modelTypes": {
       "foundational": "базова",

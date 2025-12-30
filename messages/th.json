@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "กลับไปยังโมเดล",
-      "knowledgeCutoff": "ขีดจำกัดความรู้: {cutoff}"
+      "knowledgeCutoff": "ขีดจำกัดความรู้: {cutoff}",
+      "knowledgeCutoffLabel": "ขอบเขตความรู้ล่าสุด"
     },
     "modelTypes": {
       "foundational": "พื้นฐาน",

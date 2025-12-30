@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "মডেলে ফিরে যান",
-      "knowledgeCutoff": "জ্ঞান কাটঅফ: {cutoff}"
+      "knowledgeCutoff": "জ্ঞান কাটঅফ: {cutoff}",
+      "knowledgeCutoffLabel": "জ্ঞানসীমা"
     },
     "modelTypes": {
       "foundational": "মৌলিক",

@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "మోడల్స్‌కు తిరిగి వెళ్ళండి",
-      "knowledgeCutoff": "జ్ఞాన పరిమితి: {cutoff}"
+      "knowledgeCutoff": "జ్ఞాన పరిమితి: {cutoff}",
+      "knowledgeCutoffLabel": "జ్ఞానం ముగిసిన తేదీ"
     },
     "modelTypes": {
       "foundational": "ఫౌండేషన్‌ల్",

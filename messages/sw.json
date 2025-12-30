@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Rudi kwa Modeli",
-      "knowledgeCutoff": "Kipimo cha maarifa: {cutoff}"
+      "knowledgeCutoff": "Kipimo cha maarifa: {cutoff}",
+      "knowledgeCutoffLabel": "Muda wa mwisho wa maarifa"
     },
     "modelTypes": {
       "foundational": "msingi",

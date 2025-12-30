@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "ආපසු මාදිලිවලට",
-      "knowledgeCutoff": "දැනුම් සීමාව: {cutoff}"
+      "knowledgeCutoff": "දැනුම් සීමාව: {cutoff}",
+      "knowledgeCutoffLabel": "දැනුම් සීමාව"
     },
     "modelTypes": {
       "foundational": "ප්‍රාථමික",

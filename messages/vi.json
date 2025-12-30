@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Quay lại danh sách mô hình",
-      "knowledgeCutoff": "Giới hạn kiến thức: {cutoff}"
+      "knowledgeCutoff": "Giới hạn kiến thức: {cutoff}",
+      "knowledgeCutoffLabel": "Giới hạn kiến thức"
     },
     "modelTypes": {
       "foundational": "nền tảng",

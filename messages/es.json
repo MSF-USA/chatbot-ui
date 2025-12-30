@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Volver a Modelos",
-      "knowledgeCutoff": "Corte de conocimiento: {cutoff}"
+      "knowledgeCutoff": "Corte de conocimiento: {cutoff}",
+      "knowledgeCutoffLabel": "Límite de conocimiento"
     },
     "modelTypes": {
       "foundational": "fundamental",

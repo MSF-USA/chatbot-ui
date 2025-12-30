@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Înapoi la modele",
-      "knowledgeCutoff": "Limită de cunoștințe: {cutoff}"
+      "knowledgeCutoff": "Limită de cunoștințe: {cutoff}",
+      "knowledgeCutoffLabel": "Dată limită a cunoștințelor"
     },
     "modelTypes": {
       "foundational": "fundamental",

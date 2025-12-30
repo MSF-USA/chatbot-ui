@@ -1032,7 +1032,8 @@
     },
     "header": {
       "backToModels": "ماڈلز پر واپس جائیں",
-      "knowledgeCutoff": "علم کی حد"
+      "knowledgeCutoff": "علم کی حد",
+      "knowledgeCutoffLabel": "علم کی حد"
     },
     "modelTypes": {
       "foundational": "بنیادی",

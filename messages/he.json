@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "חזרה לדגמים",
-      "knowledgeCutoff": "חיתוך ידע: {cutoff}"
+      "knowledgeCutoff": "חיתוך ידע: {cutoff}",
+      "knowledgeCutoffLabel": "תאריך עדכון הידע"
     },
     "modelTypes": {
       "foundational": "בסיסי",

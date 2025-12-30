@@ -1024,7 +1024,8 @@
     },
     "header": {
       "backToModels": "Kembali ke Model",
-      "knowledgeCutoff": "Batas Pengetahuan"
+      "knowledgeCutoff": "Batas Pengetahuan",
+      "knowledgeCutoffLabel": "Batas pengetahuan"
     },
     "modelTypes": {
       "foundational": "Fundamental",

@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Назад к моделям",
-      "knowledgeCutoff": "Дата отсечения знаний: {cutoff}"
+      "knowledgeCutoff": "Дата отсечения знаний: {cutoff}",
+      "knowledgeCutoffLabel": "Срез знаний"
     },
     "modelTypes": {
       "foundational": "базовая",

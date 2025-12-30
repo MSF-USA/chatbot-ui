@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "モデルに戻る",
-      "knowledgeCutoff": "知識カットオフ：{cutoff}"
+      "knowledgeCutoff": "知識カットオフ：{cutoff}",
+      "knowledgeCutoffLabel": "知識のカットオフ"
     },
     "modelTypes": {
       "foundational": "基盤",

@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Takaisin malleihin",
-      "knowledgeCutoff": "Tietopäivityksen ajankohta: {cutoff}"
+      "knowledgeCutoff": "Tietopäivityksen ajankohta: {cutoff}",
+      "knowledgeCutoffLabel": "Tietopäättymisajankohta"
     },
     "modelTypes": {
       "foundational": "perus",

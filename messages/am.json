@@ -966,7 +966,8 @@
     },
     "header": {
       "backToModels": "ወደ ሞዴሎች ተመለስ",
-      "knowledgeCutoff": "የእውቀት ማቋረጫ: {cutoff}"
+      "knowledgeCutoff": "የእውቀት ማቋረጫ: {cutoff}",
+      "knowledgeCutoffLabel": "የእውቀት ግድብ"
     },
     "modelTypes": {
       "foundational": "መሰረታዊ",

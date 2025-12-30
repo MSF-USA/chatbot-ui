@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "मॉडलों पर वापस जाएं",
-      "knowledgeCutoff": "ज्ञान कटऑफ: {cutoff}"
+      "knowledgeCutoff": "ज्ञान कटऑफ: {cutoff}",
+      "knowledgeCutoffLabel": "ज्ञान सीमा"
     },
     "modelTypes": {
       "foundational": "मूलभूत",

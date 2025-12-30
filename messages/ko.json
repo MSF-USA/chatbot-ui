@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "모델로 돌아가기",
-      "knowledgeCutoff": "지식 기준일: {cutoff}"
+      "knowledgeCutoff": "지식 기준일: {cutoff}",
+      "knowledgeCutoffLabel": "지식 기준일"
     },
     "modelTypes": {
       "foundational": "기본",

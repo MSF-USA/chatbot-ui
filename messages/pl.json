@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Powrót do modeli",
-      "knowledgeCutoff": "Zakres wiedzy: {cutoff}"
+      "knowledgeCutoff": "Zakres wiedzy: {cutoff}",
+      "knowledgeCutoffLabel": "Data ograniczenia wiedzy"
     },
     "modelTypes": {
       "foundational": "podstawowy",

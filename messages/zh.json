@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "返回模型",
-      "knowledgeCutoff": "知识截止日期：{cutoff}"
+      "knowledgeCutoff": "知识截止日期：{cutoff}",
+      "knowledgeCutoffLabel": "知识截止日期"
     },
     "modelTypes": {
       "foundational": "基础型",

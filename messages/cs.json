@@ -969,7 +969,8 @@
     },
     "header": {
       "backToModels": "Zpět na modely",
-      "knowledgeCutoff": "Uzávěrka znalostí: {cutoff}"
+      "knowledgeCutoff": "Uzávěrka znalostí: {cutoff}",
+      "knowledgeCutoffLabel": "Datum omezení znalostí"
     },
     "modelTypes": {
       "foundational": "základní",

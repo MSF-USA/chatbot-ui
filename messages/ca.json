@@ -1052,7 +1052,8 @@
     },
     "header": {
       "backToModels": "Torna als models",
-      "knowledgeCutoff": "Límit de coneixement: {cutoff}"
+      "knowledgeCutoff": "Límit de coneixement: {cutoff}",
+      "knowledgeCutoffLabel": "Límit de coneixement"
     },
     "modelTypes": {
       "foundational": "fonamental",
