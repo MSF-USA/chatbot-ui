@@ -119,6 +119,9 @@ export interface DocumentTranslationReference {
   /** Original filename before translation */
   originalFilename: string;
 
+  /** URL to download the original uploaded file */
+  originalFileUrl: string;
+
   /** Translated document filename */
   translatedFilename: string;
 
