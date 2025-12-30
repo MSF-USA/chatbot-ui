@@ -1,3 +1,5 @@
+import { convertImagesToBase64 } from '@/lib/utils/server/image/blobToBase64';
+
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 
@@ -5,15 +7,15 @@ import { BasePipelineStage } from '../pipeline/PipelineStage';
  * ImageProcessor handles image content in the pipeline.
  *
  * Responsibilities:
- * - Validates that images are accessible
- * - Extracts image URLs for later use
- * - NO processing needed (OpenAI supports images natively)
+ * - Extracts image URLs from messages
+ * - Converts Azure Blob Storage URLs to base64 data URLs for LLM consumption
+ * - Stores converted images in context for downstream handlers
  *
  * Modifies context:
- * - context.processedContent.images
+ * - context.processedContent.images (with base64 data URLs)
  *
- * Note: Images are handled natively by OpenAI's vision models.
- * This processor just ensures they're extracted and validated.
+ * Note: LLMs cannot access private Azure blob URLs, so images must be
+ * converted to base64 data URLs before being sent to the API.
  */
 export class ImageProcessor extends BasePipelineStage {
   readonly name = 'ImageProcessor';
@@ -45,15 +47,19 @@ export class ImageProcessor extends BasePipelineStage {
 
     console.log(`[ImageProcessor] Found ${images.length} image(s)`);
 
-    // Note: Image URL validation is not performed here.
-    // OpenAI's API will handle invalid URLs gracefully with error responses.
-    // Future enhancement: Pre-validate URLs to fail fast, but not required.
+    // Convert blob storage URLs to base64 data URLs for LLM consumption
+    // LLMs cannot access private Azure blob URLs directly
+    const convertedImages = await convertImagesToBase64(images, context.user);
+
+    console.log(
+      `[ImageProcessor] Converted ${convertedImages.length} image(s) to base64`,
+    );
 
     return {
       ...context,
       processedContent: {
         ...context.processedContent,
-        images: images.length > 0 ? images : undefined,
+        images: convertedImages.length > 0 ? convertedImages : undefined,
       },
     };
   }
