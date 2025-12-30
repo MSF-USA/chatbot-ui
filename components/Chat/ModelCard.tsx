@@ -97,15 +97,17 @@ export const ModelCard: FC<ModelCardProps> = ({
       >
         <div className="flex items-center gap-2">
           {icon}
-          {typeIcon}
           <span className="font-medium text-sm text-gray-900 dark:text-white">
             {name}
           </span>
           {badge}
         </div>
-        {isSelected && (
-          <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
-        )}
+        <div className="flex items-center gap-2">
+          {typeIcon}
+          {isSelected && (
+            <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
+          )}
+        </div>
       </button>
     </div>
   );
