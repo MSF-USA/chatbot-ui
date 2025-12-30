@@ -1,4 +1,4 @@
-import { IconChevronLeft } from '@tabler/icons-react';
+import { IconCalendar, IconChevronLeft } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
 import { useLocale, useTranslations } from 'next-intl';
@@ -7,6 +7,8 @@ import { modelIdToLocaleKey } from '@/lib/utils/app/locales';
 import { formatKnowledgeCutoff } from '@/lib/utils/shared/formatKnowledgeCutoff';
 
 import { OpenAIModel } from '@/types/openai';
+
+import { Tooltip } from '@/components/UI/Tooltip';
 
 import { ModelProviderIcon } from './ModelProviderIcon';
 import { ModelTypeIcon } from './ModelTypeIcon';
@@ -92,11 +94,12 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
           {localizedModelType}
         </span>
         {knowledgeCutoffDisplay && (
-          <span className="text-xs text-gray-600 dark:text-gray-400">
-            {t('modelSelect.header.knowledgeCutoff', {
-              cutoff: knowledgeCutoffDisplay,
-            })}
-          </span>
+          <Tooltip content={t('modelSelect.header.knowledgeCutoffLabel')}>
+            <span className="inline-flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400 cursor-help">
+              <IconCalendar size={14} />
+              {knowledgeCutoffDisplay}
+            </span>
+          </Tooltip>
         )}
       </div>
     </div>
