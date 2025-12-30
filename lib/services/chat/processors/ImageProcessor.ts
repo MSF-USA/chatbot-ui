@@ -1,14 +1,28 @@
-import { convertImagesToBase64 } from '@/lib/utils/server/image/blobToBase64';
+import { getBlobBase64String } from '@/lib/utils/server/blob/blob';
 
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
+
+/**
+ * Extracts the filename from various URL formats.
+ * Supports both old blob URLs and new `/api/file/{id}` format.
+ *
+ * @param url - The image URL (blob URL, /api/file/id, or data URL)
+ * @returns The filename/id portion, or the full URL if already base64
+ */
+function extractFilename(url: string): string {
+  // New format: /api/file/{filename}
+  // Old format: https://xxx.blob.core.windows.net/.../filename
+  // Both can use split('/').pop() to get the filename
+  return url.split('/').pop() || url;
+}
 
 /**
  * ImageProcessor handles image content in the pipeline.
  *
  * Responsibilities:
  * - Extracts image URLs from messages
- * - Converts Azure Blob Storage URLs to base64 data URLs for LLM consumption
+ * - Converts image references to base64 data URLs for LLM consumption
  * - Stores converted images in context for downstream handlers
  *
  * Modifies context:
