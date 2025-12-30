@@ -8,6 +8,7 @@ import {
 } from '@/lib/utils/server/audio/audioExtractor';
 import { BlobStorage } from '@/lib/utils/server/blob/blob';
 import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
+import { convertImagesToBase64 } from '@/lib/utils/server/image/blobToBase64';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { getChunkedTranscriptionService } from '../../transcription/chunkedTranscriptionService';
@@ -445,11 +446,24 @@ export class FileProcessor extends BasePipelineStage {
             ),
           );
 
+          // STEP 5: Convert images to base64 for LLM consumption
+          // LLMs cannot access private Azure blob URLs directly
+          let convertedImages = images;
+          if (images.length > 0) {
+            console.log(
+              `[FileProcessor] Converting ${images.length} image(s) to base64...`,
+            );
+            convertedImages = await convertImagesToBase64(images, context.user);
+            console.log(
+              `[FileProcessor] Converted ${convertedImages.length} image(s) to base64`,
+            );
+          }
+
           // Add span attributes
           span.setAttribute('file.count', files.length);
           span.setAttribute('file.summaries_count', fileSummaries.length);
           span.setAttribute('file.transcripts_count', transcripts.length);
-          span.setAttribute('file.images_count', images.length);
+          span.setAttribute('file.images_count', convertedImages.length);
           span.setStatus({ code: SpanStatusCode.OK });
 
           // Return context with processed content
@@ -460,7 +474,7 @@ export class FileProcessor extends BasePipelineStage {
               fileSummaries:
                 fileSummaries.length > 0 ? fileSummaries : undefined,
               transcripts: transcripts.length > 0 ? transcripts : undefined,
-              images: images.length > 0 ? images : undefined,
+              images: convertedImages.length > 0 ? convertedImages : undefined,
             },
           };
         } catch (error) {
