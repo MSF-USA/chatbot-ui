@@ -32,14 +32,18 @@ export class DocumentTranslationService {
   /**
    * Creates a new DocumentTranslationService instance.
    *
-   * @throws Error if AZURE_TRANSLATOR_ENDPOINT environment variable is not set
+   * Falls back to AZURE_AI_FOUNDRY_ENDPOINT if AZURE_TRANSLATOR_ENDPOINT is not set.
+   *
+   * @throws Error if neither endpoint environment variable is set
    */
   constructor() {
-    const endpoint = process.env.AZURE_TRANSLATOR_ENDPOINT;
+    const endpoint =
+      process.env.AZURE_TRANSLATOR_ENDPOINT ||
+      process.env.AZURE_AI_FOUNDRY_ENDPOINT;
     if (!endpoint) {
       throw new Error(
-        'AZURE_TRANSLATOR_ENDPOINT environment variable is not configured. ' +
-          'Set it to your Azure Translator resource endpoint (e.g., https://your-translator.cognitiveservices.azure.com)',
+        'Neither AZURE_TRANSLATOR_ENDPOINT nor AZURE_AI_FOUNDRY_ENDPOINT environment variable is configured. ' +
+          'Set one of these to your Azure AI resource endpoint.',
       );
     }
     this.endpoint = endpoint.replace(/\/$/, ''); // Remove trailing slash if present
