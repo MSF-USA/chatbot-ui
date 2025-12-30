@@ -94,6 +94,12 @@ export interface ChatContext {
   /** Response verbosity */
   verbosity?: 'low' | 'medium' | 'high';
 
+  /** Raw user prompt from request (before building full system prompt) */
+  rawUserPrompt?: string;
+
+  /** Whether to include user info in system prompt */
+  includeUserInfoInPrompt?: boolean;
+
   // ========================================
   // FEATURE FLAGS
   // ========================================
