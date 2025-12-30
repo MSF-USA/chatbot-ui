@@ -1508,7 +1508,8 @@
     "noToneDefault": "Ton Yok (Varsayılan)",
     "useDefaultStyle": "Varsayılan yazı stilini kullan",
     "noTonesCreated": "Henüz ton oluşturulmadı",
-    "createTonesHint": "Hızlı Eylemler'de tonlar oluşturun"
+    "createTonesHint": "Hızlı Eylemler'de tonlar oluşturun",
+    "translateDocumentTooltip": "Belgeleri başka bir dile çevirin.\n\nDesteklenen formatlar: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaksimum boyut: 40MB\n\n80'den fazla dili, isteğe bağlı sözlük dosyalarıyla destekler."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Yapay zekanın nasıl yanıt vereceğini özelleştirmek için kişisel talimatlarınızı ekleyin. Bunlar, yardımcı, doğru ve güvenli yanıtları garanti altına alan temel davranış yönergeleriyle birleştirilir.",
   "Tip: Type \"/\" to select from saved prompt templates_": "İpucu: Kayıtlı istem şablonlarından seçmek için \"/\" yazın.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Önce yerel BT desteğinizle iletişime geçin",
     "escalationStep2": "Çözülmezse, Operasyonel Merkezinizin (OC) BT departmanına yönlendirin",
     "escalationStep3": "Hâlâ çözülmezse, OC BT ekibi konuyu SITS’e (Ortak BT Hizmetleri) yönlendirebilir"
+  },
+  "translateDocumentDropdown": "Belgeyi Çevir",
+  "documentTranslation": {
+    "title": "Belge Çevirisi",
+    "targetLanguage": "Hedef Dil",
+    "sourceLanguage": "Kaynak Dil",
+    "searchLanguage": "Dilleri ara...",
+    "noLanguagesFound": "Dil bulunamadı",
+    "autoDetect": "Belirtilmemişse otomatik algılansın",
+    "glossary": "Sözlük Dosyası",
+    "glossaryHelp": "Özel terimler için CSV, TSV veya XLIFF sözlük dosyası yükleyin",
+    "uploadGlossary": "Sözlük Yükle",
+    "glossaryTooLarge": "Sözlük dosyası çok büyük. Maksimum boyut {maxSize}.",
+    "outputFilename": "Çıktı Dosya Adı",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Belgeyi Çevir",
+    "translating": "Çevriliyor...",
+    "noDocumentError": "Lütfen çevrilecek bir belge seçin.",
+    "noTargetLanguageError": "Lütfen bir hedef dil seçin.",
+    "documentTooLarge": "Belge çok büyük. Maksimum boyut {maxSize}.",
+    "translationSuccess": "Belge başarıyla çevrildi",
+    "translationFailed": "Çeviri başarısız: {error}",
+    "invalidReference": "Geçersiz belge çeviri referansı",
+    "documentNotFound": "Çevrilmiş belge bulunamadı veya süresi doldu",
+    "downloadFailed": "Çevrilmiş belge indirilemedi",
+    "downloadSuccess": "Belge başarıyla indirildi",
+    "translatedTo": "{language} diline çevrildi",
+    "download": "İndir",
+    "downloading": "İndiriliyor...",
+    "expired": "Bu çevirinin süresi doldu ve artık erişilemez",
+    "expiresSoon": "{days} gün içinde süresi dolacak - lütfen yakında indirin",
+    "expires": "{days} gün boyunca kullanılabilir"
   }
 }

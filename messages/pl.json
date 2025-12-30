@@ -1508,7 +1508,8 @@
     "noToneDefault": "Brak tonu (domyślny)",
     "useDefaultStyle": "Użyj domyślnego stylu pisania",
     "noTonesCreated": "Nie utworzono jeszcze tonów",
-    "createTonesHint": "Utwórz tony w Szybkich działaniach"
+    "createTonesHint": "Utwórz tony w Szybkich działaniach",
+    "translateDocumentTooltip": "Tłumacz dokumenty na inny język.\n\nObsługiwane formaty: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaks. rozmiar: 40 MB\n\nObsługa ponad 80 języków z opcjonalnymi plikami glosariusza."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Dodaj własne instrukcje, aby dostosować sposób, w jaki AI odpowiada. Zostaną one połączone z głównymi wytycznymi, które zapewniają pomocne, dokładne i bezpieczne odpowiedzi.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Porada: wpisz „/”, aby wybrać z zapisanych szablonów podpowiedzi.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Najpierw skontaktuj się z lokalnym wsparciem IT",
     "escalationStep2": "Jeśli problem nie zostanie rozwiązany, eskaluj do działu IT swojego Centrali Operacyjnej (OC)",
     "escalationStep3": "Jeśli nadal nierozwiązane, dział IT OC może przekazać zgłoszenie do SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Przetłumacz dokument",
+  "documentTranslation": {
+    "title": "Tłumaczenie dokumentu",
+    "targetLanguage": "Język docelowy",
+    "sourceLanguage": "Język źródłowy",
+    "searchLanguage": "Wyszukaj języki...",
+    "noLanguagesFound": "Nie znaleziono języków",
+    "autoDetect": "Wykryj automatycznie, jeśli nie podano",
+    "glossary": "Plik glosariusza",
+    "glossaryHelp": "Prześlij plik glosariusza w formacie CSV, TSV lub XLIFF dla własnej terminologii",
+    "uploadGlossary": "Prześlij glosariusz",
+    "glossaryTooLarge": "Plik glosariusza jest za duży. Maksymalny rozmiar to {maxSize}.",
+    "outputFilename": "Nazwa pliku wyjściowego",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Przetłumacz dokument",
+    "translating": "Tłumaczenie...",
+    "noDocumentError": "Proszę wybrać dokument do tłumaczenia.",
+    "noTargetLanguageError": "Proszę wybrać język docelowy.",
+    "documentTooLarge": "Dokument jest za duży. Maksymalny rozmiar to {maxSize}.",
+    "translationSuccess": "Dokument przetłumaczony pomyślnie",
+    "translationFailed": "Tłumaczenie nie powiodło się: {error}",
+    "invalidReference": "Nieprawidłowy identyfikator tłumaczenia dokumentu",
+    "documentNotFound": "Przetłumaczony dokument nie został znaleziony lub wygasł",
+    "downloadFailed": "Nie udało się pobrać przetłumaczonego dokumentu",
+    "downloadSuccess": "Dokument pobrany pomyślnie",
+    "translatedTo": "Przetłumaczono na {language}",
+    "download": "Pobierz",
+    "downloading": "Pobieranie...",
+    "expired": "To tłumaczenie wygasło i nie jest już dostępne",
+    "expiresSoon": "Wygasa za {days} dni – pobierz wkrótce",
+    "expires": "Dostępne przez {days} dni"
   }
 }

@@ -1508,7 +1508,8 @@
     "noToneDefault": "සුරැස්සුවක් නැහැ (පෙරනිමිය)",
     "useDefaultStyle": "පෙරනිමි ලිවීමේ විලාසය භාවිතා කරන්න",
     "noTonesCreated": "තවම සුරැස්සු නිර්මාණය කර නැත",
-    "createTonesHint": "Quick Actions තුළ සුරැස්සු නිර්මාණය කරන්න"
+    "createTonesHint": "Quick Actions තුළ සුරැස්සු නිර්මාණය කරන්න",
+    "translateDocumentTooltip": "ප්‍රලේඛ පරිවර්තනය වෙනත් භාෂාවකට.\n\nසහාය වන හැඳුනුම්පත්: Word, Excel, PowerPoint, PDF, HTML, TXT\nඋපරිම ප්‍රමාණය: 40MB\n\nවිකල්ප ශබ්ද කෝෂ ගොනු සමඟ භාෂා 80+කට සහය දක්වයි."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI එකේ ප්‍රතිචාර ගැලපෙන්න ඔබගේ පුද්ගලික උපදෙස් එක් කරන්න. මෙවා උදව්कारी, නිවැරදි සහ නිසි ආරක්ෂාවක් ඇති ප්‍රතිචාර ගෙදීමට වන මූලික හැසිරීම් මාර්ගෝපදේශ සමඟ ඒකාබද්ධ වේ.",
   "Tip: Type \"/\" to select from saved prompt templates_": "ඉඟිය: සුරක්ෂිත උත්ප්‍රේරණ සැදීම් තෝරා ගැනීමට \"/\" ටයිප් කරන්න.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "ප්‍රථමයෙන් ඔබේ ප්‍රාදේශීය IT සහාය අමතන්න",
     "escalationStep2": "විසඳිය නොහොත්, ඔබගේ ක්‍රියාත්මක මධ්‍යස්ථානය (OC) IT අංශයට උසස් කරන්න",
     "escalationStep3": "තවමත් විසඳා නොමැති නම්, OC IT විසින් SITS (Shared IT Services) වෙත උසස් කළ හැක"
+  },
+  "translateDocumentDropdown": "ප්‍රලේඛය පරිවර්තනය කරන්න",
+  "documentTranslation": {
+    "title": "ප්‍රලේඛ පරිවර්තනය",
+    "targetLanguage": "ඉලක්ක භාෂාව",
+    "sourceLanguage": "මූල භාෂාව",
+    "searchLanguage": "භාෂා සොයන්න...",
+    "noLanguagesFound": "භාෂා හමු නොවිණි",
+    "autoDetect": "නියම නොකළේ නම් ස්වයංක්‍රීයව හඳුනාගන්න",
+    "glossary": "ශබ්ද කෝෂ ගොනුව",
+    "glossaryHelp": "අභිරුචි නියාමයන් සඳහා CSV, TSV හෝ XLIFF ශබ්ද කෝෂ ගොනුවක් උඩුගත කරන්න",
+    "uploadGlossary": "ශබ්ද කෝෂය උඩුගත කරන්න",
+    "glossaryTooLarge": "ශබ්ද කෝෂ ගොනුව විශාල වේ. උපරිම ප්‍රමාණය {maxSize}.",
+    "outputFilename": "ප්‍රතිදාන ගොනු නාමය",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ප්‍රලේඛය පරිවර්තනය කරන්න",
+    "translating": "පරිවර්තනය වෙමින්...",
+    "noDocumentError": "පරිවර්තනය සඳහා කරුණාකර ප්‍රලේඛයක් තෝරන්න.",
+    "noTargetLanguageError": "කරුණාකර ඉලක්ක භාෂාවක් තෝරන්න.",
+    "documentTooLarge": "ප්‍රලේඛය විශාල වැඩියි. උපරිම ප්‍රමාණය {maxSize}.",
+    "translationSuccess": "ප්‍රලේඛය සාර්ථකව පරිවර්තනය කරන ලදි",
+    "translationFailed": "පරිවර්තනය අසාර්ථකයි: {error}",
+    "invalidReference": "අවලංගු ප්‍රලේඛ පරිවර්තන යොමු",
+    "documentNotFound": "පරිවර්තනය වූ ප්‍රලේඛය හමු නොවීය හෝ කල් ඉකුත් වී ඇත",
+    "downloadFailed": "පරිවර්තනය කළ ප්‍රලේඛය බාගත කිරීම අසාර්ථකයි",
+    "downloadSuccess": "ප්‍රලේඛය සාර්ථකව බාගත කරන ලදි",
+    "translatedTo": "{language} වෙත පරිවර්තනය කරන ලදි",
+    "download": "බාගත කරන්න",
+    "downloading": "බාගත වෙමින්...",
+    "expired": "මෙම පරිවර්තනය කල් ඉකුත් වී ඇති බැවින් තවදුරටත් ලබා ගත නොහැක",
+    "expiresSoon": "දින {days}ක් ඇතුළත කල් ඉකුත් වේ - ඉක්මනින් බාගත කරන්න",
+    "expires": "දින {days}ක් සඳහා ලැබෙනු ඇත"
   }
 }

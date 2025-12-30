@@ -1508,7 +1508,8 @@
     "noToneDefault": "کوئی ٹون نہیں (ڈیفالٹ)",
     "useDefaultStyle": "ڈیفالٹ لکھنے کا انداز استعمال کریں",
     "noTonesCreated": "ابھی تک کوئی ٹونز نہیں بنائی گئی ہیں",
-    "createTonesHint": "کوئیک ایکشنز میں ٹونز بنائیں"
+    "createTonesHint": "کوئیک ایکشنز میں ٹونز بنائیں",
+    "translateDocumentTooltip": "دستاویزات کا ترجمہ کسی دوسری زبان میں کریں۔\n\nمدد شدہ فارمیٹس: Word, Excel, PowerPoint, PDF, HTML, TXT\nزیادہ سے زیادہ سائز: 40MB\n\n80 سے زائد زبانوں کی معاونت، اختیاری glossary فائلز کے ساتھ۔"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "اپنی ذاتی ہدایات شامل کریں تاکہ AI کے ردعمل کو اپنی مرضی کے مطابق بنا سکیں۔ یہ ہدایات بنیادی رہنمائی کے ساتھ ملائی جاتی ہیں جو مددگار، درست اور محفوظ جوابات کو یقینی بناتی ہیں۔",
   "Tip: Type \"/\" to select from saved prompt templates_": "ٹپ: محفوظ شدہ پرومپٹ ٹیمپلیٹس میں سے منتخب کرنے کے لیے \"/\" ٹائپ کریں۔",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "پہلے اپنے مقامی IT سپورٹ سے رابطہ کریں",
     "escalationStep2": "اگر مسئلہ حل نہ ہو تو اپنے Operational Center (OC) کے IT شعبہ کو اطلاع دیں",
     "escalationStep3": "اگر اب بھی مسئلہ حل نہ ہو، تو OC IT شعبہ SITS (شیئرڈ IT سروسز) کو اطلاع دے سکتا ہے"
+  },
+  "translateDocumentDropdown": "دستاویز کا ترجمہ کریں",
+  "documentTranslation": {
+    "title": "دستاویز کا ترجمہ",
+    "targetLanguage": "مطلوبہ زبان",
+    "sourceLanguage": "اصل زبان",
+    "searchLanguage": "زبانیں تلاش کریں...",
+    "noLanguagesFound": "کوئی زبان نہیں ملی",
+    "autoDetect": "اگر درج نہ ہو تو خودکار شناخت",
+    "glossary": "گلاسیری فائل",
+    "glossaryHelp": "کسٹم اصطلاحات کے لیے CSV، TSV، یا XLIFF glossary فائل اپ لوڈ کریں",
+    "uploadGlossary": "گلاسیری اپ لوڈ کریں",
+    "glossaryTooLarge": "گلاسیری فائل بہت بڑی ہے۔ زیادہ سے زیادہ سائز {maxSize} ہے۔",
+    "outputFilename": "آؤٹ پٹ فائل نام",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "دستاویز کا ترجمہ کریں",
+    "translating": "ترجمہ ہو رہا ہے...",
+    "noDocumentError": "براہ کرم ترجمہ کے لیے ایک دستاویز منتخب کریں۔",
+    "noTargetLanguageError": "براہ کرم مطلوبہ زبان منتخب کریں۔",
+    "documentTooLarge": "دستاویز بہت بڑی ہے۔ زیادہ سے زیادہ سائز {maxSize} ہے۔",
+    "translationSuccess": "دستاویز کامیابی سے ترجمہ ہوگئی",
+    "translationFailed": "ترجمہ ناکام: {error}",
+    "invalidReference": "غلط دستاویز ترجمہ حوالہ",
+    "documentNotFound": "ترجمہ شدہ دستاویز نہیں ملی یا اس کی مدت ختم ہوگئی ہے",
+    "downloadFailed": "ترجمہ شدہ دستاویز ڈاؤن لوڈ کرنے میں ناکامی",
+    "downloadSuccess": "دستاویز کامیابی سے ڈاؤن لوڈ ہوگئی",
+    "translatedTo": "{language} میں ترجمہ شدہ",
+    "download": "ڈاؤن لوڈ کریں",
+    "downloading": "ڈاؤن لوڈ ہو رہا ہے...",
+    "expired": "اس ترجمے کی مدت ختم ہوچکی ہے اور یہ دستیاب نہیں رہا",
+    "expiresSoon": "{days} دن میں مدت ختم ہو جائے گی - جلدی ڈاؤن لوڈ کریں",
+    "expires": "{days} دن تک دستیاب"
   }
 }

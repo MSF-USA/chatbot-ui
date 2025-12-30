@@ -1508,7 +1508,8 @@
     "noToneDefault": "အသံသွင်းပုံ မရွေး (မူလအတည်းအထား)",
     "useDefaultStyle": "မူလရေးသားပုံကိုအသုံးပြုပါ",
     "noTonesCreated": "အသံသွင်းပုံ မရှိသေးပါ",
-    "createTonesHint": "Quick Actions တွင် အသံသွင်းပုံများ တည်ဆောက်နိုင်သည်"
+    "createTonesHint": "Quick Actions တွင် အသံသွင်းပုံများ တည်ဆောက်နိုင်သည်",
+    "translateDocumentTooltip": "စာရွက်စာတမ်းများကို အခြားဘာသာစကားထဲသို့ ဘာသာပြန်ပါ။\n\nထောက်ပံ့သော ဖိုင်အမျိုးအစားများ- Word, Excel, PowerPoint, PDF, HTML, TXT\nအကြီးဆုံးဖိုင်အရွယ်အစား- ၄၀MB\n\nGlossary ဖိုင်များပါဝင်၍ ဘာသာစကား ၈၀+ ကိုထောက်ပံ့သည်။"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI ရဲ့ တုန့်ပြန်မှုကို ပြင်ဆင်နိုင်ရန် ကိုယ်ပိုင်ညွှန်ကြားချက်များ ထည့်ပါ။ ဤညွှန်ကြားချက်များကို အထောက်အကူပြု၊ တိကျမှန်ကန်ပြီး လုံခြုံစိတ်ချသော တုန့်ပြန်မှုများ ရရှိစေရန် မူဝါဒအညွှန်းနှင့် တွဲဖက်အသုံးပြုပါသည်။",
   "Tip: Type \"/\" to select from saved prompt templates_": "အကြံပြုချက် - သိမ်းထားသော prompt template များကို ရွေးချယ်ရန် \"/\" ကို ရိုက်ထည့်ပါ။",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "ပထမဦးဆုံး သင့်ဒေသခံ IT ထောက်ခံမှုအဖွဲ့ကို ဆက်သွယ်ပါ",
     "escalationStep2": "မဖြေရှင်းနိုင်ပါက၊ သင့် Operational Center (OC) ၏ IT ဌာနထံ တိုးမြှင့်ပေးပါ",
     "escalationStep3": "တစ်ခုလုံး မဖြေရှင်းနိုင်ပါက OC IT သည် SITS (Shared IT Services) သို့ တိုးမြှင့်နိုင်ပါသည်"
+  },
+  "translateDocumentDropdown": "စာရွက်စာတမ်းဘာသာပြန်ရန်",
+  "documentTranslation": {
+    "title": "စာရွက်စာတမ်းဘာသာပြန်ခြင်း",
+    "targetLanguage": "ပစ်မှတ်ဘာသာစကား",
+    "sourceLanguage": "မူရင်းဘာသာစကား",
+    "searchLanguage": "ဘာသာစကားများကို ရှာရန်...",
+    "noLanguagesFound": "ဘာသာစကားများ ရှာမတွေ့ပါ",
+    "autoDetect": "သတ်မှတ်မထားလျှင် အလိုအလျောက် သိရှိမည်",
+    "glossary": "Glossary ဖိုင်",
+    "glossaryHelp": "သင့်အတွက် စိတ်ကြိုက်အဓိပ္ပါယ်များအတွက် CSV, TSV သို့မဟုတ် XLIFF glossary ဖိုင်တင်ပါ။",
+    "uploadGlossary": "Glossary တင်ရန်",
+    "glossaryTooLarge": "Glossary ဖိုင် အရမ်းကြီးနေသည်။ အများဆုံး {maxSize}သာလျှင် ခွင့်ပြုသည်။",
+    "outputFilename": "ရလာဒ်ဖိုင်နာမည်",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "စာရွက်စာတမ်းဘာသာပြန်ရန်",
+    "translating": "ဘာသာပြန်နေသည်...",
+    "noDocumentError": "ဘာသာပြန်ရန် စာရွက်စာတမ်း ရွေးချယ်ပါ။",
+    "noTargetLanguageError": "ပစ်မှတ်ဘာသာစကား ရွေးချယ်ပါ။",
+    "documentTooLarge": "စာရွက်စာတမ်း အရမ်းကြီးနေသည်။ အများဆုံး {maxSize}သာ ခွင့်ပြုသည်။",
+    "translationSuccess": "စာရွက်စာတမ်း ဘာသာပြန်ပြီး",
+    "translationFailed": "ဘာသာပြန်ခြင်း မအောင်မြင်ပါ: {error}",
+    "invalidReference": "စာရွက်စာတမ်းဘာသာပြန် ချိတ်ဆက်ချက် မမှန်ကန်ပါ",
+    "documentNotFound": "ဘာသာပြန်ထားသောစာရွက်စာတမ်းကို မတွေ့ပါ သို့ မသက်တမ်းကုန်သွားပါ နဲ့",
+    "downloadFailed": "ဘာသာပြန်ထားသောစာရွက်စာတမ်း မဒေါင်းလုဒ်ရနိုင်ပါ",
+    "downloadSuccess": "စာရွက်စာတမ်းကို အောင်မြင်စွာ ဒေါင်းလုဒ်လုပ်ပြီး",
+    "translatedTo": "{language} သို့ဘာသာပြန်ပြီး",
+    "download": "ဒေါင်းလုဒ်လုပ်ပါ",
+    "downloading": "ဒေါင်းလုဒ်လုပျနေသည်...",
+    "expired": "ဤဘာသာပြန်မှု သက်တမ်းကုန်သွားပြီး မသုံးနိုင်တော့ပါ",
+    "expiresSoon": "သက်တမ်း {days} ရက်အတွင်း ပြီးဆုံးပါမည် - မကြာမီ ဒေါင်းလုဒ်လုပ်ပါ",
+    "expires": "{days} ရက်အတွက် သုံးနိုင်ပါသည်"
   }
 }

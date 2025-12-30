@@ -1425,7 +1425,8 @@
     "noToneDefault": "Sin tono (predeterminado)",
     "useDefaultStyle": "Usar estilo de escritura predeterminado",
     "noTonesCreated": "Aún no se han creado tonos",
-    "createTonesHint": "Cree tonos en Acciones rápidas"
+    "createTonesHint": "Cree tonos en Acciones rápidas",
+    "translateDocumentTooltip": "Traduce documentos a otro idioma.\n\nFormatos compatibles: Word, Excel, PowerPoint, PDF, HTML, TXT\nTamaño máximo: 40 MB\n\nCompatible con más de 80 idiomas y archivos de glosario opcionales."
   },
   "transcription": {
     "transcribesOnSend": "Transcribe al enviar",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Contacte primero a su soporte de TI local",
     "escalationStep2": "Si no se resuelve, escale al departamento de TI de su Centro Operacional (OC)",
     "escalationStep3": "Si aún no se resuelve, el TI del OC puede escalar a SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Traducir documento",
+  "documentTranslation": {
+    "title": "Traducción de documentos",
+    "targetLanguage": "Idioma de destino",
+    "sourceLanguage": "Idioma de origen",
+    "searchLanguage": "Buscar idiomas...",
+    "noLanguagesFound": "No se encontraron idiomas",
+    "autoDetect": "Detección automática si no se especifica",
+    "glossary": "Archivo de glosario",
+    "glossaryHelp": "Suba un archivo de glosario CSV, TSV o XLIFF para terminología personalizada",
+    "uploadGlossary": "Subir glosario",
+    "glossaryTooLarge": "El archivo de glosario es demasiado grande. El tamaño máximo es {maxSize}.",
+    "outputFilename": "Nombre del archivo de salida",
+    "outputFilenamePlaceholder": "documento_es.docx",
+    "translateButton": "Traducir documento",
+    "translating": "Traduciendo...",
+    "noDocumentError": "Por favor seleccione un documento para traducir.",
+    "noTargetLanguageError": "Por favor seleccione un idioma de destino.",
+    "documentTooLarge": "Documento demasiado grande. El tamaño máximo es {maxSize}.",
+    "translationSuccess": "Documento traducido correctamente",
+    "translationFailed": "Falló la traducción: {error}",
+    "invalidReference": "Referencia de traducción de documento no válida",
+    "documentNotFound": "El documento traducido no se encuentra o ha expirado",
+    "downloadFailed": "No se pudo descargar el documento traducido",
+    "downloadSuccess": "Documento descargado correctamente",
+    "translatedTo": "Traducido a {language}",
+    "download": "Descargar",
+    "downloading": "Descargando...",
+    "expired": "Esta traducción ha expirado y ya no está disponible",
+    "expiresSoon": "Expira en {days} día(s); descargue pronto",
+    "expires": "Disponible por {days} día(s)"
   }
 }

@@ -1425,7 +1425,8 @@
     "noToneDefault": "Без тональности (по умолчанию)",
     "useDefaultStyle": "Использовать стиль по умолчанию",
     "noTonesCreated": "Тональности ещё не созданы",
-    "createTonesHint": "Создайте тональности в Быстрых действиях"
+    "createTonesHint": "Создайте тональности в Быстрых действиях",
+    "translateDocumentTooltip": "Переводите документы на другие языки.\n\nПоддерживаемые форматы: Word, Excel, PowerPoint, PDF, HTML, TXT\nМаксимальный размер: 40 МБ\n\nПоддерживается более 80 языков, возможна загрузка глоссариев."
   },
   "transcription": {
     "addInstructions": "Добавить инструкции",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Сначала обратитесь в вашу локальную ИТ-поддержку",
     "escalationStep2": "Если проблема не решена, эскалируйте в ИТ-отдел вашего операционного центра (OC)",
     "escalationStep3": "Если всё ещё не решено, ИТ OC может эскалировать в SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Перевести документ",
+  "documentTranslation": {
+    "title": "Перевод документов",
+    "targetLanguage": "Язык перевода",
+    "sourceLanguage": "Исходный язык",
+    "searchLanguage": "Поиск языков...",
+    "noLanguagesFound": "Языки не найдены",
+    "autoDetect": "Автоопределение, если не указано",
+    "glossary": "Файл глоссария",
+    "glossaryHelp": "Загрузите файл глоссария в формате CSV, TSV или XLIFF для индивидуальной терминологии",
+    "uploadGlossary": "Загрузить глоссарий",
+    "glossaryTooLarge": "Файл глоссария слишком большой. Максимальный размер — {maxSize}.",
+    "outputFilename": "Имя выходного файла",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Перевести документ",
+    "translating": "Выполняется перевод...",
+    "noDocumentError": "Пожалуйста, выберите документ для перевода.",
+    "noTargetLanguageError": "Пожалуйста, выберите язык перевода.",
+    "documentTooLarge": "Документ слишком большой. Максимальный размер — {maxSize}.",
+    "translationSuccess": "Документ успешно переведён",
+    "translationFailed": "Ошибка перевода: {error}",
+    "invalidReference": "Недопустимая ссылка на перевод документа",
+    "documentNotFound": "Переведённый документ не найден или срок его действия истёк",
+    "downloadFailed": "Не удалось скачать переведённый документ",
+    "downloadSuccess": "Документ успешно скачан",
+    "translatedTo": "Переведено на {language}",
+    "download": "Скачать",
+    "downloading": "Скачивание...",
+    "expired": "Срок действия этого перевода истёк, файл недоступен",
+    "expiresSoon": "Истекает через {days} дн. — скачайте заранее",
+    "expires": "Доступно {days} дн."
   }
 }

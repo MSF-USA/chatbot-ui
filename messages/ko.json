@@ -1508,7 +1508,8 @@
     "noToneDefault": "톤 없음 (기본값)",
     "useDefaultStyle": "기본 작성 스타일 사용",
     "noTonesCreated": "아직 생성된 톤이 없습니다",
-    "createTonesHint": "빠른 작업에서 톤을 생성하세요"
+    "createTonesHint": "빠른 작업에서 톤을 생성하세요",
+    "translateDocumentTooltip": "문서를 다른 언어로 번역합니다.\n\n지원 형식: Word, Excel, PowerPoint, PDF, HTML, TXT\n최대 크기: 40MB\n\n80개 이상의 언어와 선택적 용어집 파일을 지원합니다."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI의 응답 방식을 맞춤화하려면 개인 지침을 추가하세요. 이는 유용하고 정확하며 안전한 응답을 보장하는 기본 행동 지침과 함께 적용됩니다.",
   "Tip: Type \"/\" to select from saved prompt templates_": "팁: \"/\"를 입력하면 저장된 프롬프트 템플릿을 선택할 수 있습니다.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "먼저 지역 IT 지원팀에 문의하십시오",
     "escalationStep2": "해결되지 않으면 운영센터(OC) IT 부서로 문의하십시오",
     "escalationStep3": "여전히 해결되지 않으면, OC IT가 SITS(공유 IT 서비스)로 추가 문의할 수 있습니다"
+  },
+  "translateDocumentDropdown": "문서 번역",
+  "documentTranslation": {
+    "title": "문서 번역",
+    "targetLanguage": "대상 언어",
+    "sourceLanguage": "원본 언어",
+    "searchLanguage": "언어 검색...",
+    "noLanguagesFound": "언어를 찾을 수 없습니다",
+    "autoDetect": "지정하지 않으면 자동 감지",
+    "glossary": "용어집 파일",
+    "glossaryHelp": "사용자 지정 용어집으로 CSV, TSV 또는 XLIFF 파일을 업로드하세요",
+    "uploadGlossary": "용어집 업로드",
+    "glossaryTooLarge": "용어집 파일이 너무 큽니다. 최대 크기는 {maxSize}입니다.",
+    "outputFilename": "출력 파일명",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "문서 번역",
+    "translating": "번역 중...",
+    "noDocumentError": "번역할 문서를 선택해 주세요.",
+    "noTargetLanguageError": "대상 언어를 선택해 주세요.",
+    "documentTooLarge": "문서가 너무 큽니다. 최대 크기는 {maxSize}입니다.",
+    "translationSuccess": "문서가 성공적으로 번역되었습니다",
+    "translationFailed": "번역에 실패했습니다: {error}",
+    "invalidReference": "잘못된 문서 번역 참조입니다",
+    "documentNotFound": "번역된 문서를 찾을 수 없거나 만료되었습니다",
+    "downloadFailed": "번역된 문서 다운로드에 실패했습니다",
+    "downloadSuccess": "문서를 성공적으로 다운로드했습니다",
+    "translatedTo": "{language}(으)로 번역됨",
+    "download": "다운로드",
+    "downloading": "다운로드 중...",
+    "expired": "이 번역은 만료되어 더 이상 이용할 수 없습니다",
+    "expiresSoon": "{days}일 후 만료 예정 - 빠른 다운로드 권장",
+    "expires": "{days}일간 이용 가능"
   }
 }

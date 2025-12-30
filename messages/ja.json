@@ -1508,7 +1508,8 @@
     "noToneDefault": "トーンなし（デフォルト）",
     "useDefaultStyle": "デフォルトの文体を使用",
     "noTonesCreated": "トーンはまだ作成されていません",
-    "createTonesHint": "クイックアクションでトーンを作成"
+    "createTonesHint": "クイックアクションでトーンを作成",
+    "translateDocumentTooltip": "ドキュメントを他の言語に翻訳します。\n\n対応フォーマット：Word、Excel、PowerPoint、PDF、HTML、TXT\n最大サイズ：40MB\n\n80以上の言語に対応し、用語集ファイルの利用も可能です。"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AIの応答をカスタマイズするための個別指示を追加できます。これらは、役立つ・正確・安全な応答を保証するための基本的なガイドラインと組み合わされます。",
   "Tip: Type \"/\" to select from saved prompt templates_": "ヒント：「/」を入力すると保存されたプロンプトテンプレートから選択できます。",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "まずは所属のITサポートに連絡してください",
     "escalationStep2": "解決しない場合は、オペレーショナルセンター（OC）のIT部門にエスカレーションしてください",
     "escalationStep3": "それでも解決しない場合は、OCのIT部門がSITS（Shared IT Services）にエスカレーションできます"
+  },
+  "translateDocumentDropdown": "ドキュメントの翻訳",
+  "documentTranslation": {
+    "title": "ドキュメントの翻訳",
+    "targetLanguage": "翻訳先言語",
+    "sourceLanguage": "原文言語",
+    "searchLanguage": "言語を検索...",
+    "noLanguagesFound": "該当する言語がありません",
+    "autoDetect": "未指定の場合は自動検出",
+    "glossary": "用語集ファイル",
+    "glossaryHelp": "カスタム用語集としてCSV、TSV、XLIFFファイルをアップロードできます",
+    "uploadGlossary": "用語集をアップロード",
+    "glossaryTooLarge": "用語集ファイルが大きすぎます。最大サイズは{maxSize}です。",
+    "outputFilename": "出力ファイル名",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ドキュメントの翻訳",
+    "translating": "翻訳中...",
+    "noDocumentError": "翻訳するドキュメントを選択してください。",
+    "noTargetLanguageError": "翻訳先言語を選択してください。",
+    "documentTooLarge": "ドキュメントが大きすぎます。最大サイズは{maxSize}です。",
+    "translationSuccess": "ドキュメントの翻訳が完了しました",
+    "translationFailed": "翻訳中にエラーが発生しました: {error}",
+    "invalidReference": "無効なドキュメント翻訳参照",
+    "documentNotFound": "翻訳済みドキュメントが見つからないか、有効期限が切れています",
+    "downloadFailed": "翻訳済みドキュメントのダウンロードに失敗しました",
+    "downloadSuccess": "ドキュメントのダウンロードが完了しました",
+    "translatedTo": "{language}に翻訳済み",
+    "download": "ダウンロード",
+    "downloading": "ダウンロード中...",
+    "expired": "この翻訳の有効期限が切れており、利用できません",
+    "expiresSoon": "残り{days}日で失効します。お早めにダウンロードしてください",
+    "expires": "{days}日間利用可能"
   }
 }

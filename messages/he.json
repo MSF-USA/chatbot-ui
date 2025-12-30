@@ -1508,7 +1508,8 @@
     "noToneDefault": "ללא טון (ברירת מחדל)",
     "useDefaultStyle": "השתמש בסגנון כתיבה ברירת מחדל",
     "noTonesCreated": "לא נוצרו טונים עדיין",
-    "createTonesHint": "צור טונים בפעולות מהירות"
+    "createTonesHint": "צור טונים בפעולות מהירות",
+    "translateDocumentTooltip": "תרגם מסמכים לשפה אחרת.\n\nפורמטים נתמכים: Word, Excel, PowerPoint, PDF, HTML, TXT\nגודל מירבי: 40MB\n\nתמיכה ב-80+ שפות עם קבצי מילון אופציונליים."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "הוסיפו הוראות אישיות כדי להתאים את תגובת הבינה המלאכותית. הוראות אלו משולבות עם הנחיות ליבה שמבטיחות תגובות מועילות, מדויקות ובטוחות.",
   "Tip: Type \"/\" to select from saved prompt templates_": "עצה: הקלידו \"/\" כדי לבחור מהתבניות השמורות.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "פנה קודם כל לתמיכה המקומית שלך ב-IT",
     "escalationStep2": "אם לא נפתר, הסלם למחלקת ה-IT במרכז התפעולי (OC) שלך",
     "escalationStep3": "אם עדיין לא נפתר, ה-IT של ה-OC יכול להסלים ל-SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "תרגם מסמך",
+  "documentTranslation": {
+    "title": "תרגום מסמכים",
+    "targetLanguage": "שפת יעד",
+    "sourceLanguage": "שפת מקור",
+    "searchLanguage": "חיפוש שפות...",
+    "noLanguagesFound": "לא נמצאו שפות",
+    "autoDetect": "זיהוי אוטומטי אם לא צוין",
+    "glossary": "קובץ מילון",
+    "glossaryHelp": "העלה קובץ מילון מסוג CSV, TSV, או XLIFF למונחים מותאמים",
+    "uploadGlossary": "העלה מילון",
+    "glossaryTooLarge": "קובץ המילון גדול מדי. הגודל המקסימלי הוא {maxSize}.",
+    "outputFilename": "שם קובץ פלט",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "תרגם מסמך",
+    "translating": "מתרגם...",
+    "noDocumentError": "נא לבחור מסמך לתרגום.",
+    "noTargetLanguageError": "נא לבחור שפת יעד.",
+    "documentTooLarge": "המסמך גדול מדי. הגודל המקסימלי הוא {maxSize}.",
+    "translationSuccess": "המסמך תורגם בהצלחה",
+    "translationFailed": "התרגום נכשל: {error}",
+    "invalidReference": "הפניה לא חוקית לתרגום המסמך",
+    "documentNotFound": "המסמך המתורגם לא נמצא או שתוקפו פג",
+    "downloadFailed": "שגיאה בהורדת המסמך המתורגם",
+    "downloadSuccess": "המסמך הורד בהצלחה",
+    "translatedTo": "תורגם ל-{language}",
+    "download": "הורדה",
+    "downloading": "מוריד...",
+    "expired": "התרגום פג תוקף ואינו זמין עוד",
+    "expiresSoon": "פג בעוד {days} יום/ימים - מומלץ להוריד בהקדם",
+    "expires": "זמין למשך {days} ימים"
   }
 }

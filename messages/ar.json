@@ -1425,7 +1425,8 @@
     "noToneDefault": "بدون نبرة (افتراضي)",
     "useDefaultStyle": "استخدم أسلوب الكتابة الافتراضي",
     "noTonesCreated": "لم يتم إنشاء أي نبرة بعد",
-    "createTonesHint": "أنشئ النبرات من الإجراءات السريعة"
+    "createTonesHint": "أنشئ النبرات من الإجراءات السريعة",
+    "translateDocumentTooltip": "ترجم المستندات إلى لغة أخرى.\n\nالصيغ المدعومة: Word، Excel، PowerPoint، PDF، HTML، TXT\nالحجم الأقصى: 40 ميغابايت\n\nيدعم أكثر من 80 لغة مع ملفات المصطلحات الاختيارية."
   },
   "transcription": {
     "addInstructions": "إضافة تعليمات",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "تواصل أولاً مع دعم تكنولوجيا المعلومات المحلي",
     "escalationStep2": "إذا لم يتم الحل، صعّد الأمر إلى قسم تكنولوجيا المعلومات في مركز العمليات (OC)",
     "escalationStep3": "إذا لم يُحل، يمكن لمركز العمليات (OC) تصعيد الأمر إلى SITS (الخدمات المشتركة لتكنولوجيا المعلومات)"
+  },
+  "translateDocumentDropdown": "ترجمة المستند",
+  "documentTranslation": {
+    "title": "ترجمة المستند",
+    "targetLanguage": "اللغة المستهدفة",
+    "sourceLanguage": "اللغة المصدر",
+    "searchLanguage": "بحث عن لغات...",
+    "noLanguagesFound": "لم يتم العثور على لغات",
+    "autoDetect": "اكتشاف تلقائي إذا لم يتم التحديد",
+    "glossary": "ملف المصطلحات",
+    "glossaryHelp": "قم بتحميل ملف مصطلحات بصيغة CSV أو TSV أو XLIFF للمصطلحات المخصصة",
+    "uploadGlossary": "تحميل ملف المصطلحات",
+    "glossaryTooLarge": "ملف المصطلحات كبير جداً. الحد الأقصى للحجم هو {maxSize}.",
+    "outputFilename": "اسم ملف النتيجة",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ترجمة المستند",
+    "translating": "جارٍ الترجمة...",
+    "noDocumentError": "يرجى اختيار مستند للترجمة.",
+    "noTargetLanguageError": "يرجى اختيار اللغة المستهدفة.",
+    "documentTooLarge": "المستند كبير جداً. الحد الأقصى للحجم هو {maxSize}.",
+    "translationSuccess": "تمت ترجمة المستند بنجاح",
+    "translationFailed": "فشلت الترجمة: {error}",
+    "invalidReference": "مرجع ترجمة مستند غير صحيح",
+    "documentNotFound": "المستند المترجم غير موجود أو انتهت صلاحيته",
+    "downloadFailed": "فشل تنزيل المستند المترجم",
+    "downloadSuccess": "تم تنزيل المستند بنجاح",
+    "translatedTo": "تمت الترجمة إلى {language}",
+    "download": "تنزيل",
+    "downloading": "جارٍ التنزيل...",
+    "expired": "انتهت صلاحية هذه الترجمة ولم تعد متاحة",
+    "expiresSoon": "تنتهي في غضون {days} يوم(أيام) - يرجى التنزيل قريباً",
+    "expires": "متوفر لمدة {days} يوم"
   }
 }

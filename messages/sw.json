@@ -1508,7 +1508,8 @@
     "noToneDefault": "Hakuna Tono (Chaguomsingi)",
     "useDefaultStyle": "Tumia mtindo wa uandishi chaguomsingi",
     "noTonesCreated": "Hakuna tono lililoundwa bado",
-    "createTonesHint": "Unda matono kwenye Vitendo vya Haraka"
+    "createTonesHint": "Unda matono kwenye Vitendo vya Haraka",
+    "translateDocumentTooltip": "Tafsiri hati kwa lugha nyingine.\n\nMiundo inayoungwa mkono: Word, Excel, PowerPoint, PDF, HTML, TXT\nUkubwa wa juu: 40MB\n\nInasaidia zaidi ya lugha 80 na faili za kamusi (glossary) kwa hiari."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Ongeza maelekezo yako binafsi kubinafsisha jinsi AI inavyojibu. Haya yanaunganishwa na miongozo ya msingi ili kuhakikisha majibu ni ya msaada, sahihi na salama.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Dokezo: Andika \"/\" kuchagua kutoka kwenye templeti za maelekezo zilizohifadhiwa.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Wasiliana kwanza na msaada wa IT wa eneo lako",
     "escalationStep2": "Ikiwa haijatatuliwa, peleka kwa idara ya IT ya Kituo chako cha Uendeshaji (OC)",
     "escalationStep3": "Ikiwa bado haijatatuliwa, OC IT inaweza kuelekeza kwa SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Tafsiri Hati",
+  "documentTranslation": {
+    "title": "Tafsiri ya Hati",
+    "targetLanguage": "Lugha Lengwa",
+    "sourceLanguage": "Lugha Chanzo",
+    "searchLanguage": "Tafuta lugha...",
+    "noLanguagesFound": "Hakuna lugha zilizopatikana",
+    "autoDetect": "Tambua moja kwa moja kama haijabainishwa",
+    "glossary": "Faili ya Kamusi (Glossary)",
+    "glossaryHelp": "Pakia faili ya kamusi (CSV, TSV, au XLIFF) kwa istilahi maalum",
+    "uploadGlossary": "Pakia Kamusi",
+    "glossaryTooLarge": "Faili ya kamusi ni kubwa mno. Ukubwa wa juu ni {maxSize}.",
+    "outputFilename": "Jina la Faili ya Matokeo",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Tafsiri Hati",
+    "translating": "Inatafsiri...",
+    "noDocumentError": "Tafadhali chagua hati ya kutafsiri.",
+    "noTargetLanguageError": "Tafadhali chagua lugha lengwa.",
+    "documentTooLarge": "Hati ni kubwa mno. Ukubwa wa juu ni {maxSize}.",
+    "translationSuccess": "Hati imetafsiriwa kwa mafanikio",
+    "translationFailed": "Tafsiri imeshindikana: {error}",
+    "invalidReference": "Marejeleo ya tafsiri ya hati sio sahihi",
+    "documentNotFound": "Hati iliyotafsiriwa haijapatikana au muda wake umeisha",
+    "downloadFailed": "Imeshindikana kupakua hati iliyotafsiriwa",
+    "downloadSuccess": "Hati imepakuliwa kwa mafanikio",
+    "translatedTo": "Imetafsiriwa kwa {language}",
+    "download": "Pakua",
+    "downloading": "Inapakua...",
+    "expired": "Tafsiri hii imeisha muda na haipatikani tena",
+    "expiresSoon": "Inaisha baada ya siku {days} - pakua mapema",
+    "expires": "Inapatikana kwa siku {days}"
   }
 }

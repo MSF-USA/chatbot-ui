@@ -1425,7 +1425,8 @@
     "noToneDefault": "কোনো টোন নয় (ডিফল্ট)",
     "useDefaultStyle": "ডিফল্ট লেখার শৈলী ব্যবহার করুন",
     "noTonesCreated": "এখনও কোনো টোন তৈরি করা হয়নি",
-    "createTonesHint": "Quick Actions-এ টোন তৈরি করুন"
+    "createTonesHint": "Quick Actions-এ টোন তৈরি করুন",
+    "translateDocumentTooltip": "ডকুমেন্ট অন্য ভাষায় অনুবাদ করুন।\n\nসমর্থিত ফরম্যাট: Word, Excel, PowerPoint, PDF, HTML, TXT\nসর্বাধিক আকার: ৪০MB\n\n৮০+ ভাষা সমর্থিত, এবং ঐচ্ছিক গ্লোসারি ফাইল ব্যবহার করা যায়।"
   },
   "transcription": {
     "transcribesOnSend": "পাঠানোর সময় লিপিবদ্ধ করুন",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "প্রথমে আপনার স্থানীয় আইটি সহায়তার সাথে যোগাযোগ করুন",
     "escalationStep2": "সমাধান না হলে, আপনার OC (অপারেশনাল সেন্টার) আইটি বিভাগে এসক্যালেট করুন",
     "escalationStep3": "এখনও সমাধান না হলে, OC আইটি SITS (শেয়ার্ড আইটি সার্ভিসেস)-এ এসক্যালেট করতে পারে"
+  },
+  "translateDocumentDropdown": "ডকুমেন্ট অনুবাদ করুন",
+  "documentTranslation": {
+    "title": "ডকুমেন্ট অনুবাদ",
+    "targetLanguage": "টার্গেট ভাষা",
+    "sourceLanguage": "সোর্স ভাষা",
+    "searchLanguage": "ভাষা অনুসন্ধান করুন...",
+    "noLanguagesFound": "কোনো ভাষা পাওয়া যায়নি",
+    "autoDetect": "নির্দিষ্ট না থাকলে স্বয়ংক্রিয়ভাবে শনাক্ত করুন",
+    "glossary": "গ্লোসারি ফাইল",
+    "glossaryHelp": "নিজস্ব শব্দভাণ্ডারের জন্য CSV, TSV, অথবা XLIFF গ্লোসারি ফাইল আপলোড করুন",
+    "uploadGlossary": "গ্লোসারি আপলোড করুন",
+    "glossaryTooLarge": "গ্লোসারি ফাইলটি অনেক বড়। সর্বাধিক আকার {maxSize}।",
+    "outputFilename": "আউটপুট ফাইলের নাম",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ডকুমেন্ট অনুবাদ করুন",
+    "translating": "অনুবাদ হচ্ছে...",
+    "noDocumentError": "অনুগ্রহ করে অনুবাদের জন্য একটি ডকুমেন্ট নির্বাচন করুন।",
+    "noTargetLanguageError": "অনুগ্রহ করে টার্গেট ভাষা নির্বাচন করুন।",
+    "documentTooLarge": "ডকুমেন্টটি অনেক বড়। সর্বাধিক আকার {maxSize}।",
+    "translationSuccess": "ডকুমেন্ট সফলভাবে অনুবাদ হয়েছে",
+    "translationFailed": "অনুবাদ ব্যর্থ হয়েছে: {error}",
+    "invalidReference": "অবৈধ ডকুমেন্ট অনুবাদ রেফারেন্স",
+    "documentNotFound": "অনুবাদ করা ডকুমেন্ট পাওয়া যায়নি বা মেয়াদোত্তীর্ণ",
+    "downloadFailed": "অনুবাদকৃত ডকুমেন্ট ডাউনলোডে ব্যর্থ",
+    "downloadSuccess": "ডকুমেন্ট সফলভাবে ডাউনলোড হয়েছে",
+    "translatedTo": "{language} ভাষায় অনুবাদিত",
+    "download": "ডাউনলোড",
+    "downloading": "ডাউনলোড হচ্ছে...",
+    "expired": "এই অনুবাদের মেয়াদ শেষ হয়েছে এবং আর উপলব্ধ নেই",
+    "expiresSoon": "{days} দিন পর মেয়াদ শেষ হবে - দ্রুত ডাউনলোড করুন",
+    "expires": "{days} দিন পর্যন্ত উপলব্ধ"
   }
 }

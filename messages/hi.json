@@ -1425,7 +1425,8 @@
     "noToneDefault": "कोई टोन नहीं (डिफ़ॉल्ट)",
     "useDefaultStyle": "डिफ़ॉल्ट लेखन शैली का उपयोग करें",
     "noTonesCreated": "अभी तक कोई टोन नहीं बनाई गई",
-    "createTonesHint": "त्वरित क्रियाओं में टोन बनाएं"
+    "createTonesHint": "त्वरित क्रियाओं में टोन बनाएं",
+    "translateDocumentTooltip": "दस्तावेज़ों का अनुवाद दूसरी भाषा में करें।\n\nसमर्थित फॉर्मेट: Word, Excel, PowerPoint, PDF, HTML, TXT\nअधिकतम आकार: 40MB\n\n80+ भाषाओं के लिए समर्थन, वैकल्पिक glossary फ़ाइल के साथ।"
   },
   "transcription": {
     "addInstructions": "निर्देश जोड़ें",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "पहले अपने स्थानीय IT सहायता से संपर्क करें",
     "escalationStep2": "यदि समस्या हल न हो, तो अपने ऑपरेशनल सेंटर (OC) IT विभाग तक पहुंचाएं",
     "escalationStep3": "यदि अब भी हल न हो, तो OC IT, SITS (शेयर्ड IT सर्विसेज़) तक एस्केलेट कर सकता है"
+  },
+  "translateDocumentDropdown": "दस्तावेज़ अनुवाद करें",
+  "documentTranslation": {
+    "title": "दस्तावेज़ अनुवाद",
+    "targetLanguage": "लक्ष्य भाषा",
+    "sourceLanguage": "स्रोत भाषा",
+    "searchLanguage": "भाषा खोजें...",
+    "noLanguagesFound": "कोई भाषा नहीं मिली",
+    "autoDetect": "यदि निर्दिष्ट नहीं है तो स्वचालित पहचान",
+    "glossary": "Glossary फ़ाइल",
+    "glossaryHelp": "कस्टम शब्दावली के लिए CSV, TSV, या XLIFF glossary फ़ाइल अपलोड करें",
+    "uploadGlossary": "Glossary अपलोड करें",
+    "glossaryTooLarge": "Glossary फ़ाइल बहुत बड़ी है। अधिकतम आकार {maxSize} है।",
+    "outputFilename": "आउटपुट फ़ाइलनाम",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "दस्तावेज़ अनुवाद करें",
+    "translating": "अनुवाद किया जा रहा है...",
+    "noDocumentError": "कृपया अनुवाद के लिए कोई दस्तावेज़ चुनें।",
+    "noTargetLanguageError": "कृपया लक्ष्य भाषा चुनें।",
+    "documentTooLarge": "दस्तावेज़ बहुत बड़ा है। अधिकतम आकार {maxSize} है।",
+    "translationSuccess": "दस्तावेज़ का सफलतापूर्वक अनुवाद हो गया",
+    "translationFailed": "अनुवाद विफल: {error}",
+    "invalidReference": "अमान्य दस्तावेज़ अनुवाद संदर्भ",
+    "documentNotFound": "अनुवादित दस्तावेज़ नहीं मिला या इसकी वैधता समाप्त हो गई है",
+    "downloadFailed": "अनुवादित दस्तावेज़ डाउनलोड करने में विफल",
+    "downloadSuccess": "दस्तावेज़ सफलतापूर्वक डाउनलोड हुआ",
+    "translatedTo": "{language} में अनुवादित",
+    "download": "डाउनलोड करें",
+    "downloading": "डाउनलोड हो रहा है...",
+    "expired": "इस अनुवाद की वैधता समाप्त हो चुकी है और अब उपलब्ध नहीं है",
+    "expiresSoon": "{days} दिन में समाप्त होगा - शीघ्र डाउनलोड करें",
+    "expires": "{days} दिन तक उपलब्ध"
   }
 }

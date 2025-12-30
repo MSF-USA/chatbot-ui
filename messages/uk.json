@@ -1508,7 +1508,8 @@
     "noToneDefault": "Без тону (за замовчуванням)",
     "useDefaultStyle": "Використовувати стиль за замовчуванням",
     "noTonesCreated": "Ще не створено жодного тону",
-    "createTonesHint": "Створюйте тони у Швидких діях"
+    "createTonesHint": "Створюйте тони у Швидких діях",
+    "translateDocumentTooltip": "Перекладайте документи іншою мовою.\n\nПідтримувані формати: Word, Excel, PowerPoint, PDF, HTML, TXT\nМаксимальний розмір: 40 MB\n\nПідтримує 80+ мов і додаткові глосарії."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Додайте особисті інструкції, щоб налаштувати відповіді ШІ. Вони поєднуються з основними правилами, які забезпечують корисні, точні та безпечні відповіді.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Порада: введіть \"/\", щоб вибрати із збережених шаблонів підказок.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Спочатку зверніться до місцевої ІТ-підтримки",
     "escalationStep2": "Якщо питання не вирішено, зверніться до ІТ-відділу вашого Операційного центру (OC)",
     "escalationStep3": "Якщо й досі не вирішено, OC IT може передати питання до SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Перекласти документ",
+  "documentTranslation": {
+    "title": "Переклад документів",
+    "targetLanguage": "Мова перекладу",
+    "sourceLanguage": "Мова оригіналу",
+    "searchLanguage": "Пошук мов...",
+    "noLanguagesFound": "Мови не знайдено",
+    "autoDetect": "Автовизначення, якщо не вказано",
+    "glossary": "Файл глосарію",
+    "glossaryHelp": "Завантажте глосарій у форматі CSV, TSV або XLIFF для власної термінології",
+    "uploadGlossary": "Завантажити глосарій",
+    "glossaryTooLarge": "Файл глосарію завеликий. Максимальний розмір — {maxSize}.",
+    "outputFilename": "Ім'я вихідного файлу",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Перекласти документ",
+    "translating": "Переклад...",
+    "noDocumentError": "Оберіть документ для перекладу.",
+    "noTargetLanguageError": "Оберіть мову перекладу.",
+    "documentTooLarge": "Документ завеликий. Максимальний розмір — {maxSize}.",
+    "translationSuccess": "Документ успішно перекладений",
+    "translationFailed": "Помилка перекладу: {error}",
+    "invalidReference": "Недійсне посилання на переклад документа",
+    "documentNotFound": "Перекладений документ не знайдено або термін його дії закінчився",
+    "downloadFailed": "Не вдалося завантажити перекладений документ",
+    "downloadSuccess": "Документ успішно завантажено",
+    "translatedTo": "Перекладено на {language}",
+    "download": "Завантажити",
+    "downloading": "Завантаження...",
+    "expired": "Термін дії цього перекладу закінчився",
+    "expiresSoon": "Термін дії закінчується через {days} днi(в) — завантажте найближчим часом",
+    "expires": "Доступно протягом {days} днiв"
   }
 }

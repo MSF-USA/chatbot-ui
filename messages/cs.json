@@ -1425,7 +1425,8 @@
     "noToneDefault": "Žádný tón (výchozí)",
     "useDefaultStyle": "Použít výchozí styl psaní",
     "noTonesCreated": "Zatím nebyly vytvořeny žádné tóny",
-    "createTonesHint": "Vytvořte tóny v Rychlých akcích"
+    "createTonesHint": "Vytvořte tóny v Rychlých akcích",
+    "translateDocumentTooltip": "Překládejte dokumenty do jiného jazyka.\n\nPodporované formáty: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaximální velikost: 40 MB\n\nPodporuje více než 80 jazyků s volitelnými soubory glosáře."
   },
   "transcription": {
     "addInstructions": "Přidat pokyny",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Nejprve kontaktujte místní IT podporu",
     "escalationStep2": "Pokud není problém vyřešen, obraťte se na IT oddělení vašeho operačního centra (OC)",
     "escalationStep3": "Pokud není problém stále vyřešen, OC IT může eskalovat na SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Přeložit dokument",
+  "documentTranslation": {
+    "title": "Překlad dokumentu",
+    "targetLanguage": "Cílový jazyk",
+    "sourceLanguage": "Zdrojový jazyk",
+    "searchLanguage": "Vyhledat jazyky...",
+    "noLanguagesFound": "Nenalezeny žádné jazyky",
+    "autoDetect": "Automaticky rozpoznat, pokud není uvedeno",
+    "glossary": "Soubor glosáře",
+    "glossaryHelp": "Nahrajte glosář ve formátu CSV, TSV nebo XLIFF pro vlastní terminologii",
+    "uploadGlossary": "Nahrát glosář",
+    "glossaryTooLarge": "Soubor glosáře je příliš velký. Maximální velikost je {maxSize}.",
+    "outputFilename": "Výstupní název souboru",
+    "outputFilenamePlaceholder": "document_cs.docx",
+    "translateButton": "Přeložit dokument",
+    "translating": "Překládá se...",
+    "noDocumentError": "Vyberte prosím dokument k překladu.",
+    "noTargetLanguageError": "Vyberte prosím cílový jazyk.",
+    "documentTooLarge": "Dokument je příliš velký. Maximální velikost je {maxSize}.",
+    "translationSuccess": "Dokument byl úspěšně přeložen",
+    "translationFailed": "Překlad selhal: {error}",
+    "invalidReference": "Neplatný odkaz pro překlad dokumentu",
+    "documentNotFound": "Přeložený dokument nebyl nalezen nebo jeho platnost vypršela",
+    "downloadFailed": "Stažení přeloženého dokumentu se nezdařilo",
+    "downloadSuccess": "Dokument byl úspěšně stažen",
+    "translatedTo": "Přeloženo do {language}",
+    "download": "Stáhnout",
+    "downloading": "Stahuje se...",
+    "expired": "Tento překlad vypršel a již není k dispozici",
+    "expiresSoon": "Vyprší za {days} den/dnů – stáhněte brzy",
+    "expires": "K dispozici {days} dní"
   }
 }

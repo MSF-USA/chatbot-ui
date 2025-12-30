@@ -1508,7 +1508,8 @@
     "noToneDefault": "Fără ton (implicit)",
     "useDefaultStyle": "Folosiți stilul de scriere implicit",
     "noTonesCreated": "Nu au fost create tonuri încă",
-    "createTonesHint": "Creați tonuri în Acțiuni rapide"
+    "createTonesHint": "Creați tonuri în Acțiuni rapide",
+    "translateDocumentTooltip": "Tradu documente în altă limbă.\n\nFormate acceptate: Word, Excel, PowerPoint, PDF, HTML, TXT\nDimensiune maximă: 40MB\n\nSuportă peste 80 de limbi, cu fișiere glosar opționale."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adăugați instrucțiunile personale pentru a personaliza modul în care răspunde AI. Acestea sunt combinate cu liniile directoare de bază care asigură răspunsuri utile, corecte și sigure.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Contactați mai întâi suportul IT local",
     "escalationStep2": "Dacă problema nu este rezolvată, escaladați către departamentul IT al Centrului Operațional (OC)",
     "escalationStep3": "Dacă încă nu este rezolvată, OC IT poate escalada către SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Tradu Documentul",
+  "documentTranslation": {
+    "title": "Traducere Document",
+    "targetLanguage": "Limba țintă",
+    "sourceLanguage": "Limba sursă",
+    "searchLanguage": "Caută limbi...",
+    "noLanguagesFound": "Nicio limbă găsită",
+    "autoDetect": "Detectare automată dacă nu este specificat",
+    "glossary": "Fișier Glosar",
+    "glossaryHelp": "Încarcă un fișier glosar CSV, TSV sau XLIFF pentru terminologie personalizată",
+    "uploadGlossary": "Încarcă Glosar",
+    "glossaryTooLarge": "Fișierul glosar este prea mare. Dimensiunea maximă este {maxSize}.",
+    "outputFilename": "Nume fișier rezultat",
+    "outputFilenamePlaceholder": "document_ro.docx",
+    "translateButton": "Tradu Documentul",
+    "translating": "Se traduce...",
+    "noDocumentError": "Vă rugăm să selectați un document pentru traducere.",
+    "noTargetLanguageError": "Vă rugăm să selectați o limbă țintă.",
+    "documentTooLarge": "Documentul este prea mare. Dimensiunea maximă este {maxSize}.",
+    "translationSuccess": "Documentul a fost tradus cu succes",
+    "translationFailed": "Traducerea a eșuat: {error}",
+    "invalidReference": "Referință invalidă pentru traducerea documentului",
+    "documentNotFound": "Documentul tradus nu a fost găsit sau a expirat",
+    "downloadFailed": "Descărcarea documentului tradus a eșuat",
+    "downloadSuccess": "Documentul a fost descărcat cu succes",
+    "translatedTo": "Tradus în {language}",
+    "download": "Descarcă",
+    "downloading": "Se descarcă...",
+    "expired": "Această traducere a expirat și nu mai este disponibilă",
+    "expiresSoon": "Expiră în {days} zi(le) - descărcați cât mai curând",
+    "expires": "Disponibil pentru {days} zile"
   }
 }

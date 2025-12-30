@@ -1508,7 +1508,8 @@
     "noToneDefault": "Sense to (per defecte)",
     "useDefaultStyle": "Fes servir l'estil d'escriptura per defecte",
     "noTonesCreated": "Encara no s'ha creat cap to",
-    "createTonesHint": "Crea tons a Accions Ràpides"
+    "createTonesHint": "Crea tons a Accions Ràpides",
+    "translateDocumentTooltip": "Traduïu documents a un altre idioma.\n\nFormats admesos: Word, Excel, PowerPoint, PDF, HTML, TXT\nMida màxima: 40 MB\n\nAdmet més de 80 idiomes amb arxius de glossari opcionals."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Afegeix les teves instruccions personals per personalitzar com respon la IA. Aquestes es combinen amb les directrius bàsiques de comportament que garanteixen respostes útils, precises i segures.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Consell: Escriu \"/\" per seleccionar d'entre les plantilles de prompt desades.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Contacta primer amb el teu suport informàtic local",
     "escalationStep2": "Si no es resol, escala-ho al departament de TI del Centre Operacional (OC)",
     "escalationStep3": "Si encara no es resol, el TI de l’OC pot escalar-ho a SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Traduir document",
+  "documentTranslation": {
+    "title": "Traducció de documents",
+    "targetLanguage": "Idioma de destinació",
+    "sourceLanguage": "Idioma d'origen",
+    "searchLanguage": "Cerca idiomes...",
+    "noLanguagesFound": "No s'ha trobat cap idioma",
+    "autoDetect": "Detecció automàtica si no s'especifica",
+    "glossary": "Arxiu de glossari",
+    "glossaryHelp": "Carregueu un arxiu de glossari CSV, TSV o XLIFF per a una terminologia personalitzada",
+    "uploadGlossary": "Puja glossari",
+    "glossaryTooLarge": "L'arxiu del glossari és massa gran. La mida màxima és {maxSize}.",
+    "outputFilename": "Nom de l'arxiu de sortida",
+    "outputFilenamePlaceholder": "document_ca.docx",
+    "translateButton": "Traduir document",
+    "translating": "S'està traduint...",
+    "noDocumentError": "Seleccioneu un document per traduir.",
+    "noTargetLanguageError": "Seleccioneu un idioma de destinació.",
+    "documentTooLarge": "El document és massa gran. La mida màxima és {maxSize}.",
+    "translationSuccess": "Document traduït correctament",
+    "translationFailed": "Error en la traducció: {error}",
+    "invalidReference": "Referència de traducció del document no vàlida",
+    "documentNotFound": "No s'ha trobat el document traduït o ha caducat",
+    "downloadFailed": "No s'ha pogut descarregar el document traduït",
+    "downloadSuccess": "Document descarregat correctament",
+    "translatedTo": "Traduït a {language}",
+    "download": "Descarrega",
+    "downloading": "S'està descarregant...",
+    "expired": "Aquesta traducció ha caducat i ja no està disponible",
+    "expiresSoon": "Caduca en {days} dia(es) - descarregueu aviat",
+    "expires": "Disponible durant {days} dies"
   }
 }

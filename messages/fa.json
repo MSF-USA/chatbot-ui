@@ -1508,7 +1508,8 @@
     "noToneDefault": "بدون لحن (پیش‌فرض)",
     "useDefaultStyle": "استفاده از سبک نوشتاری پیش‌فرض",
     "noTonesCreated": "هنوز لحنی ایجاد نشده است",
-    "createTonesHint": "می‌توانید لحن را در عملیات سریع ایجاد کنید"
+    "createTonesHint": "می‌توانید لحن را در عملیات سریع ایجاد کنید",
+    "translateDocumentTooltip": "ترجمه اسناد به زبان دیگر.\n\nفرمت‌های پشتیبانی‌شده: Word، Excel، PowerPoint، PDF، HTML، TXT\nحداکثر اندازه: ۴۰ مگابایت\n\nپشتیبانی از بیش از ۸۰ زبان همراه با فایل واژه‌نامه انتخابی."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "دستورالعمل‌های شخصی خود را برای سفارشی‌سازی نحوه پاسخ‌دهی هوش مصنوعی اضافه کنید. این دستورالعمل‌ها همراه با راهنماهای اصلی رفتاری برای تضمین پاسخ‌های مفید، دقیق و ایمن ترکیب می‌شوند.",
   "Tip: Type \"/\" to select from saved prompt templates_": "نکته: با وارد کردن \"/\" می‌توانید از قالب‌های ذخیره‌شده راهنما انتخاب کنید.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "ابتدا با پشتیبانی فناوری اطلاعات محلی خود تماس بگیرید",
     "escalationStep2": "در صورت حل نشدن مشکل، به بخش IT مرکز عملیاتی (OC) خود ارجاع دهید",
     "escalationStep3": "در صورت باقی بودن مشکل، بخش IT OC می‌تواند موضوع را به SITS (خدمات مشترک IT) ارجاع دهد"
+  },
+  "translateDocumentDropdown": "ترجمه سند",
+  "documentTranslation": {
+    "title": "ترجمه سند",
+    "targetLanguage": "زبان مقصد",
+    "sourceLanguage": "زبان مبدا",
+    "searchLanguage": "جستجوی زبان‌ها...",
+    "noLanguagesFound": "زبانی یافت نشد",
+    "autoDetect": "در صورت مشخص نبودن، به صورت خودکار تشخیص داده می‌شود",
+    "glossary": "فایل واژه‌نامه",
+    "glossaryHelp": "یک فایل واژه‌نامه با فرمت CSV، TSV یا XLIFF برای اصطلاحات سفارشی بارگذاری کنید",
+    "uploadGlossary": "بارگذاری واژه‌نامه",
+    "glossaryTooLarge": "فایل واژه‌نامه بیش از حد بزرگ است. حداکثر اندازه {maxSize} است.",
+    "outputFilename": "نام فایل خروجی",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ترجمه سند",
+    "translating": "در حال ترجمه...",
+    "noDocumentError": "لطفاً یک سند برای ترجمه انتخاب کنید.",
+    "noTargetLanguageError": "لطفاً زبان مقصد را انتخاب کنید.",
+    "documentTooLarge": "سند بسیار بزرگ است. حداکثر اندازه {maxSize} است.",
+    "translationSuccess": "سند با موفقیت ترجمه شد",
+    "translationFailed": "ترجمه انجام نشد: {error}",
+    "invalidReference": "ارجاع ترجمه سند نامعتبر است",
+    "documentNotFound": "سند ترجمه‌شده پیدا نشد یا منقضی شده است",
+    "downloadFailed": "دانلود سند ترجمه‌شده ناموفق بود",
+    "downloadSuccess": "سند با موفقیت دانلود شد",
+    "translatedTo": "ترجمه شده به {language}",
+    "download": "دانلود",
+    "downloading": "در حال دانلود...",
+    "expired": "این ترجمه منقضی شده و دیگر در دسترس نیست.",
+    "expiresSoon": "تا {days} روز دیگر منقضی می‌شود - هرچه زودتر دانلود کنید",
+    "expires": "به مدت {days} روز در دسترس است"
   }
 }

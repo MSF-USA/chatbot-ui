@@ -1508,7 +1508,8 @@
     "noToneDefault": "Không có giọng điệu (Mặc định)",
     "useDefaultStyle": "Sử dụng phong cách viết mặc định",
     "noTonesCreated": "Chưa tạo giọng điệu nào",
-    "createTonesHint": "Tạo giọng điệu trong Quick Actions"
+    "createTonesHint": "Tạo giọng điệu trong Quick Actions",
+    "translateDocumentTooltip": "Dịch tài liệu sang ngôn ngữ khác.\n\nĐịnh dạng hỗ trợ: Word, Excel, PowerPoint, PDF, HTML, TXT\nKích thước tối đa: 40MB\n\nHỗ trợ hơn 80 ngôn ngữ với file thuật ngữ tùy chọn."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Thêm hướng dẫn cá nhân của bạn để tùy chỉnh cách AI phản hồi. Các hướng dẫn này sẽ được kết hợp với các quy tắc hành vi cốt lõi nhằm đảm bảo phản hồi hữu ích, chính xác và an toàn.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Mẹo: Gõ \"/\" để chọn từ các mẫu gợi ý đã lưu.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Trước tiên, hãy liên hệ bộ phận IT địa phương của bạn",
     "escalationStep2": "Nếu chưa được giải quyết, chuyển cấp lên phòng IT Trung Tâm Điều Hành (OC) của bạn",
     "escalationStep3": "Nếu vẫn chưa được giải quyết, phòng IT OC có thể chuyển cấp lên SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Dịch tài liệu",
+  "documentTranslation": {
+    "title": "Dịch tài liệu",
+    "targetLanguage": "Ngôn ngữ đích",
+    "sourceLanguage": "Ngôn ngữ nguồn",
+    "searchLanguage": "Tìm kiếm ngôn ngữ...",
+    "noLanguagesFound": "Không tìm thấy ngôn ngữ nào",
+    "autoDetect": "Tự động nhận diện nếu không chỉ định",
+    "glossary": "Tệp thuật ngữ",
+    "glossaryHelp": "Tải lên file thuật ngữ định dạng CSV, TSV hoặc XLIFF cho thuật ngữ tùy chỉnh",
+    "uploadGlossary": "Tải lên thuật ngữ",
+    "glossaryTooLarge": "Tệp thuật ngữ quá lớn. Kích thước tối đa là {maxSize}.",
+    "outputFilename": "Tên tệp xuất",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Dịch tài liệu",
+    "translating": "Đang dịch...",
+    "noDocumentError": "Vui lòng chọn tài liệu để dịch.",
+    "noTargetLanguageError": "Vui lòng chọn ngôn ngữ đích.",
+    "documentTooLarge": "Tài liệu quá lớn. Kích thước tối đa là {maxSize}.",
+    "translationSuccess": "Dịch tài liệu thành công",
+    "translationFailed": "Dịch thất bại: {error}",
+    "invalidReference": "Tham chiếu dịch tài liệu không hợp lệ",
+    "documentNotFound": "Không tìm thấy tài liệu đã dịch hoặc đã hết hạn",
+    "downloadFailed": "Tải xuống tài liệu đã dịch thất bại",
+    "downloadSuccess": "Tải xuống tài liệu thành công",
+    "translatedTo": "Đã dịch sang {language}",
+    "download": "Tải xuống",
+    "downloading": "Đang tải xuống...",
+    "expired": "Bản dịch này đã hết hạn và không còn khả dụng",
+    "expiresSoon": "Sẽ hết hạn trong {days} ngày - hãy tải xuống sớm",
+    "expires": "Có thể tải trong {days} ngày"
   }
 }

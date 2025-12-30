@@ -1508,7 +1508,8 @@
     "noToneDefault": "శైలి లేదు (ఒప్పందమైనది)",
     "useDefaultStyle": "డిఫాల్ట్ రైటింగ్ స్టైల్లు వినియోగించండి",
     "noTonesCreated": "ఇంకా ఎలాంటి శైలులు సృష్టించలేదు",
-    "createTonesHint": "త్వరిత చర్యల్లో శైల్లను సృష్టించండి"
+    "createTonesHint": "త్వరిత చర్యల్లో శైల్లను సృష్టించండి",
+    "translateDocumentTooltip": "డాక్యుమెంట్లను ఇతర భాషలకు అనువదించండి.\n\nఅనుమతించబడిన ఫార్మాట్‌లు: Word, Excel, PowerPoint, PDF, HTML, TXT\nగరిష్ఠ పరిమాణం: 40MB\n\nఐచ్ఛిక గ్లోస్సరీ ఫైళ్లతో పాటు 80+ భాషలకు మద్దతు."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI ఎలా స్పందించాలో అనుకూలీకరించడానికి మీ వ్యక్తిగత సూచనలను జత చేయండి. ఇవి సహాయకరమైన, ఖచ్చితమైన మరియు సురక్షితమైన స్పందనలను నిర్ధారించే ప్రాథమిక ప్రవర్తనా మార్గదర్శకాలతో కలిపి ఉపయోగించబడతాయి.",
   "Tip: Type \"/\" to select from saved prompt templates_": "సూచన: సేవ్ చేయబడిన ప్రాంప్ట్ టెంప్లేట్లను ఎంచుకోవడానికి \"/\" టైప్ చేయండి.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "ముందుగా మీ స్థానిక IT సహాయాన్ని సంప్రదించండి",
     "escalationStep2": "పరిష్కారం కాకపోతే, మీ OC (ఆపరేషనల్ సెంటర్) IT విభాగానికి స్కలేట్ చేయండి",
     "escalationStep3": "ఇంకా పరిష్కారం కాకపోతే, OC IT వారు SITS (షేర్డ్ IT సర్వీసెస్) కు స్కలేట్ చేయవచ్చు"
+  },
+  "translateDocumentDropdown": "డాక్యుమెంట్ అనువదించండి",
+  "documentTranslation": {
+    "title": "డాక్యుమెంట్ అనువాదం",
+    "targetLanguage": "లక్ష్య భాష",
+    "sourceLanguage": "మూల భాష",
+    "searchLanguage": "భాషలను శోధించండి...",
+    "noLanguagesFound": "ఏ భాషలు కనుగొనబడలేదు",
+    "autoDetect": "చెప్పనట్లయితే స్వయంచాలకంగా గుర్తించు",
+    "glossary": "గ్లోస్సరీ ఫైల్",
+    "glossaryHelp": "కస్టమ్ పదజాలానికి CSV, TSV, లేదా XLIFF గ్లోస్సరీ ఫైల్‌ను అప్లోడ్ చేయండి",
+    "uploadGlossary": "గ్లోస్సరీ అప్లోడ్ చేయండి",
+    "glossaryTooLarge": "గ్లోస్సరీ ఫైల్ చాలా పెద్దదిగా ఉంది. గరిష్ఠ పరిమాణం {maxSize}.",
+    "outputFilename": "ఫలిత ఫైల్ పేరు",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "డాక్యుమెంట్ అనువదించండి",
+    "translating": "అనువదిస్తున్నది...",
+    "noDocumentError": "దయచేసి అనువదించడానికి ఒక డాక్యుమెంట్‌ను ఎంచుకోండి.",
+    "noTargetLanguageError": "దయచేసి లక్ష్య భాషను ఎంచుకోండి.",
+    "documentTooLarge": "డాక్యుమెంట్ చాలా పెద్దదిగా ఉంది. గరిష్ఠ పరిమాణం {maxSize}.",
+    "translationSuccess": "డాక్యుమెంట్ విజయవంతంగా అనువదించబడింది",
+    "translationFailed": "అనువాదం విఫలంగా ఉంది: {error}",
+    "invalidReference": "చెల్లని డాక్యుమెంట్ అనువాద రిఫరెన్స్",
+    "documentNotFound": "అనువదించబడిన డాక్యుమెంట్ కనుగొనబడలేదు లేదా గడువు ముగిసింది",
+    "downloadFailed": "అనువదించబడిన డాక్యుమెంట్‌ను డౌన్‌లోడ్ చేయడంలో వైఫల్యం",
+    "downloadSuccess": "డాక్యుమెంట్ విజయవంతంగా డౌన్‌లోడ్ చేయబడింది",
+    "translatedTo": "{language} కి అనువదించబడింది",
+    "download": "డౌన్‌లోడ్ చేసుకోండి",
+    "downloading": "డౌన్‌లోడ్ అవుతోంది...",
+    "expired": "ఈ అనువాదానికి గడువు పూర్తయింది, ఇక అందుబాటులో లేదు",
+    "expiresSoon": "{days} రోజు(లు)లో గడువు ముగుస్తుంది - త్వరలో డౌన్‌లోడ్ చేయండి",
+    "expires": "{days} రోజులపాటు అందుబాటులో ఉంటుంది"
   }
 }

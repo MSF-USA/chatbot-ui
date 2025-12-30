@@ -1508,7 +1508,8 @@
     "noToneDefault": "Nessun tono (predefinito)",
     "useDefaultStyle": "Usa stile di scrittura predefinito",
     "noTonesCreated": "Nessun tono creato",
-    "createTonesHint": "Crea toni nelle Azioni rapide"
+    "createTonesHint": "Crea toni nelle Azioni rapide",
+    "translateDocumentTooltip": "Traduce documenti in un'altra lingua.\n\nFormati supportati: Word, Excel, PowerPoint, PDF, HTML, TXT\nDimensione massima: 40MB\n\nSupporta oltre 80 lingue con file glossario opzionali."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Aggiungi le tue istruzioni personali per personalizzare le risposte dell’IA. Queste si uniscono alle linee guida principali per garantire risposte utili, accurate e sicure.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Suggerimento: digita \"/\" per selezionare tra i modelli di prompt salvati.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Contatta prima il tuo supporto IT locale",
     "escalationStep2": "Se non risolto, inoltra all'ufficio IT del tuo Centro Operativo (OC)",
     "escalationStep3": "Se ancora non risolto, l’IT dell’OC può inoltrare a SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Traduci documento",
+  "documentTranslation": {
+    "title": "Traduzione documento",
+    "targetLanguage": "Lingua di destinazione",
+    "sourceLanguage": "Lingua di origine",
+    "searchLanguage": "Cerca lingue...",
+    "noLanguagesFound": "Nessuna lingua trovata",
+    "autoDetect": "Rilevamento automatico se non specificato",
+    "glossary": "File glossario",
+    "glossaryHelp": "Carica un file glossario CSV, TSV o XLIFF per la terminologia personalizzata",
+    "uploadGlossary": "Carica glossario",
+    "glossaryTooLarge": "File glossario troppo grande. Dimensione massima: {maxSize}.",
+    "outputFilename": "Nome file di output",
+    "outputFilenamePlaceholder": "document_it.docx",
+    "translateButton": "Traduci documento",
+    "translating": "Traduzione in corso...",
+    "noDocumentError": "Seleziona un documento da tradurre.",
+    "noTargetLanguageError": "Seleziona una lingua di destinazione.",
+    "documentTooLarge": "Documento troppo grande. Dimensione massima: {maxSize}.",
+    "translationSuccess": "Documento tradotto con successo",
+    "translationFailed": "Traduzione non riuscita: {error}",
+    "invalidReference": "Riferimento traduzione documento non valido",
+    "documentNotFound": "Documento tradotto non trovato o scaduto",
+    "downloadFailed": "Impossibile scaricare il documento tradotto",
+    "downloadSuccess": "Documento scaricato con successo",
+    "translatedTo": "Tradotto in {language}",
+    "download": "Scarica",
+    "downloading": "Download in corso...",
+    "expired": "Questa traduzione è scaduta e non è più disponibile",
+    "expiresSoon": "Scade tra {days} giorno/i - scarica presto",
+    "expires": "Disponibile per {days} giorni"
   }
 }

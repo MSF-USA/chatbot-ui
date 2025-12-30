@@ -1508,7 +1508,8 @@
     "noToneDefault": "Ingen ton (standard)",
     "useDefaultStyle": "Använd standardstil",
     "noTonesCreated": "Inga toner har skapats ännu",
-    "createTonesHint": "Skapa toner i Snabbåtgärder"
+    "createTonesHint": "Skapa toner i Snabbåtgärder",
+    "translateDocumentTooltip": "Översätt dokument till ett annat språk.\n\nStödda format: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaxstorlek: 40 MB\n\nStöder 80+ språk med valfria ordlistor."
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Lägg till dina egna instruktioner för att anpassa hur AI:n svarar. Dessa kombineras med grundläggande riktlinjer som säkerställer hjälpsamma, korrekta och säkra svar.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Tips: Skriv \"/\" för att välja bland sparade promptmallar.",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "Kontakta först din lokala IT-support",
     "escalationStep2": "Om det inte löser problemet, eskalera till ditt operativa centers IT-avdelning",
     "escalationStep3": "Om det fortfarande inte är löst kan OC IT eskalera till SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Översätt dokument",
+  "documentTranslation": {
+    "title": "Dokumentöversättning",
+    "targetLanguage": "Målspråk",
+    "sourceLanguage": "Källspråk",
+    "searchLanguage": "Sök språk...",
+    "noLanguagesFound": "Inga språk hittades",
+    "autoDetect": "Identifiera automatiskt om inte angivet",
+    "glossary": "Ordlistfil",
+    "glossaryHelp": "Ladda upp en CSV-, TSV- eller XLIFF-ordlista för anpassad terminologi",
+    "uploadGlossary": "Ladda upp ordlista",
+    "glossaryTooLarge": "Ordlistfilen är för stor. Maximal storlek är {maxSize}.",
+    "outputFilename": "Utdatafilnamn",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Översätt dokument",
+    "translating": "Översätter...",
+    "noDocumentError": "Vänligen välj ett dokument att översätta.",
+    "noTargetLanguageError": "Vänligen välj ett målspråk.",
+    "documentTooLarge": "Dokumentet är för stort. Maximal storlek är {maxSize}.",
+    "translationSuccess": "Dokumentet har översatts",
+    "translationFailed": "Översättningen misslyckades: {error}",
+    "invalidReference": "Ogiltig referens för dokumentöversättning",
+    "documentNotFound": "Det översatta dokumentet hittades inte eller har gått ut",
+    "downloadFailed": "Kunde inte ladda ner det översatta dokumentet",
+    "downloadSuccess": "Dokumentet har laddats ner",
+    "translatedTo": "Översatt till {language}",
+    "download": "Ladda ner",
+    "downloading": "Laddar ner...",
+    "expired": "Denna översättning har gått ut och är inte längre tillgänglig",
+    "expiresSoon": "Utgår om {days} dag(ar) – ladda ner snart",
+    "expires": "Tillgänglig i {days} dagar"
   }
 }

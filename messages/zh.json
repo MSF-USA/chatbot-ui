@@ -1425,7 +1425,8 @@
     "noToneDefault": "无语气（默认）",
     "useDefaultStyle": "使用默认写作风格",
     "noTonesCreated": "尚未创建语气",
-    "createTonesHint": "可在快捷操作中创建语气"
+    "createTonesHint": "可在快捷操作中创建语气",
+    "translateDocumentTooltip": "将文档翻译为其他语言。\n\n支持格式：Word、Excel、PowerPoint、PDF、HTML、TXT\n最大文件大小：40MB\n\n支持 80 多种语言，并可选用术语表文件。"
   },
   "transcription": {
     "addInstructions": "添加说明",
@@ -1584,5 +1585,37 @@
     "escalationStep1": "请首先联系您本地的 IT 支持",
     "escalationStep2": "如未解决，请升级到您的运营中心（OC）IT 部门",
     "escalationStep3": "如仍未解决，OC IT 可升级到 SITS（共享 IT 服务）"
+  },
+  "translateDocumentDropdown": "翻译文档",
+  "documentTranslation": {
+    "title": "文档翻译",
+    "targetLanguage": "目标语言",
+    "sourceLanguage": "源语言",
+    "searchLanguage": "搜索语言…",
+    "noLanguagesFound": "未找到语言",
+    "autoDetect": "如未指定将自动检测",
+    "glossary": "术语表文件",
+    "glossaryHelp": "上传 CSV、TSV 或 XLIFF 格式的术语表以自定义术语",
+    "uploadGlossary": "上传术语表",
+    "glossaryTooLarge": "术语表文件过大。最大支持{maxSize}。",
+    "outputFilename": "输出文件名",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "翻译文档",
+    "translating": "正在翻译…",
+    "noDocumentError": "请选择要翻译的文档。",
+    "noTargetLanguageError": "请选择目标语言。",
+    "documentTooLarge": "文档过大。最大支持{maxSize}。",
+    "translationSuccess": "文档翻译成功",
+    "translationFailed": "翻译失败：{error}",
+    "invalidReference": "无效的文档翻译引用",
+    "documentNotFound": "已翻译的文档未找到或已过期",
+    "downloadFailed": "下载翻译文档失败",
+    "downloadSuccess": "文档下载成功",
+    "translatedTo": "已翻译为{language}",
+    "download": "下载",
+    "downloading": "正在下载…",
+    "expired": "此翻译已过期，无法访问",
+    "expiresSoon": "将在{days}天后过期，请尽快下载",
+    "expires": "可用{days}天"
   }
 }
