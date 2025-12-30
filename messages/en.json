@@ -1085,7 +1085,9 @@
       "azureAgentModeDescription": "Faster but stores conversation data in the cloud",
       "privacyInfoTitle": "Important Privacy Information",
       "privacyInfoDescription": "Your full conversation will be sent to Azure AI Foundry agent.",
-      "learnMoreDataStorage": "Learn more about data storage"
+      "learnMoreDataStorage": "Learn more about data storage",
+      "privacyEnabled": "Privacy-focused search enabled",
+      "learnPrivacy": "Learn how your privacy is protected"
     },
     "customAgent": {
       "label": "Custom Agent:",
