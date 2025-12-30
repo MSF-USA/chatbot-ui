@@ -61,9 +61,25 @@ export class ImageProcessor extends BasePipelineStage {
 
     console.log(`[ImageProcessor] Found ${images.length} image(s)`);
 
-    // Convert blob storage URLs to base64 data URLs for LLM consumption
-    // LLMs cannot access private Azure blob URLs directly
-    const convertedImages = await convertImagesToBase64(images, context.user);
+    // Convert image references to base64 data URLs for LLM consumption
+    // Uses getBlobBase64String which handles both data URL strings and binary content
+    const convertedImages = await Promise.all(
+      images.map(async (image) => {
+        // Skip if already a base64 data URL
+        if (image.url.startsWith('data:')) {
+          return image;
+        }
+
+        const filename = extractFilename(image.url);
+        const base64Url = await getBlobBase64String(
+          context.user.id ?? 'anonymous',
+          filename,
+          'images',
+          context.user,
+        );
+        return { url: base64Url, detail: image.detail };
+      }),
+    );
 
     console.log(
       `[ImageProcessor] Converted ${convertedImages.length} image(s) to base64`,
