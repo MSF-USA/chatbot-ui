@@ -8,6 +8,7 @@ import {
   SystemPromptOptions,
   buildSystemPrompt,
 } from '@/lib/utils/app/systemPrompt';
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
 import { getMessageContentTypes } from '@/lib/utils/server/chat/chat';
 
 import { ChatBody } from '@/types/chat';
@@ -142,6 +143,8 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       includeUserInfoInPrompt,
       preferredName,
       userContext,
+      displayNamePreference,
+      customDisplayName,
     } = body;
 
     if (tone) {
@@ -161,6 +164,8 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       includeUserInfoInPrompt,
       preferredName,
       userContext,
+      displayNamePreference,
+      customDisplayName,
       temperature,
       stream,
       reasoningEffort,
