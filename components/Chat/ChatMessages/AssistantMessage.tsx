@@ -35,6 +35,7 @@ import { Citation } from '@/types/rag';
 import { MessageTranslationState } from '@/types/translation';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
+import { DocumentTranslationContent } from '@/components/Chat/ChatMessages/DocumentTranslationContent';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { TranscriptContent } from '@/components/Chat/ChatMessages/TranscriptContent';
 import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
@@ -52,6 +53,16 @@ import type { MermaidConfig } from 'mermaid';
  */
 function isBlobTranscriptReference(content: string): boolean {
   return /^\[Transcript:\s*.+?\s*\|\s*blob:[a-fA-F0-9-]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
+    content.trim(),
+  );
+}
+
+/**
+ * Checks if content is a document translation reference.
+ * Format: [Translation: filename | lang:code | blob:jobId | ext:extension | expires:ISO_TIMESTAMP]
+ */
+function isDocumentTranslationReference(content: string): boolean {
+  return /^\[Translation:\s*.+?\s*\|\s*lang:[a-zA-Z-]+\s*\|\s*blob:[a-fA-F0-9-]+\s*\|\s*ext:[a-zA-Z0-9]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
     content.trim(),
   );
 }
@@ -481,8 +492,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="prose dark:prose-invert max-w-none w-full"
                 style={{ maxWidth: 'none' }}
               >
-                {/* Check if content is a blob transcript reference that needs lazy loading */}
-                {isBlobTranscriptReference(displayedContent) ? (
+                {/* Check for document translation reference */}
+                {isDocumentTranslationReference(displayedContent) ? (
+                  <DocumentTranslationContent content={displayedContent} />
+                ) : /* Check if content is a blob transcript reference that needs lazy loading */
+                isBlobTranscriptReference(displayedContent) ? (
                   <TranscriptContent
                     content={displayedContent}
                     className="whitespace-pre-wrap"
