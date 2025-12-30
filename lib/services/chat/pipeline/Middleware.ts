@@ -140,6 +140,8 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       tone,
       streamingSpeed,
       includeUserInfoInPrompt,
+      preferredName,
+      userContext,
     } = body;
 
     if (tone) {
@@ -157,6 +159,8 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       messages,
       rawUserPrompt: prompt,
       includeUserInfoInPrompt,
+      preferredName,
+      userContext,
       temperature,
       stream,
       reasoningEffort,
@@ -234,10 +238,12 @@ export const createSystemPromptMiddleware = (
   // Add user info if enabled and user is available
   if (context.includeUserInfoInPrompt && context.user) {
     options.userInfo = {
-      name: context.user.displayName,
+      // Use preferredName if provided, otherwise fall back to profile displayName
+      name: context.preferredName || context.user.displayName,
       title: context.user.jobTitle,
       email: context.user.mail,
       department: context.user.department,
+      additionalContext: context.userContext,
     };
   }
 
