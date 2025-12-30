@@ -8,7 +8,8 @@ import MicIcon from '@/components/Icons/mic';
 import { useChatInputStore } from '@/client/stores/chatInputStore';
 
 const SILENCE_THRESHOLD = -50;
-const MAX_SILENT_DURATION = 6000;
+const TRANSCRIBE_SILENCE_DURATION = 2000; // 2 seconds of silence triggers transcription
+const MAX_SILENT_DURATION = 6000; // 6 seconds of silence stops recording
 
 const ChatInputVoiceCapture: FC = React.memo(() => {
   const setTextFieldValue = useChatInputStore(
@@ -21,10 +22,12 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
   const [hasMicrophone, setHasMicrophone] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribingSegment, setIsTranscribingSegment] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
+  const lastTranscribedChunkIndexRef = useRef<number>(0);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -171,6 +174,35 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
     silenceStartTimeRef.current = null;
     setIsInitializing(false);
     setIsRecording(false);
+  };
+
+  /**
+   * Transcribe a segment of audio while continuing to record.
+   * Takes chunks from lastTranscribedChunkIndex to current length.
+   */
+  const transcribeSegment = async () => {
+    const startIndex = lastTranscribedChunkIndexRef.current;
+    const endIndex = audioChunksRef.current.length;
+
+    // Skip if no new chunks
+    if (endIndex <= startIndex) return;
+
+    // Get pending chunks
+    const pendingChunks = audioChunksRef.current.slice(startIndex, endIndex);
+
+    // Update index before async operation to prevent re-processing
+    lastTranscribedChunkIndexRef.current = endIndex;
+
+    // Create blob from pending chunks
+    const segmentBlob = new Blob(pendingChunks, { type: 'audio/webm' });
+
+    // Transcribe with UI indicator
+    setIsTranscribingSegment(true);
+    try {
+      await transcribeAudio(segmentBlob);
+    } finally {
+      setIsTranscribingSegment(false);
+    }
   };
 
   const transcribeAudio = async (audioBlob: Blob) => {
