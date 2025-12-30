@@ -530,6 +530,34 @@ const Dropdown: React.FC<DropdownProps> = ({
         }}
         className="hidden"
       />
+
+      {/* Hidden file input for documents (for translation) */}
+      <input
+        ref={documentTranslateInputRef}
+        type="file"
+        accept={DOCUMENT_TRANSLATION_ACCEPT_TYPES}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setDocumentToTranslate(file);
+            setIsDocumentTranslateOpen(true);
+          }
+          // Reset input so the same file can be selected again
+          e.target.value = '';
+        }}
+        className="hidden"
+      />
+
+      {/* Document Translation Modal */}
+      <ChatInputDocumentTranslate
+        isOpen={isDocumentTranslateOpen}
+        onClose={() => {
+          setIsDocumentTranslateOpen(false);
+          setDocumentToTranslate(null);
+        }}
+        documentFile={documentToTranslate}
+        onTranslationComplete={handleDocumentTranslationComplete}
+      />
     </div>
   );
 };
