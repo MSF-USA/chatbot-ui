@@ -151,6 +151,13 @@ const ChatBodySchema = z
       .string()
       .max(2000, 'User context too long (max 2,000 chars)')
       .optional(),
+    displayNamePreference: z
+      .enum(['firstName', 'lastName', 'fullName', 'custom', 'none'])
+      .optional(),
+    customDisplayName: z
+      .string()
+      .max(100, 'Custom display name too long (max 100 chars)')
+      .optional(),
   })
   .strict(); // Reject unknown properties
 
