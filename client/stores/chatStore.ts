@@ -408,6 +408,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       tone, // Pass the full tone object
       signal: abortController?.signal, // Pass abort signal
       streamingSpeed: settings.streamingSpeed, // Pass streaming speed configuration
+      includeUserInfoInPrompt: settings.includeUserInfoInPrompt,
     });
   },
 
