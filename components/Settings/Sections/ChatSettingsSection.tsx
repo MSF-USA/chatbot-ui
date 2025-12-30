@@ -1,4 +1,4 @@
-import { IconChevronDown, IconMessage } from '@tabler/icons-react';
+import { IconChevronDown, IconMessage, IconUser } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
 import { Session } from 'next-auth';
@@ -31,6 +31,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
 }) => {
   const t = useTranslations();
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
+  const [isAboutYouExpanded, setIsAboutYouExpanded] = useState(false);
 
   return (
     <div className="p-4">
