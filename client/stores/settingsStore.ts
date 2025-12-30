@@ -53,6 +53,12 @@ interface SettingsStore {
   /** Whether to include user info (name, title, email, dept) in system prompt */
   includeUserInfoInPrompt: boolean;
 
+  /** User's preferred name (overrides displayName from profile) */
+  preferredName: string;
+
+  /** Additional context about the user for the AI */
+  userContext: string;
+
   // Model ordering state
   modelOrderMode: ModelOrderMode;
   customModelOrder: string[];
@@ -71,6 +77,8 @@ interface SettingsStore {
   setCustomDisplayName: (name: string) => void;
   setStreamingSpeed: (config: StreamingSpeedConfig) => void;
   setIncludeUserInfoInPrompt: (enabled: boolean) => void;
+  setPreferredName: (name: string) => void;
+  setUserContext: (context: string) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
