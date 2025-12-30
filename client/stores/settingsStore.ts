@@ -50,6 +50,9 @@ interface SettingsStore {
   customAgents: CustomAgent[];
   streamingSpeed: StreamingSpeedConfig;
 
+  /** Whether to include user info (name, title, email, dept) in system prompt */
+  includeUserInfoInPrompt: boolean;
+
   // Model ordering state
   modelOrderMode: ModelOrderMode;
   customModelOrder: string[];
@@ -67,6 +70,7 @@ interface SettingsStore {
   setDisplayNamePreference: (preference: DisplayNamePreference) => void;
   setCustomDisplayName: (name: string) => void;
   setStreamingSpeed: (config: StreamingSpeedConfig) => void;
+  setIncludeUserInfoInPrompt: (enabled: boolean) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
@@ -120,6 +124,7 @@ export const useSettingsStore = create<SettingsStore>()(
       tones: [],
       customAgents: [],
       streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false, // Default off for privacy
 
       // Model ordering initial state
       modelOrderMode: 'usage',
@@ -147,6 +152,9 @@ export const useSettingsStore = create<SettingsStore>()(
       setCustomDisplayName: (name) => set({ customDisplayName: name }),
 
       setStreamingSpeed: (config) => set({ streamingSpeed: config }),
+
+      setIncludeUserInfoInPrompt: (enabled) =>
+        set({ includeUserInfoInPrompt: enabled }),
 
       setModels: (models) => set({ models }),
 
@@ -265,6 +273,7 @@ export const useSettingsStore = create<SettingsStore>()(
           tones: [],
           customAgents: [],
           streamingSpeed: DEFAULT_STREAMING_SPEED,
+          includeUserInfoInPrompt: false,
           modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
