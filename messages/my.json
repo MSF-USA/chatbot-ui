@@ -605,7 +605,8 @@
     "stopRecording": "မှတ်တင်ခြင်းရပ်ရန်",
     "voiceInput": "အသံဖြင့်ထည့်သွင်းမှု",
     "microphoneAccessDenied": "မိုက်ခရိုဖုန်း လက်ခံခွင့် ပျောက်နေပါသည်။ သင်၏ browser settings တွင် ဖွင့်ပေးပါ။",
-    "microphoneAccessError": "မိုက်ခရိုဖုန်း လက်ခံခွင့်အမှား: {message}"
+    "microphoneAccessError": "မိုက်ခရိုဖုန်း လက်ခံခွင့်အမှား: {message}",
+    "voiceInputTranscribing": "စာသားသို့ ပြောင်းလဲနေသည်..."
   },
   "sidebar": {
     "collapseSidebar": "ဘေးဘားကို ကျုံ့ပါ",

@@ -600,7 +600,8 @@
     "stopRecording": "Dừng ghi âm",
     "voiceInput": "Nhập bằng giọng nói",
     "microphoneAccessDenied": "Truy cập micro đã bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt của bạn.",
-    "microphoneAccessError": "Lỗi truy cập micro: {message}"
+    "microphoneAccessError": "Lỗi truy cập micro: {message}",
+    "voiceInputTranscribing": "Đang chuyển thành văn bản..."
   },
   "sidebar": {
     "collapseSidebar": "Thu gọn thanh bên",

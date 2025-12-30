@@ -582,7 +582,8 @@
     "stopRecording": "Arrêter l'enregistrement",
     "voiceInput": "Saisie vocale",
     "microphoneAccessDenied": "Accès au microphone refusé. Veuillez l’activer dans les paramètres de votre navigateur.",
-    "microphoneAccessError": "Erreur d'accès au microphone : {message}"
+    "microphoneAccessError": "Erreur d'accès au microphone : {message}",
+    "voiceInputTranscribing": "Transcription en cours..."
   },
   "sidebar": {
     "collapseSidebar": "Réduire la barre latérale",

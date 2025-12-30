@@ -629,7 +629,8 @@
     "stopRecording": "ریکارڈنگ روکیں",
     "voiceInput": "وائس ان پٹ",
     "microphoneAccessDenied": "مائیکروفون تک رسائی مسترد کر دی گئی ہے۔ براہ کرم اپنے براؤزر سیٹنگز میں اسے فعال کریں۔",
-    "microphoneAccessError": "مائیکروفون تک رسائی میں خرابی: {message}"
+    "microphoneAccessError": "مائیکروفون تک رسائی میں خرابی: {message}",
+    "voiceInputTranscribing": "ٹرانسکرائب کیا جا رہا ہے..."
   },
   "sidebar": {
     "collapseSidebar": "سائیڈ بار کو سکیڑیں",

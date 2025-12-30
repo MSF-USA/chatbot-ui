@@ -557,7 +557,8 @@
     "stopRecording": "Interrompi registrazione",
     "voiceInput": "Inserimento vocale",
     "microphoneAccessDenied": "Accesso al microfono negato. Abilitalo nelle impostazioni del browser.",
-    "microphoneAccessError": "Errore di accesso al microfono: {message}"
+    "microphoneAccessError": "Errore di accesso al microfono: {message}",
+    "voiceInputTranscribing": "Trascrizione in corso..."
   },
   "sidebar": {
     "collapseSidebar": "Comprimi barra laterale",

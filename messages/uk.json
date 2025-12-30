@@ -547,7 +547,8 @@
     "stopRecording": "Зупинити запис",
     "voiceInput": "Голосовий ввід",
     "microphoneAccessDenied": "Доступ до мікрофона заборонено. Будь ласка, увімкніть його в налаштуваннях браузера.",
-    "microphoneAccessError": "Помилка доступу до мікрофона: {message}"
+    "microphoneAccessError": "Помилка доступу до мікрофона: {message}",
+    "voiceInputTranscribing": "Транскрибування..."
   },
   "sidebar": {
     "collapseSidebar": "Згорнути бічну панель",

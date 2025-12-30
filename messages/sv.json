@@ -630,7 +630,8 @@
     "stopRecording": "Stoppa inspelning",
     "voiceInput": "Röstinmatning",
     "microphoneAccessDenied": "Mikrofonåtkomst nekad. Aktivera det i webbläsarens inställningar.",
-    "microphoneAccessError": "Fel vid mikrofonåtkomst: {message}"
+    "microphoneAccessError": "Fel vid mikrofonåtkomst: {message}",
+    "voiceInputTranscribing": "Transkriberar..."
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",

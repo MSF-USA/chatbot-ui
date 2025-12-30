@@ -630,7 +630,8 @@
     "stopRecording": "रिकॉर्डिंग रोकें",
     "voiceInput": "वॉइस इनपुट",
     "microphoneAccessDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत है। कृपया अपने ब्राउज़र सेटिंग्स में इसे सक्षम करें।",
-    "microphoneAccessError": "माइक्रोफ़ोन एक्सेस त्रुटि: {message}"
+    "microphoneAccessError": "माइक्रोफ़ोन एक्सेस त्रुटि: {message}",
+    "voiceInputTranscribing": "प्रतिलेखन किया जा रहा है..."
   },
   "sidebar": {
     "collapseSidebar": "साइडबार संक्षिप्त करें",

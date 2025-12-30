@@ -630,7 +630,8 @@
     "stopRecording": "停止录音",
     "voiceInput": "语音输入",
     "microphoneAccessDenied": "麦克风访问被拒绝，请在浏览器设置中启用。",
-    "microphoneAccessError": "麦克风访问错误：{message}"
+    "microphoneAccessError": "麦克风访问错误：{message}",
+    "voiceInputTranscribing": "正在转录…"
   },
   "sidebar": {
     "collapseSidebar": "折叠侧边栏",

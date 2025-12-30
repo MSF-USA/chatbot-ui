@@ -579,7 +579,8 @@
     "stopRecording": "ቅርጸትን ያቁሙ",
     "voiceInput": "የድምፅ ግቤት",
     "microphoneAccessDenied": "የማይክሮፎን መዳረሻ ተከልክሏል። እባክዎን በአንተ መቃኛ ቅንብሮች ውስጥ ይችላሉ።",
-    "microphoneAccessError": "የማይክሮፎን መዳረሻ ስህተት፡ {message}"
+    "microphoneAccessError": "የማይክሮፎን መዳረሻ ስህተት፡ {message}",
+    "voiceInputTranscribing": "በመቅዳት ላይ..."
   },
   "sidebar": {
     "collapseSidebar": "የጎን አሞሌውን ሰብስብ",

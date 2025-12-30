@@ -595,7 +595,8 @@
     "stopRecording": "Opname stoppen",
     "voiceInput": "Spraakinvoer",
     "microphoneAccessDenied": "Microfoontoegang is geweigerd. Schakel deze in via uw browserinstellingen.",
-    "microphoneAccessError": "Microfoontoegangsprobleem: {message}"
+    "microphoneAccessError": "Microfoontoegangsprobleem: {message}",
+    "voiceInputTranscribing": "Transcriberen..."
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",

@@ -582,7 +582,8 @@
     "stopRecording": "Parar gravação",
     "voiceInput": "Entrada de voz",
     "microphoneAccessDenied": "Acesso ao microfone negado. Ative-o nas configurações do seu navegador.",
-    "microphoneAccessError": "Erro de acesso ao microfone: {message}"
+    "microphoneAccessError": "Erro de acesso ao microfone: {message}",
+    "voiceInputTranscribing": "Transcrevendo..."
   },
   "sidebar": {
     "collapseSidebar": "Recolher barra lateral",

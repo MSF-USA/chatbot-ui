@@ -630,7 +630,8 @@
     "stopRecording": "Kaydı durdur",
     "voiceInput": "Sesli Giriş",
     "microphoneAccessDenied": "Mikrofona erişim reddedildi. Lütfen tarayıcı ayarlarından etkinleştirin.",
-    "microphoneAccessError": "Mikrofona erişim hatası: {message}"
+    "microphoneAccessError": "Mikrofona erişim hatası: {message}",
+    "voiceInputTranscribing": "Çevriliyor..."
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",

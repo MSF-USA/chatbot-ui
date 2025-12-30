@@ -582,7 +582,8 @@
     "stopRecording": "Aufnahme stoppen",
     "voiceInput": "Spracheingabe",
     "microphoneAccessDenied": "Mikrofonzugriff verweigert. Bitte aktivieren Sie ihn in den Browsereinstellungen.",
-    "microphoneAccessError": "Fehler beim Mikrofonzugriff: {message}"
+    "microphoneAccessError": "Fehler beim Mikrofonzugriff: {message}",
+    "voiceInputTranscribing": "Transkription läuft..."
   },
   "sidebar": {
     "collapseSidebar": "Seitenleiste einklappen",

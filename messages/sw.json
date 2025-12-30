@@ -630,7 +630,8 @@
     "stopRecording": "Sitisha kurekodi",
     "voiceInput": "Kuingiza Sauti",
     "microphoneAccessDenied": "Ufikiaji wa kipaza sauti umekataliwa. Tafadhali wezesha kwenye mipangilio ya kivinjari chako.",
-    "microphoneAccessError": "Hitilafu ya ufikiaji wa kipaza sauti: {message}"
+    "microphoneAccessError": "Hitilafu ya ufikiaji wa kipaza sauti: {message}",
+    "voiceInputTranscribing": "Inatambua..."
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",

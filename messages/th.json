@@ -547,7 +547,8 @@
     "stopRecording": "หยุดบันทึกเสียง",
     "voiceInput": "ป้อนด้วยเสียง",
     "microphoneAccessDenied": "ไม่สามารถเข้าถึงไมโครโฟน กรุณาเปิดใช้งานในตั้งค่าเบราว์เซอร์ของคุณ",
-    "microphoneAccessError": "เกิดข้อผิดพลาดในการเข้าถึงไมโครโฟน: {message}"
+    "microphoneAccessError": "เกิดข้อผิดพลาดในการเข้าถึงไมโครโฟน: {message}",
+    "voiceInputTranscribing": "กำลังถอดเสียง..."
   },
   "sidebar": {
     "collapseSidebar": "ยุบแถบด้านข้าง",

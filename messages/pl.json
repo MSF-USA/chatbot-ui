@@ -627,7 +627,8 @@
     "stopRecording": "Zatrzymaj nagrywanie",
     "voiceInput": "Wprowadzanie głosowe",
     "microphoneAccessDenied": "Dostęp do mikrofonu został zablokowany. Proszę włączyć go w ustawieniach przeglądarki.",
-    "microphoneAccessError": "Błąd dostępu do mikrofonu: {message}"
+    "microphoneAccessError": "Błąd dostępu do mikrofonu: {message}",
+    "voiceInputTranscribing": "Transkrypcja..."
   },
   "sidebar": {
     "collapseSidebar": "Zwiń pasek boczny",

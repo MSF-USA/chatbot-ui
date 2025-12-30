@@ -597,7 +597,8 @@
     "stopRecording": "Hentikan rekaman",
     "voiceInput": "Input Suara",
     "microphoneAccessDenied": "Akses mikrofon ditolak. Silakan aktifkan di pengaturan browser Anda.",
-    "microphoneAccessError": "Kesalahan akses mikrofon: {message}"
+    "microphoneAccessError": "Kesalahan akses mikrofon: {message}",
+    "voiceInputTranscribing": "Sedang mentranskripsikan..."
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",

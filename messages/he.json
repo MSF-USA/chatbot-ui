@@ -605,7 +605,8 @@
     "stopRecording": "הפסק הקלטה",
     "voiceInput": "קלט קולי",
     "microphoneAccessDenied": "הגישה למיקרופון נחסמה. אנא אפשר/י זאת בהגדרות הדפדפן.",
-    "microphoneAccessError": "שגיאת גישה למיקרופון: {message}"
+    "microphoneAccessError": "שגיאת גישה למיקרופון: {message}",
+    "voiceInputTranscribing": "מתמלל..."
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",

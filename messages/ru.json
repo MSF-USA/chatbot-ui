@@ -630,7 +630,8 @@
     "stopRecording": "Остановить запись",
     "voiceInput": "Голосовой ввод",
     "microphoneAccessDenied": "Доступ к микрофону запрещён. Пожалуйста, включите его в настройках браузера.",
-    "microphoneAccessError": "Ошибка доступа к микрофону: {message}"
+    "microphoneAccessError": "Ошибка доступа к микрофону: {message}",
+    "voiceInputTranscribing": "Распознавание речи..."
   },
   "sidebar": {
     "collapseSidebar": "Свернуть боковую панель",

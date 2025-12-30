@@ -630,7 +630,8 @@
     "stopRecording": "録音を停止",
     "voiceInput": "音声入力",
     "microphoneAccessDenied": "マイクへのアクセスが拒否されています。ブラウザの設定で有効にしてください。",
-    "microphoneAccessError": "マイクアクセスエラー：{message}"
+    "microphoneAccessError": "マイクアクセスエラー：{message}",
+    "voiceInputTranscribing": "音声を文字起こし中..."
   },
   "sidebar": {
     "collapseSidebar": "サイドバーを折りたたむ",

@@ -628,7 +628,8 @@
     "stopRecording": "Opriți înregistrarea",
     "voiceInput": "Introducere vocală",
     "microphoneAccessDenied": "Accesul la microfon este refuzat. Vă rugăm să îl activați în setările browserului.",
-    "microphoneAccessError": "Eroare de acces la microfon: {message}"
+    "microphoneAccessError": "Eroare de acces la microfon: {message}",
+    "voiceInputTranscribing": "Transcriere în curs..."
   },
   "sidebar": {
     "collapseSidebar": "Restrânge bara laterală",

@@ -582,7 +582,8 @@
     "stopRecording": "রেকর্ডিং বন্ধ করুন",
     "voiceInput": "ভয়েস ইনপুট",
     "microphoneAccessDenied": "মাইক্রোফোন ব্যবহারের অনুমতি নেই। দয়া করে ব্রাউজারের সেটিংসে এটি সক্রিয় করুন।",
-    "microphoneAccessError": "মাইক্রোফোন ব্যবহারে ত্রুটি: {message}"
+    "microphoneAccessError": "মাইক্রোফোন ব্যবহারে ত্রুটি: {message}",
+    "voiceInputTranscribing": "ট্র্যান্সক্রাইব করা হচ্ছে..."
   },
   "sidebar": {
     "collapseSidebar": "সাইডবার সংকুচিত করুন",

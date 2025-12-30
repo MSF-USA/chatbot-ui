@@ -630,7 +630,8 @@
     "stopRecording": "Zastavit nahrávání",
     "voiceInput": "Hlasový vstup",
     "microphoneAccessDenied": "Přístup k mikrofonu byl odepřen. Povolit jej můžete v nastavení vašeho prohlížeče.",
-    "microphoneAccessError": "Chyba přístupu k mikrofonu: {message}"
+    "microphoneAccessError": "Chyba přístupu k mikrofonu: {message}",
+    "voiceInputTranscribing": "Přepisování..."
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",

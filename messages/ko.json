@@ -630,7 +630,8 @@
     "stopRecording": "녹음 중지",
     "voiceInput": "음성 입력",
     "microphoneAccessDenied": "마이크 접근이 거부되었습니다. 브라우저 설정에서 활성화해 주세요.",
-    "microphoneAccessError": "마이크 접근 오류: {message}"
+    "microphoneAccessError": "마이크 접근 오류: {message}",
+    "voiceInputTranscribing": "음성 변환 중..."
   },
   "sidebar": {
     "collapseSidebar": "사이드바 축소",

@@ -605,7 +605,8 @@
     "stopRecording": "Atura l'enregistrament",
     "voiceInput": "Entrada de veu",
     "microphoneAccessDenied": "L'accés al micròfon està denegat. Activeu-lo a la configuració del vostre navegador.",
-    "microphoneAccessError": "Error d'accés al micròfon: {message}"
+    "microphoneAccessError": "Error d'accés al micròfon: {message}",
+    "voiceInputTranscribing": "Transcripció en curs..."
   },
   "sidebar": {
     "collapseSidebar": "Plegar barra lateral",

@@ -605,7 +605,8 @@
     "stopRecording": "Lopeta tallennus",
     "voiceInput": "Äänisyöte",
     "microphoneAccessDenied": "Mikrofonin käyttö estetty. Ota käyttöön selaimen asetuksista.",
-    "microphoneAccessError": "Virhe mikrofonin käytössä: {message}"
+    "microphoneAccessError": "Virhe mikrofonin käytössä: {message}",
+    "voiceInputTranscribing": "Muunnetaan puhetta tekstiksi..."
   },
   "sidebar": {
     "collapseSidebar": "Tiivistä sivupalkki",

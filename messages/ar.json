@@ -582,7 +582,8 @@
     "stopRecording": "إيقاف التسجيل",
     "voiceInput": "إدخال صوتي",
     "microphoneAccessDenied": "تم رفض الوصول إلى الميكروفون. يرجى تفعيله في إعدادات المتصفح.",
-    "microphoneAccessError": "خطأ في الوصول إلى الميكروفون: {message}"
+    "microphoneAccessError": "خطأ في الوصول إلى الميكروفون: {message}",
+    "voiceInputTranscribing": "جارٍ التحويل إلى نص..."
   },
   "sidebar": {
     "collapseSidebar": "طي الشريط الجانبي",

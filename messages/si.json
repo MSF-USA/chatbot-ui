@@ -597,7 +597,8 @@
     "stopRecording": "වාර්තාගත කිරීම නවත්වන්න",
     "voiceInput": "හඬ ආදානය",
     "microphoneAccessDenied": "මයික්රොෆෝන් ප්‍රවේශය ප්‍රතික්ෂේප වී ඇත. කරුණාකර ඔබේ බ්‍රව්සරයේ සැකසුම්වලදී එය සක්‍රිය කරන්න.",
-    "microphoneAccessError": "මයික්රොෆෝන් ප්‍රවේශ දෝෂය: {message}"
+    "microphoneAccessError": "මයික්රොෆෝන් ප්‍රවේශ දෝෂය: {message}",
+    "voiceInputTranscribing": "පරිවර්තනය වෙමින්..."
   },
   "sidebar": {
     "collapseSidebar": "පැති තීරුව හකුළන්න",

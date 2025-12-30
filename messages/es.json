@@ -582,7 +582,8 @@
     "stopRecording": "Detener grabación",
     "voiceInput": "Entrada de voz",
     "microphoneAccessDenied": "El acceso al micrófono está denegado. Por favor, actívelo en la configuración de su navegador.",
-    "microphoneAccessError": "Error de acceso al micrófono: {message}"
+    "microphoneAccessError": "Error de acceso al micrófono: {message}",
+    "voiceInputTranscribing": "Transcribiendo..."
   },
   "sidebar": {
     "collapseSidebar": "Contraer barra lateral",
