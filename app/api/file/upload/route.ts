@@ -164,9 +164,9 @@ export async function POST(request: NextRequest) {
 
     const fileURI: string = await uploadFileToBlobStorage(fileData, session);
     // Return a reference path instead of the full blob URL
-    const filename = fileURI.split('/').pop();
+    const blobFilename = fileURI.split('/').pop();
     return successResponse(
-      { uri: `/api/file/${filename}` },
+      { uri: `/api/file/${blobFilename}` },
       'File uploaded successfully',
     );
   } catch (error) {
