@@ -44,4 +44,10 @@ export interface Settings {
   displayNamePreference: DisplayNamePreference;
   customDisplayName: string;
   streamingSpeed: StreamingSpeedConfig;
+  /** Whether to include user info (name, title, email, dept) in system prompt */
+  includeUserInfoInPrompt: boolean;
+  /** User's preferred name (overrides displayName from profile) */
+  preferredName: string;
+  /** Additional context about the user for the AI */
+  userContext: string;
 }
