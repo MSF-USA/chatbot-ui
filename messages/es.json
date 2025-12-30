@@ -575,7 +575,14 @@
       "empty": "vacío"
     },
     "discardChanges": "Descartar cambios",
-    "discardChangesMessage": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?"
+    "discardChangesMessage": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "voiceInputStarting": "Iniciando...",
+    "voiceInputRecording": "Grabando...",
+    "voiceInputTapToStop": "Toca para detener",
+    "stopRecording": "Detener grabación",
+    "voiceInput": "Entrada de voz",
+    "microphoneAccessDenied": "El acceso al micrófono está denegado. Por favor, actívelo en la configuración de su navegador.",
+    "microphoneAccessError": "Error de acceso al micrófono: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Contraer barra lateral",

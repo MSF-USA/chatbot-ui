@@ -540,7 +540,14 @@
       "empty": "ว่างเปล่า"
     },
     "discardChanges": "ยกเลิกการเปลี่ยนแปลง",
-    "discardChangesMessage": "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก คุณแน่ใจว่าต้องการยกเลิกหรือไม่?"
+    "discardChangesMessage": "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก คุณแน่ใจว่าต้องการยกเลิกหรือไม่?",
+    "voiceInputStarting": "กำลังเริ่ม...",
+    "voiceInputRecording": "กำลังบันทึก...",
+    "voiceInputTapToStop": "แตะเพื่อหยุด",
+    "stopRecording": "หยุดบันทึกเสียง",
+    "voiceInput": "ป้อนด้วยเสียง",
+    "microphoneAccessDenied": "ไม่สามารถเข้าถึงไมโครโฟน กรุณาเปิดใช้งานในตั้งค่าเบราว์เซอร์ของคุณ",
+    "microphoneAccessError": "เกิดข้อผิดพลาดในการเข้าถึงไมโครโฟน: {message}"
   },
   "sidebar": {
     "collapseSidebar": "ยุบแถบด้านข้าง",

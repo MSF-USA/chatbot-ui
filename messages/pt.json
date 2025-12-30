@@ -575,7 +575,14 @@
       "empty": "vazio"
     },
     "discardChanges": "Descartar alterações",
-    "discardChangesMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartá-las?"
+    "discardChangesMessage": "Você tem alterações não salvas. Tem certeza de que deseja descartá-las?",
+    "voiceInputStarting": "Iniciando...",
+    "voiceInputRecording": "Gravando...",
+    "voiceInputTapToStop": "Toque para parar",
+    "stopRecording": "Parar gravação",
+    "voiceInput": "Entrada de voz",
+    "microphoneAccessDenied": "Acesso ao microfone negado. Ative-o nas configurações do seu navegador.",
+    "microphoneAccessError": "Erro de acesso ao microfone: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Recolher barra lateral",

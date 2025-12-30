@@ -575,7 +575,14 @@
       "empty": "leer"
     },
     "discardChanges": "Änderungen verwerfen",
-    "discardChangesMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
+    "discardChangesMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?",
+    "voiceInputStarting": "Wird gestartet...",
+    "voiceInputRecording": "Aufnahme läuft...",
+    "voiceInputTapToStop": "Zum Stoppen tippen",
+    "stopRecording": "Aufnahme stoppen",
+    "voiceInput": "Spracheingabe",
+    "microphoneAccessDenied": "Mikrofonzugriff verweigert. Bitte aktivieren Sie ihn in den Browsereinstellungen.",
+    "microphoneAccessError": "Fehler beim Mikrofonzugriff: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Seitenleiste einklappen",

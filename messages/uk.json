@@ -540,7 +540,14 @@
       "empty": "порожньо"
     },
     "discardChanges": "Відхилити зміни",
-    "discardChangesMessage": "У вас є незбережені зміни. Ви впевнені, що хочете їх відхилити?"
+    "discardChangesMessage": "У вас є незбережені зміни. Ви впевнені, що хочете їх відхилити?",
+    "voiceInputStarting": "Запуск...",
+    "voiceInputRecording": "Запис...",
+    "voiceInputTapToStop": "Торкніться, щоб зупинити",
+    "stopRecording": "Зупинити запис",
+    "voiceInput": "Голосовий ввід",
+    "microphoneAccessDenied": "Доступ до мікрофона заборонено. Будь ласка, увімкніть його в налаштуваннях браузера.",
+    "microphoneAccessError": "Помилка доступу до мікрофона: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Згорнути бічну панель",

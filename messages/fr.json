@@ -575,7 +575,14 @@
       "empty": "vide"
     },
     "discardChanges": "Annuler les modifications",
-    "discardChangesMessage": "Vous avez des modifications non enregistrées. Voulez-vous vraiment les annuler ?"
+    "discardChangesMessage": "Vous avez des modifications non enregistrées. Voulez-vous vraiment les annuler ?",
+    "voiceInputStarting": "Démarrage...",
+    "voiceInputRecording": "Enregistrement...",
+    "voiceInputTapToStop": "Appuyez pour arrêter",
+    "stopRecording": "Arrêter l'enregistrement",
+    "voiceInput": "Saisie vocale",
+    "microphoneAccessDenied": "Accès au microphone refusé. Veuillez l’activer dans les paramètres de votre navigateur.",
+    "microphoneAccessError": "Erreur d'accès au microphone : {message}"
   },
   "sidebar": {
     "collapseSidebar": "Réduire la barre latérale",

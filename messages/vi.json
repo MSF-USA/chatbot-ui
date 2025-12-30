@@ -593,7 +593,14 @@
       "empty": "trống"
     },
     "discardChanges": "Huỷ thay đổi",
-    "discardChangesMessage": "Bạn có các thay đổi chưa lưu. Bạn có chắc muốn huỷ các thay đổi này không?"
+    "discardChangesMessage": "Bạn có các thay đổi chưa lưu. Bạn có chắc muốn huỷ các thay đổi này không?",
+    "voiceInputStarting": "Đang khởi động...",
+    "voiceInputRecording": "Đang ghi âm...",
+    "voiceInputTapToStop": "Nhấn để dừng",
+    "stopRecording": "Dừng ghi âm",
+    "voiceInput": "Nhập bằng giọng nói",
+    "microphoneAccessDenied": "Truy cập micro đã bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt của bạn.",
+    "microphoneAccessError": "Lỗi truy cập micro: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Thu gọn thanh bên",

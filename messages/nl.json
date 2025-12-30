@@ -588,7 +588,14 @@
       "filesCount": "{count} bestand(en)",
       "audioVideo": "audio/video",
       "empty": "leeg"
-    }
+    },
+    "voiceInputStarting": "Starten...",
+    "voiceInputRecording": "Opnemen...",
+    "voiceInputTapToStop": "Tik om te stoppen",
+    "stopRecording": "Opname stoppen",
+    "voiceInput": "Spraakinvoer",
+    "microphoneAccessDenied": "Microfoontoegang is geweigerd. Schakel deze in via uw browserinstellingen.",
+    "microphoneAccessError": "Microfoontoegangsprobleem: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",

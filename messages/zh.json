@@ -623,7 +623,14 @@
       "empty": "空"
     },
     "discardChanges": "放弃更改",
-    "discardChangesMessage": "您有未保存的更改。确定要放弃吗？"
+    "discardChangesMessage": "您有未保存的更改。确定要放弃吗？",
+    "voiceInputStarting": "正在开始...",
+    "voiceInputRecording": "正在录音...",
+    "voiceInputTapToStop": "点击停止",
+    "stopRecording": "停止录音",
+    "voiceInput": "语音输入",
+    "microphoneAccessDenied": "麦克风访问被拒绝，请在浏览器设置中启用。",
+    "microphoneAccessError": "麦克风访问错误：{message}"
   },
   "sidebar": {
     "collapseSidebar": "折叠侧边栏",

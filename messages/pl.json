@@ -620,7 +620,14 @@
       "empty": "puste"
     },
     "discardChanges": "Odrzuć zmiany",
-    "discardChangesMessage": "Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić?"
+    "discardChangesMessage": "Masz niezapisane zmiany. Czy na pewno chcesz je odrzucić?",
+    "voiceInputStarting": "Uruchamianie...",
+    "voiceInputRecording": "Nagrywanie...",
+    "voiceInputTapToStop": "Dotknij, aby zatrzymać",
+    "stopRecording": "Zatrzymaj nagrywanie",
+    "voiceInput": "Wprowadzanie głosowe",
+    "microphoneAccessDenied": "Dostęp do mikrofonu został zablokowany. Proszę włączyć go w ustawieniach przeglądarki.",
+    "microphoneAccessError": "Błąd dostępu do mikrofonu: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Zwiń pasek boczny",

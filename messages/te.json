@@ -621,7 +621,14 @@
       "empty": "ఖాళీ"
     },
     "discardChanges": "మార్పులను విస్మరించు",
-    "discardChangesMessage": "మీరు సేవ్ చేయని మార్పులు ఉన్నాయి. విస్మరించాలనుకుంటున్నారా?"
+    "discardChangesMessage": "మీరు సేవ్ చేయని మార్పులు ఉన్నాయి. విస్మరించాలనుకుంటున్నారా?",
+    "voiceInputStarting": "ప్రారంభమవుతోంది...",
+    "voiceInputRecording": "రికార్డింగ్ జరుగుతోంది...",
+    "voiceInputTapToStop": "ఆపడానికి ట్యాప్ చేయండి",
+    "stopRecording": "రికార్డింగ్ ఆపు",
+    "voiceInput": "వాయిస్ ఇన్‌పుట్",
+    "microphoneAccessDenied": "మైక్రోఫోన్ యాక్సెస్ నిషేధించబడింది. దయచేసి మీ బ్రౌజర్ సెట్టింగ్‌లలో దీనిని ప్రారంభించండి.",
+    "microphoneAccessError": "మైక్రోఫోన్ యాక్సెస్ లో లోపం: {message}"
   },
   "sidebar": {
     "collapseSidebar": "సైడ్‌బార్‌ను కుదించండి",

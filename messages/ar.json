@@ -575,7 +575,14 @@
       "empty": "فارغ"
     },
     "discardChanges": "تجاهل التعديلات",
-    "discardChangesMessage": "لديك تعديلات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟"
+    "discardChangesMessage": "لديك تعديلات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟",
+    "voiceInputStarting": "جارٍ البدء...",
+    "voiceInputRecording": "جارٍ التسجيل...",
+    "voiceInputTapToStop": "اضغط لإيقاف",
+    "stopRecording": "إيقاف التسجيل",
+    "voiceInput": "إدخال صوتي",
+    "microphoneAccessDenied": "تم رفض الوصول إلى الميكروفون. يرجى تفعيله في إعدادات المتصفح.",
+    "microphoneAccessError": "خطأ في الوصول إلى الميكروفون: {message}"
   },
   "sidebar": {
     "collapseSidebar": "طي الشريط الجانبي",

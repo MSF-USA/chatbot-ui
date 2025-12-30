@@ -598,7 +598,14 @@
       "empty": "buit"
     },
     "discardChanges": "Descarta els canvis",
-    "discardChangesMessage": "Teniu canvis sense desar. Esteu segur que voleu descartar-los?"
+    "discardChangesMessage": "Teniu canvis sense desar. Esteu segur que voleu descartar-los?",
+    "voiceInputStarting": "S'està iniciant...",
+    "voiceInputRecording": "Enregistrant...",
+    "voiceInputTapToStop": "Toca per aturar",
+    "stopRecording": "Atura l'enregistrament",
+    "voiceInput": "Entrada de veu",
+    "microphoneAccessDenied": "L'accés al micròfon està denegat. Activeu-lo a la configuració del vostre navegador.",
+    "microphoneAccessError": "Error d'accés al micròfon: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Plegar barra lateral",

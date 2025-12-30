@@ -623,7 +623,14 @@
       "empty": "prázdné"
     },
     "discardChanges": "Zrušit změny",
-    "discardChangesMessage": "Máte neuložené změny. Opravdu je chcete zrušit?"
+    "discardChangesMessage": "Máte neuložené změny. Opravdu je chcete zrušit?",
+    "voiceInputStarting": "Spouštím...",
+    "voiceInputRecording": "Nahrávám...",
+    "voiceInputTapToStop": "Klepněte pro zastavení",
+    "stopRecording": "Zastavit nahrávání",
+    "voiceInput": "Hlasový vstup",
+    "microphoneAccessDenied": "Přístup k mikrofonu byl odepřen. Povolit jej můžete v nastavení vašeho prohlížeče.",
+    "microphoneAccessError": "Chyba přístupu k mikrofonu: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",

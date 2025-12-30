@@ -598,7 +598,14 @@
       "empty": "ריק"
     },
     "discardChanges": "השלך שינויים",
-    "discardChangesMessage": "יש לך שינויים שלא נשמרו. האם אתה בטוח שברצונך להשליך אותם?"
+    "discardChangesMessage": "יש לך שינויים שלא נשמרו. האם אתה בטוח שברצונך להשליך אותם?",
+    "voiceInputStarting": "מפעיל...",
+    "voiceInputRecording": "מקליט...",
+    "voiceInputTapToStop": "הקש/י להפסקה",
+    "stopRecording": "הפסק הקלטה",
+    "voiceInput": "קלט קולי",
+    "microphoneAccessDenied": "הגישה למיקרופון נחסמה. אנא אפשר/י זאת בהגדרות הדפדפן.",
+    "microphoneAccessError": "שגיאת גישה למיקרופון: {message}"
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",

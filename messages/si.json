@@ -590,7 +590,14 @@
       "empty": "හිස්"
     },
     "discardChanges": "වෙනස්කම් අතහරියන්න",
-    "discardChangesMessage": "ඔබ සුරක්ෂිත නොකළ වෙනස්කම් ඇත. ඒවා වළක්වා දැමීමට ඔබට විශ්වාසද?"
+    "discardChangesMessage": "ඔබ සුරක්ෂිත නොකළ වෙනස්කම් ඇත. ඒවා වළක්වා දැමීමට ඔබට විශ්වාසද?",
+    "voiceInputStarting": "ආරම්භ වේ...",
+    "voiceInputRecording": "වාර්තාගත වෙමින්...",
+    "voiceInputTapToStop": "නවත්වීමට තට්ටු කරන්න",
+    "stopRecording": "වාර්තාගත කිරීම නවත්වන්න",
+    "voiceInput": "හඬ ආදානය",
+    "microphoneAccessDenied": "මයික්රොෆෝන් ප්‍රවේශය ප්‍රතික්ෂේප වී ඇත. කරුණාකර ඔබේ බ්‍රව්සරයේ සැකසුම්වලදී එය සක්‍රිය කරන්න.",
+    "microphoneAccessError": "මයික්රොෆෝන් ප්‍රවේශ දෝෂය: {message}"
   },
   "sidebar": {
     "collapseSidebar": "පැති තීරුව හකුළන්න",

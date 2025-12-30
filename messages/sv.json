@@ -623,7 +623,14 @@
       "empty": "tom"
     },
     "discardChanges": "Kasta ändringar",
-    "discardChangesMessage": "Du har osparade ändringar. Är du säker på att du vill kasta dem?"
+    "discardChangesMessage": "Du har osparade ändringar. Är du säker på att du vill kasta dem?",
+    "voiceInputStarting": "Startar...",
+    "voiceInputRecording": "Spelar in...",
+    "voiceInputTapToStop": "Tryck för att stoppa",
+    "stopRecording": "Stoppa inspelning",
+    "voiceInput": "Röstinmatning",
+    "microphoneAccessDenied": "Mikrofonåtkomst nekad. Aktivera det i webbläsarens inställningar.",
+    "microphoneAccessError": "Fel vid mikrofonåtkomst: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",

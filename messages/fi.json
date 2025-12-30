@@ -598,7 +598,14 @@
       "empty": "tyhjä"
     },
     "discardChanges": "Hylkää muutokset",
-    "discardChangesMessage": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti hylätä ne?"
+    "discardChangesMessage": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti hylätä ne?",
+    "voiceInputStarting": "Käynnistetään...",
+    "voiceInputRecording": "Tallennetaan...",
+    "voiceInputTapToStop": "Pysäytä napauttamalla",
+    "stopRecording": "Lopeta tallennus",
+    "voiceInput": "Äänisyöte",
+    "microphoneAccessDenied": "Mikrofonin käyttö estetty. Ota käyttöön selaimen asetuksista.",
+    "microphoneAccessError": "Virhe mikrofonin käytössä: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Tiivistä sivupalkki",

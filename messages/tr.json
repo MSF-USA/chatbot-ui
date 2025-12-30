@@ -623,7 +623,14 @@
       "empty": "boş"
     },
     "discardChanges": "Değişiklikleri At",
-    "discardChangesMessage": "Kaydedilmemiş değişiklikleriniz var. Onları atmak istediğinize emin misiniz?"
+    "discardChangesMessage": "Kaydedilmemiş değişiklikleriniz var. Onları atmak istediğinize emin misiniz?",
+    "voiceInputStarting": "Başlatılıyor...",
+    "voiceInputRecording": "Kaydediliyor...",
+    "voiceInputTapToStop": "Durdurmak için dokunun",
+    "stopRecording": "Kaydı durdur",
+    "voiceInput": "Sesli Giriş",
+    "microphoneAccessDenied": "Mikrofona erişim reddedildi. Lütfen tarayıcı ayarlarından etkinleştirin.",
+    "microphoneAccessError": "Mikrofona erişim hatası: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",

@@ -622,7 +622,14 @@
       "empty": "خالی"
     },
     "discardChanges": "تبدیلیاں منسوخ کریں",
-    "discardChangesMessage": "آپ کی تبدیلیاں محفوظ نہیں ہوئیں۔ کیا آپ واقعی انہیں منسوخ کرنا چاہتے ہیں؟"
+    "discardChangesMessage": "آپ کی تبدیلیاں محفوظ نہیں ہوئیں۔ کیا آپ واقعی انہیں منسوخ کرنا چاہتے ہیں؟",
+    "voiceInputStarting": "شروع ہو رہا ہے...",
+    "voiceInputRecording": "ریکارڈنگ جاری ہے...",
+    "voiceInputTapToStop": "روکنے کے لیے ٹیپ کریں",
+    "stopRecording": "ریکارڈنگ روکیں",
+    "voiceInput": "وائس ان پٹ",
+    "microphoneAccessDenied": "مائیکروفون تک رسائی مسترد کر دی گئی ہے۔ براہ کرم اپنے براؤزر سیٹنگز میں اسے فعال کریں۔",
+    "microphoneAccessError": "مائیکروفون تک رسائی میں خرابی: {message}"
   },
   "sidebar": {
     "collapseSidebar": "سائیڈ بار کو سکیڑیں",

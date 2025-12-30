@@ -590,7 +590,14 @@
       "empty": "kosong"
     },
     "discardChanges": "Batalkan Perubahan",
-    "discardChangesMessage": "Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin membatalkannya?"
+    "discardChangesMessage": "Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin membatalkannya?",
+    "voiceInputStarting": "Memulai...",
+    "voiceInputRecording": "Merekam...",
+    "voiceInputTapToStop": "Ketuk untuk berhenti",
+    "stopRecording": "Hentikan rekaman",
+    "voiceInput": "Input Suara",
+    "microphoneAccessDenied": "Akses mikrofon ditolak. Silakan aktifkan di pengaturan browser Anda.",
+    "microphoneAccessError": "Kesalahan akses mikrofon: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",

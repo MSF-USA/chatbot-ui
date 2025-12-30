@@ -572,7 +572,14 @@
       "empty": "ባዶ"
     },
     "discardChanges": "ለውጦቹን ይጥፉ",
-    "discardChangesMessage": "ያልተቀመጡ ለውጦች አሉ። ለውጦቹን ለመጥፋት እርግጠኛ ኖት?"
+    "discardChangesMessage": "ያልተቀመጡ ለውጦች አሉ። ለውጦቹን ለመጥፋት እርግጠኛ ኖት?",
+    "voiceInputStarting": "በመጀመር ላይ...",
+    "voiceInputRecording": "በመቅረጽ ላይ...",
+    "voiceInputTapToStop": "ለማቆም ይንኩ",
+    "stopRecording": "ቅርጸትን ያቁሙ",
+    "voiceInput": "የድምፅ ግቤት",
+    "microphoneAccessDenied": "የማይክሮፎን መዳረሻ ተከልክሏል። እባክዎን በአንተ መቃኛ ቅንብሮች ውስጥ ይችላሉ።",
+    "microphoneAccessError": "የማይክሮፎን መዳረሻ ስህተት፡ {message}"
   },
   "sidebar": {
     "collapseSidebar": "የጎን አሞሌውን ሰብስብ",

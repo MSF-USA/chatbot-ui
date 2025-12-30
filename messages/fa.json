@@ -548,7 +548,14 @@
       "empty": "خالی"
     },
     "discardChanges": "لغو تغییرات",
-    "discardChangesMessage": "شما تغییرات ذخیره‌نشده دارید. مطمئن هستید که می‌خواهید آن‌ها را لغو کنید؟"
+    "discardChangesMessage": "شما تغییرات ذخیره‌نشده دارید. مطمئن هستید که می‌خواهید آن‌ها را لغو کنید؟",
+    "voiceInputStarting": "در حال شروع...",
+    "voiceInputRecording": "در حال ضبط...",
+    "voiceInputTapToStop": "برای توقف ضربه بزنید",
+    "stopRecording": "توقف ضبط",
+    "voiceInput": "ورودی صوتی",
+    "microphoneAccessDenied": "دسترسی به میکروفون رد شده است. لطفاً این دسترسی را در تنظیمات مرورگر فعال کنید.",
+    "microphoneAccessError": "خطا در دسترسی به میکروفون: {message}"
   },
   "sidebar": {
     "collapseSidebar": "بستن نوار کناری",

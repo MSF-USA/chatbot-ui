@@ -623,7 +623,14 @@
       "empty": "tupu"
     },
     "discardChanges": "Tupa Mabadiliko",
-    "discardChangesMessage": "Una mabadiliko ambayo hayijahifadhiwa. Una uhakika unataka kuyatupa?"
+    "discardChangesMessage": "Una mabadiliko ambayo hayijahifadhiwa. Una uhakika unataka kuyatupa?",
+    "voiceInputStarting": "Inaanza...",
+    "voiceInputRecording": "Inarekodi...",
+    "voiceInputTapToStop": "Gusa kusitisha",
+    "stopRecording": "Sitisha kurekodi",
+    "voiceInput": "Kuingiza Sauti",
+    "microphoneAccessDenied": "Ufikiaji wa kipaza sauti umekataliwa. Tafadhali wezesha kwenye mipangilio ya kivinjari chako.",
+    "microphoneAccessError": "Hitilafu ya ufikiaji wa kipaza sauti: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",

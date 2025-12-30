@@ -623,7 +623,14 @@
       "empty": "пусто"
     },
     "discardChanges": "Отменить изменения",
-    "discardChangesMessage": "У вас есть несохранённые изменения. Вы уверены, что хотите их отменить?"
+    "discardChangesMessage": "У вас есть несохранённые изменения. Вы уверены, что хотите их отменить?",
+    "voiceInputStarting": "Запуск...",
+    "voiceInputRecording": "Идёт запись...",
+    "voiceInputTapToStop": "Нажмите, чтобы остановить",
+    "stopRecording": "Остановить запись",
+    "voiceInput": "Голосовой ввод",
+    "microphoneAccessDenied": "Доступ к микрофону запрещён. Пожалуйста, включите его в настройках браузера.",
+    "microphoneAccessError": "Ошибка доступа к микрофону: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Свернуть боковую панель",

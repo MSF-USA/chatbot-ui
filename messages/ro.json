@@ -621,7 +621,14 @@
       "empty": "gol"
     },
     "discardChanges": "Renunță la modificări",
-    "discardChangesMessage": "Aveți modificări nesalvate. Sigur doriți să renunțați la ele?"
+    "discardChangesMessage": "Aveți modificări nesalvate. Sigur doriți să renunțați la ele?",
+    "voiceInputStarting": "Se pornește...",
+    "voiceInputRecording": "Se înregistrează...",
+    "voiceInputTapToStop": "Atingeți pentru a opri",
+    "stopRecording": "Opriți înregistrarea",
+    "voiceInput": "Introducere vocală",
+    "microphoneAccessDenied": "Accesul la microfon este refuzat. Vă rugăm să îl activați în setările browserului.",
+    "microphoneAccessError": "Eroare de acces la microfon: {message}"
   },
   "sidebar": {
     "collapseSidebar": "Restrânge bara laterală",

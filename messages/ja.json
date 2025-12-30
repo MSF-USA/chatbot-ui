@@ -623,7 +623,14 @@
       "empty": "空欄"
     },
     "discardChanges": "変更を破棄",
-    "discardChangesMessage": "未保存の変更があります。本当に破棄してもよろしいですか？"
+    "discardChangesMessage": "未保存の変更があります。本当に破棄してもよろしいですか？",
+    "voiceInputStarting": "開始しています...",
+    "voiceInputRecording": "録音中...",
+    "voiceInputTapToStop": "タップして停止",
+    "stopRecording": "録音を停止",
+    "voiceInput": "音声入力",
+    "microphoneAccessDenied": "マイクへのアクセスが拒否されています。ブラウザの設定で有効にしてください。",
+    "microphoneAccessError": "マイクアクセスエラー：{message}"
   },
   "sidebar": {
     "collapseSidebar": "サイドバーを折りたたむ",

@@ -623,7 +623,14 @@
       "empty": "खाली"
     },
     "discardChanges": "परिवर्तनों को त्यागें",
-    "discardChangesMessage": "आपके कुछ परिवर्तन सहेजे नहीं गए हैं। क्या आप वाकई उन्हें त्यागना चाहते हैं?"
+    "discardChangesMessage": "आपके कुछ परिवर्तन सहेजे नहीं गए हैं। क्या आप वाकई उन्हें त्यागना चाहते हैं?",
+    "voiceInputStarting": "शुरू हो रहा है...",
+    "voiceInputRecording": "रिकॉर्डिंग हो रही है...",
+    "voiceInputTapToStop": "रोकने के लिए टैप करें",
+    "stopRecording": "रिकॉर्डिंग रोकें",
+    "voiceInput": "वॉइस इनपुट",
+    "microphoneAccessDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत है। कृपया अपने ब्राउज़र सेटिंग्स में इसे सक्षम करें।",
+    "microphoneAccessError": "माइक्रोफ़ोन एक्सेस त्रुटि: {message}"
   },
   "sidebar": {
     "collapseSidebar": "साइडबार संक्षिप्त करें",
