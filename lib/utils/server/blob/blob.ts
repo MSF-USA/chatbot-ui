@@ -432,26 +432,21 @@ export const getBlobBase64String = async (
     blobLocation,
     BlobProperty.BLOB,
   ) as Promise<Buffer>);
-  const mimeType = lookup(
-    blobLocation.split('.')[blobLocation.split('.').length - 1],
-  );
 
-  let base64String: string;
-  if (blobType === 'images') {
-    base64String = blob.toString();
-  } else {
-    base64String = blob.toString('base64');
+  // Check if content is already a data URL string (images are stored this way)
+  const contentString = blob.toString('utf8');
+  if (contentString.startsWith('data:')) {
+    return contentString;
   }
 
-  if (base64String.startsWith('data:')) {
-    /* pass */
-  } else if (mimeType) {
-    const base64Content =
-      base64String.split('base64')[base64String.split('base64').length - 1];
-    base64String = `data:${mimeType};base64,${base64Content}`;
-  } else {
-    throw new Error(`Couldn't pull mime type: ${blobLocation}`);
+  // Otherwise, it's binary content - encode to base64
+  const base64Data = blob.toString('base64');
+  const extension = blobLocation.split('.').pop() || '';
+  const mimeType = lookup(extension);
+
+  if (!mimeType) {
+    throw new Error(`Couldn't determine mime type for: ${blobLocation}`);
   }
 
-  return base64String;
+  return `data:${mimeType};base64,${base64Data}`;
 };
