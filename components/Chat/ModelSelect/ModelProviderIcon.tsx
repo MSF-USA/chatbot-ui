@@ -3,7 +3,7 @@ import React from 'react';
 import {
   AzureAIIcon,
   AzureOpenAIIcon,
-  ClaudeAIIcon,
+  ClaudeAIIconBrand,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -38,7 +38,7 @@ export const ModelProviderIcon: React.FC<ModelProviderIconProps> = ({
     case 'meta':
       return <MetaIcon {...iconProps} />;
     case 'anthropic':
-      return <ClaudeAIIcon {...iconProps} />;
+      return <ClaudeAIIconBrand {...iconProps} />;
     default:
       return null;
   }
