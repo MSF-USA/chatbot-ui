@@ -1,9 +1,15 @@
 /**
  * Blob to Base64 Conversion Utilities
  *
- * Converts Azure Blob Storage URLs to base64 data URLs for LLM consumption.
- * LLMs cannot access private Azure blob URLs, so images must be converted
- * to base64 data URLs before being sent to the API.
+ * @deprecated This module is deprecated. Use getBlobBase64String from
+ * '@/lib/utils/server/blob/blob' instead. That function:
+ * - Uses the same working path as the /api/file/[id] route
+ * - Handles both data URL strings and binary content
+ * - Works with the new /api/file/{id} URL format
+ *
+ * The functions in this module relied on parsing full blob storage URLs,
+ * which is no longer needed since the frontend now stores file references
+ * instead of blob URLs for security reasons.
  */
 import { Session } from 'next-auth';
 
@@ -104,6 +110,10 @@ export function getImageMimeType(filename: string): string {
 
 /**
  * Fetches an image from Azure Blob Storage and converts it to a base64 data URL.
+ *
+ * @deprecated Use getBlobBase64String from '@/lib/utils/server/blob/blob' instead.
+ * Extract the filename from the URL with `url.split('/').pop()` and pass it
+ * to getBlobBase64String for conversion.
  *
  * @param blobUrl - The Azure Blob Storage URL
  * @param user - The user session (needed for blob storage access)
