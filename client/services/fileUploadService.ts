@@ -348,7 +348,9 @@ async function uploadImageToAPI(
     `/api/file/upload?filename=${encodedFileName}&filetype=image`,
     {
       method: 'POST',
-      body: base64String.split(',')[1],
+      // Send full data URL (including "data:image/...;base64," prefix)
+      // so getBlobBase64String() can detect and return it correctly
+      body: base64String,
       headers: {
         'x-file-name': encodedFileName,
       },
