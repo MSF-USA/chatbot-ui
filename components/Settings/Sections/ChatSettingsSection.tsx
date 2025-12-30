@@ -4,6 +4,10 @@ import { FC, useState } from 'react';
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
+
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
 import { Settings } from '@/types/settings';
 
 import { SystemPrompt } from '../SystemPrompt';
@@ -32,6 +36,14 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   const t = useTranslations();
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
   const [isAboutYouExpanded, setIsAboutYouExpanded] = useState(false);
+  const { displayNamePreference, customDisplayName } = useSettings();
+
+  // Compute derived name from General Settings for placeholder
+  const derivedDisplayName = getUserDisplayName(
+    user,
+    displayNamePreference,
+    customDisplayName,
+  );
 
   return (
     <div className="p-4">
@@ -235,14 +247,14 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                         })
                       }
                       placeholder={
-                        user?.displayName ||
+                        derivedDisplayName ||
                         t('settings.aboutYou.preferredNamePlaceholder')
                       }
                       maxLength={100}
                       className="mt-1 w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-2 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {t('settings.aboutYou.preferredNameDescription')}
+                      {t('settings.aboutYou.preferredNameDescriptionWithSync')}
                     </p>
                   </div>
 
