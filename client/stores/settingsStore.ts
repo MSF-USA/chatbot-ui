@@ -282,7 +282,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 7, // Increment this when schema changes to trigger migrations
+      version: 8, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -296,6 +296,7 @@ export const useSettingsStore = create<SettingsStore>()(
         tones: state.tones,
         customAgents: state.customAgents,
         streamingSpeed: state.streamingSpeed,
+        includeUserInfoInPrompt: state.includeUserInfoInPrompt,
         modelOrderMode: state.modelOrderMode,
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
@@ -317,6 +318,11 @@ export const useSettingsStore = create<SettingsStore>()(
         // Version 6 → 7: Add organizationPreference (null = auto-detect)
         if (version < 7 && state.organizationPreference === undefined) {
           state.organizationPreference = null;
+        }
+
+        // Version 7 → 8: Add includeUserInfoInPrompt (default: false for privacy)
+        if (version < 8 && state.includeUserInfoInPrompt === undefined) {
+          state.includeUserInfoInPrompt = false;
         }
 
         return state;
