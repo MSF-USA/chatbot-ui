@@ -53,9 +53,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
       });
 
       if (permissionStatus.state === 'denied') {
-        alert(
-          'Microphone access is denied. Please enable it in your browser settings.',
-        );
+        alert(t('chat.microphoneAccessDenied'));
         return;
       }
     } catch (permErr) {
@@ -148,7 +146,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
       console.error('[VoiceCapture] Error getting user media:', err);
       console.error('[VoiceCapture] Error name:', err.name);
       console.error('[VoiceCapture] Error message:', err.message);
-      alert(`Microphone access error: ${err.message}`);
+      alert(t('chat.microphoneAccessError', { message: err.message }));
     }
   };
 
@@ -254,7 +252,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
         >
           <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-yellow-500" />
           <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400 whitespace-nowrap">
-            Starting...
+            {t('chat.voiceInputStarting')}
           </span>
         </button>
       ) : isRecording ? (
@@ -269,7 +267,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
         >
           <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-red-500" />
           <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
-            Stop recording
+            {t('chat.stopRecording')}
           </span>
         </button>
       ) : (
@@ -286,7 +284,7 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
             <MicIcon className="h-5 w-5 md:h-4 md:w-4" />
           </button>
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md whitespace-nowrap z-50">
-            Voice Input
+            {t('chat.voiceInput')}
           </div>
         </div>
       )}
