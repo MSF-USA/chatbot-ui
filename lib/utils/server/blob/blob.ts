@@ -439,6 +439,22 @@ export const getBlobBase64String = async (
     return contentString;
   }
 
+  // Check if it's raw base64 (legacy format - stored without data: prefix)
+  // Raw base64 starts with valid base64 chars and contains no null bytes
+  const isLikelyRawBase64 =
+    /^[A-Za-z0-9+/]/.test(contentString) &&
+    !contentString.includes('\x00') &&
+    /^[A-Za-z0-9+/=\s]+$/.test(contentString.slice(0, 100));
+
+  if (isLikelyRawBase64) {
+    const extension = blobLocation.split('.').pop() || '';
+    const mimeType = lookup(extension);
+    if (mimeType) {
+      // Wrap the raw base64 with the data URL prefix
+      return `data:${mimeType};base64,${contentString}`;
+    }
+  }
+
   // Otherwise, it's binary content - encode to base64
   const base64Data = blob.toString('base64');
   const extension = blobLocation.split('.').pop() || '';
