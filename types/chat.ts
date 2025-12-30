@@ -172,6 +172,8 @@ export interface ChatBody {
   tone?: Tone; // Full tone object (if tone is selected)
   streamingSpeed?: StreamingSpeedConfig; // Smooth streaming speed configuration
   includeUserInfoInPrompt?: boolean; // Include user name/title/dept in system prompt
+  preferredName?: string; // User's preferred name (overrides profile displayName)
+  userContext?: string; // Additional user context for the AI
 }
 
 export interface Conversation {
