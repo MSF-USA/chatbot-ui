@@ -143,6 +143,14 @@ const ChatBodySchema = z
     tone: ToneSchema.optional(), // Full tone object from client
     streamingSpeed: StreamingSpeedSchema.optional(), // Smooth streaming speed configuration
     includeUserInfoInPrompt: z.boolean().optional(), // Include user info in system prompt
+    preferredName: z
+      .string()
+      .max(100, 'Preferred name too long (max 100 chars)')
+      .optional(),
+    userContext: z
+      .string()
+      .max(2000, 'User context too long (max 2,000 chars)')
+      .optional(),
   })
   .strict(); // Reject unknown properties
 
