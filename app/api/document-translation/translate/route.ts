@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
     const originalBlobPath = `${session.user.id}/translations/${jobId}_original.${fileExtension}`;
     const contentType = getDocumentContentType(document.name);
 
-    await blobStorage.upload(originalBlobPath, new Uint8Array(documentBuffer), {
+    await blobStorage.upload(originalBlobPath, documentBuffer, {
       blobHTTPHeaders: {
         blobContentType: contentType,
         blobContentDisposition: `attachment; filename="${encodeURIComponent(document.name)}"`,
