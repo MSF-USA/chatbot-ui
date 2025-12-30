@@ -82,7 +82,6 @@ export const DOCUMENT_TRANSLATION_EXTENSIONS = [
   '.docx',
   '.xlsx',
   '.pptx',
-  '.pdf',
   '.msg',
   '.xlf',
   '.xliff',
@@ -102,7 +101,7 @@ export const GLOSSARY_EXTENSIONS = ['.csv', '.tsv', '.xlf', '.xliff'] as const;
  * Accept attribute value for file inputs that accept documents for translation.
  */
 export const DOCUMENT_TRANSLATION_ACCEPT_TYPES =
-  '.txt,.html,.htm,.docx,.xlsx,.pptx,.pdf,.msg,.xlf,.xliff,.csv,.tsv,.tab,.mhtml,.mht';
+  '.txt,.html,.htm,.docx,.xlsx,.pptx,.msg,.xlf,.xliff,.csv,.tsv,.tab,.mhtml,.mht';
 
 /**
  * Accept attribute value for glossary file inputs.
