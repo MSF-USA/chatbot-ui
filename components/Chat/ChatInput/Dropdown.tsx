@@ -187,11 +187,12 @@ const Dropdown: React.FC<DropdownProps> = ({
 
       // Create an assistant message group with the translation reference
       const assistantMessage: AssistantMessageGroup = {
+        type: 'assistant_group',
         versions: [
           {
             content: referenceText,
-            role: 'assistant',
-            messageType: 'text',
+            messageType: 'TEXT',
+            createdAt: new Date().toISOString(),
           },
         ],
         activeIndex: 0,
