@@ -9,6 +9,7 @@ import { formatKnowledgeCutoff } from '@/lib/utils/shared/formatKnowledgeCutoff'
 import { OpenAIModel } from '@/types/openai';
 
 import { ModelProviderIcon } from './ModelProviderIcon';
+import { ModelTypeIcon } from './ModelTypeIcon';
 
 interface ModelHeaderProps {
   selectedModel: OpenAIModel;
@@ -77,7 +78,7 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
 
       <div className="flex items-center gap-2 flex-wrap">
         <span
-          className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium ${
             modelConfig?.modelType === 'reasoning'
               ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
               : modelConfig?.modelType === 'omni'
@@ -87,6 +88,7 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
                   : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
           }`}
         >
+          <ModelTypeIcon modelType={modelConfig?.modelType} />
           {localizedModelType}
         </span>
         {knowledgeCutoffDisplay && (
