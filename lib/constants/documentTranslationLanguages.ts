@@ -154,21 +154,54 @@ export function getDocumentTranslationLanguageByCode(
 }
 
 /**
- * Searches languages by name (English or native).
+ * Gets the localized name of a language using the browser's Intl.DisplayNames API.
+ * Falls back to empty string if the API is unavailable or the code is invalid.
+ *
+ * @param code - The ISO language code
+ * @param locale - The locale to display the language name in
+ * @returns The localized language name or empty string
+ */
+export function getLocalizedLanguageName(code: string, locale: string): string {
+  try {
+    const displayNames = new Intl.DisplayNames([locale], { type: 'language' });
+    return displayNames.of(code) || '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Searches languages by name (English, native, localized, or ISO code).
  *
  * @param query - Search query string
+ * @param locale - Optional locale for searching by localized language names
  * @returns Array of matching languages
  */
 export function searchDocumentTranslationLanguages(
   query: string,
+  locale?: string,
 ): DocumentTranslationLanguage[] {
   const lowerQuery = query.toLowerCase();
-  return DOCUMENT_TRANSLATION_LANGUAGES.filter(
-    (lang) =>
+  return DOCUMENT_TRANSLATION_LANGUAGES.filter((lang) => {
+    // Check English name, native name, and ISO code
+    if (
       lang.englishName.toLowerCase().includes(lowerQuery) ||
       lang.nativeName.toLowerCase().includes(lowerQuery) ||
-      lang.code.toLowerCase().includes(lowerQuery),
-  );
+      lang.code.toLowerCase().includes(lowerQuery)
+    ) {
+      return true;
+    }
+
+    // Check localized name if locale is provided
+    if (locale) {
+      const localizedName = getLocalizedLanguageName(lang.code, locale);
+      if (localizedName && localizedName.toLowerCase().includes(lowerQuery)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
 }
 
 /**
