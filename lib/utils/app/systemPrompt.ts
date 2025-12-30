@@ -4,12 +4,15 @@
  * This module provides a split system prompt architecture:
  * - BASE_SYSTEM_PROMPT: Immutable core behaviors (formatting, safety, communication style)
  * - DEFAULT_USER_PROMPT: Default user-customizable instructions
- * - buildSystemPrompt(): Combines base + user prompts into final system prompt
+ * - buildSystemPrompt(): Combines base + user + dynamic context into final system prompt
  *
  * The base prompt is derived from analysis of Anthropic Claude, OpenAI ChatGPT,
  * Cursor IDE, and Vercel v0 system prompts.
+ *
+ * Dynamic context includes:
+ * - Current date/time (always included)
+ * - User information (optional, controlled by settings)
  */
-import { env } from '@/config/environment';
 
 /**
  * Default base system prompt content.
@@ -142,22 +145,119 @@ export const DEFAULT_USER_PROMPT =
   'You are a helpful AI assistant. Answer questions accurately and helpfully.';
 
 /**
- * Combines the base system prompt with the user's custom instructions.
+ * User information that can optionally be included in the system prompt.
+ * All fields are optional - only provided fields will be included.
+ */
+export interface SystemPromptUserInfo {
+  name?: string;
+  title?: string;
+  email?: string;
+  department?: string;
+}
+
+/**
+ * Options for building the system prompt with dynamic context.
  *
- * @param userPrompt - The user's custom instructions (from settings or per-request)
- * @returns The complete system prompt with base + user instructions
+ * Supports backward compatibility: if a string is passed to buildSystemPrompt,
+ * it will be treated as the userPrompt option.
+ */
+export interface SystemPromptOptions {
+  /** The user's custom instructions (from settings or per-request) */
+  userPrompt?: string;
+  /** Override for current date/time. If not provided, uses current time. */
+  currentDateTime?: Date;
+  /** Optional user information to include in prompt context */
+  userInfo?: SystemPromptUserInfo;
+}
+
+/**
+ * Formats a date for display in the system prompt.
+ * Uses a human-readable format with timezone.
+ *
+ * @param date - The date to format
+ * @returns Formatted date string (e.g., "Monday, December 30, 2024, 02:15 PM EST")
+ */
+function formatDateTime(date: Date): string {
+  return date.toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+}
+
+/**
+ * Builds the dynamic context section for the system prompt.
+ * Always includes date/time, optionally includes user information.
+ *
+ * @param options - Options containing date/time and optional user info
+ * @returns Formatted dynamic context string
+ */
+function buildDynamicContext(options: SystemPromptOptions): string {
+  const parts: string[] = [];
+
+  // Always include date/time (use provided date or current time)
+  const dateTime = options.currentDateTime ?? new Date();
+  parts.push(`Current date and time: ${formatDateTime(dateTime)}`);
+
+  // Include user info if provided
+  if (options.userInfo) {
+    const { name, title, email, department } = options.userInfo;
+    const userParts: string[] = [];
+    if (name) userParts.push(`- Name: ${name}`);
+    if (title) userParts.push(`- Title: ${title}`);
+    if (email) userParts.push(`- Email: ${email}`);
+    if (department) userParts.push(`- Department: ${department}`);
+
+    if (userParts.length > 0) {
+      parts.push('\n## About the Current User\n' + userParts.join('\n'));
+    }
+  }
+
+  return `# Dynamic Context\n\n${parts.join('\n')}\n`;
+}
+
+/**
+ * Combines the base system prompt with dynamic context and user's custom instructions.
+ *
+ * Supports two calling patterns for backward compatibility:
+ * - buildSystemPrompt("custom prompt") - legacy string-based call
+ * - buildSystemPrompt({ userPrompt, userInfo }) - new options-based call
+ *
+ * @param optionsOrPrompt - Either a string (user prompt) or SystemPromptOptions object
+ * @returns The complete system prompt with base + dynamic context + user instructions
  *
  * @example
- * // With custom user prompt
+ * // Legacy usage with string
  * const prompt = buildSystemPrompt("Always respond in French");
  *
  * @example
- * // With empty/undefined prompt (uses default)
+ * // New usage with options (includes date/time automatically)
+ * const prompt = buildSystemPrompt({
+ *   userPrompt: "Always respond in French",
+ *   userInfo: { name: "Jane Doe", department: "Operations" }
+ * });
+ *
+ * @example
+ * // With empty/undefined (uses defaults, includes current date/time)
  * const prompt = buildSystemPrompt();
  */
-export function buildSystemPrompt(userPrompt?: string): string {
-  const effectiveUserPrompt = userPrompt?.trim() || DEFAULT_USER_PROMPT;
-  return `${BASE_SYSTEM_PROMPT}\n\n# User Instructions\n\n${effectiveUserPrompt}`;
+export function buildSystemPrompt(
+  optionsOrPrompt?: SystemPromptOptions | string,
+): string {
+  // Handle backward compatibility: string argument becomes userPrompt option
+  const options: SystemPromptOptions =
+    typeof optionsOrPrompt === 'string'
+      ? { userPrompt: optionsOrPrompt }
+      : optionsOrPrompt || {};
+
+  const effectiveUserPrompt = options.userPrompt?.trim() || DEFAULT_USER_PROMPT;
+  const dynamicContext = buildDynamicContext(options);
+
+  return `${BASE_SYSTEM_PROMPT}\n\n${dynamicContext}\n# User Instructions\n\n${effectiveUserPrompt}`;
 }
 
 /**
