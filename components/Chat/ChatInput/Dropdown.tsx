@@ -3,6 +3,7 @@ import {
   IconCirclePlus,
   IconFile,
   IconFileMusic,
+  IconFileText,
   IconLanguage,
   IconLink,
   IconPaperclip,
@@ -27,9 +28,11 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
+import { DocumentTranslationReference } from '@/types/documentTranslation';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
+import ChatInputDocumentTranslate from '@/components/Chat/ChatInput/ChatInputDocumentTranslate';
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
@@ -38,7 +41,10 @@ import ImageIcon from '@/components/Icons/image';
 import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
 import { useChatInputStore } from '@/client/stores/chatInputStore';
-import { TRANSCRIPTION_ACCEPT_TYPES } from '@/lib/constants/fileTypes';
+import {
+  DOCUMENT_TRANSLATION_ACCEPT_TYPES,
+  TRANSCRIPTION_ACCEPT_TYPES,
+} from '@/lib/constants/fileTypes';
 
 interface DropdownProps {
   onCameraClick: () => void;
@@ -84,6 +90,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
+  const [isDocumentTranslateOpen, setIsDocumentTranslateOpen] = useState(false);
+  const [documentToTranslate, setDocumentToTranslate] = useState<File | null>(
+    null,
+  );
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isToneOpen, setIsToneOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -134,6 +144,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const transcribeInputRef = useRef<HTMLInputElement>(null);
+  const documentTranslateInputRef = useRef<HTMLInputElement>(null);
 
   // Handler for file attach that doesn't access ref during render
   const handleAttachClick = useCallback(() => {
@@ -146,6 +157,24 @@ const Dropdown: React.FC<DropdownProps> = ({
     closeDropdown();
     transcribeInputRef.current?.click();
   }, [closeDropdown]);
+
+  // Handler for document translation file selection
+  const handleDocumentTranslateClick = useCallback(() => {
+    closeDropdown();
+    documentTranslateInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handle document translation completion
+  const handleDocumentTranslationComplete = useCallback(
+    (reference: DocumentTranslationReference) => {
+      // Set the text field with the translation reference for sending
+      const referenceText = `[Translation: ${reference.translatedFilename} | lang:${reference.targetLanguage} | blob:${reference.jobId} | ext:${reference.fileExtension} | expires:${reference.expiresAt}]`;
+      setTextFieldValue(referenceText);
+      setIsDocumentTranslateOpen(false);
+      setDocumentToTranslate(null);
+    },
+    [setTextFieldValue],
+  );
 
   // Helper function to toggle search mode (always sets to ALWAYS when enabled)
   const toggleSearchMode = useCallback(() => {
@@ -232,6 +261,16 @@ const Dropdown: React.FC<DropdownProps> = ({
         },
         category: 'transform',
       },
+      {
+        id: 'translateDocument',
+        icon: (
+          <IconFileText size={18} className="text-indigo-500 flex-shrink-0" />
+        ),
+        label: t('translateDocumentDropdown'),
+        infoTooltip: t('dropdown.translateDocumentTooltip'),
+        onClick: handleDocumentTranslateClick,
+        category: 'transform',
+      },
       ...(hasCameraSupport
         ? [
             {
@@ -261,6 +300,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       onCameraClick,
       handleAttachClick,
       handleTranscribeClick,
+      handleDocumentTranslateClick,
       toggleSearchMode,
     ],
   );
@@ -274,6 +314,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     closeDropdown,
     onCloseModals: () => {
       setIsTranslateOpen(false);
+      setIsDocumentTranslateOpen(false);
       setIsImageOpen(false);
       setIsToneOpen(false);
     },
