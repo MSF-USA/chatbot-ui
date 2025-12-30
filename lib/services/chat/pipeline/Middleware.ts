@@ -4,7 +4,10 @@ import { NextRequest } from 'next/server';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 import { ModelSelector, RateLimiter } from '@/lib/services/shared';
 
-import { buildSystemPrompt } from '@/lib/utils/app/systemPrompt';
+import {
+  SystemPromptOptions,
+  buildSystemPrompt,
+} from '@/lib/utils/app/systemPrompt';
 import { getMessageContentTypes } from '@/lib/utils/server/chat/chat';
 
 import { ChatBody } from '@/types/chat';
