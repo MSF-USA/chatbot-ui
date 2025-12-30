@@ -103,6 +103,9 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
 
       source.connect(analyserRef.current);
 
+      // Show initializing state immediately
+      setIsInitializing(true);
+
       // Start checking for silence
       silenceStartTimeRef.current = null;
       checkSilenceIntervalRef.current = window.setInterval(() => {
@@ -135,6 +138,10 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
         }
       }, 100);
 
+      // Wait for stream warmup before signaling ready to record
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      setIsInitializing(false);
       setIsRecording(true);
     } catch (err: any) {
       console.error('[VoiceCapture] Error getting user media:', err);
