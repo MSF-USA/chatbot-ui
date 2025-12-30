@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { resolveImageReferencesInContent } from '@/lib/services/imageService';
+
 import { buildMessageContent } from '@/lib/utils/shared/chat/contentBuilder';
 import { validateMessageSubmission } from '@/lib/utils/shared/chat/validation';
 
@@ -176,8 +178,6 @@ export function useMessageSender({
     }
 
     // Build content with filtered file field value (if artifact is being edited)
-    // Content contains file references (e.g., /api/file/abc123.png) - NOT base64
-    // The backend (ImageProcessor/FileProcessor) handles converting to base64 for the LLM
     const content = buildMessageContent(
       submitType,
       textFieldValue,
@@ -186,10 +186,14 @@ export function useMessageSender({
       null,
     );
 
+    // Resolve image file references (/api/file/...) to base64 data URLs before sending
+    // This ensures the server receives base64 data it can pass to the LLM
+    const resolvedContent = await resolveImageReferencesInContent(content);
+
     onSend(
       {
         role: 'user',
-        content,
+        content: resolvedContent,
         messageType: mapSubmitTypeToMessageType(submitType ?? 'TEXT'),
         toneId: selectedToneId,
         promptId: usedPromptId,
