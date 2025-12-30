@@ -91,8 +91,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       `[DocumentTranslation] Downloaded translation for job ${jobId}: ${blobPath} (${content.length} bytes)`,
     );
 
-    // Return the file as a binary response
-    return new NextResponse(content, {
+    // Return the file as a binary response (convert Buffer to Uint8Array for NextResponse compatibility)
+    return new NextResponse(new Uint8Array(content), {
       status: 200,
       headers: {
         'Content-Type': contentType,
