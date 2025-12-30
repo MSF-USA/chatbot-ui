@@ -409,6 +409,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       signal: abortController?.signal, // Pass abort signal
       streamingSpeed: settings.streamingSpeed, // Pass streaming speed configuration
       includeUserInfoInPrompt: settings.includeUserInfoInPrompt,
+      preferredName: settings.preferredName,
+      userContext: settings.userContext,
     });
   },
 
