@@ -139,6 +139,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       forcedAgentType,
       tone,
       streamingSpeed,
+      includeUserInfoInPrompt,
     } = body;
 
     if (tone) {
@@ -149,10 +150,13 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       });
     }
 
+    // Store raw user prompt - system prompt will be built in buildChatContext
+    // after auth middleware has provided user info
     return {
       model,
       messages,
-      systemPrompt: buildSystemPrompt(prompt),
+      rawUserPrompt: prompt,
+      includeUserInfoInPrompt,
       temperature,
       stream,
       reasoningEffort,
@@ -213,6 +217,32 @@ export const createContentAnalysisMiddleware = (
     hasFiles: contentTypes.has('file') || contentTypes.has('audio'),
     hasImages: contentTypes.has('image'),
     hasAudio: contentTypes.has('audio'), // Audio files detected separately by analyzer
+  };
+};
+
+/**
+ * Factory for system prompt middleware that builds the final system prompt.
+ * Runs after auth so user info is available if needed.
+ */
+export const createSystemPromptMiddleware = (
+  context: Partial<ChatContext>,
+): Partial<ChatContext> => {
+  const options: SystemPromptOptions = {
+    userPrompt: context.rawUserPrompt,
+  };
+
+  // Add user info if enabled and user is available
+  if (context.includeUserInfoInPrompt && context.user) {
+    options.userInfo = {
+      name: context.user.displayName,
+      title: context.user.jobTitle,
+      email: context.user.mail,
+      department: context.user.department,
+    };
+  }
+
+  return {
+    systemPrompt: buildSystemPrompt(options),
   };
 };
 
