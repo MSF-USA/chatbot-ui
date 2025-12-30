@@ -90,9 +90,9 @@ export class DocumentTranslationService {
     // Prepare multipart form data
     const formData = new FormData();
 
-    // Add the document
+    // Add the document (convert Buffer to Uint8Array for Blob compatibility)
     const documentContentType = getDocumentContentType(filename);
-    const documentBlob = new Blob([documentBuffer], {
+    const documentBlob = new Blob([new Uint8Array(documentBuffer)], {
       type: documentContentType,
     });
     formData.append('document', documentBlob, filename);
@@ -100,7 +100,7 @@ export class DocumentTranslationService {
     // Add glossary if provided
     if (glossaryBuffer && glossaryFilename) {
       const glossaryContentType = getGlossaryContentType(glossaryFilename);
-      const glossaryBlob = new Blob([glossaryBuffer], {
+      const glossaryBlob = new Blob([new Uint8Array(glossaryBuffer)], {
         type: glossaryContentType,
       });
       formData.append('glossary', glossaryBlob, glossaryFilename);
