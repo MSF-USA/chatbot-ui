@@ -68,13 +68,19 @@ const ChatInputVoiceCapture: FC = React.memo(() => {
       mediaStreamRef.current = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
+      mediaRecorder.start(100); // Capture data every 100ms to prevent audio cutoff
 
       // Empty the chunks
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstart = () => {
+        console.log(
+          '[VoiceCapture] Recording initialized - audio capture active',
+        );
       };
 
       mediaRecorder.onstop = () => {
