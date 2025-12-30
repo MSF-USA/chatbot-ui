@@ -356,6 +356,34 @@ export class StandardChatHandler extends BasePipelineStage {
           (c) => c.type !== 'file_url' && c.type !== 'text',
         );
 
+        // Replace image URLs with converted base64 from context.processedContent.images
+        // The processors convert blob storage URLs to base64 data URLs for LLM consumption
+        if (images && images.length > 0) {
+          let imageIndex = 0;
+          for (const item of nonTextContent) {
+            if (
+              item.type === 'image_url' &&
+              'image_url' in item &&
+              imageIndex < images.length
+            ) {
+              // Replace with converted base64 URL
+              (
+                item as {
+                  type: 'image_url';
+                  image_url: { url: string; detail?: string };
+                }
+              ).image_url.url = images[imageIndex].url;
+              (
+                item as {
+                  type: 'image_url';
+                  image_url: { url: string; detail?: string };
+                }
+              ).image_url.detail = images[imageIndex].detail;
+              imageIndex++;
+            }
+          }
+        }
+
         // Build final content array
         const finalContent: typeof enrichedContent = [];
 
@@ -367,7 +395,7 @@ export class StandardChatHandler extends BasePipelineStage {
           });
         }
 
-        // Add non-text content (e.g., images)
+        // Add non-text content (e.g., images with base64 URLs)
         finalContent.push(...nonTextContent);
 
         // Replace last message with enriched content
