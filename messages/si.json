@@ -840,7 +840,18 @@
     "Slow": "තිරසාර",
     "Normal": "සාමාන්‍ය",
     "Fast": "වේගවත්",
-    "Controls how smoothly text appears during AI responses": "AI ප්‍රතිචාරවලදී පෙළය කඩිනමින් පෙනෙන ආකාරය පාලනය කරයි"
+    "Controls how smoothly text appears during AI responses": "AI ප්‍රතිචාරවලදී පෙළය කඩිනමින් පෙනෙන ආකාරය පාලනය කරයි",
+    "aboutYou": {
+      "title": "ඔබ ගැන",
+      "shareBasicInfo": "මූලික තොරතුරු AI සමඟ බෙදාගන්න",
+      "shareBasicInfoDescription": "එය සක්‍රීය කරන විට, ඔබගේ නම, තනතුර සහ දෙපාර්තමේන්තුව ඔබේ පැතිකඩෙන් AI වෙත දැනගැනේ",
+      "preferredName": "අභිප්‍රේත නම",
+      "preferredNamePlaceholder": "ඔබට කෙසේ ඇමතීමට කැමතිද?",
+      "preferredNameDescription": "ඔබගේ ප්‍රදර්ශන නම උඩින් යාවත්කාලීන කරන්න. ඔබගේ පැතිකඩ නම භාවිතා කිරීමට හිස්ව තබන්න",
+      "additionalContext": "අතිරේක පසුබැසීම",
+      "additionalContextPlaceholder": "උදාහරණයක් ලෙස, මම ක්ෂේත්‍ර මෙහෙයුම් වල කටයුතු කරමි, සිහිපත් පිළිතුරු කැමති, නිතර වෛද්‍ය විධිමත් ක්‍රියාමාර්ග ගැන අසනවා...",
+      "additionalContextDescription": "AI තවදුරටත් ඔබ ගැන දැනගැනීමට අවශ්‍ය වෙන වෙනම තොරතුරු"
+    }
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"

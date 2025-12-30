@@ -873,7 +873,18 @@
     "Slow": "Langsam",
     "Normal": "Normal",
     "Fast": "Schnell",
-    "Controls how smoothly text appears during AI responses": "Steuert, wie flüssig Text während KI-Antworten angezeigt wird"
+    "Controls how smoothly text appears during AI responses": "Steuert, wie flüssig Text während KI-Antworten angezeigt wird",
+    "aboutYou": {
+      "title": "Über Sie",
+      "shareBasicInfo": "Basisinformationen mit der KI teilen",
+      "shareBasicInfoDescription": "Wenn aktiviert, kennt die KI Ihren Namen, Ihre Position und Ihre Abteilung aus Ihrem Profil",
+      "preferredName": "Bevorzugter Name",
+      "preferredNamePlaceholder": "Wie möchten Sie genannt werden?",
+      "preferredNameDescription": "Überschreibt Ihren Anzeigenamen. Feld leer lassen, um Ihren Profilnamen zu verwenden",
+      "additionalContext": "Zusätzlicher Kontext",
+      "additionalContextPlaceholder": "Z.B. Ich arbeite im Feldeinsatz, bevorzuge prägnante Antworten, stelle oft Fragen zu medizinischen Protokollen...",
+      "additionalContextDescription": "Weitere Informationen, die die KI über Sie wissen sollte"
+    }
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

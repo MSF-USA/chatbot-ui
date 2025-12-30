@@ -873,7 +873,18 @@
     "Slow": "慢速",
     "Normal": "正常",
     "Fast": "快速",
-    "Controls how smoothly text appears during AI responses": "控制 AI 回复时文本显示的流畅度"
+    "Controls how smoothly text appears during AI responses": "控制 AI 回复时文本显示的流畅度",
+    "aboutYou": {
+      "title": "关于您",
+      "shareBasicInfo": "与 AI 共享基本信息",
+      "shareBasicInfoDescription": "启用后，AI 将从您的个人资料中获知您的姓名、头衔和部门",
+      "preferredName": "首选称呼",
+      "preferredNamePlaceholder": "您希望如何被称呼？",
+      "preferredNameDescription": "覆盖您的显示名称。若留空，则使用您的个人资料名称",
+      "additionalContext": "补充说明",
+      "additionalContextPlaceholder": "如：我在外勤工作，喜欢简明回复，经常咨询医疗规范...",
+      "additionalContextDescription": "您希望 AI 了解的其他信息"
+    }
   },
   "notFound": {
     "lostDog": "迷路的狗"

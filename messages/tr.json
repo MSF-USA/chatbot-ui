@@ -873,7 +873,18 @@
     "Slow": "Yavaş",
     "Normal": "Normal",
     "Fast": "Hızlı",
-    "Controls how smoothly text appears during AI responses": "AI yanıtlarında metnin ne kadar akıcı görüneceğini ayarlar"
+    "Controls how smoothly text appears during AI responses": "AI yanıtlarında metnin ne kadar akıcı görüneceğini ayarlar",
+    "aboutYou": {
+      "title": "Hakkınızda",
+      "shareBasicInfo": "Yapay zeka ile temel bilgileri paylaş",
+      "shareBasicInfoDescription": "Etkinleştirildiğinde, yapay zeka profilinizden adınızı, unvanınızı ve departmanınızı bilecek",
+      "preferredName": "Tercih Edilen İsim",
+      "preferredNamePlaceholder": "Size nasıl hitap edilmesini istersiniz?",
+      "preferredNameDescription": "Görünen adınızı geçersiz kılar. Profil adınızı kullanmak için boş bırakın",
+      "additionalContext": "Ek Bağlam",
+      "additionalContextPlaceholder": "Örn. Saha operasyonlarında çalışıyorum, kısa yanıtları tercih ederim, sıkça tıbbi protokolleri sorarım...",
+      "additionalContextDescription": "Yapay zekanın sizinle ilgili bilmesini istediğiniz diğer bilgiler"
+    }
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

@@ -871,7 +871,18 @@
     "Slow": "నెల్లగా",
     "Normal": "సాధారణంగా",
     "Fast": "త్వరగా",
-    "Controls how smoothly text appears during AI responses": "AI ప్రతిస్పందనలో వచనం ఎంత తేలికగా ప్రదర్శించబడుతుందో నియంత్రిస్తుంది"
+    "Controls how smoothly text appears during AI responses": "AI ప్రతిస్పందనలో వచనం ఎంత తేలికగా ప్రదర్శించబడుతుందో నియంత్రిస్తుంది",
+    "aboutYou": {
+      "title": "మీ గురించి",
+      "shareBasicInfo": "ప్రాధమిక సమాచారాన్ని AIతో పంచుకోండి",
+      "shareBasicInfoDescription": "ఈ సెట్టింగ్ ప్రారంభించినప్పుడు, AI మీ పేరు, హోదా, విభాగాన్ని మీ ప్రొఫైల్ నుండి తెలుసుకుంటుంది",
+      "preferredName": "ఇష్టపడే పేరు",
+      "preferredNamePlaceholder": "తమను ఏ పేరుతో పిలవాలని మీరు కోరుకుంటారు?",
+      "preferredNameDescription": "మీ డిస్ప్లే పేరును మార్చండి. ప్రొఫైల్ పేరు వాడాలంటే ఖాళీగా ఉంచండి",
+      "additionalContext": "అదనపు వివరణ",
+      "additionalContextPlaceholder": "ఉదా: నేనుమైదాన కార్యకలాపాల్లో పనిచేస్తానుఅవసరమైన సమాధానాలుప్రాధాన్యమిస్తాను, తరచుగా వైద్య నిబంధనల గురించి అడుగుతాను...",
+      "additionalContextDescription": "AI మీ గురించి తెలుసుకోవాల్సిన మరే ఇతర సమాచారం ఉందా?"
+    }
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"

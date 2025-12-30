@@ -843,7 +843,18 @@
     "Slow": "Chậm",
     "Normal": "Bình thường",
     "Fast": "Nhanh",
-    "Controls how smoothly text appears during AI responses": "Điều chỉnh độ mượt khi văn bản xuất hiện trong phản hồi của AI"
+    "Controls how smoothly text appears during AI responses": "Điều chỉnh độ mượt khi văn bản xuất hiện trong phản hồi của AI",
+    "aboutYou": {
+      "title": "Về bạn",
+      "shareBasicInfo": "Chia sẻ thông tin cơ bản với AI",
+      "shareBasicInfoDescription": "Khi bật, AI sẽ biết tên, chức danh và phòng ban của bạn từ hồ sơ",
+      "preferredName": "Tên bạn muốn dùng",
+      "preferredNamePlaceholder": "Bạn muốn được gọi là gì?",
+      "preferredNameDescription": "Ghi đè tên hiển thị của bạn. Để trống nếu muốn dùng tên hồ sơ",
+      "additionalContext": "Ngữ cảnh bổ sung",
+      "additionalContextPlaceholder": "Ví dụ: Tôi làm ở bộ phận hiện trường, thích câu trả lời ngắn gọn, thường hỏi về quy trình y tế...",
+      "additionalContextDescription": "Bất kỳ thông tin nào khác bạn muốn AI biết về bạn"
+    }
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

@@ -840,7 +840,18 @@
     "Slow": "Lambat",
     "Normal": "Normal",
     "Fast": "Cepat",
-    "Controls how smoothly text appears during AI responses": "Mengatur seberapa mulus teks ditampilkan selama respons AI"
+    "Controls how smoothly text appears during AI responses": "Mengatur seberapa mulus teks ditampilkan selama respons AI",
+    "aboutYou": {
+      "title": "Tentang Anda",
+      "shareBasicInfo": "Bagikan info dasar ke AI",
+      "shareBasicInfoDescription": "Jika diaktifkan, AI akan mengetahui nama, jabatan, dan departemen Anda dari profil Anda",
+      "preferredName": "Nama Panggilan",
+      "preferredNamePlaceholder": "Ingin dipanggil apa?",
+      "preferredNameDescription": "Ganti nama tampilan Anda. Biarkan kosong untuk menggunakan nama profil",
+      "additionalContext": "Konteks Tambahan",
+      "additionalContextPlaceholder": "Misal: Saya bekerja di operasi lapangan, lebih suka jawaban singkat, sering bertanya tentang protokol medis...",
+      "additionalContextDescription": "Informasi lain yang ingin Anda bagikan ke AI tentang diri Anda"
+    }
   },
   "notFound": {
     "lostDog": "Anjing hilang"

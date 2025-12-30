@@ -848,7 +848,18 @@
     "Slow": "איטי",
     "Normal": "רגיל",
     "Fast": "מהיר",
-    "Controls how smoothly text appears during AI responses": "שולט עד כמה בצורה חלקה מופיע הטקסט במהלך תגובות ה-AI"
+    "Controls how smoothly text appears during AI responses": "שולט עד כמה בצורה חלקה מופיע הטקסט במהלך תגובות ה-AI",
+    "aboutYou": {
+      "title": "עליך",
+      "shareBasicInfo": "שתף מידע בסיסי עם ה-AI",
+      "shareBasicInfoDescription": "כאשר האפשרות מופעלת, ה-AI ידע את שמך, תפקידך והמחלקה שלך מהפרופיל שלך",
+      "preferredName": "שם מועדף",
+      "preferredNamePlaceholder": "איך היית רוצה שיפנו אליך?",
+      "preferredNameDescription": "עקוף את שם התצוגה שלך. השאר ריק כדי להשתמש בשם מהפרופיל",
+      "additionalContext": "הקשר נוסף",
+      "additionalContextPlaceholder": "לדוגמה: אני עובד/ת בתפעול שטח, מעדיף/ה תשובות תמציתיות, מרבה לשאול על פרוטוקולים רפואיים...",
+      "additionalContextDescription": "כל מידע נוסף שתרצה שה-AI יידע עליך"
+    }
   },
   "notFound": {
     "lostDog": "כלב אבוד"

@@ -838,7 +838,18 @@
     "Slow": "Traag",
     "Normal": "Normaal",
     "Fast": "Snel",
-    "Controls how smoothly text appears during AI responses": "Bepaalt hoe soepel tekst verschijnt tijdens AI-antwoorden"
+    "Controls how smoothly text appears during AI responses": "Bepaalt hoe soepel tekst verschijnt tijdens AI-antwoorden",
+    "aboutYou": {
+      "title": "Over u",
+      "shareBasicInfo": "Deel basisinformatie met AI",
+      "shareBasicInfoDescription": "Indien ingeschakeld, weet de AI uw naam, functie en afdeling uit uw profiel",
+      "preferredName": "Voorkeursnaam",
+      "preferredNamePlaceholder": "Hoe wilt u worden genoemd?",
+      "preferredNameDescription": "Overschrijf uw weergavenaam. Laat leeg om uw profielnaam te gebruiken",
+      "additionalContext": "Aanvullende context",
+      "additionalContextPlaceholder": "Bijv. Ik werk bij veldoperaties, geef de voorkeur aan beknopte antwoorden, vraag vaak naar medische protocollen...",
+      "additionalContextDescription": "Andere informatie die u wilt dat de AI over u weet"
+    }
   },
   "notFound": {
     "lostDog": "Verloren hond"

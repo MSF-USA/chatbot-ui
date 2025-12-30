@@ -790,7 +790,18 @@
     "Slow": "ช้า",
     "Normal": "ปกติ",
     "Fast": "เร็ว",
-    "Controls how smoothly text appears during AI responses": "ควบคุมความลื่นไหลของข้อความที่แสดงระหว่างการตอบกลับของ AI"
+    "Controls how smoothly text appears during AI responses": "ควบคุมความลื่นไหลของข้อความที่แสดงระหว่างการตอบกลับของ AI",
+    "aboutYou": {
+      "title": "เกี่ยวกับคุณ",
+      "shareBasicInfo": "แบ่งปันข้อมูลพื้นฐานกับ AI",
+      "shareBasicInfoDescription": "เมื่อเปิดใช้งาน AI จะทราบชื่อ ตำแหน่ง และแผนกของคุณจากโปรไฟล์",
+      "preferredName": "ชื่อที่ต้องการให้เรียก",
+      "preferredNamePlaceholder": "ต้องการให้เรียกชื่ออะไร",
+      "preferredNameDescription": "แทนที่ชื่อที่แสดงของคุณ ปล่อยว่างเพื่อใช้ชื่อในโปรไฟล์",
+      "additionalContext": "ข้อมูลเพิ่มเติม",
+      "additionalContextPlaceholder": "เช่น ฉันทำงานฝ่ายปฏิบัติการภาคสนาม ต้องการคำตอบสั้น ๆ มักถามเกี่ยวกับระเบียบวิธีทางแพทย์...",
+      "additionalContextDescription": "ข้อมูลอื่นใดที่คุณต้องการให้ AI ทราบเกี่ยวกับตัวคุณ"
+    }
   },
   "notFound": {
     "lostDog": "สุนัขหาย"

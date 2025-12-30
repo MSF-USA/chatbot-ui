@@ -825,7 +825,18 @@
     "Slow": "بطيء",
     "Normal": "عادي",
     "Fast": "سريع",
-    "Controls how smoothly text appears during AI responses": "يتحكم في سلاسة ظهور النص أثناء ردود الذكاء الاصطناعي"
+    "Controls how smoothly text appears during AI responses": "يتحكم في سلاسة ظهور النص أثناء ردود الذكاء الاصطناعي",
+    "aboutYou": {
+      "title": "معلومات عنك",
+      "shareBasicInfo": "مشاركة المعلومات الأساسية مع الذكاء الاصطناعي",
+      "shareBasicInfoDescription": "عند التفعيل، سيتمكن الذكاء الاصطناعي من معرفة اسمك، وظيفتك، وقسمك من ملفك الشخصي",
+      "preferredName": "الاسم المفضل",
+      "preferredNamePlaceholder": "كيف تود أن يتم مناداتك؟",
+      "preferredNameDescription": "تجاوز اسم العرض الخاص بك. اترك الحقل فارغاً لاستخدام اسم ملفك الشخصي",
+      "additionalContext": "سياق إضافي",
+      "additionalContextPlaceholder": "مثلاً: أعمل في العمليات الميدانية، أفضل الردود المختصرة، غالباً أسأل عن البروتوكولات الطبية...",
+      "additionalContextDescription": "أي معلومات أخرى تود أن يعرفها الذكاء الاصطناعي عنك"
+    }
   },
   "notFound": {
     "lostDog": "كلب ضائع"

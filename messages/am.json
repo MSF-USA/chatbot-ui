@@ -822,7 +822,18 @@
     "Slow": "የሚዘገይ",
     "Normal": "መደበኛ",
     "Fast": "ፈጣን",
-    "Controls how smoothly text appears during AI responses": "በAI ምላሾች ውስጥ ጽሑፉ በምንኛ በቀላሉ እንዲታይ ይቆጣጠራል"
+    "Controls how smoothly text appears during AI responses": "በAI ምላሾች ውስጥ ጽሑፉ በምንኛ በቀላሉ እንዲታይ ይቆጣጠራል",
+    "aboutYou": {
+      "title": "ስለ እርስዎ",
+      "shareBasicInfo": "መሠረታዊ መረጃ ከ AI ጋር ያጋሩ",
+      "shareBasicInfoDescription": "ይህ ሲፈቀደው፣ AI ከመገለጫዎ ስምዎን፣ ድርጅት ስምዎንና ክፍልዎን ያውቃል",
+      "preferredName": "የሚመርጡት ስም",
+      "preferredNamePlaceholder": "በምን መጠራት ትፈልጋለህ?",
+      "preferredNameDescription": "የሚታየውን ስምዎ ይቀይሩ። የመገለጫውን ስም ለመጠቀም ባዶ ይተዉት",
+      "additionalContext": "ተጨማሪ አገናኝት",
+      "additionalContextPlaceholder": "ለምሳሌ፦ በመስክ ኦፕሬሽኖች እሰራለሁ፣ አጭር መልሶችን እፈልጋለሁ፣ በተደጋጋሚ የህክምና ፕሮቶኮሎች እበዛባለሁ...",
+      "additionalContextDescription": "AI ስለ እርስዎ ማወቅ የሚችለው ማንኛውም ተጨማሪ መረጃ"
+    }
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

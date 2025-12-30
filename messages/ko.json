@@ -873,7 +873,18 @@
     "Slow": "느림",
     "Normal": "보통",
     "Fast": "빠름",
-    "Controls how smoothly text appears during AI responses": "AI 응답 중 텍스트가 얼마나 부드럽게 표시되는지 제어합니다"
+    "Controls how smoothly text appears during AI responses": "AI 응답 중 텍스트가 얼마나 부드럽게 표시되는지 제어합니다",
+    "aboutYou": {
+      "title": "내 정보",
+      "shareBasicInfo": "AI와 기본 정보 공유",
+      "shareBasicInfoDescription": "이 옵션을 활성화하면 AI가 프로필에 등록된 이름, 직함, 부서를 알 수 있습니다.",
+      "preferredName": "선호 이름",
+      "preferredNamePlaceholder": "어떻게 불리고 싶으신가요?",
+      "preferredNameDescription": "표시 이름을 변경합니다. 비워두면 프로필 이름이 사용됩니다.",
+      "additionalContext": "추가 정보",
+      "additionalContextPlaceholder": "예: 현장 운영팀에서 근무, 간결한 답변 선호, 의료 지침 관련 질문 자주 함 등...",
+      "additionalContextDescription": "AI가 알고 있으면 좋을 기타 정보"
+    }
   },
   "notFound": {
     "lostDog": "잃어버린 개"

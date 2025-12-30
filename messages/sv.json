@@ -873,7 +873,18 @@
     "Slow": "Långsam",
     "Normal": "Normal",
     "Fast": "Snabb",
-    "Controls how smoothly text appears during AI responses": "Styr hur smidigt text visas under AI-svar"
+    "Controls how smoothly text appears during AI responses": "Styr hur smidigt text visas under AI-svar",
+    "aboutYou": {
+      "title": "Om dig",
+      "shareBasicInfo": "Dela grundläggande information med AI",
+      "shareBasicInfoDescription": "När aktiverat får AI tillgång till ditt namn, din titel och avdelning från din profil",
+      "preferredName": "Föredraget namn",
+      "preferredNamePlaceholder": "Vad vill du bli kallad?",
+      "preferredNameDescription": "Ersätt ditt visningsnamn. Lämna tomt för att använda profilnamnet",
+      "additionalContext": "Ytterligare kontext",
+      "additionalContextPlaceholder": "T.ex. Jag arbetar inom fältverksamhet, föredrar kortfattade svar, frågar ofta om medicinska protokoll...",
+      "additionalContextDescription": "Annan information du vill att AI:n ska känna till om dig"
+    }
   },
   "notFound": {
     "lostDog": "Förlorad hund"

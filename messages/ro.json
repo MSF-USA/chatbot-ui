@@ -871,7 +871,18 @@
     "Slow": "Încet",
     "Normal": "Normal",
     "Fast": "Rapid",
-    "Controls how smoothly text appears during AI responses": "Controlează cât de cursiv apare textul în timpul răspunsurilor AI"
+    "Controls how smoothly text appears during AI responses": "Controlează cât de cursiv apare textul în timpul răspunsurilor AI",
+    "aboutYou": {
+      "title": "Despre tine",
+      "shareBasicInfo": "Partajează informații de bază cu AI-ul",
+      "shareBasicInfoDescription": "Când este activat, AI-ul va ști numele, funcția și departamentul tău din profil",
+      "preferredName": "Nume preferat",
+      "preferredNamePlaceholder": "Cum ai dori să fii apelat?",
+      "preferredNameDescription": "Suprascrie numele afișat. Lasă necompletat pentru a folosi numele din profil",
+      "additionalContext": "Context suplimentar",
+      "additionalContextPlaceholder": "Ex.: Lucrez în operațiuni de teren, prefer răspunsuri concise, întreb des despre protocoale medicale...",
+      "additionalContextDescription": "Orice altă informație pe care ai dori ca AI-ul să o știe despre tine"
+    }
   },
   "notFound": {
     "lostDog": "Câine pierdut"

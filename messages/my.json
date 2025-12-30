@@ -848,7 +848,18 @@
     "Slow": "နှေး",
     "Normal": "သာမန်",
     "Fast": "မြန်",
-    "Controls how smoothly text appears during AI responses": "AI ဖြေဆိုမှုအတွင်း စာသား ပေါ်လာမှု၏ မျှတမှုကို ထိန်းချုပ်သည်"
+    "Controls how smoothly text appears during AI responses": "AI ဖြေဆိုမှုအတွင်း စာသား ပေါ်လာမှု၏ မျှတမှုကို ထိန်းချုပ်သည်",
+    "aboutYou": {
+      "title": "သင့်အကြောင်း",
+      "shareBasicInfo": "အခြေခံအချက်အလက်များကို AI နှင့်မျှဝေပါ",
+      "shareBasicInfoDescription": "ဤအလွှာကို ဖွင့်ထားသည့်အခါ AI သည် သင့်နာမည်၊ တာဝန်အမည်နှင့် ဌာနအမည်ကို သင့်ပရိုဖိုင်မှ သိရှိနိုင်ပါသည်",
+      "preferredName": "အသုံးပြုလိုသောအမည်",
+      "preferredNamePlaceholder": "သင့်ကို ဘယ်လိုခေါ်ချင်ပါသလဲ?",
+      "preferredNameDescription": "သင့်အမည်ပြသမှုကို အစားထိုးရန်။ မဖြည့်ပါက သင့်ပရိုဖိုင်အမည်ကို အသုံးပြုမည်",
+      "additionalContext": "ဖြည့်စွက်သိသာချက်",
+      "additionalContextPlaceholder": "ဥပမာ- အပြင်အဆင်တပ်၌ လုပ်ကိုင်သည်၊ တိုတောင်းသည့်အဖြေများကို ပိုနှစ်သက်သည်၊ ဆေးဘက်ဆိုင်ရာလမ်းညွှန်ချက်များအကြောင်း မကြမီမေးလေ့ရှိသည်...",
+      "additionalContextDescription": "AI သို့ သိရှိစေလိုသည့် အခြားသတင်းအချက်အလက်များ"
+    }
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"

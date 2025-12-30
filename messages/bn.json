@@ -873,7 +873,18 @@
     "Slow": "ধীর",
     "Normal": "স্বাভাবিক",
     "Fast": "দ্রুত",
-    "Controls how smoothly text appears during AI responses": "এটি AI উত্তর দেওয়ার সময় টেক্সট কতটা মসৃণভাবে প্রদর্শিত হবে তা নিয়ন্ত্রণ করে"
+    "Controls how smoothly text appears during AI responses": "এটি AI উত্তর দেওয়ার সময় টেক্সট কতটা মসৃণভাবে প্রদর্শিত হবে তা নিয়ন্ত্রণ করে",
+    "aboutYou": {
+      "title": "আপনার সম্পর্কে",
+      "shareBasicInfo": "এআই-এর সাথে মৌলিক তথ্য শেয়ার করুন",
+      "shareBasicInfoDescription": "সক্রিয় করলে, এআই আপনার প্রোফাইল থেকে আপনার নাম, পদবি এবং বিভাগ জানতে পারবে",
+      "preferredName": "পছন্দের নাম",
+      "preferredNamePlaceholder": "আপনাকে কী নামে ডাকা হোক চান?",
+      "preferredNameDescription": "আপনার প্রদর্শিত নাম পরিবর্তন করুন। প্রোফাইলের নাম ব্যবহার করতে ফাঁকা রাখুন",
+      "additionalContext": "অতিরিক্ত তথ্য",
+      "additionalContextPlaceholder": "যেমন, আমি ফিল্ড অপারেশনসে কাজ করি, সংক্ষিপ্ত উত্তর পছন্দ করি, প্রায়ই চিকিৎসা প্রোটোকল নিয়ে জানতে চাই...",
+      "additionalContextDescription": "আপনি এআই-কে সম্পর্কে আরও যেকোনো তথ্য জানাতে চাইলে"
+    }
   },
   "notFound": {
     "lostDog": "হারানো কুকুর"

@@ -873,7 +873,18 @@
     "Slow": "遅い",
     "Normal": "標準",
     "Fast": "速い",
-    "Controls how smoothly text appears during AI responses": "AIの応答中にテキストがどれだけ滑らかに表示されるかを制御します"
+    "Controls how smoothly text appears during AI responses": "AIの応答中にテキストがどれだけ滑らかに表示されるかを制御します",
+    "aboutYou": {
+      "title": "あなたについて",
+      "shareBasicInfo": "AIと基本情報を共有する",
+      "shareBasicInfoDescription": "有効にすると、AIはあなたの名前、役職、所属部門をプロフィールから取得します",
+      "preferredName": "希望する呼び名",
+      "preferredNamePlaceholder": "どのように呼ばれたいですか？",
+      "preferredNameDescription": "表示名を上書きします。未入力の場合はプロフィールの名前が使用されます",
+      "additionalContext": "追加情報",
+      "additionalContextPlaceholder": "例：フィールドオペレーション担当、簡潔な回答を希望、医療プロトコルについてよく質問します...",
+      "additionalContextDescription": "AIに知っておいてほしいその他の情報"
+    }
   },
   "notFound": {
     "lostDog": "迷子の犬"

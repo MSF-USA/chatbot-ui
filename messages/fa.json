@@ -798,7 +798,18 @@
     "Slow": "کند",
     "Normal": "عادی",
     "Fast": "سریع",
-    "Controls how smoothly text appears during AI responses": "نحوه نمایش روان متن هنگام پاسخ‌های هوش مصنوعی را کنترل می‌کند"
+    "Controls how smoothly text appears during AI responses": "نحوه نمایش روان متن هنگام پاسخ‌های هوش مصنوعی را کنترل می‌کند",
+    "aboutYou": {
+      "title": "درباره شما",
+      "shareBasicInfo": "اشتراک‌گذاری اطلاعات پایه با هوش مصنوعی",
+      "shareBasicInfoDescription": "در صورت فعال بودن، هوش مصنوعی نام، عنوان و بخش شما را از پروفایل‌تان می‌داند",
+      "preferredName": "نام دلخواه",
+      "preferredNamePlaceholder": "مایلید با چه نامی خطاب شوید؟",
+      "preferredNameDescription": "نام نمایشی شما را تغییر می‌دهد. برای استفاده از نام پروفایل، این قسمت را خالی بگذارید",
+      "additionalContext": "زمینه‌ی اضافی",
+      "additionalContextPlaceholder": "مثلاً: من در عملیات میدانی کار می‌کنم، پاسخ‌های مختصر را ترجیح می‌دهم، اغلب درباره پروتکل‌های پزشکی سؤال می‌کنم...",
+      "additionalContextDescription": "هر اطلاعات دیگری که می‌خواهید هوش مصنوعی درباره شما بداند"
+    }
   },
   "notFound": {
     "lostDog": "سگ گمشده"

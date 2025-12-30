@@ -873,7 +873,18 @@
     "Slow": "Polepole",
     "Normal": "Kawaida",
     "Fast": "Haraka",
-    "Controls how smoothly text appears during AI responses": "Hudhibiti jinsi maandishi yanavyoonekana kwa urahisi wakati wa majibu ya AI"
+    "Controls how smoothly text appears during AI responses": "Hudhibiti jinsi maandishi yanavyoonekana kwa urahisi wakati wa majibu ya AI",
+    "aboutYou": {
+      "title": "Kuhusu Wewe",
+      "shareBasicInfo": "Shiriki taarifa za msingi na AI",
+      "shareBasicInfoDescription": "Ukipachua, AI itajua jina lako, cheo, na idara yako kutoka kwa wasifu wako",
+      "preferredName": "Jina Unalopendelea",
+      "preferredNamePlaceholder": "Ungependa kuitwa jina gani?",
+      "preferredNameDescription": "Badilisha jina linaloonekana. Acha wazi kutumia jina la wasifu wako",
+      "additionalContext": "Maelezo ya Ziada",
+      "additionalContextPlaceholder": "Mfano, nafanya kazi kwenye operesheni za mashambani, napendelea majibu mafupi, mara nyingi nauliza kuhusu taratibu za matibabu...",
+      "additionalContextDescription": "Taarifa nyingine yoyote ungependa AI ijue kukuhusu"
+    }
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

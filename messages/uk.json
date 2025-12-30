@@ -790,7 +790,18 @@
     "Slow": "Повільно",
     "Normal": "Нормально",
     "Fast": "Швидко",
-    "Controls how smoothly text appears during AI responses": "Визначає плавність появи тексту у відповідях ШІ"
+    "Controls how smoothly text appears during AI responses": "Визначає плавність появи тексту у відповідях ШІ",
+    "aboutYou": {
+      "title": "Про вас",
+      "shareBasicInfo": "Ділитися основною інформацією з AI",
+      "shareBasicInfoDescription": "Якщо ввімкнено, AI знатиме ваше ім’я, посаду та відділ з вашого профілю",
+      "preferredName": "Бажане ім’я",
+      "preferredNamePlaceholder": "Як ви хочете, щоб до вас звертались?",
+      "preferredNameDescription": "Замінити ім’я для відображення. Залиште поле порожнім, щоб використовувати ім’я з профілю",
+      "additionalContext": "Додаткова інформація",
+      "additionalContextPlaceholder": "Наприклад: працюю в польових операціях, віддаю перевагу коротким відповідям, часто запитую про медичні протоколи...",
+      "additionalContextDescription": "Інша інформація, яку ви хочете повідомити AI про себе"
+    }
   },
   "notFound": {
     "lostDog": "Загублений пес"

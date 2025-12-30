@@ -873,7 +873,18 @@
     "Slow": "Lento",
     "Normal": "Normal",
     "Fast": "Rápido",
-    "Controls how smoothly text appears during AI responses": "Controla la fluidez con la que aparece el texto durante las respuestas de la IA"
+    "Controls how smoothly text appears during AI responses": "Controla la fluidez con la que aparece el texto durante las respuestas de la IA",
+    "aboutYou": {
+      "title": "Sobre usted",
+      "shareBasicInfo": "Compartir información básica con la IA",
+      "shareBasicInfoDescription": "Si está activado, la IA sabrá su nombre, puesto y departamento según su perfil",
+      "preferredName": "Nombre preferido",
+      "preferredNamePlaceholder": "¿Cómo le gustaría ser llamado/a?",
+      "preferredNameDescription": "Reemplace su nombre de pantalla. Deje en blanco para usar el nombre de su perfil",
+      "additionalContext": "Contexto adicional",
+      "additionalContextPlaceholder": "Ejemplo: trabajo en operaciones de terreno, prefiero respuestas concisas, suelo consultar sobre protocolos médicos...",
+      "additionalContextDescription": "Cualquier otra información que desee que la IA sepa sobre usted"
+    }
   },
   "notFound": {
     "lostDog": "Perro perdido"

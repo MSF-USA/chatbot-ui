@@ -848,7 +848,18 @@
     "Slow": "Hidas",
     "Normal": "Normaali",
     "Fast": "Nopea",
-    "Controls how smoothly text appears during AI responses": "Säätää, kuinka sujuvasti teksti ilmestyy tekoälyn vastauksissa"
+    "Controls how smoothly text appears during AI responses": "Säätää, kuinka sujuvasti teksti ilmestyy tekoälyn vastauksissa",
+    "aboutYou": {
+      "title": "Sinusta",
+      "shareBasicInfo": "Jaa perustiedot tekoälyn kanssa",
+      "shareBasicInfoDescription": "Kun tämä on käytössä, tekoäly näkee nimesi, tittelin ja osaston profiilistasi",
+      "preferredName": "Toivottu kutsumanimi",
+      "preferredNamePlaceholder": "Millä nimellä haluaisit tulla kutsutuksi?",
+      "preferredNameDescription": "Korvaa näyttönimesi. Jätä tyhjäksi käyttääksesi profiilin nimeäsi",
+      "additionalContext": "Lisätietoa",
+      "additionalContextPlaceholder": "Esim. työskentelen kenttätoiminnassa, suosin ytimekkäitä vastauksia, kysyn usein lääketieteellisistä protokollista...",
+      "additionalContextDescription": "Muu tieto, jonka haluat tekoälyn tietävän sinusta"
+    }
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

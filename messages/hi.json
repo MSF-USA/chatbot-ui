@@ -873,7 +873,18 @@
     "Slow": "धीमा",
     "Normal": "सामान्य",
     "Fast": "तेज़",
-    "Controls how smoothly text appears during AI responses": "AI प्रतिक्रियाओं के दौरान पाठ कितनी सहजता से दिखे, इसे नियंत्रित करता है"
+    "Controls how smoothly text appears during AI responses": "AI प्रतिक्रियाओं के दौरान पाठ कितनी सहजता से दिखे, इसे नियंत्रित करता है",
+    "aboutYou": {
+      "title": "आपके बारे में",
+      "shareBasicInfo": "एआई के साथ बुनियादी जानकारी साझा करें",
+      "shareBasicInfoDescription": "सक्षम होने पर, एआई को आपके प्रोफ़ाइल से आपका नाम, पद, और विभाग पता चलेगा",
+      "preferredName": "पसंदीदा नाम",
+      "preferredNamePlaceholder": "आप किस नाम से पुकारे जाना पसंद करेंगे?",
+      "preferredNameDescription": "डिस्प्ले नाम बदलें। प्रोफ़ाइल नाम के लिए खाली छोड़ें",
+      "additionalContext": "अतिरिक्त संदर्भ",
+      "additionalContextPlaceholder": "उदा., मैं फील्ड ऑपरेशन्स में काम करता/करती हूँ, संक्षिप्त उत्तर पसंद करता/करती हूँ, अक्सर चिकित्सा प्रोटोकॉल के बारे में पूछता/पूछती हूँ...",
+      "additionalContextDescription": "कोई भी अन्य जानकारी जो आप एआई को अपने बारे में बताना चाहें"
+    }
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"

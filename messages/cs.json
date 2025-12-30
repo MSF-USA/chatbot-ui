@@ -873,7 +873,18 @@
     "Slow": "Pomalá",
     "Normal": "Normální",
     "Fast": "Rychlá",
-    "Controls how smoothly text appears during AI responses": "Určuje, jak plynule se text zobrazuje během odpovědí AI"
+    "Controls how smoothly text appears during AI responses": "Určuje, jak plynule se text zobrazuje během odpovědí AI",
+    "aboutYou": {
+      "title": "O vás",
+      "shareBasicInfo": "Sdílet základní informace s AI",
+      "shareBasicInfoDescription": "Když je tato možnost zapnuta, AI bude znát vaše jméno, titul a oddělení z vašeho profilu",
+      "preferredName": "Preferované jméno",
+      "preferredNamePlaceholder": "Jak si přejete, abychom vás oslovovali?",
+      "preferredNameDescription": "Přepište své zobrazované jméno. Nechte prázdné, pokud chcete použít jméno z profilu",
+      "additionalContext": "Další kontext",
+      "additionalContextPlaceholder": "Např. pracuji v terénních operacích, preferuji stručné odpovědi, často se ptám na lékařské protokoly...",
+      "additionalContextDescription": "Jakékoli další informace, které chcete, aby AI o vás věděla"
+    }
   },
   "notFound": {
     "lostDog": "Ztracený pes"

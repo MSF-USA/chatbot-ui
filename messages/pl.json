@@ -870,7 +870,18 @@
     "Slow": "Wolno",
     "Normal": "Normalnie",
     "Fast": "Szybko",
-    "Controls how smoothly text appears during AI responses": "Określa płynność pojawiania się tekstu podczas odpowiedzi AI"
+    "Controls how smoothly text appears during AI responses": "Określa płynność pojawiania się tekstu podczas odpowiedzi AI",
+    "aboutYou": {
+      "title": "O Tobie",
+      "shareBasicInfo": "Udostępnij podstawowe informacje AI",
+      "shareBasicInfoDescription": "Po włączeniu AI będzie znała Twoje imię, stanowisko i dział z Twojego profilu",
+      "preferredName": "Preferowane imię",
+      "preferredNamePlaceholder": "Jak chciał(a)byś, aby Cię nazywano?",
+      "preferredNameDescription": "Zastąp nazwę wyświetlaną. Pozostaw puste, aby użyć nazwy z profilu",
+      "additionalContext": "Dodatkowy kontekst",
+      "additionalContextPlaceholder": "Np. pracuję w terenie, preferuję zwięzłe odpowiedzi, często pytam o protokoły medyczne...",
+      "additionalContextDescription": "Każda inna informacja, którą chciał(a)byś, aby AI o Tobie wiedziała"
+    }
   },
   "notFound": {
     "lostDog": "Zagubiony pies"

@@ -873,7 +873,18 @@
     "Slow": "Медленно",
     "Normal": "Обычно",
     "Fast": "Быстро",
-    "Controls how smoothly text appears during AI responses": "Определяет плавность появления текста в ответах ИИ"
+    "Controls how smoothly text appears during AI responses": "Определяет плавность появления текста в ответах ИИ",
+    "aboutYou": {
+      "title": "О вас",
+      "shareBasicInfo": "Делиться основной информацией с ИИ",
+      "shareBasicInfoDescription": "Если включено, ИИ будет знать ваше имя, должность и отдел из вашего профиля",
+      "preferredName": "Предпочитаемое имя",
+      "preferredNamePlaceholder": "Как вы хотите, чтобы вас называли?",
+      "preferredNameDescription": "Заменить отображаемое имя. Оставьте поле пустым, чтобы использовать имя из профиля",
+      "additionalContext": "Дополнительная информация",
+      "additionalContextPlaceholder": "Например, работаю на полевых операциях, предпочитаю краткие ответы, часто спрашиваю о медицинских протоколах...",
+      "additionalContextDescription": "Любая другая информация, которую вы хотите сообщить ИИ о себе"
+    }
   },
   "notFound": {
     "lostDog": "Потерянная собака"
