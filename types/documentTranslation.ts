@@ -16,7 +16,6 @@ export const DOCUMENT_TRANSLATION_FORMATS = [
   '.docx', // Word
   '.xlsx', // Excel
   '.pptx', // PowerPoint
-  '.pdf', // PDF (read-only output)
   '.msg', // Outlook
   '.xlf',
   '.xliff', // XLIFF
@@ -47,7 +46,6 @@ export const DOCUMENT_CONTENT_TYPES: Record<string, string> = {
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  pdf: 'application/pdf',
   msg: 'application/vnd.ms-outlook',
   xlf: 'application/xliff+xml',
   xliff: 'application/xliff+xml',
