@@ -163,9 +163,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       effectiveVoiceName = voiceName;
     } else if (
       settings.globalVoice &&
-      isMultilingualVoice(settings.globalVoice)
+      isMultilingualVoice(settings.globalVoice) &&
+      Object.keys(settings.languageVoices).length === 0
     ) {
-      // Priority 2: User's global voice is multilingual - skip language detection
+      // Priority 2: Global voice is multilingual AND no language preferences - skip detection
       effectiveVoiceName = settings.globalVoice;
     } else {
       // Priority 3: Need to detect language to resolve voice
