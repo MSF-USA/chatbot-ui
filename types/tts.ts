@@ -112,6 +112,16 @@ export interface TTSRequest {
   pitch?: number;
   /** Override output format */
   outputFormat?: TTSOutputFormat;
+  /**
+   * User's global fallback voice preference.
+   * If multilingual, skips language detection entirely.
+   */
+  globalVoice?: string;
+  /**
+   * User's per-language voice preferences.
+   * Keys are base language codes (e.g., "en", "fr").
+   */
+  languageVoices?: LanguageVoiceDefaults;
 }
 
 /**
