@@ -15,7 +15,7 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
 
-import { ReasoningEffort, Settings, Verbosity } from '@/types/settings';
+import { Settings } from '@/types/settings';
 import { TTSSettings } from '@/types/tts';
 
 import { SystemPrompt } from '../SystemPrompt';
