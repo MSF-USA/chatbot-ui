@@ -403,6 +403,37 @@ export const useSettingsStore = create<SettingsStore>()(
           state.ttsSettings = DEFAULT_TTS_SETTINGS;
         }
 
+        // Version 10 → 11: Migrate TTS settings from voiceName to globalVoice/languageVoices
+        if (version < 11 && state.ttsSettings !== undefined) {
+          const oldSettings = state.ttsSettings as Record<string, unknown>;
+
+          // Check if using old format (has voiceName instead of globalVoice)
+          if ('voiceName' in oldSettings && !('globalVoice' in oldSettings)) {
+            const oldVoiceName = oldSettings.voiceName as string;
+            const newSettings: TTSSettings = {
+              globalVoice: oldVoiceName || DEFAULT_TTS_SETTINGS.globalVoice,
+              languageVoices: {},
+              rate: (oldSettings.rate as number) ?? DEFAULT_TTS_SETTINGS.rate,
+              pitch:
+                (oldSettings.pitch as number) ?? DEFAULT_TTS_SETTINGS.pitch,
+              outputFormat:
+                (oldSettings.outputFormat as TTSSettings['outputFormat']) ??
+                DEFAULT_TTS_SETTINGS.outputFormat,
+            };
+
+            // If the old voice was language-specific, migrate it as that language's default
+            if (oldVoiceName) {
+              const localeMatch = oldVoiceName.match(/^([a-z]{2})-[A-Z]{2}/);
+              if (localeMatch) {
+                const baseLanguage = localeMatch[1].toLowerCase();
+                newSettings.languageVoices[baseLanguage] = oldVoiceName;
+              }
+            }
+
+            state.ttsSettings = newSettings;
+          }
+        }
+
         return state;
       },
     },
