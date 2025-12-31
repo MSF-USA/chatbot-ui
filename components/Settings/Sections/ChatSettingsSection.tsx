@@ -1,6 +1,8 @@
 import {
   IconChevronDown,
+  IconInfoCircle,
   IconMessage,
+  IconSliders,
   IconUser,
   IconVolume,
 } from '@tabler/icons-react';
@@ -13,7 +15,7 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
 
-import { Settings } from '@/types/settings';
+import { ReasoningEffort, Settings, Verbosity } from '@/types/settings';
 import { TTSSettings } from '@/types/tts';
 
 import { SystemPrompt } from '../SystemPrompt';
@@ -41,6 +43,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
+  const [isModelResponseExpanded, setIsModelResponseExpanded] = useState(true);
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
   const [isAboutYouExpanded, setIsAboutYouExpanded] = useState(false);
   const [isTTSExpanded, setIsTTSExpanded] = useState(false);
@@ -49,6 +52,10 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
     customDisplayName,
     ttsSettings,
     setTTSSettings,
+    reasoningEffort,
+    setReasoningEffort,
+    verbosity,
+    setVerbosity,
   } = useSettings();
 
   // Compute derived name from General Settings for placeholder
@@ -69,29 +76,119 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
       </div>
 
       <div className="space-y-8">
-        {/* Model Response Settings Section */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {t('settings.Model Response Settings')}
-          </h3>
-
-          {/* Temperature Setting */}
-          <div className="mb-4">
-            <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-              {t('Default') + ' ' + t('Temperature') + '*'}
+        {/* Model Response Settings Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsModelResponseExpanded(!isModelResponseExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconSliders
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.Model Response Settings')}
+              </h3>
             </div>
-            <TemperatureSlider
-              temperature={state.temperature}
-              onChangeTemperature={(temperature) =>
-                dispatch({ field: 'temperature', value: temperature })
-              }
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isModelResponseExpanded ? 'rotate-180' : ''
+              }`}
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              {t(
-                'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
-              )}
-            </p>
-          </div>
+          </button>
+
+          {isModelResponseExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-6">
+              {/* Info box */}
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 text-xs">
+                <div className="flex items-start">
+                  <IconInfoCircle
+                    size={16}
+                    className="me-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  />
+                  <div className="text-blue-700 dark:text-blue-300">
+                    {t('settings.Model Response Settings Description')}
+                  </div>
+                </div>
+              </div>
+
+              {/* Temperature Setting */}
+              <div>
+                <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
+                  {t('Default') + ' ' + t('Temperature') + '*'}
+                </div>
+                <TemperatureSlider
+                  temperature={state.temperature}
+                  onChangeTemperature={(temperature) =>
+                    dispatch({ field: 'temperature', value: temperature })
+                  }
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t(
+                    'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
+                  )}
+                </p>
+              </div>
+
+              {/* Reasoning Effort Setting */}
+              <div>
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Default Reasoning Effort')}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['low', 'medium', 'high'] as const).map((level) => (
+                    <button
+                      key={level}
+                      onClick={() =>
+                        setReasoningEffort(
+                          reasoningEffort === level ? undefined : level,
+                        )
+                      }
+                      className={`px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+                        reasoningEffort === level
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {t(`modelSelect.advancedOptions.${level}`)}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t('settings.reasoningEffortDescription')}
+                </p>
+              </div>
+
+              {/* Verbosity Setting */}
+              <div>
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Default Verbosity')}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['low', 'medium', 'high'] as const).map((level) => (
+                    <button
+                      key={level}
+                      onClick={() =>
+                        setVerbosity(verbosity === level ? undefined : level)
+                      }
+                      className={`px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+                        verbosity === level
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {t(`modelSelect.advancedOptions.${level}`)}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t('settings.verbosityDescription')}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Advanced Settings Section - Collapsible */}
