@@ -196,6 +196,39 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
           )}
         </div>
 
+        {/* Text-to-Speech Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsTTSExpanded(!isTTSExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconVolume
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.tts.title')}
+              </h3>
+            </div>
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isTTSExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {isTTSExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <TTSSettingsPanel
+                settings={ttsSettings}
+                onChange={setTTSSettings}
+              />
+            </div>
+          )}
+        </div>
+
         {/* About You Section - Collapsible */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <button
