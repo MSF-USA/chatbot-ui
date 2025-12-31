@@ -14,6 +14,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
+
 import { translateText } from '@/lib/services/translation/translationService';
 
 import { getAutonym } from '@/lib/utils/app/locales';
@@ -87,6 +89,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
 }) => {
   const t = useTranslations();
   const { openDocument } = useArtifactStore();
+  const { ttsSettings } = useSettings();
 
   // UI state
   const [copied, setCopied] = useState(false);
@@ -332,12 +335,22 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
       setIsGeneratingAudio(true);
       setLoadingMessage(t('chat.translating'));
 
+      // Build request body with user's TTS settings for server-side voice resolution
+      const requestBody = {
+        text: displayedTranscript,
+        rate: ttsSettings.rate,
+        pitch: ttsSettings.pitch,
+        outputFormat: ttsSettings.outputFormat,
+        globalVoice: ttsSettings.globalVoice,
+        languageVoices: ttsSettings.languageVoices,
+      };
+
       const response = await fetch('/api/chat/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: displayedTranscript }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -361,7 +374,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
       setLoadingMessage(message);
       setTimeout(() => setLoadingMessage(null), 3000);
     }
-  }, [displayedTranscript, translationState.currentLocale, t]);
+  }, [displayedTranscript, ttsSettings, translationState.currentLocale, t]);
 
   // Close audio player and clean up resources
   const handleCloseAudio = useCallback(() => {
