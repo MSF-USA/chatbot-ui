@@ -18,8 +18,10 @@ import {
 import { VoiceBrowser } from './VoiceBrowser';
 
 import {
+  getBaseLanguageCode,
   getDefaultVoiceForLocale,
   getTTSLocaleForAppLocale,
+  resolveVoiceForLanguage,
 } from '@/lib/data/ttsVoices';
 
 interface TTSSettingsPanelProps {
@@ -42,18 +44,30 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
-  // Get effective voice name (use default if not set)
-  const effectiveVoiceName =
-    settings.voiceName ||
-    getDefaultVoiceForLocale(getTTSLocaleForAppLocale(locale))?.name ||
-    'en-US-AriaNeural';
+  // Get effective voice name using resolve logic
+  const ttsLocale = getTTSLocaleForAppLocale(locale);
+  const baseLanguage = getBaseLanguageCode(ttsLocale);
+  const effectiveVoiceName = resolveVoiceForLanguage(baseLanguage, settings);
 
-  // Handle voice selection
+  // Handle voice selection - for now, update globalVoice
+  // The full per-language UI will be implemented in the VoiceBrowser redesign
   const handleVoiceChange = useCallback(
     (voiceName: string) => {
-      onChange({ voiceName });
+      // Extract base language from the voice locale and set as language default
+      const voiceLocale = voiceName.match(/^([a-z]{2})-[A-Z]{2}/)?.[1];
+      if (voiceLocale) {
+        onChange({
+          languageVoices: {
+            ...settings.languageVoices,
+            [voiceLocale.toLowerCase()]: voiceName,
+          },
+        });
+      } else {
+        // For multilingual voices, set as global
+        onChange({ globalVoice: voiceName });
+      }
     },
-    [onChange],
+    [onChange, settings.languageVoices],
   );
 
   // Handle rate change
