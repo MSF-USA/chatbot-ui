@@ -1,8 +1,8 @@
 import {
+  IconAdjustments,
   IconChevronDown,
   IconInfoCircle,
   IconMessage,
-  IconSliders,
   IconUser,
   IconVolume,
 } from '@tabler/icons-react';
@@ -82,7 +82,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
             className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <IconSliders
+              <IconAdjustments
                 size={18}
                 className="text-gray-500 dark:text-gray-400"
               />
