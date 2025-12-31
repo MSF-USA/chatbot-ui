@@ -1027,7 +1027,7 @@ export function resolveVoiceForLanguage(
   const langCode = detectedLanguage.toLowerCase();
 
   // 1. Check for language-specific default
-  if (settings.languageVoices[langCode]) {
+  if (settings.languageVoices?.[langCode]) {
     return settings.languageVoices[langCode];
   }
 
