@@ -90,6 +90,26 @@ export const ImageContent: FC<ImageContentProps> = ({ images }) => {
     setLightboxImage(imageUrl);
   };
 
+  /**
+   * Downloads an image by creating a temporary link element
+   */
+  const downloadImage = (
+    event: React.MouseEvent,
+    base64Data: string,
+    index: number,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = base64Data;
+    link.download = `image-${index + 1}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Render lightbox if an image is selected
   if (lightboxImage) {
     return (
@@ -165,9 +185,13 @@ export const ImageContent: FC<ImageContentProps> = ({ images }) => {
               <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold bg-purple-500 text-white">
                 IMG
               </div>
-              <div className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 dark:bg-gray-800/90">
+              <button
+                onClick={(e) => downloadImage(e, imageBase64, index)}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                title="Download"
+              >
                 <IconDownload className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-              </div>
+              </button>
             </div>
           </div>
         ))}
