@@ -1022,6 +1022,8 @@
       "title": "Text-to-Speech",
       "language": "Language",
       "voice": "Voice",
+      "multilingualVoices": "Multilingual Voices",
+      "voices": "Voices",
       "rate": "Speed",
       "pitch": "Pitch",
       "quality": "Audio Quality",
