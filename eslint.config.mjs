@@ -35,6 +35,7 @@ export default [
         navigator: "readonly",
         localStorage: "readonly",
         sessionStorage: "readonly",
+        Audio: "readonly",
         console: "readonly",
         fetch: "readonly",
         Response: "readonly",
