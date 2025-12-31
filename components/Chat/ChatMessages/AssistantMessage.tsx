@@ -276,14 +276,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         setIsGeneratingAudio(true);
         setLoadingMessage('Generating audio...');
 
-        // Build request body - let server handle language detection and voice resolution
-        // We only send explicit voice override if provided
+        // Build request body with user's TTS settings for server-side voice resolution
+        // Send explicit voice override if provided, otherwise send settings for resolution
         const requestBody = {
           text: displayedContent,
           voiceName: overrides.globalVoice || undefined,
           rate: overrides.rate ?? ttsSettings.rate,
           pitch: overrides.pitch ?? ttsSettings.pitch,
           outputFormat: overrides.outputFormat ?? ttsSettings.outputFormat,
+          globalVoice: ttsSettings.globalVoice,
+          languageVoices: ttsSettings.languageVoices,
         };
 
         const response = await fetch('/api/chat/tts', {
