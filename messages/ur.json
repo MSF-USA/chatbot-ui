@@ -630,7 +630,8 @@
     "voiceInput": "وائس ان پٹ",
     "microphoneAccessDenied": "مائیکروفون تک رسائی مسترد کر دی گئی ہے۔ براہ کرم اپنے براؤزر سیٹنگز میں اسے فعال کریں۔",
     "microphoneAccessError": "مائیکروفون تک رسائی میں خرابی: {message}",
-    "voiceInputTranscribing": "ٹرانسکرائب کیا جا رہا ہے..."
+    "voiceInputTranscribing": "ٹرانسکرائب کیا جا رہا ہے...",
+    "ttsRightClickHint": "آواز کے اختیارات کے لیے رائٹ کلک کریں"
   },
   "sidebar": {
     "collapseSidebar": "سائیڈ بار کو سکیڑیں",
@@ -885,7 +886,33 @@
       "additionalContextDescription": "کوئی اور معلومات جو آپ چاہتے ہیں کہ AI کو آپ کے بارے میں معلوم ہوں",
       "preferredNameDescriptionWithSync": "AI آپ کو کس طرح مخاطب کرے گا۔ اگر خالی چھوڑ دیں تو جنرل سیٹنگز میں دیا گیا ڈسپلے نام استعمال ہوگا۔"
     },
-    "displayNameUIOnly": "یہ طے کرتا ہے کہ آپ کا نام ایپ میں کیسے دکھائی دے گا۔ AI اسے نہیں دیکھتا جب تک آپ چیٹ سیٹنگز میں شیئرنگ فعال نہ کریں۔"
+    "displayNameUIOnly": "یہ طے کرتا ہے کہ آپ کا نام ایپ میں کیسے دکھائی دے گا۔ AI اسے نہیں دیکھتا جب تک آپ چیٹ سیٹنگز میں شیئرنگ فعال نہ کریں۔",
+    "tts": {
+      "title": "ٹیکسٹ ٹو اسپیچ",
+      "language": "زبان",
+      "voice": "آواز",
+      "multilingualVoices": "کئی زبانوں کی آوازیں",
+      "voices": "آوازیں",
+      "rate": "رفتار",
+      "pitch": "پچ",
+      "quality": "آڈیو کوالٹی",
+      "qualityDescription": "اعلی معیار بہتر آڈیو فراہم کرتا ہے لیکن زیادہ بینڈوڈتھ استعمال کرتا ہے",
+      "preview": "پریویو",
+      "previewing": "چل رہا ہے...",
+      "previewFailed": "پریویو آڈیو تیار کرنے میں ناکامی",
+      "previewText": "یہ منتخب کردہ آواز کی ترتیبات کا پریویو ہے۔",
+      "reset": "ری سیٹ کریں",
+      "default": "ڈیفالٹ",
+      "slower": "آہستہ",
+      "faster": "تیز",
+      "lower": "کم",
+      "higher": "زیادہ",
+      "selectedVoice": "منتخب شدہ",
+      "noVoicesAvailable": "اس زبان کے لیے کوئی آواز دستیاب نہیں",
+      "quickSettings": "آواز کی ترتیبات",
+      "overrideForThisMessage": "اس پیغام کے لیے ترتیبات تبدیل کریں",
+      "speakWithSettings": "آواز نکالیں"
+    }
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"

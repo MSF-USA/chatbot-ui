@@ -580,7 +580,8 @@
     "voiceInput": "የድምፅ ግቤት",
     "microphoneAccessDenied": "የማይክሮፎን መዳረሻ ተከልክሏል። እባክዎን በአንተ መቃኛ ቅንብሮች ውስጥ ይችላሉ።",
     "microphoneAccessError": "የማይክሮፎን መዳረሻ ስህተት፡ {message}",
-    "voiceInputTranscribing": "በመቅዳት ላይ..."
+    "voiceInputTranscribing": "በመቅዳት ላይ...",
+    "ttsRightClickHint": "ድምፅ ምርጫዎችን ለማየት ቀኝ ይጫኑ"
   },
   "sidebar": {
     "collapseSidebar": "የጎን አሞሌውን ሰብስብ",
@@ -835,7 +836,33 @@
       "additionalContextDescription": "AI ስለ እርስዎ ማወቅ የሚችለው ማንኛውም ተጨማሪ መረጃ",
       "preferredNameDescriptionWithSync": "AI በሚጠራዎ ጊዜ የሚጠቀምበት ስም። ክፍት ብትተዉ፣ ከአጠቃላይ ቅንብሮች የተወሰነውን የስም አሳይ ይጠቀማል።"
     },
-    "displayNameUIOnly": "ይህ ስምዎ በመተግበሪያው ላይ እንዴት እንደሚታይ ይቆጣጠራል። በChat ቅንብሮች ግልጽ ማድረግን ሲከፍቱ ብቻ ይህን AI ማየት ይችላል።"
+    "displayNameUIOnly": "ይህ ስምዎ በመተግበሪያው ላይ እንዴት እንደሚታይ ይቆጣጠራል። በChat ቅንብሮች ግልጽ ማድረግን ሲከፍቱ ብቻ ይህን AI ማየት ይችላል።",
+    "tts": {
+      "title": "ከጽሑፍ ወደ ቃላት",
+      "language": "ቋንቋ",
+      "voice": "ድምፅ",
+      "multilingualVoices": "በብዙ ቋንቋዎች የሚቀራረቡ ድምፆች",
+      "voices": "ድምፆች",
+      "rate": "ፍጥነት",
+      "pitch": "ደረጃ",
+      "quality": "የድምፅ ጥራት",
+      "qualityDescription": "ከፍተኛ ጥራት የተሻለ ድምፅ ያሰራጫል ነገር ግን በዝተዋል የተጠቀመ",
+      "preview": "ቅድመ እይታ",
+      "previewing": "በማጫወት ላይ...",
+      "previewFailed": "የቅድመ አይታ ድምፅ ማመንጨት አልተቻለም",
+      "previewText": "ይህ የተመረጡትን የድምፅ ቅንብሮች ቅድመ እይታ ነው።",
+      "reset": "ዳግም አድስ",
+      "default": "ነባሪ",
+      "slower": "ዝቅተኛ ፍጥነት",
+      "faster": "ከፍተኛ ፍጥነት",
+      "lower": "ዝቅተኛ",
+      "higher": "ከፍ ያለ",
+      "selectedVoice": "የተመረጠ",
+      "noVoicesAvailable": "ለዚህ ቋንቋ ድምፆች አልተገኙም",
+      "quickSettings": "የድምፅ ቅንብሮች",
+      "overrideForThisMessage": "ቅንብሮቹን ለዚህ መልእክት ያስተካክሉ",
+      "speakWithSettings": "አንብር"
+    }
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

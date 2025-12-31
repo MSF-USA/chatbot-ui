@@ -606,7 +606,8 @@
     "voiceInput": "Entrada de veu",
     "microphoneAccessDenied": "L'accés al micròfon està denegat. Activeu-lo a la configuració del vostre navegador.",
     "microphoneAccessError": "Error d'accés al micròfon: {message}",
-    "voiceInputTranscribing": "Transcripció en curs..."
+    "voiceInputTranscribing": "Transcripció en curs...",
+    "ttsRightClickHint": "Clic dret per opcions de veu"
   },
   "sidebar": {
     "collapseSidebar": "Plegar barra lateral",
@@ -861,7 +862,33 @@
       "additionalContextDescription": "Qualsevol altra informació que vulguis que la IA sàpiga sobre tu",
       "preferredNameDescriptionWithSync": "Com s'adreçarà la IA a tu. Deixa-ho en blanc per utilitzar el nom visible de la configuració general."
     },
-    "displayNameUIOnly": "Això controla com apareix el teu nom a l'aplicació. La IA no el veurà tret que activis el compartir a la configuració del xat."
+    "displayNameUIOnly": "Això controla com apareix el teu nom a l'aplicació. La IA no el veurà tret que activis el compartir a la configuració del xat.",
+    "tts": {
+      "title": "Text a veu",
+      "language": "Idioma",
+      "voice": "Veu",
+      "multilingualVoices": "Veus multilingües",
+      "voices": "Veus",
+      "rate": "Velocitat",
+      "pitch": "To",
+      "quality": "Qualitat de l’àudio",
+      "qualityDescription": "Una qualitat més alta produeix un àudio millor però utilitza més amplada de banda",
+      "preview": "Previsualitza",
+      "previewing": "Reproduint...",
+      "previewFailed": "No s’ha pogut generar l’àudio de previsualització",
+      "previewText": "Aquesta és una previsualització de la configuració de veu seleccionada.",
+      "reset": "Restableix",
+      "default": "Per defecte",
+      "slower": "Més lent",
+      "faster": "Més ràpid",
+      "lower": "Més baix",
+      "higher": "Més alt",
+      "selectedVoice": "Seleccionada",
+      "noVoicesAvailable": "No hi ha veus disponibles per a aquest idioma",
+      "quickSettings": "Configuració de veu",
+      "overrideForThisMessage": "Ajusta la configuració per a aquest missatge",
+      "speakWithSettings": "Reprodueix"
+    }
   },
   "notFound": {
     "lostDog": "Gos perdut"

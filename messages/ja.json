@@ -631,7 +631,8 @@
     "voiceInput": "音声入力",
     "microphoneAccessDenied": "マイクへのアクセスが拒否されています。ブラウザの設定で有効にしてください。",
     "microphoneAccessError": "マイクアクセスエラー：{message}",
-    "voiceInputTranscribing": "音声を文字起こし中..."
+    "voiceInputTranscribing": "音声を文字起こし中...",
+    "ttsRightClickHint": "右クリックで音声オプションを表示"
   },
   "sidebar": {
     "collapseSidebar": "サイドバーを折りたたむ",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "AIに知っておいてほしいその他の情報",
       "preferredNameDescriptionWithSync": "AIがあなたをどのように呼ぶかを設定します。未入力の場合は、一般設定の表示名が使われます。"
     },
-    "displayNameUIOnly": "これはアプリ上でのあなたの名前の表示方法を設定します。AIは、チャット設定で共有を有効にしない限り、この情報を見ることはありません。"
+    "displayNameUIOnly": "これはアプリ上でのあなたの名前の表示方法を設定します。AIは、チャット設定で共有を有効にしない限り、この情報を見ることはありません。",
+    "tts": {
+      "title": "テキスト読み上げ",
+      "language": "言語",
+      "voice": "音声",
+      "multilingualVoices": "多言語音声",
+      "voices": "音声一覧",
+      "rate": "速度",
+      "pitch": "ピッチ",
+      "quality": "音質",
+      "qualityDescription": "高音質にするとより良い音声になりますが、通信量が増加します",
+      "preview": "プレビュー",
+      "previewing": "再生中...",
+      "previewFailed": "プレビュー音声の生成に失敗しました",
+      "previewText": "選択した音声設定のプレビューです。",
+      "reset": "リセット",
+      "default": "デフォルト",
+      "slower": "遅く",
+      "faster": "速く",
+      "lower": "低く",
+      "higher": "高く",
+      "selectedVoice": "選択済み",
+      "noVoicesAvailable": "この言語の音声が利用できません",
+      "quickSettings": "音声設定",
+      "overrideForThisMessage": "このメッセージ用に設定を調整",
+      "speakWithSettings": "読み上げる"
+    }
   },
   "notFound": {
     "lostDog": "迷子の犬"

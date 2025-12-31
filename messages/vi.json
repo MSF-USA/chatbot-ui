@@ -601,7 +601,8 @@
     "voiceInput": "Nhập bằng giọng nói",
     "microphoneAccessDenied": "Truy cập micro đã bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt của bạn.",
     "microphoneAccessError": "Lỗi truy cập micro: {message}",
-    "voiceInputTranscribing": "Đang chuyển thành văn bản..."
+    "voiceInputTranscribing": "Đang chuyển thành văn bản...",
+    "ttsRightClickHint": "Nhấn chuột phải để chọn tùy chọn giọng nói"
   },
   "sidebar": {
     "collapseSidebar": "Thu gọn thanh bên",
@@ -856,7 +857,33 @@
       "additionalContextDescription": "Bất kỳ thông tin nào khác bạn muốn AI biết về bạn",
       "preferredNameDescriptionWithSync": "Cách AI sẽ xưng hô với bạn. Để trống nếu muốn dùng tên hiển thị từ Cài đặt Chung."
     },
-    "displayNameUIOnly": "Điều này kiểm soát cách tên của bạn hiển thị trong ứng dụng. AI sẽ không nhìn thấy tên này trừ khi bạn bật chia sẻ trong Cài đặt Trò chuyện."
+    "displayNameUIOnly": "Điều này kiểm soát cách tên của bạn hiển thị trong ứng dụng. AI sẽ không nhìn thấy tên này trừ khi bạn bật chia sẻ trong Cài đặt Trò chuyện.",
+    "tts": {
+      "title": "Chuyển văn bản thành giọng nói",
+      "language": "Ngôn ngữ",
+      "voice": "Giọng nói",
+      "multilingualVoices": "Giọng nói đa ngôn ngữ",
+      "voices": "Các giọng nói",
+      "rate": "Tốc độ",
+      "pitch": "Âm sắc",
+      "quality": "Chất lượng âm thanh",
+      "qualityDescription": "Chất lượng cao tạo âm thanh tốt hơn nhưng sử dụng nhiều băng thông hơn",
+      "preview": "Xem trước",
+      "previewing": "Đang phát...",
+      "previewFailed": "Không thể tạo âm thanh xem trước",
+      "previewText": "Đây là bản xem trước các thiết lập giọng nói đã chọn.",
+      "reset": "Đặt lại",
+      "default": "Mặc định",
+      "slower": "Chậm hơn",
+      "faster": "Nhanh hơn",
+      "lower": "Thấp hơn",
+      "higher": "Cao hơn",
+      "selectedVoice": "Đã chọn",
+      "noVoicesAvailable": "Không có giọng nói cho ngôn ngữ này",
+      "quickSettings": "Cài đặt giọng nói",
+      "overrideForThisMessage": "Điều chỉnh cài đặt cho tin nhắn này",
+      "speakWithSettings": "Đọc"
+    }
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

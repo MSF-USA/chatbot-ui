@@ -631,7 +631,8 @@
     "voiceInput": "Hlasový vstup",
     "microphoneAccessDenied": "Přístup k mikrofonu byl odepřen. Povolit jej můžete v nastavení vašeho prohlížeče.",
     "microphoneAccessError": "Chyba přístupu k mikrofonu: {message}",
-    "voiceInputTranscribing": "Přepisování..."
+    "voiceInputTranscribing": "Přepisování...",
+    "ttsRightClickHint": "Klikněte pravým tlačítkem pro možnosti hlasu"
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Jakékoli další informace, které chcete, aby AI o vás věděla",
       "preferredNameDescriptionWithSync": "Jak vás bude AI oslovovat. Pokud necháte prázdné, použije se vaše zobrazované jméno z obecných nastavení."
     },
-    "displayNameUIOnly": "Toto určuje, jak se vaše jméno zobrazuje v aplikaci. AI ho neuvidí, pokud v nastavení chatu nepovolíte sdílení."
+    "displayNameUIOnly": "Toto určuje, jak se vaše jméno zobrazuje v aplikaci. AI ho neuvidí, pokud v nastavení chatu nepovolíte sdílení.",
+    "tts": {
+      "title": "Převod textu na řeč",
+      "language": "Jazyk",
+      "voice": "Hlas",
+      "multilingualVoices": "Vícejazyčné hlasy",
+      "voices": "Hlasy",
+      "rate": "Rychlost",
+      "pitch": "Tón",
+      "quality": "Kvalita zvuku",
+      "qualityDescription": "Vyšší kvalita vytváří lepší zvuk, ale využívá více dat",
+      "preview": "Náhled",
+      "previewing": "Přehrávání...",
+      "previewFailed": "Nepodařilo se vytvořit zvukový náhled",
+      "previewText": "Toto je náhled vybraných nastavení hlasu.",
+      "reset": "Obnovit",
+      "default": "Výchozí",
+      "slower": "Pomaleji",
+      "faster": "Rychleji",
+      "lower": "Nižší",
+      "higher": "Vyšší",
+      "selectedVoice": "Vybráno",
+      "noVoicesAvailable": "Pro tento jazyk nejsou dostupné žádné hlasy",
+      "quickSettings": "Nastavení hlasu",
+      "overrideForThisMessage": "Upravit nastavení pro tuto zprávu",
+      "speakWithSettings": "Přečíst"
+    }
   },
   "notFound": {
     "lostDog": "Ztracený pes"

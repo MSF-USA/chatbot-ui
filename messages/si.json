@@ -598,7 +598,8 @@
     "voiceInput": "හඬ ආදානය",
     "microphoneAccessDenied": "මයික්රොෆෝන් ප්‍රවේශය ප්‍රතික්ෂේප වී ඇත. කරුණාකර ඔබේ බ්‍රව්සරයේ සැකසුම්වලදී එය සක්‍රිය කරන්න.",
     "microphoneAccessError": "මයික්රොෆෝන් ප්‍රවේශ දෝෂය: {message}",
-    "voiceInputTranscribing": "පරිවර්තනය වෙමින්..."
+    "voiceInputTranscribing": "පරිවර්තනය වෙමින්...",
+    "ttsRightClickHint": "ශ්‍රව්‍ය විකල්ප සඳහා දකුණට ක්ලික් කරන්න"
   },
   "sidebar": {
     "collapseSidebar": "පැති තීරුව හකුළන්න",
@@ -853,7 +854,33 @@
       "additionalContextDescription": "AI තවදුරටත් ඔබ ගැන දැනගැනීමට අවශ්‍ය වෙන වෙනම තොරතුරු",
       "preferredNameDescriptionWithSync": "AI එක ඔබේ නම යොදාගෙන ඔබව අමතනු ලබන ආකාරය සදහන් කරයි. සාමාන්‍ය සැකසීම් වලින් ඔබේ display name භාවිතා කිරීමට හිස්ව තබන්න."
     },
-    "displayNameUIOnly": "මෙය ඇප් එකෙහි ඔබගේ නම පෙන්වීම ආකාරය පාලනය කරයි. ඔබ Chat Settings හි බෙදාගැනීම සක්‍රීය නොකරයි නම් AI එකට මෙය බැලිය නොහැක."
+    "displayNameUIOnly": "මෙය ඇප් එකෙහි ඔබගේ නම පෙන්වීම ආකාරය පාලනය කරයි. ඔබ Chat Settings හි බෙදාගැනීම සක්‍රීය නොකරයි නම් AI එකට මෙය බැලිය නොහැක.",
+    "tts": {
+      "title": "පෙළ-වෙතින්-කතා",
+      "language": "භාෂාව",
+      "voice": "හඬ",
+      "multilingualVoices": "බහුභාෂා හඬ",
+      "voices": "හඬ",
+      "rate": "වේගය",
+      "pitch": "ධවනය",
+      "quality": "ශබ්ද ගුණාත්මකත්වය",
+      "qualityDescription": "ඉහළ ගුණාත්මකත්වය උසස් ශබ්දයක් ලබාදෙයි, නමුත් වැඩි පටහැනි පළාත් භාවිතා වේ",
+      "preview": "පූර්වදසුන",
+      "previewing": "ව‍යාජනය කරමින්...",
+      "previewFailed": "පූර්වදසුනේ ශබ්දය ජනනය කිරීමට අසාර්ථකයි",
+      "previewText": "තෝරාගත් හඬ සැකසුම් සඳහා මෙය පූර්වදසුනකි.",
+      "reset": "නැවත සකසන්න",
+      "default": "පෙරනිමි",
+      "slower": "අඩු වේගයෙන්",
+      "faster": "අධික වේගයෙන්",
+      "lower": "අඩු",
+      "higher": "ඉහළ",
+      "selectedVoice": "තෝරාගෙන ඇත",
+      "noVoicesAvailable": "මෙම භාෂාව සඳහා හඬ ලබා ගත නොහැක",
+      "quickSettings": "හඬ සැකසුම්",
+      "overrideForThisMessage": "මෙම පණිවිඩය සඳහා සැකසුම් සකසන්න",
+      "speakWithSettings": "කතා කරන්න"
+    }
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"

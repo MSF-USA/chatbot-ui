@@ -631,7 +631,8 @@
     "voiceInput": "음성 입력",
     "microphoneAccessDenied": "마이크 접근이 거부되었습니다. 브라우저 설정에서 활성화해 주세요.",
     "microphoneAccessError": "마이크 접근 오류: {message}",
-    "voiceInputTranscribing": "음성 변환 중..."
+    "voiceInputTranscribing": "음성 변환 중...",
+    "ttsRightClickHint": "음성 옵션을 보려면 오른쪽 클릭하세요"
   },
   "sidebar": {
     "collapseSidebar": "사이드바 축소",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "AI가 알고 있으면 좋을 기타 정보",
       "preferredNameDescriptionWithSync": "AI가 귀하를 부를 때 사용할 이름입니다. 입력하지 않으면 일반 설정의 표시 이름이 사용됩니다."
     },
-    "displayNameUIOnly": "앱에서 이름이 표시되는 방식을 설정합니다. AI는 채팅 설정에서 공유를 활성화하지 않는 한 이 정보를 볼 수 없습니다."
+    "displayNameUIOnly": "앱에서 이름이 표시되는 방식을 설정합니다. AI는 채팅 설정에서 공유를 활성화하지 않는 한 이 정보를 볼 수 없습니다.",
+    "tts": {
+      "title": "텍스트 음성 변환",
+      "language": "언어",
+      "voice": "음성",
+      "multilingualVoices": "다국어 음성",
+      "voices": "음성 목록",
+      "rate": "속도",
+      "pitch": "음정",
+      "quality": "오디오 품질",
+      "qualityDescription": "고품질은 음질이 더 좋지만 더 많은 대역폭을 사용합니다",
+      "preview": "미리 듣기",
+      "previewing": "재생 중...",
+      "previewFailed": "미리 듣기 오디오 생성에 실패했습니다",
+      "previewText": "선택한 음성 설정의 미리 듣기입니다.",
+      "reset": "초기화",
+      "default": "기본값",
+      "slower": "더 느리게",
+      "faster": "더 빠르게",
+      "lower": "더 낮게",
+      "higher": "더 높게",
+      "selectedVoice": "선택됨",
+      "noVoicesAvailable": "이 언어에 사용할 수 있는 음성이 없습니다",
+      "quickSettings": "음성 설정",
+      "overrideForThisMessage": "이 메시지에 대한 설정 조정",
+      "speakWithSettings": "읽어주기"
+    }
   },
   "notFound": {
     "lostDog": "잃어버린 개"

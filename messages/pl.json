@@ -628,7 +628,8 @@
     "voiceInput": "Wprowadzanie głosowe",
     "microphoneAccessDenied": "Dostęp do mikrofonu został zablokowany. Proszę włączyć go w ustawieniach przeglądarki.",
     "microphoneAccessError": "Błąd dostępu do mikrofonu: {message}",
-    "voiceInputTranscribing": "Transkrypcja..."
+    "voiceInputTranscribing": "Transkrypcja...",
+    "ttsRightClickHint": "Kliknij prawym przyciskiem myszy, aby wybrać opcje głosu"
   },
   "sidebar": {
     "collapseSidebar": "Zwiń pasek boczny",
@@ -883,7 +884,33 @@
       "additionalContextDescription": "Każda inna informacja, którą chciał(a)byś, aby AI o Tobie wiedziała",
       "preferredNameDescriptionWithSync": "Jak AI będzie się do Ciebie zwracać. Pozostaw puste, aby użyć imienia wyświetlanego w Ustawieniach ogólnych."
     },
-    "displayNameUIOnly": "To ustawienie kontroluje, jak Twoje imię będzie wyświetlane w aplikacji. AI nie widzi tej informacji, chyba że włączysz udostępnianie w Ustawieniach czatu."
+    "displayNameUIOnly": "To ustawienie kontroluje, jak Twoje imię będzie wyświetlane w aplikacji. AI nie widzi tej informacji, chyba że włączysz udostępnianie w Ustawieniach czatu.",
+    "tts": {
+      "title": "Tekst na mowę",
+      "language": "Język",
+      "voice": "Głos",
+      "multilingualVoices": "Głosy wielojęzyczne",
+      "voices": "Głosy",
+      "rate": "Szybkość",
+      "pitch": "Ton",
+      "quality": "Jakość dźwięku",
+      "qualityDescription": "Wyższa jakość zapewnia lepszy dźwięk, ale zużywa więcej transferu",
+      "preview": "Podgląd",
+      "previewing": "Odtwarzanie...",
+      "previewFailed": "Nie udało się wygenerować podglądu audio",
+      "previewText": "To jest podgląd wybranych ustawień głosu.",
+      "reset": "Resetuj",
+      "default": "Domyślne",
+      "slower": "Wolniej",
+      "faster": "Szybciej",
+      "lower": "Niżej",
+      "higher": "Wyżej",
+      "selectedVoice": "Wybrano",
+      "noVoicesAvailable": "Brak dostępnych głosów dla tego języka",
+      "quickSettings": "Ustawienia głosu",
+      "overrideForThisMessage": "Dostosuj ustawienia dla tej wiadomości",
+      "speakWithSettings": "Odtwórz"
+    }
   },
   "notFound": {
     "lostDog": "Zagubiony pies"

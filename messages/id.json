@@ -598,7 +598,8 @@
     "voiceInput": "Input Suara",
     "microphoneAccessDenied": "Akses mikrofon ditolak. Silakan aktifkan di pengaturan browser Anda.",
     "microphoneAccessError": "Kesalahan akses mikrofon: {message}",
-    "voiceInputTranscribing": "Sedang mentranskripsikan..."
+    "voiceInputTranscribing": "Sedang mentranskripsikan...",
+    "ttsRightClickHint": "Klik kanan untuk opsi suara"
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",
@@ -853,7 +854,33 @@
       "additionalContextDescription": "Informasi lain yang ingin Anda bagikan ke AI tentang diri Anda",
       "preferredNameDescriptionWithSync": "Cara AI akan memanggil Anda. Biarkan kosong untuk menggunakan nama tampilan dari Pengaturan Umum."
     },
-    "displayNameUIOnly": "Ini mengatur bagaimana nama Anda ditampilkan di aplikasi. AI tidak akan melihat ini kecuali Anda mengaktifkan berbagi di Pengaturan Chat."
+    "displayNameUIOnly": "Ini mengatur bagaimana nama Anda ditampilkan di aplikasi. AI tidak akan melihat ini kecuali Anda mengaktifkan berbagi di Pengaturan Chat.",
+    "tts": {
+      "title": "Teks-ke-Suara",
+      "language": "Bahasa",
+      "voice": "Suara",
+      "multilingualVoices": "Suara Multibahasa",
+      "voices": "Suara-suara",
+      "rate": "Kecepatan",
+      "pitch": "Nada",
+      "quality": "Kualitas Audio",
+      "qualityDescription": "Kualitas lebih tinggi menghasilkan audio yang lebih baik namun menggunakan lebih banyak bandwidth",
+      "preview": "Pratinjau",
+      "previewing": "Memutar...",
+      "previewFailed": "Gagal membuat audio pratinjau",
+      "previewText": "Ini adalah pratinjau dari pengaturan suara yang dipilih.",
+      "reset": "Atur Ulang",
+      "default": "Default",
+      "slower": "Lebih Lambat",
+      "faster": "Lebih Cepat",
+      "lower": "Lebih Rendah",
+      "higher": "Lebih Tinggi",
+      "selectedVoice": "Dipilih",
+      "noVoicesAvailable": "Tidak ada suara tersedia untuk bahasa ini",
+      "quickSettings": "Pengaturan Suara",
+      "overrideForThisMessage": "Sesuaikan pengaturan untuk pesan ini",
+      "speakWithSettings": "Ucapkan"
+    }
   },
   "notFound": {
     "lostDog": "Anjing hilang"

@@ -631,7 +631,8 @@
     "voiceInput": "Kuingiza Sauti",
     "microphoneAccessDenied": "Ufikiaji wa kipaza sauti umekataliwa. Tafadhali wezesha kwenye mipangilio ya kivinjari chako.",
     "microphoneAccessError": "Hitilafu ya ufikiaji wa kipaza sauti: {message}",
-    "voiceInputTranscribing": "Inatambua..."
+    "voiceInputTranscribing": "Inatambua...",
+    "ttsRightClickHint": "Bonyeza kulia kwa chaguo za sauti"
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Taarifa nyingine yoyote ungependa AI ijue kukuhusu",
       "preferredNameDescriptionWithSync": "Jinsi AI itakavyokuita. Acha wazi ili kutumia jina lako la kuonyeshwa kutoka Mipangilio ya Jumla."
     },
-    "displayNameUIOnly": "Hii inadhibiti jinsi jina lako linaonekana kwenye programu. AI haiwezi kuona hili isipokuwa kama umewezeshwa kushiriki kwenye Mipangilio ya Gumzo."
+    "displayNameUIOnly": "Hii inadhibiti jinsi jina lako linaonekana kwenye programu. AI haiwezi kuona hili isipokuwa kama umewezeshwa kushiriki kwenye Mipangilio ya Gumzo.",
+    "tts": {
+      "title": "Maandishi kuwa Sauti",
+      "language": "Lugha",
+      "voice": "Sauti",
+      "multilingualVoices": "Sauti za Lugha Mbalimbali",
+      "voices": "Sauti",
+      "rate": "Kasi",
+      "pitch": "Toni",
+      "quality": "Ubora wa Sauti",
+      "qualityDescription": "Ubora wa juu hutoa sauti bora lakini hutumia data zaidi",
+      "preview": "Onyesho",
+      "previewing": "Inacheza...",
+      "previewFailed": "Imeshindwa kutengeneza onyesho la sauti",
+      "previewText": "Hii ni onyesho la mipangilio ya sauti uliyochagua.",
+      "reset": "Weka upya",
+      "default": "Chaguo msingi",
+      "slower": "Polepole",
+      "faster": "Haraka",
+      "lower": "Chini",
+      "higher": "Juu",
+      "selectedVoice": "Iliyoteuliwa",
+      "noVoicesAvailable": "Hakuna sauti zilizopo kwa lugha hii",
+      "quickSettings": "Mipangilio ya Sauti",
+      "overrideForThisMessage": "Badilisha mipangilio kwa ujumbe huu",
+      "speakWithSettings": "Soma"
+    }
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

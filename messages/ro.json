@@ -629,7 +629,8 @@
     "voiceInput": "Introducere vocală",
     "microphoneAccessDenied": "Accesul la microfon este refuzat. Vă rugăm să îl activați în setările browserului.",
     "microphoneAccessError": "Eroare de acces la microfon: {message}",
-    "voiceInputTranscribing": "Transcriere în curs..."
+    "voiceInputTranscribing": "Transcriere în curs...",
+    "ttsRightClickHint": "Faceți clic dreapta pentru opțiuni de voce"
   },
   "sidebar": {
     "collapseSidebar": "Restrânge bara laterală",
@@ -884,7 +885,33 @@
       "additionalContextDescription": "Orice altă informație pe care ai dori ca AI-ul să o știe despre tine",
       "preferredNameDescriptionWithSync": "Cum vă va adresa AI-ul. Lăsați necompletat pentru a folosi numele afișat din Setările generale."
     },
-    "displayNameUIOnly": "Aceasta controlează modul în care apare numele dumneavoastră în aplicație. AI-ul nu îl vede decât dacă activați partajarea în Setările chatului."
+    "displayNameUIOnly": "Aceasta controlează modul în care apare numele dumneavoastră în aplicație. AI-ul nu îl vede decât dacă activați partajarea în Setările chatului.",
+    "tts": {
+      "title": "Text-în-vorbire",
+      "language": "Limbă",
+      "voice": "Voce",
+      "multilingualVoices": "Voci multilingve",
+      "voices": "Voci",
+      "rate": "Viteză",
+      "pitch": "Ton",
+      "quality": "Calitate audio",
+      "qualityDescription": "Calitatea superioară oferă un sunet mai bun, dar folosește mai multă lățime de bandă",
+      "preview": "Previzualizare",
+      "previewing": "Redare...",
+      "previewFailed": "Nu s-a putut genera previzualizarea audio",
+      "previewText": "Aceasta este o previzualizare a setărilor de voce selectate.",
+      "reset": "Resetează",
+      "default": "Implicit",
+      "slower": "Mai încet",
+      "faster": "Mai rapid",
+      "lower": "Mai jos",
+      "higher": "Mai sus",
+      "selectedVoice": "Selectat",
+      "noVoicesAvailable": "Nu există voci disponibile pentru această limbă",
+      "quickSettings": "Setări voce",
+      "overrideForThisMessage": "Ajustați setările pentru acest mesaj",
+      "speakWithSettings": "Redă"
+    }
   },
   "notFound": {
     "lostDog": "Câine pierdut"

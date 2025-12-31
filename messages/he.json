@@ -606,7 +606,8 @@
     "voiceInput": "קלט קולי",
     "microphoneAccessDenied": "הגישה למיקרופון נחסמה. אנא אפשר/י זאת בהגדרות הדפדפן.",
     "microphoneAccessError": "שגיאת גישה למיקרופון: {message}",
-    "voiceInputTranscribing": "מתמלל..."
+    "voiceInputTranscribing": "מתמלל...",
+    "ttsRightClickHint": "לחיצה ימנית להצגת אפשרויות קול"
   },
   "sidebar": {
     "collapseSidebar": "כיווץ סרגל צד",
@@ -861,7 +862,33 @@
       "additionalContextDescription": "כל מידע נוסף שתרצה שה-AI יידע עליך",
       "preferredNameDescriptionWithSync": "איך ה-AI יפנה אליך. השאר ריק כדי להשתמש בשם התצוגה שלך מהגדרות כלליות."
     },
-    "displayNameUIOnly": "זה קובע כיצד שמך יוצג באפליקציה. ה-AI לא רואה זאת אלא אם תפעיל שיתוף בהגדרות הצ'אט."
+    "displayNameUIOnly": "זה קובע כיצד שמך יוצג באפליקציה. ה-AI לא רואה זאת אלא אם תפעיל שיתוף בהגדרות הצ'אט.",
+    "tts": {
+      "title": "המרה מטקסט לדיבור",
+      "language": "שפה",
+      "voice": "קול",
+      "multilingualVoices": "קולות רב־לשוניים",
+      "voices": "קולות",
+      "rate": "מהירות",
+      "pitch": "גוֹבַה",
+      "quality": "איכות שמע",
+      "qualityDescription": "איכות גבוהה יותר מספקת שמע טוב יותר אך צורכת יותר רוחב פס",
+      "preview": "תצוגה מקדימה",
+      "previewing": "מנגן...",
+      "previewFailed": "נכשל ביצירת תצוגת שמע מקדימה",
+      "previewText": "זו תצוגה מקדימה של הגדרות הקול שנבחרו.",
+      "reset": "איפוס",
+      "default": "ברירת מחדל",
+      "slower": "אִטִּי י ו ת ר",
+      "faster": "מ ה י ר י ו ת ר",
+      "lower": "נמוך יותר",
+      "higher": "גבוה יותר",
+      "selectedVoice": "נבחר",
+      "noVoicesAvailable": "אין קולות זמינים לשפה זו",
+      "quickSettings": "הגדרות קול",
+      "overrideForThisMessage": "התאם הגדרות להודעה זו",
+      "speakWithSettings": "דבר"
+    }
   },
   "notFound": {
     "lostDog": "כלב אבוד"

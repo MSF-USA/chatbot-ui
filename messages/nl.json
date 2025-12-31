@@ -596,7 +596,8 @@
     "voiceInput": "Spraakinvoer",
     "microphoneAccessDenied": "Microfoontoegang is geweigerd. Schakel deze in via uw browserinstellingen.",
     "microphoneAccessError": "Microfoontoegangsprobleem: {message}",
-    "voiceInputTranscribing": "Transcriberen..."
+    "voiceInputTranscribing": "Transcriberen...",
+    "ttsRightClickHint": "Klik met de rechtermuisknop voor stemopties"
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",
@@ -851,7 +852,33 @@
       "additionalContextDescription": "Andere informatie die u wilt dat de AI over u weet",
       "preferredNameDescriptionWithSync": "Hoe de AI u aanspreekt. Laat leeg om uw weergavenaam uit de algemene instellingen te gebruiken."
     },
-    "displayNameUIOnly": "Hiermee bepaalt u hoe uw naam in de app wordt weergegeven. De AI ziet dit niet, tenzij u delen inschakelt in Chatinstellingen."
+    "displayNameUIOnly": "Hiermee bepaalt u hoe uw naam in de app wordt weergegeven. De AI ziet dit niet, tenzij u delen inschakelt in Chatinstellingen.",
+    "tts": {
+      "title": "Tekst-naar-Spraak",
+      "language": "Taal",
+      "voice": "Stem",
+      "multilingualVoices": "Meertalige stemmen",
+      "voices": "Stemmen",
+      "rate": "Snelheid",
+      "pitch": "Toonhoogte",
+      "quality": "Audiokwaliteit",
+      "qualityDescription": "Hogere kwaliteit levert beter geluid op, maar gebruikt meer bandbreedte",
+      "preview": "Voorbeeld",
+      "previewing": "Bezig met afspelen...",
+      "previewFailed": "Voorbeeldaudio genereren mislukt",
+      "previewText": "Dit is een voorbeeld van de geselecteerde steminstellingen.",
+      "reset": "Resetten",
+      "default": "Standaard",
+      "slower": "Langzamer",
+      "faster": "Sneller",
+      "lower": "Lager",
+      "higher": "Hoger",
+      "selectedVoice": "Geselecteerd",
+      "noVoicesAvailable": "Geen stemmen beschikbaar voor deze taal",
+      "quickSettings": "Steministellingen",
+      "overrideForThisMessage": "Instellingen aanpassen voor dit bericht",
+      "speakWithSettings": "Afspelen"
+    }
   },
   "notFound": {
     "lostDog": "Verloren hond"

@@ -631,7 +631,8 @@
     "voiceInput": "语音输入",
     "microphoneAccessDenied": "麦克风访问被拒绝，请在浏览器设置中启用。",
     "microphoneAccessError": "麦克风访问错误：{message}",
-    "voiceInputTranscribing": "正在转录…"
+    "voiceInputTranscribing": "正在转录…",
+    "ttsRightClickHint": "右键点击以选择语音选项"
   },
   "sidebar": {
     "collapseSidebar": "折叠侧边栏",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "您希望 AI 了解的其他信息",
       "preferredNameDescriptionWithSync": "AI 称呼您的方式。若留空，将使用通用设置中的显示姓名。"
     },
-    "displayNameUIOnly": "此项用于控制您的姓名在应用中的显示方式。除非您在聊天设置中启用共享，否则 AI 不会看到此信息。"
+    "displayNameUIOnly": "此项用于控制您的姓名在应用中的显示方式。除非您在聊天设置中启用共享，否则 AI 不会看到此信息。",
+    "tts": {
+      "title": "语音合成",
+      "language": "语言",
+      "voice": "语音",
+      "multilingualVoices": "多语言语音",
+      "voices": "语音列表",
+      "rate": "速度",
+      "pitch": "音调",
+      "quality": "音频质量",
+      "qualityDescription": "更高的音质会产生更好的音频，但会消耗更多带宽",
+      "preview": "预览",
+      "previewing": "正在播放...",
+      "previewFailed": "预览音频生成失败",
+      "previewText": "这是所选语音设置的预览音频。",
+      "reset": "重置",
+      "default": "默认",
+      "slower": "更慢",
+      "faster": "更快",
+      "lower": "降低",
+      "higher": "升高",
+      "selectedVoice": "已选择",
+      "noVoicesAvailable": "该语言暂无可用语音",
+      "quickSettings": "语音设置",
+      "overrideForThisMessage": "为此消息调整设置",
+      "speakWithSettings": "朗读"
+    }
   },
   "notFound": {
     "lostDog": "迷路的狗"

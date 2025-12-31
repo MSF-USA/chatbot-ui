@@ -606,7 +606,8 @@
     "voiceInput": "Äänisyöte",
     "microphoneAccessDenied": "Mikrofonin käyttö estetty. Ota käyttöön selaimen asetuksista.",
     "microphoneAccessError": "Virhe mikrofonin käytössä: {message}",
-    "voiceInputTranscribing": "Muunnetaan puhetta tekstiksi..."
+    "voiceInputTranscribing": "Muunnetaan puhetta tekstiksi...",
+    "ttsRightClickHint": "Napsauta hiiren oikealla valitaksesi äänivaihtoehdot"
   },
   "sidebar": {
     "collapseSidebar": "Tiivistä sivupalkki",
@@ -861,7 +862,33 @@
       "additionalContextDescription": "Muu tieto, jonka haluat tekoälyn tietävän sinusta",
       "preferredNameDescriptionWithSync": "Miten AI puhuttelee sinua. Jätä tyhjäksi käyttääksesi Yleisasetuksissa valittua näyttönimeäsi."
     },
-    "displayNameUIOnly": "Tämä määrittää, miten nimesi näkyy sovelluksessa. AI ei näe tätä, ellei jakamista ole otettu käyttöön Keskusteluasetuksissa."
+    "displayNameUIOnly": "Tämä määrittää, miten nimesi näkyy sovelluksessa. AI ei näe tätä, ellei jakamista ole otettu käyttöön Keskusteluasetuksissa.",
+    "tts": {
+      "title": "Tekstin puheeksi",
+      "language": "Kieli",
+      "voice": "Ääni",
+      "multilingualVoices": "Monikieliset äänet",
+      "voices": "Äänet",
+      "rate": "Nopeus",
+      "pitch": "Sävy",
+      "quality": "Äänenlaatu",
+      "qualityDescription": "Korkeampi laatu tuottaa paremman äänen, mutta käyttää enemmän kaistanleveyttä",
+      "preview": "Esikuuntele",
+      "previewing": "Toistetaan...",
+      "previewFailed": "Esikuuntelun äänitiedoston luominen epäonnistui",
+      "previewText": "Tämä on esikatselu valituilla ääniasetuksilla.",
+      "reset": "Palauta oletusasetukset",
+      "default": "Oletus",
+      "slower": "Hitaampi",
+      "faster": "Nopeampi",
+      "lower": "Matalampi",
+      "higher": "Korkeampi",
+      "selectedVoice": "Valittu",
+      "noVoicesAvailable": "Tälle kielelle ei ole saatavilla ääniä",
+      "quickSettings": "Ääniasetukset",
+      "overrideForThisMessage": "Muuta asetuksia tätä viestiä varten",
+      "speakWithSettings": "Puhu"
+    }
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

@@ -583,7 +583,8 @@
     "voiceInput": "إدخال صوتي",
     "microphoneAccessDenied": "تم رفض الوصول إلى الميكروفون. يرجى تفعيله في إعدادات المتصفح.",
     "microphoneAccessError": "خطأ في الوصول إلى الميكروفون: {message}",
-    "voiceInputTranscribing": "جارٍ التحويل إلى نص..."
+    "voiceInputTranscribing": "جارٍ التحويل إلى نص...",
+    "ttsRightClickHint": "انقر بزر الماوس الأيمن لاختيار خيارات الصوت"
   },
   "sidebar": {
     "collapseSidebar": "طي الشريط الجانبي",
@@ -838,7 +839,33 @@
       "additionalContextDescription": "أي معلومات أخرى تود أن يعرفها الذكاء الاصطناعي عنك",
       "preferredNameDescriptionWithSync": "كيف سيخاطبك الذكاء الاصطناعي. اتركه فارغًا لاستخدام اسم العرض من الإعدادات العامة."
     },
-    "displayNameUIOnly": "يحدد هذا كيف يظهر اسمك في التطبيق. الذكاء الاصطناعي لا يراه إلا إذا فعّلت المشاركة في إعدادات الدردشة."
+    "displayNameUIOnly": "يحدد هذا كيف يظهر اسمك في التطبيق. الذكاء الاصطناعي لا يراه إلا إذا فعّلت المشاركة في إعدادات الدردشة.",
+    "tts": {
+      "title": "تحويل النص إلى كلام",
+      "language": "اللغة",
+      "voice": "الصوت",
+      "multilingualVoices": "الأصوات متعددة اللغات",
+      "voices": "الأصوات",
+      "rate": "السرعة",
+      "pitch": "حدة الصوت",
+      "quality": "جودة الصوت",
+      "qualityDescription": "جودة أعلى تنتج صوتًا أفضل ولكن تستهلك نطاقًا تردديًا أكبر",
+      "preview": "معاينة",
+      "previewing": "يتم التشغيل...",
+      "previewFailed": "تعذر إنشاء معاينة الصوت",
+      "previewText": "هذه معاينة لإعدادات الصوت المحددة.",
+      "reset": "إعادة تعيين",
+      "default": "افتراضي",
+      "slower": "أبطأ",
+      "faster": "أسرع",
+      "lower": "أخفض",
+      "higher": "أعلى",
+      "selectedVoice": "تم الاختيار",
+      "noVoicesAvailable": "لا توجد أصوات متاحة لهذه اللغة",
+      "quickSettings": "إعدادات الصوت",
+      "overrideForThisMessage": "تعديل الإعدادات لهذه الرسالة",
+      "speakWithSettings": "تشغيل الصوت"
+    }
   },
   "notFound": {
     "lostDog": "كلب ضائع"

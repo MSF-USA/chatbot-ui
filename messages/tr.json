@@ -631,7 +631,8 @@
     "voiceInput": "Sesli Giriş",
     "microphoneAccessDenied": "Mikrofona erişim reddedildi. Lütfen tarayıcı ayarlarından etkinleştirin.",
     "microphoneAccessError": "Mikrofona erişim hatası: {message}",
-    "voiceInputTranscribing": "Çevriliyor..."
+    "voiceInputTranscribing": "Çevriliyor...",
+    "ttsRightClickHint": "Ses seçenekleri için sağ tıklayın"
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Yapay zekanın sizinle ilgili bilmesini istediğiniz diğer bilgiler",
       "preferredNameDescriptionWithSync": "Yapay zekanın size nasıl hitap edeceği. Boş bırakırsanız Genel Ayarlar'daki görünen adınız kullanılır."
     },
-    "displayNameUIOnly": "Bu, adınızın uygulamada nasıl görüneceğini belirler. Sohbet Ayarlarında paylaşımı etkinleştirmediğiniz sürece yapay zeka bunu görmez."
+    "displayNameUIOnly": "Bu, adınızın uygulamada nasıl görüneceğini belirler. Sohbet Ayarlarında paylaşımı etkinleştirmediğiniz sürece yapay zeka bunu görmez.",
+    "tts": {
+      "title": "Metinden Sese",
+      "language": "Dil",
+      "voice": "Ses",
+      "multilingualVoices": "Çok Dilli Sesler",
+      "voices": "Sesler",
+      "rate": "Hız",
+      "pitch": "Perde",
+      "quality": "Ses Kalitesi",
+      "qualityDescription": "Daha yüksek kalite, daha iyi ses üretir ancak daha fazla bant genişliği kullanır",
+      "preview": "Önizleme",
+      "previewing": "Oynatılıyor...",
+      "previewFailed": "Önizleme sesi oluşturulamadı",
+      "previewText": "Bu, seçili ses ayarlarının bir önizlemesidir.",
+      "reset": "Sıfırla",
+      "default": "Varsayılan",
+      "slower": "Daha Yavaş",
+      "faster": "Daha Hızlı",
+      "lower": "Daha Düşük",
+      "higher": "Daha Yüksek",
+      "selectedVoice": "Seçili",
+      "noVoicesAvailable": "Bu dil için ses yok",
+      "quickSettings": "Ses Ayarları",
+      "overrideForThisMessage": "Bu mesaj için ayarları değiştir",
+      "speakWithSettings": "Konuş"
+    }
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

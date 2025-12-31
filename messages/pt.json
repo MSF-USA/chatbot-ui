@@ -583,7 +583,8 @@
     "voiceInput": "Entrada de voz",
     "microphoneAccessDenied": "Acesso ao microfone negado. Ative-o nas configurações do seu navegador.",
     "microphoneAccessError": "Erro de acesso ao microfone: {message}",
-    "voiceInputTranscribing": "Transcrevendo..."
+    "voiceInputTranscribing": "Transcrevendo...",
+    "ttsRightClickHint": "Clique com o botão direito para opções de voz"
   },
   "sidebar": {
     "collapseSidebar": "Recolher barra lateral",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Qualquer outra informação que você gostaria que a IA soubesse sobre você",
       "preferredNameDescriptionWithSync": "Como a IA irá se dirigir a você. Deixe em branco para usar o nome exibido nas Configurações Gerais."
     },
-    "displayNameUIOnly": "Isso controla como seu nome aparece no aplicativo. A IA não vê esta informação, a menos que você ative o compartilhamento nas Configurações de Chat."
+    "displayNameUIOnly": "Isso controla como seu nome aparece no aplicativo. A IA não vê esta informação, a menos que você ative o compartilhamento nas Configurações de Chat.",
+    "tts": {
+      "title": "Texto para Fala",
+      "language": "Idioma",
+      "voice": "Voz",
+      "multilingualVoices": "Vozes multilíngues",
+      "voices": "Vozes",
+      "rate": "Velocidade",
+      "pitch": "Tom",
+      "quality": "Qualidade do áudio",
+      "qualityDescription": "Qualidade superior gera áudio melhor, mas usa mais banda",
+      "preview": "Prévia",
+      "previewing": "Reproduzindo...",
+      "previewFailed": "Falha ao gerar prévia do áudio",
+      "previewText": "Esta é uma prévia das configurações de voz selecionadas.",
+      "reset": "Redefinir",
+      "default": "Padrão",
+      "slower": "Mais devagar",
+      "faster": "Mais rápido",
+      "lower": "Mais grave",
+      "higher": "Mais agudo",
+      "selectedVoice": "Selecionada",
+      "noVoicesAvailable": "Nenhuma voz disponível para este idioma",
+      "quickSettings": "Configurações de voz",
+      "overrideForThisMessage": "Ajustar configurações para esta mensagem",
+      "speakWithSettings": "Falar"
+    }
   },
   "notFound": {
     "lostDog": "Cão perdido"

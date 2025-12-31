@@ -558,7 +558,8 @@
     "voiceInput": "Inserimento vocale",
     "microphoneAccessDenied": "Accesso al microfono negato. Abilitalo nelle impostazioni del browser.",
     "microphoneAccessError": "Errore di accesso al microfono: {message}",
-    "voiceInputTranscribing": "Trascrizione in corso..."
+    "voiceInputTranscribing": "Trascrizione in corso...",
+    "ttsRightClickHint": "Click destro per opzioni vocali"
   },
   "sidebar": {
     "collapseSidebar": "Comprimi barra laterale",
@@ -861,7 +862,33 @@
       "additionalContextDescription": "Qualsiasi altra informazione che vorresti condividere con l’AI su di te",
       "preferredNameDescriptionWithSync": "Come l'IA si rivolgerà a te. Lascia vuoto per usare il tuo nome visualizzato dalle Impostazioni generali."
     },
-    "displayNameUIOnly": "Questo controlla come il tuo nome appare nell'app. L'IA non lo vede a meno che tu non abiliti la condivisione nelle Impostazioni della chat."
+    "displayNameUIOnly": "Questo controlla come il tuo nome appare nell'app. L'IA non lo vede a meno che tu non abiliti la condivisione nelle Impostazioni della chat.",
+    "tts": {
+      "title": "Sintesi vocale",
+      "language": "Lingua",
+      "voice": "Voce",
+      "multilingualVoices": "Voci multilingue",
+      "voices": "Voci",
+      "rate": "Velocità",
+      "pitch": "Tonalità",
+      "quality": "Qualità audio",
+      "qualityDescription": "Una qualità più alta produce un audio migliore ma utilizza più banda",
+      "preview": "Anteprima",
+      "previewing": "Riproduzione in corso...",
+      "previewFailed": "Impossibile generare l’audio di anteprima",
+      "previewText": "Questa è un’anteprima delle impostazioni vocali selezionate.",
+      "reset": "Ripristina",
+      "default": "Predefinito",
+      "slower": "Più lento",
+      "faster": "Più veloce",
+      "lower": "Più bassa",
+      "higher": "Più alta",
+      "selectedVoice": "Selezionata",
+      "noVoicesAvailable": "Nessuna voce disponibile per questa lingua",
+      "quickSettings": "Impostazioni voce",
+      "overrideForThisMessage": "Modifica impostazioni per questo messaggio",
+      "speakWithSettings": "Pronuncia"
+    }
   },
   "notFound": {
     "lostDog": "Cane smarrito"

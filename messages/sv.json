@@ -631,7 +631,8 @@
     "voiceInput": "Röstinmatning",
     "microphoneAccessDenied": "Mikrofonåtkomst nekad. Aktivera det i webbläsarens inställningar.",
     "microphoneAccessError": "Fel vid mikrofonåtkomst: {message}",
-    "voiceInputTranscribing": "Transkriberar..."
+    "voiceInputTranscribing": "Transkriberar...",
+    "ttsRightClickHint": "Högerklicka för röstalternativ"
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Annan information du vill att AI:n ska känna till om dig",
       "preferredNameDescriptionWithSync": "Hur AI:n kommer att tilltala dig. Lämna tomt för att använda ditt visningsnamn från Allmänna inställningar."
     },
-    "displayNameUIOnly": "Detta styr hur ditt namn visas i appen. AI:n ser inte detta om du inte aktiverar delning i chattinställningarna."
+    "displayNameUIOnly": "Detta styr hur ditt namn visas i appen. AI:n ser inte detta om du inte aktiverar delning i chattinställningarna.",
+    "tts": {
+      "title": "Text-till-Tal",
+      "language": "Språk",
+      "voice": "Röst",
+      "multilingualVoices": "Flerspråkiga röster",
+      "voices": "Röster",
+      "rate": "Hastighet",
+      "pitch": "Tonhöjd",
+      "quality": "Ljudkvalitet",
+      "qualityDescription": "Högre kvalitet ger bättre ljud men använder mer bandbredd",
+      "preview": "Förhandsgranska",
+      "previewing": "Spelar upp...",
+      "previewFailed": "Kunde inte generera förhandslyssning",
+      "previewText": "Detta är en förhandslyssning av de valda röstinställningarna.",
+      "reset": "Återställ",
+      "default": "Standard",
+      "slower": "Långsammare",
+      "faster": "Snabbare",
+      "lower": "Lägre",
+      "higher": "Högre",
+      "selectedVoice": "Vald",
+      "noVoicesAvailable": "Inga röster tillgängliga för detta språk",
+      "quickSettings": "Röstinställningar",
+      "overrideForThisMessage": "Justera inställningar för detta meddelande",
+      "speakWithSettings": "Tala"
+    }
   },
   "notFound": {
     "lostDog": "Förlorad hund"

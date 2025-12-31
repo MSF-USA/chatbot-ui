@@ -583,7 +583,8 @@
     "voiceInput": "Spracheingabe",
     "microphoneAccessDenied": "Mikrofonzugriff verweigert. Bitte aktivieren Sie ihn in den Browsereinstellungen.",
     "microphoneAccessError": "Fehler beim Mikrofonzugriff: {message}",
-    "voiceInputTranscribing": "Transkription läuft..."
+    "voiceInputTranscribing": "Transkription läuft...",
+    "ttsRightClickHint": "Rechtsklick für Sprachauswahl"
   },
   "sidebar": {
     "collapseSidebar": "Seitenleiste einklappen",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Weitere Informationen, die die KI über Sie wissen sollte",
       "preferredNameDescriptionWithSync": "So spricht die KI Sie an. Lassen Sie dieses Feld leer, um den Anzeigenamen aus den allgemeinen Einstellungen zu verwenden."
     },
-    "displayNameUIOnly": "Dies steuert, wie Ihr Name in der App angezeigt wird. Die KI sieht dies nur, wenn Sie das Teilen in den Chateinstellungen aktivieren."
+    "displayNameUIOnly": "Dies steuert, wie Ihr Name in der App angezeigt wird. Die KI sieht dies nur, wenn Sie das Teilen in den Chateinstellungen aktivieren.",
+    "tts": {
+      "title": "Text-zu-Sprache",
+      "language": "Sprache",
+      "voice": "Stimme",
+      "multilingualVoices": "Mehrsprachige Stimmen",
+      "voices": "Stimmen",
+      "rate": "Geschwindigkeit",
+      "pitch": "Tonhöhe",
+      "quality": "Audioqualität",
+      "qualityDescription": "Höhere Qualität erzeugt besseren Ton, benötigt aber mehr Bandbreite",
+      "preview": "Vorschau",
+      "previewing": "Wird abgespielt...",
+      "previewFailed": "Vorschau konnte nicht erstellt werden",
+      "previewText": "Dies ist eine Vorschau der gewählten Spracheinstellungen.",
+      "reset": "Zurücksetzen",
+      "default": "Standard",
+      "slower": "Langsamer",
+      "faster": "Schneller",
+      "lower": "Tiefer",
+      "higher": "Höher",
+      "selectedVoice": "Ausgewählt",
+      "noVoicesAvailable": "Keine Stimmen für diese Sprache verfügbar",
+      "quickSettings": "Stimmeneinstellungen",
+      "overrideForThisMessage": "Einstellungen für diese Nachricht anpassen",
+      "speakWithSettings": "Abspielen"
+    }
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

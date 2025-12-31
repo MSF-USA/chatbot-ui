@@ -606,7 +606,8 @@
     "voiceInput": "အသံဖြင့်ထည့်သွင်းမှု",
     "microphoneAccessDenied": "မိုက်ခရိုဖုန်း လက်ခံခွင့် ပျောက်နေပါသည်။ သင်၏ browser settings တွင် ဖွင့်ပေးပါ။",
     "microphoneAccessError": "မိုက်ခရိုဖုန်း လက်ခံခွင့်အမှား: {message}",
-    "voiceInputTranscribing": "စာသားသို့ ပြောင်းလဲနေသည်..."
+    "voiceInputTranscribing": "စာသားသို့ ပြောင်းလဲနေသည်...",
+    "ttsRightClickHint": "အသံရွေးချယ်ရန် ညာဘက်နှိပ်ပါ"
   },
   "sidebar": {
     "collapseSidebar": "ဘေးဘားကို ကျုံ့ပါ",
@@ -861,7 +862,33 @@
       "additionalContextDescription": "AI သို့ သိရှိစေလိုသည့် အခြားသတင်းအချက်အလက်များ",
       "preferredNameDescriptionWithSync": "AI က သင့်ကို မည်သို့ ခေါ်ဆိုမည်ကို သတ်မှတ်နိုင်သည်။ မဖြည့်ထားလျှင် General Settings မှ သင့် Display Name ကို အသုံးပြုမည်။"
     },
-    "displayNameUIOnly": "ဤသည်သည် သင့်အမည်ကို app တွင်ပြသပုံကို ထိန်းချုပ်သည်။ သင်သည် Chat Settings မှာ share ပြုလုပ်ခြင်းကို ဖွင့်မထားလျှင် AI အနေနှင့် မမြင်နိုင်ပါ။"
+    "displayNameUIOnly": "ဤသည်သည် သင့်အမည်ကို app တွင်ပြသပုံကို ထိန်းချုပ်သည်။ သင်သည် Chat Settings မှာ share ပြုလုပ်ခြင်းကို ဖွင့်မထားလျှင် AI အနေနှင့် မမြင်နိုင်ပါ။",
+    "tts": {
+      "title": "စာသားမှအသံပြောင်းခြင်း",
+      "language": "ဘာသာစကား",
+      "voice": "အသံ",
+      "multilingualVoices": "ဘာသာစကားများစွာရှိသောအသံများ",
+      "voices": "အသံများ",
+      "rate": "အမြန်နှုန်း",
+      "pitch": "အသံအမြင့်",
+      "quality": "အသံအရည်အသွေး",
+      "qualityDescription": "အရည်အသွေးမြင့်လျင် အသံကောင်းစွာရရှိပေမယ့် bandwidth ပိုအသုံးပြုမည်",
+      "preview": "ကြိုကြည့်မည်",
+      "previewing": "ဖျော်ဖြေနေသည်...",
+      "previewFailed": "ကြိုတင်နားထောင်ရန် အသံဖန်တီးမှု မအောင်မြင်ပါ",
+      "previewText": "၎င်းသည် ရွေးချယ်ထားသည့် အသံအပြင်အဆင်များအတွက် ကြိုတင်နားထောင်ချက်ဖြစ်သည်။",
+      "reset": "စာအတိုင်းပြန်ထားမည်",
+      "default": "မူလအတိုင်း",
+      "slower": "နှေးသော",
+      "faster": "မြန်သော",
+      "lower": "နိမ့်သော",
+      "higher": "မြင့်သော",
+      "selectedVoice": "ရွေးချယ်ထားသည်",
+      "noVoicesAvailable": "ဤဘာသာစကားအတွက် အသံမရှိပါ",
+      "quickSettings": "အသံဆက်တင်များ",
+      "overrideForThisMessage": "ဤမက်ဆေ့ချ်အတွက် ဆက်တင်ပြင်ဆင်မည်",
+      "speakWithSettings": "အသံထုတ်ဖတ်မည်"
+    }
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"

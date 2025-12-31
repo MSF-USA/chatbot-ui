@@ -583,7 +583,8 @@
     "voiceInput": "Saisie vocale",
     "microphoneAccessDenied": "Accès au microphone refusé. Veuillez l’activer dans les paramètres de votre navigateur.",
     "microphoneAccessError": "Erreur d'accès au microphone : {message}",
-    "voiceInputTranscribing": "Transcription en cours..."
+    "voiceInputTranscribing": "Transcription en cours...",
+    "ttsRightClickHint": "Cliquez droit pour les options vocales"
   },
   "sidebar": {
     "collapseSidebar": "Réduire la barre latérale",
@@ -886,7 +887,33 @@
       "additionalContextDescription": "Tout autre renseignement que vous souhaitez partager avec l'IA à votre sujet",
       "preferredNameDescriptionWithSync": "Comment l'IA s'adressera à vous. Laissez vide pour utiliser votre nom d'affichage des paramètres généraux."
     },
-    "displayNameUIOnly": "Cela contrôle l'affichage de votre nom dans l'application. L'IA n'y a pas accès, sauf si vous activez le partage dans les paramètres de discussion."
+    "displayNameUIOnly": "Cela contrôle l'affichage de votre nom dans l'application. L'IA n'y a pas accès, sauf si vous activez le partage dans les paramètres de discussion.",
+    "tts": {
+      "title": "Synthèse vocale",
+      "language": "Langue",
+      "voice": "Voix",
+      "multilingualVoices": "Voix multilingues",
+      "voices": "Voix",
+      "rate": "Vitesse",
+      "pitch": "Tonalité",
+      "quality": "Qualité audio",
+      "qualityDescription": "Une qualité supérieure produit un meilleur son mais utilise plus de bande passante",
+      "preview": "Prévisualiser",
+      "previewing": "Lecture en cours...",
+      "previewFailed": "Échec de la génération de l’audio de prévisualisation",
+      "previewText": "Ceci est un aperçu des paramètres de voix sélectionnés.",
+      "reset": "Réinitialiser",
+      "default": "Par défaut",
+      "slower": "Plus lent",
+      "faster": "Plus rapide",
+      "lower": "Plus grave",
+      "higher": "Plus aigu",
+      "selectedVoice": "Sélectionné",
+      "noVoicesAvailable": "Aucune voix disponible pour cette langue",
+      "quickSettings": "Paramètres de la voix",
+      "overrideForThisMessage": "Ajuster les paramètres pour ce message",
+      "speakWithSettings": "Parler"
+    }
   },
   "notFound": {
     "lostDog": "Chien perdu"
