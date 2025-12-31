@@ -5,12 +5,20 @@ import { detectLanguage } from '@/lib/services/languageDetection';
 
 import { cleanMarkdown } from '@/lib/utils/app/clean';
 
-import { DEFAULT_TTS_SETTINGS, TTSOutputFormat, TTSRequest } from '@/types/tts';
+import {
+  DEFAULT_TTS_SETTINGS,
+  TTSOutputFormat,
+  TTSRequest,
+  TTSSettings,
+} from '@/types/tts';
 
 import { auth } from '@/auth';
 import {
+  getBaseLanguageCode,
   getDefaultVoiceForLocale,
   getTTSLocaleForAppLocale,
+  isMultilingualVoice,
+  resolveVoiceForLanguage,
 } from '@/lib/data/ttsVoices';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
@@ -92,10 +100,19 @@ function buildSSML(
  *
  * Request body:
  * - text: string (required) - The text to convert to speech
- * - voiceName: string (optional) - Voice to use (e.g., "en-US-AriaNeural")
+ * - voiceName: string (optional) - Explicit voice override (skips all resolution)
+ * - detectedLanguage: string (optional) - Pre-detected language hint
  * - rate: number (optional) - Speech rate (0.5 to 2.0, default 1.0)
  * - pitch: number (optional) - Pitch adjustment (-50 to +50, default 0)
  * - outputFormat: TTSOutputFormat (optional) - Audio output format
+ * - globalVoice: string (optional) - User's global fallback voice preference
+ * - languageVoices: Record<string, string> (optional) - Per-language voice preferences
+ *
+ * Voice resolution priority:
+ * 1. Explicit voiceName override → use directly
+ * 2. globalVoice is multilingual → use without detection
+ * 3. Detect language, then check languageVoices[baseLanguage]
+ * 4. Fall back to globalVoice or system default
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session: Session | null = await auth();
@@ -103,8 +120,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body: TTSRequest = await request.json();
-    const { text, voiceName, detectedLanguage, rate, pitch, outputFormat } =
-      body;
+    const {
+      text,
+      voiceName,
+      detectedLanguage,
+      rate,
+      pitch,
+      outputFormat,
+      globalVoice,
+      languageVoices,
+    } = body;
 
     // Validate input before processing - check raw input, not processed output
     if (typeof text !== 'string' || text.trim().length === 0) {
@@ -121,14 +146,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Determine the voice to use
+    // Build settings object from user preferences
+    const settings: TTSSettings = {
+      globalVoice: globalVoice ?? DEFAULT_TTS_SETTINGS.globalVoice,
+      languageVoices: languageVoices ?? {},
+      rate: rate ?? DEFAULT_TTS_SETTINGS.rate,
+      pitch: pitch ?? DEFAULT_TTS_SETTINGS.pitch,
+      outputFormat: outputFormat ?? DEFAULT_TTS_SETTINGS.outputFormat,
+    };
+
+    // Determine the voice to use based on priority hierarchy
     let effectiveVoiceName: string;
 
     if (voiceName) {
-      // Explicit voice provided by client - use it directly
+      // Priority 1: Explicit voice override - use directly
       effectiveVoiceName = voiceName;
+    } else if (
+      settings.globalVoice &&
+      isMultilingualVoice(settings.globalVoice)
+    ) {
+      // Priority 2: User's global voice is multilingual - skip language detection
+      effectiveVoiceName = settings.globalVoice;
     } else {
-      // No voice specified - detect language and pick appropriate voice
+      // Priority 3: Need to detect language to resolve voice
       let languageCode = detectedLanguage;
 
       if (!languageCode) {
@@ -137,12 +177,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         languageCode = detectionResult.language;
       }
 
-      // Get best TTS locale for the detected language
-      const ttsLocale = getTTSLocaleForAppLocale(languageCode);
+      // Get base language code (e.g., "en" from "en-US")
+      const baseLanguage = getBaseLanguageCode(languageCode);
 
-      // Get default voice for that locale
-      const defaultVoice = getDefaultVoiceForLocale(ttsLocale);
-      effectiveVoiceName = defaultVoice?.name || 'en-US-AvaMultilingualNeural';
+      // Resolve voice using the user's preferences
+      effectiveVoiceName = resolveVoiceForLanguage(baseLanguage, settings);
     }
     const effectiveRate = rate ?? DEFAULT_TTS_SETTINGS.rate;
     const effectivePitch = pitch ?? DEFAULT_TTS_SETTINGS.pitch;
