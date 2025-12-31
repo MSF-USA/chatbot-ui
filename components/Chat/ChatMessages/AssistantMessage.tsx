@@ -162,6 +162,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     };
   }, [audioUrl]);
 
+  // Reset audio state when conversation changes
+  useEffect(() => {
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    setAudioSourceLocale(null);
+    setIsGeneratingAudio(false);
+    setLoadingMessage(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation?.id]);
+
   // Process content once per change - simplified logic
   useEffect(() => {
     // Parse thinking content from the raw content
