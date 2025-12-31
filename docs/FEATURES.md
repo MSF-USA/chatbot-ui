@@ -36,6 +36,11 @@
 - Citation of sources with URLs
 - Integrated directly into AI agent responses
 - Optimized search query generation
+- **Detailed Documentation**:
+  - [Overview](./features/tools/README.md)
+  - [Architecture & Workflows](./features/tools/architecture.md)
+  - [Integration & Dependencies](./features/tools/integration.md)
+  - [Development Guide](./features/tools/development.md)
 
 ### URL Content Puller
 
@@ -62,6 +67,13 @@
 - Copy or inject transcriptions into chat
 - Download transcripts as TXT files
 - Automatic retry with exponential backoff
+- **Detailed Documentation**:
+  - [Overview](./features/transcription/overview.md)
+  - [Workflow](./features/transcription/workflow.md)
+  - [Storage](./features/transcription/storage.md)
+  - [Relevant Files](./features/transcription/relevant-files.md)
+  - [Configuration](./features/transcription/configuration.md)
+  - [Testing](./features/transcription/testing.md)
 
 ### Text-to-Speech
 
