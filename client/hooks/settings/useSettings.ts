@@ -19,6 +19,8 @@ export function useSettings() {
     prompts: store.prompts,
     customAgents: store.customAgents,
     ttsSettings: store.ttsSettings,
+    reasoningEffort: store.reasoningEffort,
+    verbosity: store.verbosity,
 
     // Actions
     setTemperature: store.setTemperature,
@@ -35,6 +37,8 @@ export function useSettings() {
     updateCustomAgent: store.updateCustomAgent,
     deleteCustomAgent: store.deleteCustomAgent,
     setTTSSettings: store.setTTSSettings,
+    setReasoningEffort: store.setReasoningEffort,
+    setVerbosity: store.setVerbosity,
     resetSettings: store.resetSettings,
   };
 }
