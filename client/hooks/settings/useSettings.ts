@@ -18,6 +18,7 @@ export function useSettings() {
     models: store.models,
     prompts: store.prompts,
     customAgents: store.customAgents,
+    ttsSettings: store.ttsSettings,
 
     // Actions
     setTemperature: store.setTemperature,
@@ -33,6 +34,7 @@ export function useSettings() {
     addCustomAgent: store.addCustomAgent,
     updateCustomAgent: store.updateCustomAgent,
     deleteCustomAgent: store.deleteCustomAgent,
+    setTTSSettings: store.setTTSSettings,
     resetSettings: store.resetSettings,
   };
 }
