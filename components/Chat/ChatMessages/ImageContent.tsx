@@ -1,4 +1,4 @@
-import { IconX } from '@tabler/icons-react';
+import { IconDownload, IconX } from '@tabler/icons-react';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -101,63 +101,76 @@ export const ImageContent: FC<ImageContentProps> = ({ images }) => {
   }
 
   return (
-    <div className="not-prose">
+    <div className="flex flex-wrap gap-2 w-full py-2">
       {/* Loading state */}
-      {isLoading && (
-        <div className="flex flex-wrap gap-2 mb-2">
-          {Array.from({ length: images.length || 1 }).map((_, i) => (
-            <div
-              key={i}
-              className={`bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg border border-gray-200 dark:border-gray-700 ${
-                images.length === 1
-                  ? 'w-full max-w-md'
-                  : 'w-[calc(50%-0.25rem)]'
-              }`}
-              style={{
-                height: images.length === 1 ? '300px' : '200px',
-              }}
-            >
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-gray-500 dark:text-gray-400 text-sm">
-                  Loading...
-                </span>
-              </div>
+      {isLoading &&
+        Array.from({ length: images.length || 1 }).map((_, i) => (
+          <div
+            key={i}
+            className="relative rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+            style={{
+              width: 'calc(50% - 0.25rem)',
+              maxWidth: '280px',
+              minWidth: '200px',
+              height: '150px',
+            }}
+          >
+            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 animate-shimmer">
+              <span className="sr-only">Loading image...</span>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
 
       {/* Error state */}
       {loadError && (
-        <div className="border border-red-300 dark:border-red-700 rounded-lg p-4 text-red-500 inline-block mb-2">
-          <span>Failed to load image(s)</span>
+        <div
+          className="relative rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+          style={{
+            width: 'calc(50% - 0.25rem)',
+            maxWidth: '280px',
+            minWidth: '200px',
+            height: '150px',
+          }}
+        >
+          <div className="flex items-center justify-center w-full h-full text-red-500 text-sm p-3">
+            <span>Failed to load image</span>
+          </div>
         </div>
       )}
 
       {/* Loaded images */}
-      {!isLoading && !loadError && imageBase64s.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2">
-          {imageBase64s.map((imageBase64, index) => (
-            // eslint-disable-next-line @next/next/no-img-element
+      {!isLoading &&
+        !loadError &&
+        imageBase64s.length > 0 &&
+        imageBase64s.map((imageBase64, index) => (
+          <div
+            key={index}
+            className="relative rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow cursor-pointer group"
+            style={{
+              width: 'calc(50% - 0.25rem)',
+              maxWidth: '280px',
+              minWidth: '200px',
+              height: '150px',
+            }}
+            onClick={() => openLightbox(imageBase64)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              key={index}
-              onClick={() => openLightbox(imageBase64)}
-              className={`rounded-lg hover:cursor-pointer hover:opacity-90 transition-opacity border border-gray-200 dark:border-gray-700 ${
-                imageBase64s.length === 1
-                  ? 'w-full max-w-md'
-                  : 'w-[calc(50%-0.25rem)]'
-              }`}
-              style={{
-                objectFit: 'cover',
-                maxHeight: imageBase64s.length === 1 ? '400px' : '200px',
-                height: imageBase64s.length > 1 ? '200px' : 'auto',
-              }}
               src={imageBase64}
               alt={`Image ${index + 1}`}
+              className="w-full h-full object-cover"
             />
-          ))}
-        </div>
-      )}
+            {/* Hover overlay with badge and download icon */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold bg-purple-500 text-white">
+                IMG
+              </div>
+              <div className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 dark:bg-gray-800/90">
+                <IconDownload className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+              </div>
+            </div>
+          </div>
+        ))}
     </div>
   );
 };
