@@ -20,6 +20,8 @@ import React, {
 
 import { useTranslations } from 'next-intl';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
+
 import { translateText } from '@/lib/services/translation';
 
 import { getAutonym } from '@/lib/utils/app/locales';
@@ -33,6 +35,7 @@ import {
 } from '@/types/chat';
 import { Citation } from '@/types/rag';
 import { MessageTranslationState } from '@/types/translation';
+import { TTSSettings } from '@/types/tts';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { DocumentTranslationContent } from '@/components/Chat/ChatMessages/DocumentTranslationContent';
@@ -41,6 +44,7 @@ import { TranscriptContent } from '@/components/Chat/ChatMessages/TranscriptCont
 import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
 import { VersionNavigation } from '@/components/Chat/ChatMessages/VersionNavigation';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
+import { TTSContextMenu } from '@/components/Chat/TTS/TTSContextMenu';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
@@ -95,6 +99,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 }) => {
   const t = useTranslations();
   const { openDocument } = useArtifactStore();
+  const { ttsSettings } = useSettings();
   const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [thinking, setThinking] = useState<string>('');
@@ -106,6 +111,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [messageCopied, setMessageCopied] = useState(false);
+
+  // TTS context menu state
+  const [ttsContextMenu, setTTSContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   // Translation state
   const [translationState, setTranslationState] =
@@ -259,42 +270,55 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     });
   }, [displayedContent]);
 
-  const handleTTS = async () => {
-    try {
-      setIsGeneratingAudio(true);
-      setLoadingMessage('Generating audio...');
+  const handleTTS = useCallback(
+    async (overrides: Partial<TTSSettings> = {}) => {
+      try {
+        setIsGeneratingAudio(true);
+        setLoadingMessage('Generating audio...');
 
-      const response = await fetch('/api/chat/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: displayedContent }),
-      });
+        // Merge global settings with overrides
+        const requestBody = {
+          text: displayedContent,
+          voiceName:
+            (overrides.voiceName ?? ttsSettings.voiceName) || undefined,
+          rate: overrides.rate ?? ttsSettings.rate,
+          pitch: overrides.pitch ?? ttsSettings.pitch,
+          outputFormat: overrides.outputFormat ?? ttsSettings.outputFormat,
+        };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'TTS conversion failed');
+        const response = await fetch('/api/chat/tts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'TTS conversion failed');
+        }
+
+        setLoadingMessage('Processing audio...');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+        setAudioSourceLocale(translationState.currentLocale); // Track which locale audio was generated for
+        setIsGeneratingAudio(false);
+        setLoadingMessage(null);
+      } catch (error) {
+        console.error('Error in TTS:', error);
+        setIsGeneratingAudio(false);
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Error generating audio. Please try again.';
+        setLoadingMessage(message);
+        setTimeout(() => setLoadingMessage(null), 3000);
       }
-
-      setLoadingMessage('Processing audio...');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setAudioUrl(url);
-      setAudioSourceLocale(translationState.currentLocale); // Track which locale audio was generated for
-      setIsGeneratingAudio(false);
-      setLoadingMessage(null);
-    } catch (error) {
-      console.error('Error in TTS:', error);
-      setIsGeneratingAudio(false);
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Error generating audio. Please try again.';
-      setLoadingMessage(message);
-      setTimeout(() => setLoadingMessage(null), 3000);
-    }
-  };
+    },
+    [displayedContent, ttsSettings, translationState.currentLocale],
+  );
 
   // Close audio player and clean up resources
   const handleCloseAudio = () => {
@@ -585,8 +609,14 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     ? undefined
                     : audioUrl
                       ? handleCloseAudio
-                      : handleTTS
+                      : () => handleTTS()
                 }
+                onContextMenu={(e) => {
+                  if (!hasEmbeddedContent && !isGeneratingAudio && !audioUrl) {
+                    e.preventDefault();
+                    setTTSContextMenu({ x: e.clientX, y: e.clientY });
+                  }
+                }}
                 disabled={hasEmbeddedContent || isGeneratingAudio}
                 aria-label={
                   audioUrl
@@ -598,7 +628,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 title={
                   hasEmbeddedContent
                     ? t('chat.actionsDisabledForEmbed')
-                    : undefined
+                    : t('chat.ttsRightClickHint')
                 }
               >
                 {isGeneratingAudio ? (
@@ -703,6 +733,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             isTranslating={translationState.isTranslating}
             cachedLocales={cachedLocales}
           />
+
+          {/* TTS Context Menu */}
+          {ttsContextMenu && (
+            <TTSContextMenu
+              position={ttsContextMenu}
+              onClose={() => setTTSContextMenu(null)}
+              onTriggerTTS={(overrides) => {
+                setTTSContextMenu(null);
+                handleTTS(overrides);
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
