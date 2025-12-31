@@ -888,7 +888,12 @@
       "quickSettings": "הגדרות קול",
       "overrideForThisMessage": "התאם הגדרות להודעה זו",
       "speakWithSettings": "דבר"
-    }
+    },
+    "Model Response Settings Description": "הגדר פרמטרי ברירת מחדל לתגובות מודל ה-AI. מודלים שונים משתמשים בהגדרות שונות.",
+    "Default Reasoning Effort": "רמת מאמץ חשיבה כברירת מחדל",
+    "reasoningEffortDescription": "שולט בעומק החשיבה במודלים של נימוק. רמת מאמץ גבוהה יותר תפיק ניתוח מעמיק יותר.",
+    "Default Verbosity": "רמת פירוט כברירת מחדל",
+    "verbosityDescription": "שולט ברמת הפירוט של התשובות במודלים מסוג GPT-5."
   },
   "notFound": {
     "lostDog": "כלב אבוד"

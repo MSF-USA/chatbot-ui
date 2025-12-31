@@ -880,7 +880,12 @@
       "quickSettings": "Pengaturan Suara",
       "overrideForThisMessage": "Sesuaikan pengaturan untuk pesan ini",
       "speakWithSettings": "Ucapkan"
-    }
+    },
+    "Model Response Settings Description": "Atur parameter default untuk respons model AI. Setiap model menggunakan pengaturan yang berbeda.",
+    "Default Reasoning Effort": "Upaya Penalaran Default",
+    "reasoningEffortDescription": "Mengatur tingkat kedalaman berpikir untuk model penalaran. Upaya yang lebih tinggi menghasilkan analisis yang lebih menyeluruh.",
+    "Default Verbosity": "Verbosity Default",
+    "verbosityDescription": "Mengatur tingkat detail respons untuk model GPT-5."
   },
   "notFound": {
     "lostDog": "Anjing hilang"

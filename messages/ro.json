@@ -911,7 +911,12 @@
       "quickSettings": "Setări voce",
       "overrideForThisMessage": "Ajustați setările pentru acest mesaj",
       "speakWithSettings": "Redă"
-    }
+    },
+    "Model Response Settings Description": "Configurați parametrii implicați în răspunsurile modelului AI. Modelele diferite folosesc setări diferite.",
+    "Default Reasoning Effort": "Efort de Raționament Implicit",
+    "reasoningEffortDescription": "Controlează profunzimea raționamentului pentru modelele de analiză. Un efort mai mare produce o analiză mai detaliată.",
+    "Default Verbosity": "Nivel de Detaliere Implicit",
+    "verbosityDescription": "Controlează nivelul de detaliere al răspunsurilor pentru modelele GPT-5."
   },
   "notFound": {
     "lostDog": "Câine pierdut"

@@ -888,7 +888,12 @@
       "quickSettings": "Configuració de veu",
       "overrideForThisMessage": "Ajusta la configuració per a aquest missatge",
       "speakWithSettings": "Reprodueix"
-    }
+    },
+    "Model Response Settings Description": "Configura els paràmetres predeterminats per a les respostes dels models d’IA. Cada model utilitza una configuració diferent.",
+    "Default Reasoning Effort": "Esforç de raonament predeterminat",
+    "reasoningEffortDescription": "Controla la profunditat del raonament dels models. Un esforç més alt produeix una anàlisi més exhaustiva.",
+    "Default Verbosity": "Verbositats predeterminades",
+    "verbosityDescription": "Controla el nivell de detall de la resposta per als models GPT-5."
   },
   "notFound": {
     "lostDog": "Gos perdut"

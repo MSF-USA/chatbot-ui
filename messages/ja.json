@@ -913,7 +913,12 @@
       "quickSettings": "音声設定",
       "overrideForThisMessage": "このメッセージ用に設定を調整",
       "speakWithSettings": "読み上げる"
-    }
+    },
+    "Model Response Settings Description": "AIモデルの応答に関するデフォルトパラメータを設定します。モデルによって設定項目が異なります。",
+    "Default Reasoning Effort": "デフォルトの推論労力",
+    "reasoningEffortDescription": "推論モデルの思考の深さを調整します。値を高くすると、より詳細な分析が行われます。",
+    "Default Verbosity": "デフォルトの詳細レベル",
+    "verbosityDescription": "GPT-5モデルの応答の詳細度を調整します。"
   },
   "notFound": {
     "lostDog": "迷子の犬"

@@ -883,7 +883,12 @@
       "quickSettings": "Cài đặt giọng nói",
       "overrideForThisMessage": "Điều chỉnh cài đặt cho tin nhắn này",
       "speakWithSettings": "Đọc"
-    }
+    },
+    "Model Response Settings Description": "Cấu hình các tham số mặc định cho phản hồi của mô hình AI. Mỗi mô hình sử dụng các thiết lập khác nhau.",
+    "Default Reasoning Effort": "Mức Độ Suy Luận Mặc Định",
+    "reasoningEffortDescription": "Điều chỉnh độ sâu tư duy cho các mô hình suy luận. Mức độ cao hơn sẽ tạo ra phân tích kỹ lưỡng hơn.",
+    "Default Verbosity": "Mức Chi Tiết Mặc Định",
+    "verbosityDescription": "Điều chỉnh mức độ chi tiết của phản hồi cho các mô hình GPT-5."
   },
   "notFound": {
     "lostDog": "Chó bị lạc"

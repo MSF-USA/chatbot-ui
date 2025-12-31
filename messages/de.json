@@ -913,7 +913,12 @@
       "quickSettings": "Stimmeneinstellungen",
       "overrideForThisMessage": "Einstellungen für diese Nachricht anpassen",
       "speakWithSettings": "Abspielen"
-    }
+    },
+    "Model Response Settings Description": "Standardparameter für AI-Modellantworten konfigurieren. Verschiedene Modelle verwenden unterschiedliche Einstellungen.",
+    "Default Reasoning Effort": "Standardmäßiger Denkaufwand",
+    "reasoningEffortDescription": "Steuert die Denktiefe bei Reasoning-Modellen. Höherer Aufwand führt zu einer gründlicheren Analyse.",
+    "Default Verbosity": "Standardmäßige Ausführlichkeit",
+    "verbosityDescription": "Steuert das Detaillierungsniveau der Antworten für GPT-5-Modelle."
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

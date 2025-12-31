@@ -888,7 +888,12 @@
       "quickSettings": "Impostazioni voce",
       "overrideForThisMessage": "Modifica impostazioni per questo messaggio",
       "speakWithSettings": "Pronuncia"
-    }
+    },
+    "Model Response Settings Description": "Configura i parametri predefiniti per le risposte del modello AI. Modelli diversi utilizzano impostazioni diverse.",
+    "Default Reasoning Effort": "Sforzo di ragionamento predefinito",
+    "reasoningEffortDescription": "Controlla la profondità del ragionamento nei modelli di analisi. Un maggiore sforzo produce analisi più approfondite.",
+    "Default Verbosity": "Verbosià predefinita",
+    "verbosityDescription": "Controlla il livello di dettaglio delle risposte per i modelli GPT-5."
   },
   "notFound": {
     "lostDog": "Cane smarrito"

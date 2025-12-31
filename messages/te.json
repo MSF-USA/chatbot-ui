@@ -911,7 +911,12 @@
       "quickSettings": "వాయిస్ సెట్టింగ్స్",
       "overrideForThisMessage": "ఈ సందేశానికి సెట్టింగ్స్ సర్దుబాటు చేయండి",
       "speakWithSettings": "పలుకండి"
-    }
+    },
+    "Model Response Settings Description": "AI మోడల్ ప్రతిస్పందనల కోసం డిఫాల్ట్ పరామితులను ఆకృతీకరించండి. వేర్వేరు మోడళ్లకు వేర్వేరు సెట్టింగ్లు ఉంటాయి.",
+    "Default Reasoning Effort": "డిఫాల్ట్ రీజనింగ్ ఈఫర్ట్",
+    "reasoningEffortDescription": "రీజనింగ్ మోడళ్లలో ఆలోచన లోతును నియంత్రిస్తుంది. ఎక్కువ ప్రయత్నంతో విస్తృతమైన విశ్లేషణ లభిస్తుంది.",
+    "Default Verbosity": "డిఫాల్ట్ వర్బోసిటీ",
+    "verbosityDescription": "GPT-5 మోడళ్లకు ప్రతిస్పందన వివరాల స్థాయిని నియంత్రిస్తుంది."
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"

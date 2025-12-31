@@ -888,7 +888,12 @@
       "quickSettings": "Ääniasetukset",
       "overrideForThisMessage": "Muuta asetuksia tätä viestiä varten",
       "speakWithSettings": "Puhu"
-    }
+    },
+    "Model Response Settings Description": "Määritä AI-mallien vastausten oletusparametrit. Eri mallit käyttävät erilaisia asetuksia.",
+    "Default Reasoning Effort": "Oletusarvoinen päättelytason vaivannäkö",
+    "reasoningEffortDescription": "Säätää päättelymallien ajattelun syvyyttä. Suurempi vaivannäkö tuottaa perusteellisemman analyysin.",
+    "Default Verbosity": "Oletusarvoinen sanamäärä",
+    "verbosityDescription": "Säätää GPT-5-mallien vastausten yksityiskohtaisuutta."
   },
   "notFound": {
     "lostDog": "Kadonnut koira"

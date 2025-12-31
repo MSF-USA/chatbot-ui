@@ -878,7 +878,12 @@
       "quickSettings": "Steministellingen",
       "overrideForThisMessage": "Instellingen aanpassen voor dit bericht",
       "speakWithSettings": "Afspelen"
-    }
+    },
+    "Model Response Settings Description": "Stel standaardparameters in voor AI-modelantwoorden. Verschillende modellen gebruiken verschillende instellingen.",
+    "Default Reasoning Effort": "Standaard redeneersinspanning",
+    "reasoningEffortDescription": "Bepaalt de diepgang van het denkproces voor redeneermodellen. Meer inspanning leidt tot een grondigere analyse.",
+    "Default Verbosity": "Standaard verhaallengte",
+    "verbosityDescription": "Bepaalt het detailniveau van antwoorden voor GPT-5-modellen."
   },
   "notFound": {
     "lostDog": "Verloren hond"

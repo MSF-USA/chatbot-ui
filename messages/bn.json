@@ -913,7 +913,12 @@
       "quickSettings": "ভয়েস সেটিংস",
       "overrideForThisMessage": "এই বার্তার জন্য সেটিংস পরিবর্তন করুন",
       "speakWithSettings": "পঠন করুন"
-    }
+    },
+    "Model Response Settings Description": "AI মডেল প্রতিক্রিয়ার জন্য ডিফল্ট প্যারামিটার কনফিগার করুন। বিভিন্ন মডেল ভিন্ন সেটিংস ব্যবহার করে।",
+    "Default Reasoning Effort": "ডিফল্ট রিজনিং এফর্ট",
+    "reasoningEffortDescription": "রিজনিং মডেলের চিন্তার গভীরতা নিয়ন্ত্রণ করে। উচ্চতর এফর্ট আরও বিস্তারিত বিশ্লেষণ দেয়।",
+    "Default Verbosity": "ডিফল্ট ভার্বোসিটি",
+    "verbosityDescription": "GPT-5 মডেলের জন্য প্রতিক্রিয়ার বিস্তারিততার স্তর নিয়ন্ত্রণ করে।"
   },
   "notFound": {
     "lostDog": "হারানো কুকুর"

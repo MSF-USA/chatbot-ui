@@ -862,7 +862,12 @@
       "quickSettings": "የድምፅ ቅንብሮች",
       "overrideForThisMessage": "ቅንብሮቹን ለዚህ መልእክት ያስተካክሉ",
       "speakWithSettings": "አንብር"
-    }
+    },
+    "Model Response Settings Description": "የአአ ሞዴል ምላሽ ነባሪ መለኪያዎችን ያዘጋጁ። በተለያዩ ሞዴሎች ተለያዩ ቅንብሮች ይጠቀማሉ።",
+    "Default Reasoning Effort": "ነባሪ የአስተያየት ጥረት",
+    "reasoningEffortDescription": "ለማያዝ ሞዴሎች የአስተያየት ጥረት ደረጃን ይቆጣጠራል። ከፍተኛ ጥረት የተጠናቀቀ ትንታኔ ይሰጣል።",
+    "Default Verbosity": "ነባሪ የቃላት ብዛት",
+    "verbosityDescription": "ለGPT-5 ሞዴል የምላሽ ዝርዝር ደረጃን ይቆጣጠራል።"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

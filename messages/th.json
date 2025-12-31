@@ -830,7 +830,12 @@
       "quickSettings": "ตั้งค่าเสียง",
       "overrideForThisMessage": "ปรับการตั้งค่าสำหรับข้อความนี้",
       "speakWithSettings": "อ่านออกเสียง"
-    }
+    },
+    "Model Response Settings Description": "กำหนดค่าพารามิเตอร์เริ่มต้นสำหรับการตอบกลับของโมเดล AI แต่ละโมเดลจะใช้การตั้งค่าที่แตกต่างกัน",
+    "Default Reasoning Effort": "ความพยายามในการใช้เหตุผลเริ่มต้น",
+    "reasoningEffortDescription": "ควบคุมระดับความลึกในการคิดสำหรับโมเดลเหตุผล ค่า effort ที่สูงจะให้การวิเคราะห์ที่ละเอียดขึ้น",
+    "Default Verbosity": "ระดับความละเอียดของข้อความเริ่มต้น",
+    "verbosityDescription": "ควบคุมระดับรายละเอียดของคำตอบสำหรับโมเดล GPT-5"
   },
   "notFound": {
     "lostDog": "สุนัขหาย"

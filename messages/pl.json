@@ -910,7 +910,12 @@
       "quickSettings": "Ustawienia głosu",
       "overrideForThisMessage": "Dostosuj ustawienia dla tej wiadomości",
       "speakWithSettings": "Odtwórz"
-    }
+    },
+    "Model Response Settings Description": "Skonfiguruj domyślne parametry odpowiedzi modelu AI. Różne modele używają różnych ustawień.",
+    "Default Reasoning Effort": "Domyślny poziom rozumowania",
+    "reasoningEffortDescription": "Określa głębokość analizy dla modeli rozumowania. Wyższy poziom zapewnia bardziej szczegółową analizę.",
+    "Default Verbosity": "Domyślny poziom szczegółowości",
+    "verbosityDescription": "Określa poziom szczegółowości odpowiedzi dla modeli GPT-5."
   },
   "notFound": {
     "lostDog": "Zagubiony pies"

@@ -913,7 +913,12 @@
       "quickSettings": "Ajustes de voz",
       "overrideForThisMessage": "Ajustar configuración para este mensaje",
       "speakWithSettings": "Hablar"
-    }
+    },
+    "Model Response Settings Description": "Configure los parámetros predeterminados para las respuestas del modelo de IA. Diferentes modelos utilizan diferentes configuraciones.",
+    "Default Reasoning Effort": "Esfuerzo de razonamiento predeterminado",
+    "reasoningEffortDescription": "Controla la profundidad de pensamiento para los modelos de razonamiento. Un esfuerzo mayor produce un análisis más exhaustivo.",
+    "Default Verbosity": "Verbosidad predeterminada",
+    "verbosityDescription": "Controla el nivel de detalle de las respuestas para los modelos GPT-5."
   },
   "notFound": {
     "lostDog": "Perro perdido"

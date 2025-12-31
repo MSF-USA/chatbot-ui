@@ -913,7 +913,12 @@
       "quickSettings": "Nastavení hlasu",
       "overrideForThisMessage": "Upravit nastavení pro tuto zprávu",
       "speakWithSettings": "Přečíst"
-    }
+    },
+    "Model Response Settings Description": "Nastavte výchozí parametry pro odpovědi AI modelu. Různé modely používají různá nastavení.",
+    "Default Reasoning Effort": "Výchozí úroveň úsilí při uvažování",
+    "reasoningEffortDescription": "Určuje hloubku uvažování pro modely zaměřené na logické myšlení. Vyšší úsilí vede k důkladnější analýze.",
+    "Default Verbosity": "Výchozí úroveň podrobnosti",
+    "verbosityDescription": "Určuje úroveň detailu odpovědí u modelů GPT-5."
   },
   "notFound": {
     "lostDog": "Ztracený pes"

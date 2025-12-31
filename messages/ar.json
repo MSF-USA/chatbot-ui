@@ -865,7 +865,12 @@
       "quickSettings": "إعدادات الصوت",
       "overrideForThisMessage": "تعديل الإعدادات لهذه الرسالة",
       "speakWithSettings": "تشغيل الصوت"
-    }
+    },
+    "Model Response Settings Description": "قم بتكوين معايير الاستجابة الافتراضية لنموذج الذكاء الاصطناعي. تختلف الإعدادات حسب كل نموذج.",
+    "Default Reasoning Effort": "جهد الاستدلال الافتراضي",
+    "reasoningEffortDescription": "يتحكم في عمق التفكير لنماذج الاستدلال. الجهد الأعلى ينتج تحليلاً أكثر شمولاً.",
+    "Default Verbosity": "الإسهاب الافتراضي",
+    "verbosityDescription": "يتحكم في مستوى تفاصيل الاستجابة لنماذج GPT-5."
   },
   "notFound": {
     "lostDog": "كلب ضائع"

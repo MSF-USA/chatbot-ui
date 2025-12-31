@@ -912,7 +912,12 @@
       "quickSettings": "آواز کی ترتیبات",
       "overrideForThisMessage": "اس پیغام کے لیے ترتیبات تبدیل کریں",
       "speakWithSettings": "آواز نکالیں"
-    }
+    },
+    "Model Response Settings Description": "AI ماڈل کے جوابات کے لیے ڈیفالٹ پیرامیٹرز ترتیب دیں۔ مختلف ماڈلز کے لیے مختلف سیٹنگز استعمال ہوتی ہیں۔",
+    "Default Reasoning Effort": "ڈیفالٹ منطقی کوشش",
+    "reasoningEffortDescription": "منطقی ماڈلز کے لیے سوچ کی گہرائی کو کنٹرول کرتا ہے۔ زیادہ کوشش سے زیادہ جامع تجزیہ حاصل ہوتا ہے۔",
+    "Default Verbosity": "ڈیفالٹ تفصیل",
+    "verbosityDescription": "GPT-5 ماڈلز کے لیے جواب کی تفصیل کا درجہ کنٹرول کرتا ہے۔"
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"

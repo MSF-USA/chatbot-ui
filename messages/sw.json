@@ -913,7 +913,12 @@
       "quickSettings": "Mipangilio ya Sauti",
       "overrideForThisMessage": "Badilisha mipangilio kwa ujumbe huu",
       "speakWithSettings": "Soma"
-    }
+    },
+    "Model Response Settings Description": "Sanidi vigezo chaguo-msingi kwa majibu ya modeli ya AI. Kila modeli hutumia mipangilio tofauti.",
+    "Default Reasoning Effort": "Jitihada Chaguo-msingi ya Upekuzi",
+    "reasoningEffortDescription": "Hudhibiti kina cha fikra kwenye modeli za kutoa hoja. Jitihada kubwa hutoa uchambuzi wa kina zaidi.",
+    "Default Verbosity": "Ufafanuzi Chaguo-msingi",
+    "verbosityDescription": "Hudhibiti kiwango cha undani wa majibu kwa modeli za GPT-5."
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

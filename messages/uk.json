@@ -830,7 +830,12 @@
       "quickSettings": "Параметри голосу",
       "overrideForThisMessage": "Налаштувати для цього повідомлення",
       "speakWithSettings": "Озвучити"
-    }
+    },
+    "Model Response Settings Description": "Налаштуйте стандартні параметри відповідей AI-моделі. Різні моделі використовують різні налаштування.",
+    "Default Reasoning Effort": "Стандартний рівень міркування",
+    "reasoningEffortDescription": "Визначає глибину аналізу для моделей міркування. Вищий рівень забезпечує детальніший аналіз.",
+    "Default Verbosity": "Стандартна деталізація",
+    "verbosityDescription": "Визначає рівень деталізації відповіді для моделей GPT-5."
   },
   "notFound": {
     "lostDog": "Загублений пес"

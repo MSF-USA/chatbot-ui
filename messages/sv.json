@@ -913,7 +913,12 @@
       "quickSettings": "Röstinställningar",
       "overrideForThisMessage": "Justera inställningar för detta meddelande",
       "speakWithSettings": "Tala"
-    }
+    },
+    "Model Response Settings Description": "Konfigurera standardparametrar för AI-modellsvar. Olika modeller använder olika inställningar.",
+    "Default Reasoning Effort": "Standardnivå för resonemang",
+    "reasoningEffortDescription": "Styr djupet på resonemanget för resonemangsmodeller. Högre nivå ger mer grundlig analys.",
+    "Default Verbosity": "Standardnivå för utförlighet",
+    "verbosityDescription": "Styr detaljnivån för svar från GPT-5-modeller."
   },
   "notFound": {
     "lostDog": "Förlorad hund"

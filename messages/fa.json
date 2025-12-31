@@ -838,7 +838,12 @@
       "quickSettings": "تنظیمات صدا",
       "overrideForThisMessage": "تنظیمات این پیام را تغییر دهید",
       "speakWithSettings": "پخش"
-    }
+    },
+    "Model Response Settings Description": "پارامترهای پیش‌فرض پاسخ مدل AI را تنظیم کنید. مدل‌های مختلف تنظیمات متفاوتی دارند.",
+    "Default Reasoning Effort": "میزان پیش‌فرض تلاش برای استدلال",
+    "reasoningEffortDescription": "عمق تفکر مدل‌های استدلال را کنترل می‌کند. تلاش بیشتر، تحلیل دقیق‌تری ایجاد می‌کند.",
+    "Default Verbosity": "سطح پیش‌فرض جزئیات پاسخ",
+    "verbosityDescription": "سطح جزئیات پاسخ برای مدل‌های GPT-5 را کنترل می‌کند."
   },
   "notFound": {
     "lostDog": "سگ گمشده"

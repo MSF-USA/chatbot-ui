@@ -913,7 +913,12 @@
       "quickSettings": "语音设置",
       "overrideForThisMessage": "为此消息调整设置",
       "speakWithSettings": "朗读"
-    }
+    },
+    "Model Response Settings Description": "配置AI模型响应的默认参数。不同模型使用不同的设置。",
+    "Default Reasoning Effort": "默认推理力度",
+    "reasoningEffortDescription": "控制推理模型的思考深度。更高力度可生成更全面的分析。",
+    "Default Verbosity": "默认详细程度",
+    "verbosityDescription": "控制GPT-5模型响应的详细程度。"
   },
   "notFound": {
     "lostDog": "迷路的狗"

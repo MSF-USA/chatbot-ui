@@ -913,7 +913,12 @@
       "quickSettings": "Ses Ayarları",
       "overrideForThisMessage": "Bu mesaj için ayarları değiştir",
       "speakWithSettings": "Konuş"
-    }
+    },
+    "Model Response Settings Description": "AI model yanıtları için varsayılan parametreleri yapılandırın. Farklı modeller farklı ayarlar kullanır.",
+    "Default Reasoning Effort": "Varsayılan Akıl Yürütme Çabası",
+    "reasoningEffortDescription": "Akıl yürütme modelleri için düşünme derinliğini kontrol eder. Daha yüksek çaba, daha ayrıntılı analiz sağlar.",
+    "Default Verbosity": "Varsayılan Detay Seviyesi",
+    "verbosityDescription": "GPT-5 modelleri için yanıt detay seviyesini kontrol eder."
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

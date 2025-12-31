@@ -880,7 +880,12 @@
       "quickSettings": "හඬ සැකසුම්",
       "overrideForThisMessage": "මෙම පණිවිඩය සඳහා සැකසුම් සකසන්න",
       "speakWithSettings": "කතා කරන්න"
-    }
+    },
+    "Model Response Settings Description": "AI ආදර්ශ පිළිතුරු සඳහා පෙරනිමි පරාමිතීන් සකසන්න. විවිධ ආදර්ශ භාවිතා වන සැකසීම් වෙනස් වේ.",
+    "Default Reasoning Effort": "පෙරනිමි ඉලක්කිත තර්කනය",
+    "reasoningEffortDescription": "තර්ක ආදර්ශ සඳහා සිතීමේ ගැඹුර පාලනය කරයි. වැඩි උත්සාහයක් විශේෂිත විශ්ලේෂණයක් ලබා දෙයි.",
+    "Default Verbosity": "පෙරනිමි විස්තරාත්මකතාවය",
+    "verbosityDescription": "GPT-5 ආදර්ශ සඳහා පිළිතුරු විස්තර මට්ටම පාලනය කරයි."
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"
