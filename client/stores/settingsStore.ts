@@ -11,7 +11,9 @@ import { SearchMode } from '@/types/searchMode';
 import {
   DEFAULT_STREAMING_SPEED,
   DisplayNamePreference,
+  ReasoningEffort,
   StreamingSpeedConfig,
+  Verbosity,
 } from '@/types/settings';
 import { Tone } from '@/types/tone';
 import { DEFAULT_TTS_SETTINGS, TTSSettings } from '@/types/tts';
@@ -71,6 +73,10 @@ interface SettingsStore {
   // Text-to-Speech settings
   ttsSettings: TTSSettings;
 
+  // Reasoning model settings
+  reasoningEffort: ReasoningEffort | undefined;
+  verbosity: Verbosity | undefined;
+
   // Actions
   setTemperature: (temperature: number) => void;
   setSystemPrompt: (prompt: string) => void;
@@ -117,6 +123,10 @@ interface SettingsStore {
   setLanguageVoice: (languageCode: string, voiceName: string) => void;
   clearLanguageVoice: (languageCode: string) => void;
 
+  // Reasoning Model Actions
+  setReasoningEffort: (effort: ReasoningEffort | undefined) => void;
+  setVerbosity: (verbosity: Verbosity | undefined) => void;
+
   // Reset
   resetSettings: () => void;
 }
@@ -156,6 +166,10 @@ export const useSettingsStore = create<SettingsStore>()(
 
       // TTS settings
       ttsSettings: DEFAULT_TTS_SETTINGS,
+
+      // Reasoning model settings (undefined = use model defaults)
+      reasoningEffort: undefined,
+      verbosity: undefined,
 
       // Actions
       setTemperature: (temperature) => set({ temperature }),
@@ -323,6 +337,10 @@ export const useSettingsStore = create<SettingsStore>()(
           };
         }),
 
+      // Reasoning Model Actions
+      setReasoningEffort: (effort) => set({ reasoningEffort: effort }),
+      setVerbosity: (verbosity) => set({ verbosity }),
+
       resetSettings: () =>
         set({
           temperature: DEFAULT_TEMPERATURE,
@@ -342,11 +360,13 @@ export const useSettingsStore = create<SettingsStore>()(
           modelUsageStats: {},
           organizationPreference: null,
           ttsSettings: DEFAULT_TTS_SETTINGS,
+          reasoningEffort: undefined,
+          verbosity: undefined,
         }),
     }),
     {
       name: 'settings-storage',
-      version: 11, // Increment this when schema changes to trigger migrations
+      version: 12, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -368,6 +388,8 @@ export const useSettingsStore = create<SettingsStore>()(
         modelUsageStats: state.modelUsageStats,
         organizationPreference: state.organizationPreference,
         ttsSettings: state.ttsSettings,
+        reasoningEffort: state.reasoningEffort,
+        verbosity: state.verbosity,
       }),
       migrate: (persistedState, version) => {
         const state = persistedState as Record<string, unknown>;
