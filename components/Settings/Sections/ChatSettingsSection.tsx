@@ -16,7 +16,6 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
 
 import { Settings } from '@/types/settings';
-import { TTSSettings } from '@/types/tts';
 
 import { SystemPrompt } from '../SystemPrompt';
 import { TTSSettingsPanel } from '../TTS/TTSSettingsPanel';
