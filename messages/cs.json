@@ -1616,6 +1616,8 @@
     "downloading": "Stahuje se...",
     "expired": "Tento překlad vypršel a již není k dispozici",
     "expiresSoon": "Vyprší za {days} den/dnů – stáhněte brzy",
-    "expires": "K dispozici {days} dní"
+    "expires": "K dispozici {days} dní",
+    "learnMore": "Zjistit více",
+    "advancedOptions": "Pokročilé možnosti"
   }
 }

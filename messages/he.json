@@ -1616,6 +1616,8 @@
     "downloading": "מוריד...",
     "expired": "התרגום פג תוקף ואינו זמין עוד",
     "expiresSoon": "פג בעוד {days} יום/ימים - מומלץ להוריד בהקדם",
-    "expires": "זמין למשך {days} ימים"
+    "expires": "זמין למשך {days} ימים",
+    "learnMore": "למידע נוסף",
+    "advancedOptions": "אפשרויות מתקדמות"
   }
 }

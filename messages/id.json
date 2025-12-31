@@ -1616,6 +1616,8 @@
     "downloading": "Mengunduh...",
     "expired": "Penerjemahan ini telah kedaluwarsa dan tidak lagi tersedia",
     "expiresSoon": "Akan kedaluwarsa dalam {days} hari - segera unduh",
-    "expires": "Tersedia selama {days} hari"
+    "expires": "Tersedia selama {days} hari",
+    "learnMore": "Pelajari lebih lanjut",
+    "advancedOptions": "Opsi lanjutan"
   }
 }

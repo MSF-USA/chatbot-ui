@@ -1616,6 +1616,8 @@
     "downloading": "Laddar ner...",
     "expired": "Denna översättning har gått ut och är inte längre tillgänglig",
     "expiresSoon": "Utgår om {days} dag(ar) – ladda ner snart",
-    "expires": "Tillgänglig i {days} dagar"
+    "expires": "Tillgänglig i {days} dagar",
+    "learnMore": "Läs mer",
+    "advancedOptions": "Avancerade alternativ"
   }
 }

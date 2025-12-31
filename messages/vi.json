@@ -1616,6 +1616,8 @@
     "downloading": "Đang tải xuống...",
     "expired": "Bản dịch này đã hết hạn và không còn khả dụng",
     "expiresSoon": "Sẽ hết hạn trong {days} ngày - hãy tải xuống sớm",
-    "expires": "Có thể tải trong {days} ngày"
+    "expires": "Có thể tải trong {days} ngày",
+    "learnMore": "Tìm hiểu thêm",
+    "advancedOptions": "Tùy chọn nâng cao"
   }
 }

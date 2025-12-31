@@ -1616,6 +1616,8 @@
     "downloading": "በማውረድ ላይ...",
     "expired": "ይህ ትርጉም ጊዜው አልፎበታል እና ማግኘት አይቻልም",
     "expiresSoon": "በ{days} ቀን(ች) ውስጥ ይያዛል - አሁን በፍጥነት ያውርዱ",
-    "expires": "ለ{days} ቀናት ይገኛል"
+    "expires": "ለ{days} ቀናት ይገኛል",
+    "learnMore": "ተጨማሪ ያስሱ",
+    "advancedOptions": "የቀላል አማራጮች"
   }
 }

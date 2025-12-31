@@ -1616,6 +1616,8 @@
     "downloading": "Ladataan...",
     "expired": "Tämä käännös on vanhentunut eikä ole enää saatavilla",
     "expiresSoon": "Vanhenee {days} päivän kuluttua – lataa pian",
-    "expires": "Saatavilla {days} päivän ajan"
+    "expires": "Saatavilla {days} päivän ajan",
+    "learnMore": "Lue lisää",
+    "advancedOptions": "Lisäasetukset"
   }
 }

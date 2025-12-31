@@ -1616,6 +1616,8 @@
     "downloading": "Baixando...",
     "expired": "Esta tradução expirou e não está mais disponível",
     "expiresSoon": "Expira em {days} dia(s) - baixe em breve",
-    "expires": "Disponível por {days} dias"
+    "expires": "Disponível por {days} dias",
+    "learnMore": "Saiba mais",
+    "advancedOptions": "Opções avançadas"
   }
 }

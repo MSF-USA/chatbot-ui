@@ -1616,6 +1616,8 @@
     "downloading": "İndiriliyor...",
     "expired": "Bu çevirinin süresi doldu ve artık erişilemez",
     "expiresSoon": "{days} gün içinde süresi dolacak - lütfen yakında indirin",
-    "expires": "{days} gün boyunca kullanılabilir"
+    "expires": "{days} gün boyunca kullanılabilir",
+    "learnMore": "Daha fazla bilgi edinin",
+    "advancedOptions": "Gelişmiş seçenekler"
   }
 }

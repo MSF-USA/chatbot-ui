@@ -1616,6 +1616,8 @@
     "downloading": "Se descarcă...",
     "expired": "Această traducere a expirat și nu mai este disponibilă",
     "expiresSoon": "Expiră în {days} zi(le) - descărcați cât mai curând",
-    "expires": "Disponibil pentru {days} zile"
+    "expires": "Disponibil pentru {days} zile",
+    "learnMore": "Află mai multe",
+    "advancedOptions": "Opțiuni avansate"
   }
 }

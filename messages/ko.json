@@ -1616,6 +1616,8 @@
     "downloading": "다운로드 중...",
     "expired": "이 번역은 만료되어 더 이상 이용할 수 없습니다",
     "expiresSoon": "{days}일 후 만료 예정 - 빠른 다운로드 권장",
-    "expires": "{days}일간 이용 가능"
+    "expires": "{days}일간 이용 가능",
+    "learnMore": "자세히 알아보기",
+    "advancedOptions": "고급 옵션"
   }
 }

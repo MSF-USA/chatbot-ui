@@ -1616,6 +1616,8 @@
     "downloading": "S'està descarregant...",
     "expired": "Aquesta traducció ha caducat i ja no està disponible",
     "expiresSoon": "Caduca en {days} dia(es) - descarregueu aviat",
-    "expires": "Disponible durant {days} dies"
+    "expires": "Disponible durant {days} dies",
+    "learnMore": "Més informació",
+    "advancedOptions": "Opcions avançades"
   }
 }

@@ -1616,6 +1616,8 @@
     "downloading": "正在下载…",
     "expired": "此翻译已过期，无法访问",
     "expiresSoon": "将在{days}天后过期，请尽快下载",
-    "expires": "可用{days}天"
+    "expires": "可用{days}天",
+    "learnMore": "了解更多",
+    "advancedOptions": "高级选项"
   }
 }

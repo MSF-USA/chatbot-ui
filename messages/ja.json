@@ -1616,6 +1616,8 @@
     "downloading": "ダウンロード中...",
     "expired": "この翻訳の有効期限が切れており、利用できません",
     "expiresSoon": "残り{days}日で失効します。お早めにダウンロードしてください",
-    "expires": "{days}日間利用可能"
+    "expires": "{days}日間利用可能",
+    "learnMore": "詳細はこちら",
+    "advancedOptions": "詳細オプション"
   }
 }

@@ -1616,6 +1616,8 @@
     "downloading": "Bezig met downloaden...",
     "expired": "Deze vertaling is verlopen en niet langer beschikbaar",
     "expiresSoon": "Verloopt over {days} dag(en) - download snel",
-    "expires": "Beschikbaar gedurende {days} dagen"
+    "expires": "Beschikbaar gedurende {days} dagen",
+    "learnMore": "Meer informatie",
+    "advancedOptions": "Geavanceerde opties"
   }
 }

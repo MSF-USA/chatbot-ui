@@ -1616,6 +1616,8 @@
     "downloading": "Inapakua...",
     "expired": "Tafsiri hii imeisha muda na haipatikani tena",
     "expiresSoon": "Inaisha baada ya siku {days} - pakua mapema",
-    "expires": "Inapatikana kwa siku {days}"
+    "expires": "Inapatikana kwa siku {days}",
+    "learnMore": "Jifunze zaidi",
+    "advancedOptions": "Chaguo za juu"
   }
 }
