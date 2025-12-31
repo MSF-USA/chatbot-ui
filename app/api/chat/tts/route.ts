@@ -34,25 +34,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Azure Speech Services configuration - using managed identity (Entra ID)
-    const region = 'eastus2';
+    // Azure Speech Services configuration
+    const region = process.env.AZURE_SPEECH_REGION || 'eastus';
+    const subscriptionKey = process.env.AZURE_SPEECH_KEY;
 
-    // Get token from DefaultAzureCredential for Cognitive Services
-    const { DefaultAzureCredential } = await import('@azure/identity');
-    const credential = new DefaultAzureCredential();
-    const tokenResponse = await credential.getToken(
-      'https://cognitiveservices.azure.com/.default',
-    );
+    let speechConfig: sdk.SpeechConfig;
 
-    if (!tokenResponse || !tokenResponse.token) {
-      throw new Error('Failed to get authentication token for Speech Services');
+    if (subscriptionKey) {
+      // Use subscription key authentication
+      speechConfig = sdk.SpeechConfig.fromSubscription(subscriptionKey, region);
+    } else {
+      // Fall back to managed identity (Entra ID) token
+      const { DefaultAzureCredential } = await import('@azure/identity');
+      const credential = new DefaultAzureCredential();
+      const tokenResponse = await credential.getToken(
+        'https://cognitiveservices.azure.com/.default',
+      );
+
+      if (!tokenResponse || !tokenResponse.token) {
+        throw new Error(
+          'Failed to get authentication token for Speech Services',
+        );
+      }
+
+      speechConfig = sdk.SpeechConfig.fromAuthorizationToken(
+        tokenResponse.token,
+        region,
+      );
     }
 
-    // Create speech config with authorization token (managed identity)
-    const speechConfig = sdk.SpeechConfig.fromAuthorizationToken(
-      tokenResponse.token,
-      region,
-    );
     speechConfig.speechSynthesisOutputFormat =
       sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 
