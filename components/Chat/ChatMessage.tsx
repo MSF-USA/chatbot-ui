@@ -208,7 +208,7 @@ export const ChatMessage: FC<Props> = ({
         >
           <FileContent files={files} images={images} />
           {text && (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+            <div className="prose dark:prose-invert prose-p:my-2 text-gray-800 dark:text-white max-w-none mt-2">
               {text.text}
             </div>
           )}
@@ -264,7 +264,7 @@ export const ChatMessage: FC<Props> = ({
         >
           <ImageContent images={images} />
           {text && (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+            <div className="prose dark:prose-invert prose-p:my-2 text-gray-800 dark:text-white max-w-none mt-2">
               {text.text}
             </div>
           )}
