@@ -49,11 +49,26 @@ export const OUTPUT_FORMAT_LABELS: Record<TTSOutputFormat, string> = {
 };
 
 /**
+ * Per-language voice defaults mapped by base language code.
+ * Example: { "en": "en-US-AriaNeural", "fr": "fr-FR-DeniseNeural" }
+ */
+export type LanguageVoiceDefaults = Record<string, string>;
+
+/**
  * User-configurable TTS settings.
  */
 export interface TTSSettings {
-  /** Voice name for synthesis (e.g., "en-US-AriaNeural") */
-  voiceName: string;
+  /**
+   * Global fallback voice (should be a multilingual voice).
+   * Used when no language-specific default is set.
+   */
+  globalVoice: string;
+  /**
+   * Per-language voice defaults.
+   * Keys are base language codes (e.g., "en", "fr").
+   * Values are full voice names (e.g., "en-US-AriaNeural").
+   */
+  languageVoices: LanguageVoiceDefaults;
   /** Speech rate multiplier (0.5 to 2.0, default 1.0) */
   rate: number;
   /** Pitch adjustment in percentage (-50 to +50, default 0) */
@@ -66,7 +81,8 @@ export interface TTSSettings {
  * Default TTS settings.
  */
 export const DEFAULT_TTS_SETTINGS: TTSSettings = {
-  voiceName: '', // Empty means auto-detect from locale
+  globalVoice: 'en-US-AvaMultilingualNeural',
+  languageVoices: {},
   rate: 1.0,
   pitch: 0,
   outputFormat: 'Audio24Khz48KBitRateMonoMp3',
@@ -86,12 +102,38 @@ export const TTS_CONSTRAINTS = {
 export interface TTSRequest {
   /** Text to convert to speech */
   text: string;
-  /** Override voice name */
+  /** Override voice name (if provided, skips language detection) */
   voiceName?: string;
+  /** Pre-detected language hint (avoids server-side detection) */
+  detectedLanguage?: string;
   /** Override speech rate */
   rate?: number;
   /** Override pitch adjustment */
   pitch?: number;
   /** Override output format */
   outputFormat?: TTSOutputFormat;
+}
+
+/**
+ * Result from language detection service.
+ */
+export interface LanguageDetectionResult {
+  /** ISO 639-1 language code (e.g., "en", "fr") */
+  language: string;
+  /** Confidence score (0-1) */
+  confidence: number;
+  /** Optional region hint (e.g., "US", "FR") */
+  region?: string;
+}
+
+/**
+ * Base language information for UI display.
+ */
+export interface BaseLanguageInfo {
+  /** ISO 639-1 language code (e.g., "en", "fr") */
+  code: string;
+  /** English display name (e.g., "English", "French") */
+  displayName: string;
+  /** Native language name (e.g., "English", "Français") */
+  nativeName: string;
 }
