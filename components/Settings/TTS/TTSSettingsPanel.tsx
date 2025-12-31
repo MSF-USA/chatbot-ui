@@ -1,11 +1,9 @@
 'use client';
 
-import { IconPlayerPlay, IconRefresh } from '@tabler/icons-react';
+import { IconRefresh } from '@tabler/icons-react';
 import { FC, useCallback, useState } from 'react';
 
 import { useLocale, useTranslations } from 'next-intl';
-
-import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import {
   DEFAULT_TTS_SETTINGS,
@@ -19,7 +17,6 @@ import { VoiceBrowser } from './VoiceBrowser';
 
 import {
   getBaseLanguageCode,
-  getDefaultVoiceForLocale,
   getTTSLocaleForAppLocale,
   resolveVoiceForLanguage,
 } from '@/lib/data/ttsVoices';
@@ -34,6 +31,7 @@ interface TTSSettingsPanelProps {
 /**
  * TTS Settings Panel component.
  * Provides controls for voice selection, rate, pitch, and audio quality.
+ * Supports per-language voice defaults with per-voice preview.
  */
 export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
   settings,
@@ -41,7 +39,7 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
 }) => {
   const t = useTranslations();
   const locale = useLocale();
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
   // Get effective voice name using resolve logic
@@ -49,8 +47,7 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
   const baseLanguage = getBaseLanguageCode(ttsLocale);
   const effectiveVoiceName = resolveVoiceForLanguage(baseLanguage, settings);
 
-  // Handle voice selection - for now, update globalVoice
-  // The full per-language UI will be implemented in the VoiceBrowser redesign
+  // Handle voice selection - sets as language default or global
   const handleVoiceChange = useCallback(
     (voiceName: string) => {
       // Extract base language from the voice locale and set as language default
@@ -63,11 +60,63 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
           },
         });
       } else {
-        // For multilingual voices, set as global
+        // For voices without standard locale pattern, set as global
         onChange({ globalVoice: voiceName });
       }
     },
     [onChange, settings.languageVoices],
+  );
+
+  // Handle per-voice preview
+  const handlePreviewVoice = useCallback(
+    async (voiceName: string, sampleText: string) => {
+      setPreviewingVoice(voiceName);
+      setPreviewError(null);
+
+      try {
+        const response = await fetch('/api/chat/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: sampleText,
+            voiceName: voiceName,
+            rate: settings.rate,
+            pitch: settings.pitch,
+            outputFormat: settings.outputFormat,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(t('settings.tts.previewFailed'));
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          setPreviewingVoice(null);
+        };
+
+        audio.onerror = () => {
+          URL.revokeObjectURL(url);
+          setPreviewingVoice(null);
+          setPreviewError(t('settings.tts.previewFailed'));
+        };
+
+        await audio.play();
+      } catch (error) {
+        console.error('TTS preview error:', error);
+        setPreviewingVoice(null);
+        setPreviewError(
+          error instanceof Error
+            ? error.message
+            : t('settings.tts.previewFailed'),
+        );
+      }
+    },
+    [settings, t],
   );
 
   // Handle rate change
@@ -102,51 +151,6 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
     onChange(DEFAULT_TTS_SETTINGS);
   }, [onChange]);
 
-  // Preview current settings
-  const handlePreview = useCallback(async () => {
-    setIsPreviewLoading(true);
-    setPreviewError(null);
-
-    try {
-      const previewText = t('settings.tts.previewText');
-
-      const response = await fetch('/api/chat/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: previewText,
-          voiceName: effectiveVoiceName,
-          rate: settings.rate,
-          pitch: settings.pitch,
-          outputFormat: settings.outputFormat,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(t('settings.tts.previewFailed'));
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-      };
-
-      await audio.play();
-    } catch (error) {
-      console.error('TTS preview error:', error);
-      setPreviewError(
-        error instanceof Error
-          ? error.message
-          : t('settings.tts.previewFailed'),
-      );
-    } finally {
-      setIsPreviewLoading(false);
-    }
-  }, [effectiveVoiceName, settings, t]);
-
   // Format rate for display
   const formatRate = (rate: number): string => {
     return `${rate.toFixed(1)}x`;
@@ -160,12 +164,19 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Voice Browser */}
+      {/* Voice Browser with per-voice preview */}
       <VoiceBrowser
         selectedVoice={effectiveVoiceName}
         onSelectVoice={handleVoiceChange}
         appLocale={locale}
+        onPreviewVoice={handlePreviewVoice}
+        previewingVoice={previewingVoice}
       />
+
+      {/* Preview Error */}
+      {previewError && (
+        <p className="text-sm text-red-600 dark:text-red-400">{previewError}</p>
+      )}
 
       {/* Speech Rate */}
       <div>
@@ -240,21 +251,8 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
         </p>
       </div>
 
-      {/* Action Buttons */}
+      {/* Reset Button */}
       <div className="flex items-center gap-3 pt-2">
-        {/* Preview Button */}
-        <button
-          onClick={handlePreview}
-          disabled={isPreviewLoading}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 rounded-lg hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600"
-        >
-          <IconPlayerPlay size={16} />
-          {isPreviewLoading
-            ? t('settings.tts.previewing')
-            : t('settings.tts.preview')}
-        </button>
-
-        {/* Reset Button */}
         <button
           onClick={handleReset}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none dark:text-gray-400 dark:hover:text-gray-200"
@@ -263,11 +261,6 @@ export const TTSSettingsPanel: FC<TTSSettingsPanelProps> = ({
           {t('settings.tts.reset')}
         </button>
       </div>
-
-      {/* Preview Error */}
-      {previewError && (
-        <p className="text-sm text-red-600 dark:text-red-400">{previewError}</p>
-      )}
     </div>
   );
 };
