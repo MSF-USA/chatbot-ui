@@ -1,21 +1,21 @@
 'use client';
 
-import {
-  IconGenderFemale,
-  IconGenderMale,
-  IconLanguage,
-  IconVolume,
-} from '@tabler/icons-react';
+import { IconLanguage, IconVolume } from '@tabler/icons-react';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { VoiceInfo } from '@/types/tts';
 
+import { VoiceRow } from './VoiceRow';
+
 import {
-  TTS_LANGUAGES,
-  getLanguageInfo,
-  getVoicesForLocale,
+  MULTILINGUAL_VOICES,
+  TTS_BASE_LANGUAGES,
+  getBaseLanguageCode,
+  getPreviewSampleForLanguage,
+  getRegionCode,
+  getVoicesForLanguageWithMultilingual,
 } from '@/lib/data/ttsVoices';
 
 interface VoiceBrowserProps {
@@ -23,109 +23,105 @@ interface VoiceBrowserProps {
   selectedVoice: string;
   /** Callback when a voice is selected */
   onSelectVoice: (voiceName: string) => void;
-  /** Current app locale for default selection */
+  /** Current app locale for default language selection */
   appLocale?: string;
+  /** Callback for voice preview (optional - if not provided, preview buttons hidden) */
+  onPreviewVoice?: (voiceName: string, sampleText: string) => void;
+  /** Voice currently being previewed (for loading state) */
+  previewingVoice?: string | null;
 }
 
 /**
  * Voice browser component for selecting TTS voices.
- * Provides a two-level selection: Language -> Voice.
+ * Provides a single language dropdown with all regional voice variants.
+ * Multilingual voices appear at the top of every language's voice list.
  */
 export const VoiceBrowser: FC<VoiceBrowserProps> = ({
   selectedVoice,
   onSelectVoice,
   appLocale = 'en',
+  onPreviewVoice,
+  previewingVoice = null,
 }) => {
   const t = useTranslations();
 
-  // Extract locale from selected voice (e.g., "en-US" from "en-US-AriaNeural")
-  const getLocaleFromVoice = useCallback((voiceName: string): string => {
-    const match = voiceName.match(/^([a-z]{2}-[A-Z]{2})/);
-    return match ? match[1] : 'en-US';
-  }, []);
+  // Extract base language from selected voice (e.g., "en" from "en-US-AriaNeural")
+  const getLanguageFromVoice = useCallback(
+    (voiceName: string): string => {
+      // Check if it's a multilingual voice (they all start with en-US but work for all languages)
+      const isMultilingual = MULTILINGUAL_VOICES.some(
+        (v) => v.name === voiceName,
+      );
+      if (isMultilingual) {
+        // For multilingual voices, use the app locale as the language
+        return appLocale.split('-')[0].toLowerCase();
+      }
 
-  // Determine initial locale based on selected voice or app locale
-  const initialLocale = useMemo(() => {
+      const match = voiceName.match(/^([a-z]{2})-[A-Z]{2}/);
+      return match ? match[1].toLowerCase() : 'en';
+    },
+    [appLocale],
+  );
+
+  // Determine initial language based on selected voice or app locale
+  const initialLanguage = useMemo(() => {
     if (selectedVoice) {
-      return getLocaleFromVoice(selectedVoice);
+      return getLanguageFromVoice(selectedVoice);
     }
-    // Map app locale to TTS locale
-    const localeMap: Record<string, string> = {
-      en: 'en-US',
-      es: 'es-ES',
-      fr: 'fr-FR',
-      de: 'de-DE',
-      it: 'it-IT',
-      pt: 'pt-BR',
-      zh: 'zh-CN',
-      ja: 'ja-JP',
-      ko: 'ko-KR',
-      ar: 'ar-SA',
-    };
-    return localeMap[appLocale] || 'en-US';
-  }, [selectedVoice, appLocale, getLocaleFromVoice]);
+    return appLocale.split('-')[0].toLowerCase();
+  }, [selectedVoice, appLocale, getLanguageFromVoice]);
 
-  const [selectedLocale, setSelectedLocale] = useState(initialLocale);
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage);
 
-  // Get voices for the selected locale
-  const voices = useMemo(
-    () => getVoicesForLocale(selectedLocale),
-    [selectedLocale],
+  // Get voices for the selected language (includes multilingual + language-specific)
+  const { multilingualVoices, languageVoices } = useMemo(
+    () => getVoicesForLanguageWithMultilingual(selectedLanguage),
+    [selectedLanguage],
   );
 
-  // Get language info for display
-  const languageInfo = useMemo(
-    () => getLanguageInfo(selectedLocale),
-    [selectedLocale],
-  );
+  // Get language display info
+  const selectedLanguageInfo = useMemo(() => {
+    return TTS_BASE_LANGUAGES.find(
+      (lang) => lang.code.toLowerCase() === selectedLanguage.toLowerCase(),
+    );
+  }, [selectedLanguage]);
 
-  // Handle locale change
-  const handleLocaleChange = useCallback(
+  // Handle language change
+  const handleLanguageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const newLocale = e.target.value;
-      setSelectedLocale(newLocale);
+      const newLanguage = e.target.value;
+      setSelectedLanguage(newLanguage);
 
-      // Auto-select first voice of new locale if current voice is from different locale
-      const newVoices = getVoicesForLocale(newLocale);
-      if (newVoices.length > 0) {
-        const currentLocale = getLocaleFromVoice(selectedVoice);
-        if (currentLocale !== newLocale) {
+      // Auto-select first voice of new language if current voice is from different language
+      const currentVoiceLang = getLanguageFromVoice(selectedVoice);
+      if (currentVoiceLang !== newLanguage) {
+        // Get voices for new language
+        const { languageVoices: newVoices } =
+          getVoicesForLanguageWithMultilingual(newLanguage);
+        if (newVoices.length > 0) {
           onSelectVoice(newVoices[0].name);
+        } else if (MULTILINGUAL_VOICES.length > 0) {
+          onSelectVoice(MULTILINGUAL_VOICES[0].name);
         }
       }
     },
-    [selectedVoice, onSelectVoice, getLocaleFromVoice],
+    [selectedVoice, onSelectVoice, getLanguageFromVoice],
   );
 
-  // Get gender icon
-  const getGenderIcon = (gender: VoiceInfo['gender']) => {
-    switch (gender) {
-      case 'Female':
-        return (
-          <IconGenderFemale size={14} className="text-pink-500 flex-shrink-0" />
+  // Handle voice preview
+  const handlePreviewVoice = useCallback(
+    (voice: VoiceInfo) => {
+      if (onPreviewVoice) {
+        // Get appropriate sample text for the voice's language
+        const voiceLang = getBaseLanguageCode(voice.locale);
+        const sampleText = getPreviewSampleForLanguage(
+          voice.type === 'Multilingual' ? selectedLanguage : voiceLang,
         );
-      case 'Male':
-        return (
-          <IconGenderMale size={14} className="text-blue-500 flex-shrink-0" />
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Get voice type badge color
-  const getTypeBadgeClass = (type: VoiceInfo['type']) => {
-    switch (type) {
-      case 'Multilingual':
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300';
-      case 'DragonHD':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
-      case 'Turbo':
-        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
-      default:
-        return 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
-    }
-  };
+        onPreviewVoice(voice.name, sampleText);
+      }
+    },
+    [onPreviewVoice, selectedLanguage],
+  );
 
   return (
     <div className="space-y-4">
@@ -136,12 +132,12 @@ export const VoiceBrowser: FC<VoiceBrowserProps> = ({
           {t('settings.tts.language')}
         </label>
         <select
-          value={selectedLocale}
-          onChange={handleLocaleChange}
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
           className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
         >
-          {TTS_LANGUAGES.map((lang) => (
-            <option key={lang.locale} value={lang.locale}>
+          {TTS_BASE_LANGUAGES.map((lang) => (
+            <option key={lang.code} value={lang.code}>
               {lang.displayName} ({lang.nativeName})
             </option>
           ))}
@@ -156,52 +152,62 @@ export const VoiceBrowser: FC<VoiceBrowserProps> = ({
         </label>
 
         {/* Voice List */}
-        <div className="max-h-48 overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-600">
-          {voices.length === 0 ? (
+        <div className="max-h-64 overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-600">
+          {/* Multilingual Voices Section */}
+          {multilingualVoices.length > 0 && (
+            <>
+              <div className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 text-xs font-medium text-purple-700 dark:text-purple-300 sticky top-0">
+                {t('settings.tts.multilingualVoices')}
+              </div>
+              <div className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                {multilingualVoices.map((voice) => (
+                  <VoiceRow
+                    key={voice.name}
+                    voice={voice}
+                    isSelected={selectedVoice === voice.name}
+                    isPreviewing={previewingVoice === voice.name}
+                    regionCode=""
+                    onSelect={() => onSelectVoice(voice.name)}
+                    onPreview={() => handlePreviewVoice(voice)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Language-Specific Voices Section */}
+          {languageVoices.length > 0 && (
+            <>
+              <div className="px-3 py-1.5 bg-neutral-50 dark:bg-neutral-800 text-xs font-medium text-neutral-600 dark:text-neutral-400 sticky top-0 border-t border-neutral-200 dark:border-neutral-700">
+                {selectedLanguageInfo?.displayName || selectedLanguage}{' '}
+                {t('settings.tts.voices')}
+              </div>
+              <div className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                {languageVoices.map((voice) => (
+                  <VoiceRow
+                    key={voice.name}
+                    voice={voice}
+                    isSelected={selectedVoice === voice.name}
+                    isPreviewing={previewingVoice === voice.name}
+                    regionCode={getRegionCode(voice.locale)}
+                    onSelect={() => onSelectVoice(voice.name)}
+                    onPreview={() => handlePreviewVoice(voice)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Empty State */}
+          {multilingualVoices.length === 0 && languageVoices.length === 0 && (
             <div className="p-3 text-sm text-gray-500 dark:text-gray-400 text-center">
               {t('settings.tts.noVoicesAvailable')}
-            </div>
-          ) : (
-            <div className="divide-y divide-neutral-100 dark:divide-neutral-700">
-              {voices.map((voice) => (
-                <button
-                  key={voice.name}
-                  onClick={() => onSelectVoice(voice.name)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${
-                    selectedVoice === voice.name
-                      ? 'bg-neutral-100 dark:bg-neutral-700'
-                      : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
-                  }`}
-                >
-                  {/* Gender Icon */}
-                  {getGenderIcon(voice.gender)}
-
-                  {/* Voice Name */}
-                  <span className="flex-1 text-sm text-neutral-900 dark:text-neutral-100">
-                    {voice.displayName}
-                  </span>
-
-                  {/* Type Badge */}
-                  {voice.type !== 'Neural' && (
-                    <span
-                      className={`text-xs px-1.5 py-0.5 rounded ${getTypeBadgeClass(voice.type)}`}
-                    >
-                      {voice.type}
-                    </span>
-                  )}
-
-                  {/* Selected Indicator */}
-                  {selectedVoice === voice.name && (
-                    <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-                  )}
-                </button>
-              ))}
             </div>
           )}
         </div>
 
         {/* Selected Voice Info */}
-        {selectedVoice && languageInfo && (
+        {selectedVoice && (
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             {t('settings.tts.selectedVoice')}: {selectedVoice}
           </p>
