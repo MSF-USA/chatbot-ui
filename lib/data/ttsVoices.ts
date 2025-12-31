@@ -4,7 +4,13 @@
  * Organized by locale with helper functions for voice selection.
  * Voice data sourced from: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts
  */
-import { VoiceGender, VoiceInfo, VoiceType } from '@/types/tts';
+import {
+  BaseLanguageInfo,
+  TTSSettings,
+  VoiceGender,
+  VoiceInfo,
+  VoiceType,
+} from '@/types/tts';
 
 /**
  * Language metadata for UI display.
@@ -811,4 +817,252 @@ export function getTTSLocaleForAppLocale(appLocale: string): string {
   );
 
   return matchingLocale ?? 'en-US';
+}
+
+/**
+ * Base languages available for TTS (without country variants).
+ * Used for the language dropdown in the UI.
+ */
+export const TTS_BASE_LANGUAGES: BaseLanguageInfo[] = [
+  { code: 'ar', displayName: 'Arabic', nativeName: 'العربية' },
+  { code: 'bn', displayName: 'Bengali', nativeName: 'বাংলা' },
+  { code: 'cs', displayName: 'Czech', nativeName: 'Čeština' },
+  { code: 'da', displayName: 'Danish', nativeName: 'Dansk' },
+  { code: 'de', displayName: 'German', nativeName: 'Deutsch' },
+  { code: 'el', displayName: 'Greek', nativeName: 'Ελληνικά' },
+  { code: 'en', displayName: 'English', nativeName: 'English' },
+  { code: 'es', displayName: 'Spanish', nativeName: 'Español' },
+  { code: 'fi', displayName: 'Finnish', nativeName: 'Suomi' },
+  { code: 'fr', displayName: 'French', nativeName: 'Français' },
+  { code: 'he', displayName: 'Hebrew', nativeName: 'עברית' },
+  { code: 'hi', displayName: 'Hindi', nativeName: 'हिन्दी' },
+  { code: 'hu', displayName: 'Hungarian', nativeName: 'Magyar' },
+  { code: 'id', displayName: 'Indonesian', nativeName: 'Bahasa Indonesia' },
+  { code: 'it', displayName: 'Italian', nativeName: 'Italiano' },
+  { code: 'ja', displayName: 'Japanese', nativeName: '日本語' },
+  { code: 'ko', displayName: 'Korean', nativeName: '한국어' },
+  { code: 'ms', displayName: 'Malay', nativeName: 'Bahasa Melayu' },
+  { code: 'nb', displayName: 'Norwegian', nativeName: 'Norsk' },
+  { code: 'nl', displayName: 'Dutch', nativeName: 'Nederlands' },
+  { code: 'pl', displayName: 'Polish', nativeName: 'Polski' },
+  { code: 'pt', displayName: 'Portuguese', nativeName: 'Português' },
+  { code: 'ro', displayName: 'Romanian', nativeName: 'Română' },
+  { code: 'ru', displayName: 'Russian', nativeName: 'Русский' },
+  { code: 'sk', displayName: 'Slovak', nativeName: 'Slovenčina' },
+  { code: 'sv', displayName: 'Swedish', nativeName: 'Svenska' },
+  { code: 'ta', displayName: 'Tamil', nativeName: 'தமிழ்' },
+  { code: 'te', displayName: 'Telugu', nativeName: 'తెలుగు' },
+  { code: 'th', displayName: 'Thai', nativeName: 'ไทย' },
+  { code: 'tr', displayName: 'Turkish', nativeName: 'Türkçe' },
+  { code: 'uk', displayName: 'Ukrainian', nativeName: 'Українська' },
+  { code: 'vi', displayName: 'Vietnamese', nativeName: 'Tiếng Việt' },
+  { code: 'zh', displayName: 'Chinese', nativeName: '中文' },
+];
+
+/**
+ * Region display names for voice list UI.
+ */
+export const REGION_DISPLAY_NAMES: Record<string, string> = {
+  US: 'US',
+  GB: 'UK',
+  AU: 'AU',
+  CA: 'CA',
+  IN: 'IN',
+  IE: 'IE',
+  SA: 'SA',
+  EG: 'EG',
+  CN: 'CN',
+  TW: 'TW',
+  HK: 'HK',
+  CZ: 'CZ',
+  DK: 'DK',
+  NL: 'NL',
+  FI: 'FI',
+  FR: 'FR',
+  AT: 'AT',
+  DE: 'DE',
+  CH: 'CH',
+  GR: 'GR',
+  IL: 'IL',
+  HU: 'HU',
+  ID: 'ID',
+  IT: 'IT',
+  JP: 'JP',
+  KR: 'KR',
+  MY: 'MY',
+  NO: 'NO',
+  PL: 'PL',
+  BR: 'BR',
+  PT: 'PT',
+  RO: 'RO',
+  RU: 'RU',
+  SK: 'SK',
+  AR: 'AR',
+  MX: 'MX',
+  ES: 'ES',
+  SE: 'SE',
+  TH: 'TH',
+  TR: 'TR',
+  UA: 'UA',
+  VN: 'VN',
+};
+
+/**
+ * All multilingual voices extracted from the catalog.
+ * These voices can speak multiple languages and should appear in every language dropdown.
+ */
+export const MULTILINGUAL_VOICES: VoiceInfo[] = Object.values(TTS_VOICES)
+  .flat()
+  .filter((v) => v.type === 'Multilingual');
+
+/**
+ * Sample preview text for each language.
+ * Used for TTS voice preview in settings.
+ */
+export const TTS_PREVIEW_SAMPLES: Record<string, string> = {
+  ar: 'مرحباً! هذه معاينة لإعدادات الصوت.',
+  bn: 'হ্যালো! এটি ভয়েস সেটিংসের একটি পূর্বরূপ।',
+  cs: 'Ahoj! Toto je náhled nastavení hlasu.',
+  da: 'Hej! Dette er en forhåndsvisning af stemmeindstillingerne.',
+  de: 'Hallo! Dies ist eine Vorschau der Spracheinstellungen.',
+  el: 'Γεια! Αυτή είναι μια προεπισκόπηση των ρυθμίσεων φωνής.',
+  en: 'Hello! This is a preview of the voice settings.',
+  es: '¡Hola! Esta es una vista previa de la configuración de voz.',
+  fi: 'Hei! Tämä on esikatselu ääniasetuksista.',
+  fr: 'Bonjour ! Ceci est un aperçu des paramètres de voix.',
+  he: 'שלום! זוהי תצוגה מקדימה של הגדרות הקול.',
+  hi: 'नमस्ते! यह आवाज सेटिंग्स का पूर्वावलोकन है।',
+  hu: 'Helló! Ez a hangbeállítások előnézete.',
+  id: 'Halo! Ini adalah pratinjau pengaturan suara.',
+  it: "Ciao! Questa è un'anteprima delle impostazioni vocali.",
+  ja: 'こんにちは！これは音声設定のプレビューです。',
+  ko: '안녕하세요! 음성 설정 미리보기입니다.',
+  ms: 'Hai! Ini adalah pratonton tetapan suara.',
+  nb: 'Hei! Dette er en forhåndsvisning av stemmeinnstillingene.',
+  nl: 'Hallo! Dit is een voorbeeld van de steminstellingen.',
+  pl: 'Cześć! To jest podgląd ustawień głosu.',
+  pt: 'Olá! Esta é uma prévia das configurações de voz.',
+  ro: 'Bună! Aceasta este o previzualizare a setărilor vocale.',
+  ru: 'Привет! Это предварительный просмотр настроек голоса.',
+  sk: 'Ahoj! Toto je náhľad nastavení hlasu.',
+  sv: 'Hej! Detta är en förhandsgranskning av röstinställningarna.',
+  ta: 'வணக்கம்! இது குரல் அமைப்புகளின் முன்னோட்டம்.',
+  te: 'హలో! ఇది వాయిస్ సెట్టింగ్‌ల ప్రివ్యూ.',
+  th: 'สวัสดี! นี่คือตัวอย่างการตั้งค่าเสียง',
+  tr: 'Merhaba! Bu, ses ayarlarının bir önizlemesidir.',
+  uk: 'Привіт! Це попередній перегляд налаштувань голосу.',
+  vi: 'Xin chào! Đây là bản xem trước cài đặt giọng nói.',
+  zh: '你好！这是语音设置的预览。',
+};
+
+/**
+ * Extract base language code from a locale.
+ *
+ * @param locale - The locale code (e.g., "en-US")
+ * @returns The base language code (e.g., "en")
+ */
+export function getBaseLanguageCode(locale: string): string {
+  return locale.split('-')[0].toLowerCase();
+}
+
+/**
+ * Extract region code from a locale.
+ *
+ * @param locale - The locale code (e.g., "en-US")
+ * @returns The region code (e.g., "US"), or empty string if none
+ */
+export function getRegionCode(locale: string): string {
+  const parts = locale.split('-');
+  return parts.length > 1 ? parts[1].toUpperCase() : '';
+}
+
+/**
+ * Get all voices for a base language (aggregates all regional variants).
+ *
+ * @param languageCode - The base language code (e.g., "en")
+ * @returns Array of all VoiceInfo for that language across all regions
+ */
+export function getVoicesForLanguage(languageCode: string): VoiceInfo[] {
+  const lowerCode = languageCode.toLowerCase();
+  const voices: VoiceInfo[] = [];
+
+  for (const [locale, localeVoices] of Object.entries(TTS_VOICES)) {
+    if (getBaseLanguageCode(locale) === lowerCode) {
+      // Only include non-multilingual voices (multilingual are handled separately)
+      voices.push(...localeVoices.filter((v) => v.type !== 'Multilingual'));
+    }
+  }
+
+  return voices;
+}
+
+/**
+ * Get voices for a language, separated into multilingual and language-specific.
+ *
+ * @param languageCode - The base language code (e.g., "en")
+ * @returns Object with multilingualVoices and languageVoices arrays
+ */
+export function getVoicesForLanguageWithMultilingual(languageCode: string): {
+  multilingualVoices: VoiceInfo[];
+  languageVoices: VoiceInfo[];
+} {
+  return {
+    multilingualVoices: MULTILINGUAL_VOICES,
+    languageVoices: getVoicesForLanguage(languageCode),
+  };
+}
+
+/**
+ * Resolve the best voice for a detected language using the settings hierarchy.
+ * Priority: 1) Language-specific default, 2) Global voice, 3) System default
+ *
+ * @param detectedLanguage - The detected language code (e.g., "en", "fr")
+ * @param settings - The user's TTS settings
+ * @returns The voice name to use
+ */
+export function resolveVoiceForLanguage(
+  detectedLanguage: string,
+  settings: TTSSettings,
+): string {
+  const langCode = detectedLanguage.toLowerCase();
+
+  // 1. Check for language-specific default
+  if (settings.languageVoices[langCode]) {
+    return settings.languageVoices[langCode];
+  }
+
+  // 2. Use global voice (should be multilingual for best results)
+  if (settings.globalVoice) {
+    return settings.globalVoice;
+  }
+
+  // 3. Fall back to system default for the language
+  const ttsLocale = getTTSLocaleForAppLocale(langCode);
+  const defaultVoice = getDefaultVoiceForLocale(ttsLocale);
+  return defaultVoice?.name ?? 'en-US-AvaMultilingualNeural';
+}
+
+/**
+ * Get preview sample text for a language.
+ *
+ * @param languageCode - The base language code (e.g., "en", "fr")
+ * @returns The preview sample text for that language
+ */
+export function getPreviewSampleForLanguage(languageCode: string): string {
+  const lowerCode = languageCode.toLowerCase();
+  return TTS_PREVIEW_SAMPLES[lowerCode] ?? TTS_PREVIEW_SAMPLES['en'];
+}
+
+/**
+ * Get base language info by code.
+ *
+ * @param code - The base language code (e.g., "en")
+ * @returns BaseLanguageInfo or undefined if not found
+ */
+export function getBaseLanguageInfo(
+  code: string,
+): BaseLanguageInfo | undefined {
+  return TTS_BASE_LANGUAGES.find(
+    (lang) => lang.code.toLowerCase() === code.toLowerCase(),
+  );
 }
