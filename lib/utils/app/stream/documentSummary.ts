@@ -75,7 +75,7 @@ export async function parseAndQueryFileOpenAI({
   file,
   prompt,
   modelId,
-  maxLength = 6000,
+  maxLength = 16000,
   user,
   botId,
   stream = true,
