@@ -659,6 +659,7 @@
     "collapseThinking": "Collapse thinking",
     "expandThinking": "Expand thinking",
     "actionsDisabledForEmbed": "Use the controls in the embedded content above",
+    "ttsRightClickHint": "Right-click for voice options",
     "loadingMessages": {
       "transcribingAndProcessing": "Transcribing and processing...",
       "transcribingAudio": "Transcribing audio...",
@@ -1016,6 +1017,30 @@
       "additionalContext": "Additional Context",
       "additionalContextPlaceholder": "E.g., I work in field operations, prefer concise responses, often ask about medical protocols...",
       "additionalContextDescription": "Any other information you'd like the AI to know about you"
+    },
+    "tts": {
+      "title": "Text-to-Speech",
+      "language": "Language",
+      "voice": "Voice",
+      "rate": "Speed",
+      "pitch": "Pitch",
+      "quality": "Audio Quality",
+      "qualityDescription": "Higher quality produces better audio but uses more bandwidth",
+      "preview": "Preview",
+      "previewing": "Playing...",
+      "previewFailed": "Failed to generate preview audio",
+      "previewText": "This is a preview of the selected voice settings.",
+      "reset": "Reset",
+      "default": "Default",
+      "slower": "Slower",
+      "faster": "Faster",
+      "lower": "Lower",
+      "higher": "Higher",
+      "selectedVoice": "Selected",
+      "noVoicesAvailable": "No voices available for this language",
+      "quickSettings": "Voice Settings",
+      "overrideForThisMessage": "Adjust settings for this message",
+      "speakWithSettings": "Speak"
     }
   },
   "emptyState": {
