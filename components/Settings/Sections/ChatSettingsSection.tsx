@@ -1,4 +1,9 @@
-import { IconChevronDown, IconMessage, IconUser } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconMessage,
+  IconUser,
+  IconVolume,
+} from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
 import { Session } from 'next-auth';
@@ -9,8 +14,10 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
 
 import { Settings } from '@/types/settings';
+import { TTSSettings } from '@/types/tts';
 
 import { SystemPrompt } from '../SystemPrompt';
+import { TTSSettingsPanel } from '../TTS/TTSSettingsPanel';
 import { TemperatureSlider } from '../Temperature';
 
 interface ChatSettingsSectionProps {
@@ -36,7 +43,13 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   const t = useTranslations();
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
   const [isAboutYouExpanded, setIsAboutYouExpanded] = useState(false);
-  const { displayNamePreference, customDisplayName } = useSettings();
+  const [isTTSExpanded, setIsTTSExpanded] = useState(false);
+  const {
+    displayNamePreference,
+    customDisplayName,
+    ttsSettings,
+    setTTSSettings,
+  } = useSettings();
 
   // Compute derived name from General Settings for placeholder
   const derivedDisplayName = getUserDisplayName(
