@@ -456,6 +456,13 @@ export const useSettingsStore = create<SettingsStore>()(
           }
         }
 
+        // Version 11 → 12: Add reasoning model settings (reasoningEffort, verbosity)
+        if (version < 12) {
+          if (state.reasoningEffort === undefined)
+            state.reasoningEffort = undefined;
+          if (state.verbosity === undefined) state.verbosity = undefined;
+        }
+
         return state;
       },
     },
