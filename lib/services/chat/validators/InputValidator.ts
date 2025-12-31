@@ -23,6 +23,8 @@ const urlOrDataUrl = (errorMessage: string) =>
     (val) => {
       // Accept data: URLs (base64 encoded images/files)
       if (val.startsWith('data:')) return true;
+      // Accept relative API URLs (internal file references like /api/file/*)
+      if (val.startsWith('/api/')) return true;
       // Otherwise, validate as standard URL
       try {
         new URL(val);
