@@ -113,6 +113,9 @@ interface SettingsStore {
 
   // TTS Actions
   setTTSSettings: (settings: Partial<TTSSettings>) => void;
+  setGlobalVoice: (voiceName: string) => void;
+  setLanguageVoice: (languageCode: string, voiceName: string) => void;
+  clearLanguageVoice: (languageCode: string) => void;
 
   // Reset
   resetSettings: () => void;
@@ -292,6 +295,34 @@ export const useSettingsStore = create<SettingsStore>()(
           ttsSettings: { ...state.ttsSettings, ...settings },
         })),
 
+      setGlobalVoice: (voiceName) =>
+        set((state) => ({
+          ttsSettings: { ...state.ttsSettings, globalVoice: voiceName },
+        })),
+
+      setLanguageVoice: (languageCode, voiceName) =>
+        set((state) => ({
+          ttsSettings: {
+            ...state.ttsSettings,
+            languageVoices: {
+              ...state.ttsSettings.languageVoices,
+              [languageCode.toLowerCase()]: voiceName,
+            },
+          },
+        })),
+
+      clearLanguageVoice: (languageCode) =>
+        set((state) => {
+          const newLanguageVoices = { ...state.ttsSettings.languageVoices };
+          delete newLanguageVoices[languageCode.toLowerCase()];
+          return {
+            ttsSettings: {
+              ...state.ttsSettings,
+              languageVoices: newLanguageVoices,
+            },
+          };
+        }),
+
       resetSettings: () =>
         set({
           temperature: DEFAULT_TEMPERATURE,
@@ -315,7 +346,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 10, // Increment this when schema changes to trigger migrations
+      version: 11, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
