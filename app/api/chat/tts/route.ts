@@ -1,11 +1,17 @@
 import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { detectLanguage } from '@/lib/services/languageDetection';
+
 import { cleanMarkdown } from '@/lib/utils/app/clean';
 
 import { DEFAULT_TTS_SETTINGS, TTSOutputFormat, TTSRequest } from '@/types/tts';
 
 import { auth } from '@/auth';
+import {
+  getDefaultVoiceForLocale,
+  getTTSLocaleForAppLocale,
+} from '@/lib/data/ttsVoices';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
 
@@ -97,7 +103,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body: TTSRequest = await request.json();
-    const { text, voiceName, rate, pitch, outputFormat } = body;
+    const { text, voiceName, detectedLanguage, rate, pitch, outputFormat } =
+      body;
 
     // Validate input before processing - check raw input, not processed output
     if (typeof text !== 'string' || text.trim().length === 0) {
@@ -114,8 +121,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Apply TTS settings with defaults
-    const effectiveVoiceName = voiceName || 'en-US-AriaNeural';
+    // Determine the voice to use
+    let effectiveVoiceName: string;
+
+    if (voiceName) {
+      // Explicit voice provided by client - use it directly
+      effectiveVoiceName = voiceName;
+    } else {
+      // No voice specified - detect language and pick appropriate voice
+      let languageCode = detectedLanguage;
+
+      if (!languageCode) {
+        // Detect language from the text
+        const detectionResult = await detectLanguage(cleanedText);
+        languageCode = detectionResult.language;
+      }
+
+      // Get best TTS locale for the detected language
+      const ttsLocale = getTTSLocaleForAppLocale(languageCode);
+
+      // Get default voice for that locale
+      const defaultVoice = getDefaultVoiceForLocale(ttsLocale);
+      effectiveVoiceName = defaultVoice?.name || 'en-US-AvaMultilingualNeural';
+    }
     const effectiveRate = rate ?? DEFAULT_TTS_SETTINGS.rate;
     const effectivePitch = pitch ?? DEFAULT_TTS_SETTINGS.pitch;
     const effectiveOutputFormat =
