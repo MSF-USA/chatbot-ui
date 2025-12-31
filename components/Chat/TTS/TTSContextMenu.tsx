@@ -14,9 +14,11 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 import { TTSSettings, TTS_CONSTRAINTS, VoiceInfo } from '@/types/tts';
 
 import {
+  getBaseLanguageCode,
   getDefaultVoiceForLocale,
   getTTSLocaleForAppLocale,
   getVoicesForLocale,
+  resolveVoiceForLanguage,
 } from '@/lib/data/ttsVoices';
 
 interface TTSContextMenuProps {
@@ -53,12 +55,13 @@ export const TTSContextMenu: FC<TTSContextMenuProps> = ({
   const ttsLocale = useMemo(() => getTTSLocaleForAppLocale(locale), [locale]);
   const voices = useMemo(() => getVoicesForLocale(ttsLocale), [ttsLocale]);
 
-  // Get effective voice name
+  // Get effective voice name using the new settings hierarchy
   const effectiveVoiceName = useMemo(() => {
     if (overrideVoice) return overrideVoice;
-    if (ttsSettings.voiceName) return ttsSettings.voiceName;
-    return getDefaultVoiceForLocale(ttsLocale)?.name || 'en-US-AriaNeural';
-  }, [overrideVoice, ttsSettings.voiceName, ttsLocale]);
+    // Use the resolve function which checks languageVoices -> globalVoice -> default
+    const baseLanguage = getBaseLanguageCode(ttsLocale);
+    return resolveVoiceForLanguage(baseLanguage, ttsSettings);
+  }, [overrideVoice, ttsSettings, ttsLocale]);
 
   // Close menu on click outside
   useEffect(() => {
@@ -116,7 +119,7 @@ export const TTSContextMenu: FC<TTSContextMenuProps> = ({
     const overrides: Partial<TTSSettings> = {};
 
     if (overrideVoice) {
-      overrides.voiceName = overrideVoice;
+      overrides.globalVoice = overrideVoice;
     }
     if (overrideRate !== ttsSettings.rate) {
       overrides.rate = overrideRate;
