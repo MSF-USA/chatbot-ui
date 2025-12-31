@@ -2,7 +2,7 @@
 
 import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
 
-import { ImageMessageContent, Message } from '@/types/chat';
+import { FileMessageContent, ImageMessageContent, Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 import { DisplayNamePreference, StreamingSpeedConfig } from '@/types/settings';
@@ -70,6 +70,57 @@ async function convertImagesToBase64(messages: Message[]): Promise<Message[]> {
       };
     }),
   );
+}
+
+/**
+ * Converts file URL references that have relative URLs (like /api/document-translation/...)
+ * into text placeholders. This prevents validation errors on the server since the
+ * InputValidator requires absolute URLs for file_url items.
+ *
+ * The original file_url remains in localStorage for UI display purposes.
+ * Only API-internal URLs (starting with /api/) are converted - external blob storage
+ * URLs pass through unchanged for server-side processing.
+ *
+ * @param messages - Array of messages potentially containing file references
+ * @returns Messages with internal file URLs converted to text placeholders
+ */
+function convertFileUrlsToPlaceholders(messages: Message[]): Message[] {
+  return messages.map((message) => {
+    // Only process array content (files are in array format)
+    if (!Array.isArray(message.content)) {
+      return message;
+    }
+
+    // Process each content block
+    const convertedContent = message.content.map((item) => {
+      // Only convert file_url items with relative URLs
+      if (item.type !== 'file_url') {
+        return item;
+      }
+
+      const fileItem = item as FileMessageContent;
+
+      // Check if this is an internal API URL (relative URL starting with /api/)
+      if (!fileItem.url.startsWith('/api/')) {
+        // External URL (blob storage, etc.) - pass through for server processing
+        return fileItem;
+      }
+
+      // Convert to text placeholder
+      const filename = fileItem.originalFilename || 'document';
+      const placeholderText = `[Document: ${filename}]`;
+
+      return {
+        type: 'text' as const,
+        text: placeholderText,
+      };
+    });
+
+    return {
+      ...message,
+      content: convertedContent,
+    };
+  });
 }
 
 /**
@@ -142,11 +193,18 @@ export class ChatService {
     // This keeps localStorage small (file refs only) while sending base64 to server
     const messagesWithBase64Images = await convertImagesToBase64(messages);
 
+    // Convert internal file URLs to text placeholders to avoid validation errors
+    // Server-side InputValidator requires absolute URLs, but document translation
+    // stores relative URLs like /api/document-translation/content/{jobId}
+    const messagesWithPlaceholders = convertFileUrlsToPlaceholders(
+      messagesWithBase64Images,
+    );
+
     return apiClient.postStream(
       '/api/chat',
       {
         model,
-        messages: messagesWithBase64Images,
+        messages: messagesWithPlaceholders,
         prompt: options?.prompt,
         temperature: options?.temperature,
         stream: options?.stream ?? true,
@@ -202,9 +260,14 @@ export class ChatService {
     // Convert image file references to base64 at API call time
     const messagesWithBase64Images = await convertImagesToBase64(messages);
 
+    // Convert internal file URLs to text placeholders to avoid validation errors
+    const messagesWithPlaceholders = convertFileUrlsToPlaceholders(
+      messagesWithBase64Images,
+    );
+
     return apiClient.post('/api/chat', {
       model,
-      messages: messagesWithBase64Images,
+      messages: messagesWithPlaceholders,
       prompt: options?.prompt,
       temperature: options?.temperature,
       stream: false,
