@@ -73,18 +73,21 @@ async function convertImagesToBase64(messages: Message[]): Promise<Message[]> {
 }
 
 /**
- * Converts file URL references that have relative URLs (like /api/document-translation/...)
- * into text placeholders. This prevents validation errors on the server since the
- * InputValidator requires absolute URLs for file_url items.
+ * Converts document translation file URL references into text placeholders.
+ * Document translation URLs are historical references that don't need server-side
+ * processing - the translation has already been completed.
+ *
+ * Regular file URLs (/api/file/*) are preserved for server-side processing by
+ * FileProcessor, which extracts text, transcribes audio, etc.
  *
  * The original file_url remains in localStorage for UI display purposes.
- * Only API-internal URLs (starting with /api/) are converted - external blob storage
- * URLs pass through unchanged for server-side processing.
  *
  * @param messages - Array of messages potentially containing file references
- * @returns Messages with internal file URLs converted to text placeholders
+ * @returns Messages with document translation URLs converted to text placeholders
  */
-function convertFileUrlsToPlaceholders(messages: Message[]): Message[] {
+function convertDocumentTranslationUrlsToPlaceholders(
+  messages: Message[],
+): Message[] {
   return messages.map((message) => {
     // Only process array content (files are in array format)
     if (!Array.isArray(message.content)) {
@@ -93,16 +96,16 @@ function convertFileUrlsToPlaceholders(messages: Message[]): Message[] {
 
     // Process each content block
     const convertedContent = message.content.map((item) => {
-      // Only convert file_url items with relative URLs
+      // Only convert file_url items
       if (item.type !== 'file_url') {
         return item;
       }
 
       const fileItem = item as FileMessageContent;
 
-      // Check if this is an internal API URL (relative URL starting with /api/)
-      if (!fileItem.url.startsWith('/api/')) {
-        // External URL (blob storage, etc.) - pass through for server processing
+      // Only convert document translation URLs - these are historical references
+      // Regular /api/file/* URLs should pass through for server-side processing
+      if (!fileItem.url.startsWith('/api/document-translation/')) {
         return fileItem;
       }
 
@@ -193,12 +196,10 @@ export class ChatService {
     // This keeps localStorage small (file refs only) while sending base64 to server
     const messagesWithBase64Images = await convertImagesToBase64(messages);
 
-    // Convert internal file URLs to text placeholders to avoid validation errors
-    // Server-side InputValidator requires absolute URLs, but document translation
-    // stores relative URLs like /api/document-translation/content/{jobId}
-    const messagesWithPlaceholders = convertFileUrlsToPlaceholders(
-      messagesWithBase64Images,
-    );
+    // Convert document translation URLs to text placeholders
+    // Regular file URLs (/api/file/*) pass through for server-side processing
+    const messagesWithPlaceholders =
+      convertDocumentTranslationUrlsToPlaceholders(messagesWithBase64Images);
 
     return apiClient.postStream(
       '/api/chat',
@@ -260,10 +261,9 @@ export class ChatService {
     // Convert image file references to base64 at API call time
     const messagesWithBase64Images = await convertImagesToBase64(messages);
 
-    // Convert internal file URLs to text placeholders to avoid validation errors
-    const messagesWithPlaceholders = convertFileUrlsToPlaceholders(
-      messagesWithBase64Images,
-    );
+    // Convert document translation URLs to text placeholders
+    const messagesWithPlaceholders =
+      convertDocumentTranslationUrlsToPlaceholders(messagesWithBase64Images);
 
     return apiClient.post('/api/chat', {
       model,
