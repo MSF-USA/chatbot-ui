@@ -35,6 +35,18 @@ export type DisplayNamePreference =
   | 'custom'
   | 'none';
 
+/**
+ * Reasoning effort level for reasoning models (GPT-5, o3).
+ * Controls the depth of thinking/analysis the model performs.
+ */
+export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high';
+
+/**
+ * Verbosity level for GPT-5 models.
+ * Controls the detail level of responses.
+ */
+export type Verbosity = 'low' | 'medium' | 'high';
+
 export interface Settings {
   theme: 'light' | 'dark';
   temperature: number;
@@ -50,4 +62,8 @@ export interface Settings {
   preferredName: string;
   /** Additional context about the user for the AI */
   userContext: string;
+  /** Default reasoning effort for reasoning models (GPT-5, o3) */
+  reasoningEffort?: ReasoningEffort;
+  /** Default verbosity for GPT-5 models */
+  verbosity?: Verbosity;
 }
