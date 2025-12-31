@@ -14,6 +14,7 @@ import {
   StreamingSpeedConfig,
 } from '@/types/settings';
 import { Tone } from '@/types/tone';
+import { DEFAULT_TTS_SETTINGS, TTSSettings } from '@/types/tts';
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -67,6 +68,9 @@ interface SettingsStore {
   // Organization preference for support contacts (null = auto-detect)
   organizationPreference: MSFOrganization | null;
 
+  // Text-to-Speech settings
+  ttsSettings: TTSSettings;
+
   // Actions
   setTemperature: (temperature: number) => void;
   setSystemPrompt: (prompt: string) => void;
@@ -107,6 +111,9 @@ interface SettingsStore {
   // Organization Actions
   setOrganizationPreference: (org: MSFOrganization | null) => void;
 
+  // TTS Actions
+  setTTSSettings: (settings: Partial<TTSSettings>) => void;
+
   // Reset
   resetSettings: () => void;
 }
@@ -143,6 +150,9 @@ export const useSettingsStore = create<SettingsStore>()(
 
       // Organization preference (null = auto-detect from email)
       organizationPreference: null,
+
+      // TTS settings
+      ttsSettings: DEFAULT_TTS_SETTINGS,
 
       // Actions
       setTemperature: (temperature) => set({ temperature }),
@@ -276,6 +286,12 @@ export const useSettingsStore = create<SettingsStore>()(
       // Organization Actions
       setOrganizationPreference: (org) => set({ organizationPreference: org }),
 
+      // TTS Actions
+      setTTSSettings: (settings) =>
+        set((state) => ({
+          ttsSettings: { ...state.ttsSettings, ...settings },
+        })),
+
       resetSettings: () =>
         set({
           temperature: DEFAULT_TEMPERATURE,
@@ -294,11 +310,12 @@ export const useSettingsStore = create<SettingsStore>()(
           customModelOrder: [],
           modelUsageStats: {},
           organizationPreference: null,
+          ttsSettings: DEFAULT_TTS_SETTINGS,
         }),
     }),
     {
       name: 'settings-storage',
-      version: 9, // Increment this when schema changes to trigger migrations
+      version: 10, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -319,6 +336,7 @@ export const useSettingsStore = create<SettingsStore>()(
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
         organizationPreference: state.organizationPreference,
+        ttsSettings: state.ttsSettings,
       }),
       migrate: (persistedState, version) => {
         const state = persistedState as Record<string, unknown>;
@@ -347,6 +365,11 @@ export const useSettingsStore = create<SettingsStore>()(
         if (version < 9) {
           if (state.preferredName === undefined) state.preferredName = '';
           if (state.userContext === undefined) state.userContext = '';
+        }
+
+        // Version 9 → 10: Add ttsSettings
+        if (version < 10 && state.ttsSettings === undefined) {
+          state.ttsSettings = DEFAULT_TTS_SETTINGS;
         }
 
         return state;
