@@ -276,11 +276,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         setIsGeneratingAudio(true);
         setLoadingMessage('Generating audio...');
 
-        // Merge global settings with overrides
+        // Build request body - let server handle language detection and voice resolution
+        // We only send explicit voice override if provided
         const requestBody = {
           text: displayedContent,
-          voiceName:
-            (overrides.voiceName ?? ttsSettings.voiceName) || undefined,
+          voiceName: overrides.globalVoice || undefined,
           rate: overrides.rate ?? ttsSettings.rate,
           pitch: overrides.pitch ?? ttsSettings.pitch,
           outputFormat: overrides.outputFormat ?? ttsSettings.outputFormat,
