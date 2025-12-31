@@ -138,11 +138,15 @@ export class ChatService {
       customDisplayName?: string;
     },
   ): Promise<ReadableStream<Uint8Array>> {
+    // Convert image file references to base64 at API call time
+    // This keeps localStorage small (file refs only) while sending base64 to server
+    const messagesWithBase64Images = await convertImagesToBase64(messages);
+
     return apiClient.postStream(
       '/api/chat',
       {
         model,
-        messages,
+        messages: messagesWithBase64Images,
         prompt: options?.prompt,
         temperature: options?.temperature,
         stream: options?.stream ?? true,
@@ -195,9 +199,12 @@ export class ChatService {
       customDisplayName?: string;
     },
   ): Promise<{ text: string; metadata?: any }> {
+    // Convert image file references to base64 at API call time
+    const messagesWithBase64Images = await convertImagesToBase64(messages);
+
     return apiClient.post('/api/chat', {
       model,
-      messages,
+      messages: messagesWithBase64Images,
       prompt: options?.prompt,
       temperature: options?.temperature,
       stream: false,
