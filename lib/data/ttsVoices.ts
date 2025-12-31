@@ -736,6 +736,18 @@ export function getVoiceByName(voiceName: string): VoiceInfo | undefined {
 }
 
 /**
+ * Check if a voice is multilingual.
+ * Multilingual voices can speak multiple languages without language detection.
+ *
+ * @param voiceName - The full voice name (e.g., "en-US-AvaMultilingualNeural")
+ * @returns True if the voice is multilingual, false otherwise
+ */
+export function isMultilingualVoice(voiceName: string): boolean {
+  const voice = getVoiceByName(voiceName);
+  return voice?.type === 'Multilingual';
+}
+
+/**
  * Get all available locales that have TTS voices.
  *
  * @returns Array of locale codes
