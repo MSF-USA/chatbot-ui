@@ -246,6 +246,11 @@ export function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModelSelectOpen]);
 
+  // Clear error when switching conversations
+  useEffect(() => {
+    clearError();
+  }, [selectedConversation?.id, clearError]);
+
   // Only auto-dismiss errors that can't be regenerated (e.g., during retry)
   // When regenerate is available, let the user decide when to dismiss
   const canRegenerate = !!error && !isRetrying;
