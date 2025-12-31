@@ -42,3 +42,22 @@ A specialized component for navigating the large catalog of Azure voices.
   - Uses language-specific sample text (`TTS_PREVIEW_SAMPLES`).
   - Plays a short audio clip using the selected voice without changing global settings.
 - Displays voice metadata like gender and type (Neural/Multilingual).
+
+### 5. `TranscriptViewer`
+
+Used to display and interact with audio/video file transcripts.
+
+- Features a speaker icon to convert the transcript text to speech.
+- Supports speaking both the original transcript and any active translations.
+- **Limitation**: TTS is disabled for large transcripts stored as blob references to prevent excessive API costs and potential timeout issues. It is only available for transcripts that are stored directly within the message content.
+- Handles its own audio generation state and playback via a local `AudioPlayer` component.
+- Uses the same `/api/chat/tts` endpoint as chat messages.
+
+### 6. `AudioPlayer`
+
+A reusable UI component for controlling audio playback.
+
+- Used by both `AssistantMessage` and `TranscriptViewer`.
+- Provides standard playback controls (play/pause, progress bar, volume).
+- Displays an "X" button to close the player and stop playback.
+- Receives the `audioUrl` (Blob URL) as a prop.

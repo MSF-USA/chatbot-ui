@@ -4,11 +4,19 @@ This document describes the technical implementation and flow of data for the Te
 
 ### 1. Client-Side Trigger
 
-TTS is typically triggered from the `AssistantMessage` component.
+TTS is triggered from two main areas in the application:
+
+#### A. Chat Messages (`AssistantMessage`)
 
 - The user clicks the speaker icon.
-- A request is prepared with the current message content.
+- A request is prepared with the current message content (or currently displayed translation).
 - If the user right-clicks the speaker icon, a `TTSContextMenu` appears allowing for quick parameter overrides (voice, rate, pitch).
+
+#### B. Transcript Viewer (`TranscriptViewer`)
+
+- Used for audio/video file transcripts.
+- The user clicks the speaker icon to synthesize the currently viewed transcript (original or translated).
+- Uses global TTS settings; does not currently support quick overrides via context menu.
 
 ### 2. API Request
 

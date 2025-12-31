@@ -19,14 +19,22 @@ These tests focus on:
 
 When maintaining or updating the TTS feature, the following manual checks are recommended:
 
-#### 1. Integration Check
+#### 1. Integration Check (Chat)
 
 - Open a chat session.
 - Send a message and wait for the response.
 - Click the speaker icon and verify audio plays correctly.
 - Test with messages containing markdown (bold, code blocks) to ensure sanitization works.
 
-#### 2. Settings & Persistence
+#### 2. Integration Check (Transcripts)
+
+- Upload an audio or video file.
+- Wait for the transcription to complete.
+- Open the transcript viewer.
+- Click the speaker icon and verify the transcript is read aloud.
+- Use the translation feature and verify the speaker can read the translated text.
+
+#### 3. Settings & Persistence
 
 - Go to **Chat Settings > Text-to-Speech**.
 - Change the global voice and audio quality.
