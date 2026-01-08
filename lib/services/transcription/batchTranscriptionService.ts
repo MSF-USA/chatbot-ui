@@ -63,6 +63,24 @@ export class BatchTranscriptionService implements ITranscriptionService {
   }
 
   /**
+   * Validates that a job ID matches the expected Azure format.
+   * Azure batch transcription job IDs are GUIDs.
+   *
+   * @param jobId - The job ID to validate
+   * @throws Error if the job ID format is invalid
+   */
+  private validateJobId(jobId: string): void {
+    // Azure uses standard GUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    const guidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!guidRegex.test(jobId)) {
+      throw new Error(
+        `Invalid job ID format: ${jobId.substring(0, 50)}${jobId.length > 50 ? '...' : ''}`,
+      );
+    }
+  }
+
+  /**
    * Submits a transcription job to the batch API.
    *
    * @param blobUrl - SAS URL to the audio file in blob storage
@@ -132,6 +150,8 @@ export class BatchTranscriptionService implements ITranscriptionService {
       throw new Error('Azure Speech API key not configured');
     }
 
+    this.validateJobId(jobId);
+
     const response = await fetch(`${this.baseUrl}/transcriptions/${jobId}`, {
       headers: {
         'Ocp-Apim-Subscription-Key': this.apiKey,
@@ -166,6 +186,8 @@ export class BatchTranscriptionService implements ITranscriptionService {
     if (!this.apiKey) {
       throw new Error('Azure Speech API key not configured');
     }
+
+    this.validateJobId(jobId);
 
     // First, get the list of result files
     const filesResponse = await fetch(
@@ -237,6 +259,8 @@ export class BatchTranscriptionService implements ITranscriptionService {
     if (!this.apiKey) {
       throw new Error('Azure Speech API key not configured');
     }
+
+    this.validateJobId(jobId);
 
     const response = await fetch(`${this.baseUrl}/transcriptions/${jobId}`, {
       method: 'DELETE',
