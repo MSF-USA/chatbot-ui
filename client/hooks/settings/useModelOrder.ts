@@ -26,8 +26,6 @@ export interface UseModelOrderResult {
   setOrderMode: (mode: ModelOrderMode) => void;
   /** Move a model up or down in the custom order */
   moveModel: (modelId: string, direction: 'up' | 'down') => void;
-  /** Increment usage count for a model */
-  incrementUsage: (modelId: string) => void;
   /** Reset to default order */
   resetOrder: () => void;
   /** Check if a model can move up */
@@ -56,7 +54,6 @@ export interface UseModelOrderResult {
  *   orderMode,
  *   setOrderMode,
  *   moveModel,
- *   incrementUsage
  * } = useModelOrder(baseModels);
  */
 export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
@@ -66,7 +63,6 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
     modelUsageStats,
     setModelOrderMode,
     moveModelInOrder,
-    incrementModelUsage,
     resetModelOrder,
   } = useSettingsStore();
 
@@ -178,7 +174,6 @@ export const useModelOrder = (models: OpenAIModel[]): UseModelOrderResult => {
     orderMode: modelOrderMode,
     setOrderMode: setModelOrderMode,
     moveModel: moveModelInOrder,
-    incrementUsage: incrementModelUsage,
     resetOrder: resetModelOrder,
     canMoveUp,
     canMoveDown,
