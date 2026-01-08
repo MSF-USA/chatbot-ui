@@ -47,9 +47,7 @@ vi.mock('@/client/hooks/settings/useCustomAgents', () => ({
   useCustomAgents: () => mockUseCustomAgents,
 }));
 
-vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
-}));
+// Note: next-intl is mocked globally in vitest.setup.dom.ts
 
 describe('ModelSelect - Toggle Functionality', () => {
   beforeEach(() => {

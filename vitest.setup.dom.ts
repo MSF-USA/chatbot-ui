@@ -27,25 +27,249 @@ vi.mock('next-auth/react', () => ({
 // Mock CSS imports
 vi.mock('katex/dist/katex.min.css', () => ({}));
 
-// Mock next-intl for component tests
-// This provides a global fallback that returns translation keys,
-// ensuring tests don't fail due to missing NextIntlClientProvider context.
-// Tests that need real translations can override this with vi.mock in the test file
-// or use the testUtils render function which provides message lookup.
+// Mock next-intl for component tests with common translations.
+// This provides a global mock that looks up translations from a messages object.
+const mockMessages: Record<string, unknown> = {
+  common: {
+    close: 'Close',
+    closeModal: 'Close modal',
+    remove: 'Remove',
+    speed: 'Speed',
+    normal: 'Normal',
+    variable: 'Variable',
+    variables: 'Variables',
+    search: 'Search',
+  },
+  chat: {
+    fullSizePreview: 'Full size preview',
+    imageContent: 'Image Content',
+    thinking: 'Thinking...',
+    viewReasoningProcess: 'View reasoning process',
+    expandThinking: 'Expand thinking',
+    collapseThinking: 'Collapse thinking',
+    sendMessage: 'Send message',
+    stopGeneration: 'Stop generation',
+    clearSearch: 'Clear search',
+    searchFeatures: 'Search features',
+  },
+  fileUpload: {
+    attachment: 'attachment',
+    attachments: 'attachments',
+    uploading: 'Uploading',
+    failed: 'Failed',
+    remove: 'Remove',
+    extractingAudio: 'Extracting audio...',
+    queuedForTranscription: 'Queued for transcription',
+    transcribing: 'Transcribing...',
+    transcribed: 'Transcribed',
+    transcriptionFailed: 'Transcription failed',
+    extractedFromSmaller: 'Extracted from {percent}% smaller',
+    textExtraction: 'Text extraction',
+    opening: 'Opening...',
+    openInEditor: 'Open in Editor',
+    failedToUpload: 'Failed to upload',
+    fileNotAvailable: 'File not available',
+    failedToOpenInEditor: 'Failed to open in editor',
+  },
+  transcription: {
+    transcribesOnSend: 'Transcribes on send',
+    addInstructions: 'Add instructions',
+    instructionsPlaceholder: 'Add context or instructions...',
+    languages: {
+      autoDetect: 'Auto-detect',
+    },
+  },
+  artifact: {
+    startWriting: 'Start writing...',
+    document: 'Document',
+    switchToCodeEditor: 'Switch to Code Editor',
+    switchToDocumentEditor: 'Switch to Document Editor',
+    exportDocument: 'Export Document',
+    close: 'Close',
+    closeEditor: 'Close editor',
+    closeCodeEditor: 'Close code editor',
+    download: 'Download',
+    fileDownloaded: 'File downloaded',
+    failedToDownload: 'Failed to download',
+    fileIncludedWithMessage: 'File and edits included with message',
+    editsNotSaved:
+      'Edits are not saved. Send via message or download to save any edits.',
+    noContentToExport: 'No content to export',
+    exportedAsHtml: 'Exported as HTML',
+    exportedAsMarkdown: 'Exported as Markdown',
+    exportedAsText: 'Exported as Text',
+    exportedAsPdf: 'Exported as PDF',
+    exportedAsDocx: 'Exported as DOCX',
+    generatingPdf: 'Generating PDF...',
+    generatingDocx: 'Generating DOCX...',
+    failedToExportAs: 'Failed to export as {format}',
+    formatMarkdown: 'Markdown (.md)',
+    formatHtml: 'HTML (.html)',
+    formatDocx: 'Word (.docx)',
+    formatText: 'Plain Text (.txt)',
+    formatPdf: 'PDF (.pdf)',
+    toolbar: {
+      bold: 'Bold',
+      italic: 'Italic',
+      underline: 'Underline',
+      strikethrough: 'Strikethrough',
+      heading1: 'Heading 1',
+      heading2: 'Heading 2',
+      heading3: 'Heading 3',
+      bulletList: 'Bullet List',
+      numberedList: 'Numbered List',
+      codeBlock: 'Code Block',
+      quote: 'Quote',
+      insertTable: 'Insert Table',
+      table: 'Table',
+      undo: 'Undo',
+      redo: 'Redo',
+    },
+    codeEditor: {
+      startTyping: 'Start typing or ask AI to generate code',
+      codeWillSync: 'Code will automatically sync from chat messages',
+      startCoding: '// Start coding...',
+    },
+  },
+  ui: {
+    close: 'Close',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    modal: {
+      close: 'Close modal',
+      closeModal: 'Close modal',
+    },
+  },
+  modelSelect: {
+    tabs: {
+      models: 'Models',
+      agents: 'Agents',
+    },
+    sections: {
+      baseModels: 'Base Models',
+    },
+    agents: {
+      advancedFeatureBadge: 'Advanced Feature',
+      description:
+        'Create and manage custom AI agents with specialized capabilities.',
+      createNewAgent: 'Create New Custom Agent',
+      noAgentsTitle: 'No Custom Agents Yet',
+      noAgentsDescription: 'Create your first custom agent.',
+    },
+    advancedOptions: 'Advanced Options',
+    searchMode: {
+      label: 'Search Mode',
+      description: 'Enable web search capabilities',
+      privacy: 'Privacy Mode',
+      aiFoundry: 'AI Foundry Mode',
+      privacyDescription: 'Search without external access',
+      aiFoundryDescription: 'Use AI Foundry for enhanced search',
+    },
+    temperature: {
+      label: 'Temperature',
+      notSupported: 'Temperature control not supported for this model',
+    },
+    details: {
+      knowledgeCutoff: 'Knowledge Cutoff',
+    },
+    close: 'Close',
+  },
+  emptyState: {
+    suggestedPrompts: {
+      createDiagrams: {
+        title: 'Create Diagrams',
+        prompt: 'Show me how you can create diagrams and flowcharts.',
+      },
+      draftContent: {
+        title: 'Draft Professional Content',
+        prompt: 'I need help writing professional documents.',
+      },
+      analyzeInformation: {
+        title: 'Analyze Information',
+        prompt: 'How can you help me analyze data or information?',
+      },
+      planOrganize: {
+        title: 'Plan & Organize',
+        prompt: 'Can you help me plan projects or organize work?',
+      },
+      brainstormIdeas: {
+        title: 'Brainstorm Ideas',
+        prompt: 'I want to brainstorm solutions to a problem.',
+      },
+      buildPresentations: {
+        title: 'Build Presentations',
+        prompt: 'How can you help me create presentations?',
+      },
+      workWithCode: {
+        title: 'Work with Code',
+        prompt: 'Can you help with coding or scripts?',
+      },
+      decisionSupport: {
+        title: 'Decision Support',
+        prompt: 'I need to make a decision.',
+      },
+      summarizeSynthesize: {
+        title: 'Summarize & Synthesize',
+        prompt: 'How do you help with summarizing?',
+      },
+    },
+  },
+  audio: {
+    speed: 'Speed',
+    playbackSpeed: 'Playback speed',
+    changePlaybackSpeed: 'Change playback speed',
+  },
+};
+
+/**
+ * Resolves a dot-notation key from a nested object.
+ * Example: 'artifact.toolbar.bold' => 'Bold'
+ */
+function getNestedValue(
+  obj: Record<string, unknown>,
+  key: string,
+): string | undefined {
+  const parts = key.split('.');
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (
+      current &&
+      typeof current === 'object' &&
+      part in (current as Record<string, unknown>)
+    ) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return undefined;
+    }
+  }
+  return typeof current === 'string' ? current : undefined;
+}
+
 vi.mock('next-intl', () => ({
-  useTranslations:
-    () => (key: string, params?: Record<string, string | number>) => {
+  useTranslations: () => {
+    const translate = (
+      key: string,
+      params?: Record<string, string | number>,
+    ) => {
+      let value = getNestedValue(mockMessages, key) ?? key;
       if (params) {
         // Handle interpolation: "Hello {name}" with {name: "World"} => "Hello World"
-        return Object.entries(params).reduce(
+        value = Object.entries(params).reduce(
           (str, [k, v]) => str.replace(`{${k}}`, String(v)),
-          key,
+          value,
         );
       }
-      return key;
-    },
+      return value;
+    };
+    // Add has method to check if translation key exists
+    translate.has = (key: string) =>
+      getNestedValue(mockMessages, key) !== undefined;
+    // Add rich method for rich text translations
+    translate.rich = (key: string) => getNestedValue(mockMessages, key) ?? key;
+    return translate;
+  },
   useLocale: () => 'en',
-  useMessages: () => ({}),
+  useMessages: () => mockMessages,
   useNow: () => new Date(),
   useTimeZone: () => 'UTC',
   useFormatter: () => ({
