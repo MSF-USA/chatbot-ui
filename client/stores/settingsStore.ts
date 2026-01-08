@@ -24,6 +24,18 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 /** Model ordering mode for the model selection UI */
 export type ModelOrderMode = 'usage' | 'name' | 'cutoff' | 'custom';
 
+/**
+ * Consecutive usage threshold before model order is updated.
+ * Prevents jarring order changes during experimentation.
+ */
+export const MODEL_USAGE_CONSECUTIVE_THRESHOLD = 3;
+
+/** Tracks consecutive usage of a model for stability in ordering */
+export interface ConsecutiveModelUsage {
+  modelId: string | null;
+  count: number;
+}
+
 export interface CustomAgent {
   id: string;
   name: string;
@@ -66,6 +78,7 @@ interface SettingsStore {
   modelOrderMode: ModelOrderMode;
   customModelOrder: string[];
   modelUsageStats: Record<string, number>;
+  consecutiveModelUsage: ConsecutiveModelUsage;
 
   // Organization preference for support contacts (null = auto-detect)
   organizationPreference: MSFOrganization | null;
@@ -112,6 +125,7 @@ interface SettingsStore {
   setCustomModelOrder: (order: string[]) => void;
   moveModelInOrder: (modelId: string, direction: 'up' | 'down') => void;
   incrementModelUsage: (modelId: string) => void;
+  recordSuccessfulModelUsage: (modelId: string) => void;
   resetModelOrder: () => void;
 
   // Organization Actions
@@ -160,6 +174,7 @@ export const useSettingsStore = create<SettingsStore>()(
       modelOrderMode: 'usage',
       customModelOrder: [],
       modelUsageStats: {},
+      consecutiveModelUsage: { modelId: null, count: 0 },
 
       // Organization preference (null = auto-detect from email)
       organizationPreference: null,
@@ -293,6 +308,30 @@ export const useSettingsStore = create<SettingsStore>()(
             [modelId]: (state.modelUsageStats[modelId] ?? 0) + 1,
           },
         })),
+
+      recordSuccessfulModelUsage: (modelId) =>
+        set((state) => {
+          const { consecutiveModelUsage, modelUsageStats } = state;
+          const isSameModel = consecutiveModelUsage.modelId === modelId;
+          const newCount = isSameModel ? consecutiveModelUsage.count + 1 : 1;
+
+          // Check if we've reached the threshold
+          if (newCount >= MODEL_USAGE_CONSECUTIVE_THRESHOLD) {
+            // Increment usage stats and reset consecutive counter
+            return {
+              modelUsageStats: {
+                ...modelUsageStats,
+                [modelId]: (modelUsageStats[modelId] ?? 0) + 1,
+              },
+              consecutiveModelUsage: { modelId, count: 0 },
+            };
+          }
+
+          // Just update the consecutive counter
+          return {
+            consecutiveModelUsage: { modelId, count: newCount },
+          };
+        }),
 
       resetModelOrder: () =>
         set({
