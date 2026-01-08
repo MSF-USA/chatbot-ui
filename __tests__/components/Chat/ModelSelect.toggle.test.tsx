@@ -272,12 +272,15 @@ describe('ModelSelect - Toggle Functionality', () => {
         prompt: '',
         temperature: 0.7,
         folderId: null,
+        defaultSearchMode: SearchMode.INTELLIGENT, // Enable search mode
       };
 
       render(<ModelSelect />);
 
-      // Should only show Privacy-Focused option (no Azure AI Agent Mode)
-      expect(screen.getByText(/Privacy-Focused/)).toBeInTheDocument();
+      // Should show Privacy-focused message (no Azure AI Agent Mode radio buttons)
+      expect(
+        screen.getByText(/Privacy-focused search enabled/),
+      ).toBeInTheDocument();
       expect(screen.queryByText(/Azure AI Agent Mode/)).not.toBeInTheDocument();
     });
 

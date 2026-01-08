@@ -51,6 +51,9 @@ const mockMessages: Record<string, unknown> = {
     stopGeneration: 'Stop generation',
     clearSearch: 'Clear search',
     searchFeatures: 'Search features',
+    changePlaybackSpeed: 'Change playback speed',
+    imageLoadError: 'Failed to load image',
+    loadingImage: 'Loading image...',
   },
   fileUpload: {
     attachment: 'attachment',
@@ -156,8 +159,21 @@ const mockMessages: Record<string, unknown> = {
       noAgentsTitle: 'No Custom Agents Yet',
       noAgentsDescription: 'Create your first custom agent.',
     },
-    advancedOptions: 'Advanced Options',
     searchMode: {
+      title: 'Search Mode',
+      subtitle: 'Will use web search when needed',
+      routingLabel: 'Search Routing',
+      whatsDifference: "What's the difference?",
+      privacyFocused: 'Privacy-Focused',
+      privacyFocusedDescription: 'Search without external data access',
+      azureAgentMode: 'Azure AI Agent Mode',
+      azureAgentModeDescription: 'Use AI Foundry for enhanced search',
+      privacyInfoTitle: 'Important Privacy Information',
+      privacyInfoDescription:
+        'Your full conversation will be sent to Azure AI Foundry agent',
+      learnMoreDataStorage: 'Learn more about data storage',
+      privacyEnabled: 'Privacy-focused search enabled',
+      learnPrivacy: 'Learn about privacy',
       label: 'Search Mode',
       description: 'Enable web search capabilities',
       privacy: 'Privacy Mode',
@@ -165,12 +181,37 @@ const mockMessages: Record<string, unknown> = {
       privacyDescription: 'Search without external access',
       aiFoundryDescription: 'Use AI Foundry for enhanced search',
     },
+    advancedOptions: {
+      title: 'Advanced Options',
+      temperature: 'Temperature',
+      fixedTemperatureNote:
+        'This model uses fixed temperature values for consistent performance',
+      reasoningEffort: 'Reasoning Effort',
+      minimal: 'Minimal',
+      low: 'Low',
+      medium: 'Medium',
+      high: 'High',
+      verbosity: 'Verbosity',
+    },
     temperature: {
       label: 'Temperature',
       notSupported: 'Temperature control not supported for this model',
     },
     details: {
       knowledgeCutoff: 'Knowledge Cutoff',
+    },
+    header: {
+      backToModels: 'Back to Models',
+      knowledgeCutoffLabel: 'Knowledge cutoff:',
+    },
+    knowledgeCutoff: {
+      realtime: 'Real-time (web search)',
+    },
+    modelTypes: {
+      reasoning: 'reasoning',
+      omni: 'omni',
+      agent: 'agent',
+      foundational: 'foundational',
     },
     close: 'Close',
   },
@@ -246,12 +287,14 @@ function getNestedValue(
 }
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => {
+  useTranslations: (namespace?: string) => {
     const translate = (
       key: string,
       params?: Record<string, string | number>,
     ) => {
-      let value = getNestedValue(mockMessages, key) ?? key;
+      // Prepend namespace if provided
+      const fullKey = namespace ? `${namespace}.${key}` : key;
+      let value = getNestedValue(mockMessages, fullKey) ?? key;
       if (params) {
         // Handle interpolation: "Hello {name}" with {name: "World"} => "Hello World"
         value = Object.entries(params).reduce(
@@ -262,10 +305,15 @@ vi.mock('next-intl', () => ({
       return value;
     };
     // Add has method to check if translation key exists
-    translate.has = (key: string) =>
-      getNestedValue(mockMessages, key) !== undefined;
+    translate.has = (key: string) => {
+      const fullKey = namespace ? `${namespace}.${key}` : key;
+      return getNestedValue(mockMessages, fullKey) !== undefined;
+    };
     // Add rich method for rich text translations
-    translate.rich = (key: string) => getNestedValue(mockMessages, key) ?? key;
+    translate.rich = (key: string) => {
+      const fullKey = namespace ? `${namespace}.${key}` : key;
+      return getNestedValue(mockMessages, fullKey) ?? key;
+    };
     return translate;
   },
   useLocale: () => 'en',

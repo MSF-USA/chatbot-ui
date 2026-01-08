@@ -39,7 +39,7 @@ describe('ImageContent', () => {
       const images = [createImageContent('https://example.com/image1.jpg')];
       render(<ImageContent images={images} />);
 
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
+      expect(screen.getByText('Loading image...')).toBeInTheDocument();
     });
 
     it('displays loading skeleton for single image', () => {
@@ -48,9 +48,8 @@ describe('ImageContent', () => {
       const images = [createImageContent('https://example.com/image1.jpg')];
       const { container } = render(<ImageContent images={images} />);
 
-      const skeleton = container.querySelector('.animate-pulse');
+      const skeleton = container.querySelector('.animate-shimmer');
       expect(skeleton).toBeInTheDocument();
-      expect(skeleton).toHaveClass('w-full', 'max-w-md');
     });
 
     it('displays loading skeletons for multiple images', () => {
@@ -62,11 +61,8 @@ describe('ImageContent', () => {
       ];
       const { container } = render(<ImageContent images={images} />);
 
-      const skeletons = container.querySelectorAll('.animate-pulse');
+      const skeletons = container.querySelectorAll('.animate-shimmer');
       expect(skeletons).toHaveLength(2);
-      skeletons.forEach((skeleton) => {
-        expect(skeleton).toHaveClass('w-[calc(50%-0.25rem)]');
-      });
     });
   });
 
@@ -112,8 +108,7 @@ describe('ImageContent', () => {
 
       await waitFor(() => {
         const img = screen.getByAltText('Image 1');
-        expect(img).toHaveClass('w-full', 'max-w-md');
-        expect(img).toHaveStyle({ maxHeight: '400px' });
+        expect(img).toHaveClass('w-full', 'h-full', 'object-cover');
       });
     });
 
@@ -130,10 +125,8 @@ describe('ImageContent', () => {
         const img1 = screen.getByAltText('Image 1');
         const img2 = screen.getByAltText('Image 2');
 
-        expect(img1).toHaveClass('w-[calc(50%-0.25rem)]');
-        expect(img2).toHaveClass('w-[calc(50%-0.25rem)]');
-        expect(img1).toHaveStyle({ height: '200px', maxHeight: '200px' });
-        expect(img2).toHaveStyle({ height: '200px', maxHeight: '200px' });
+        expect(img1).toHaveClass('w-full', 'h-full', 'object-cover');
+        expect(img2).toHaveClass('w-full', 'h-full', 'object-cover');
       });
     });
   });
@@ -146,7 +139,7 @@ describe('ImageContent', () => {
       render(<ImageContent images={images} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to load image(s)')).toBeInTheDocument();
+        expect(screen.getByText('Failed to load image')).toBeInTheDocument();
       });
     });
 
@@ -157,7 +150,7 @@ describe('ImageContent', () => {
       render(<ImageContent images={images} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to load image(s)')).toBeInTheDocument();
+        expect(screen.getByText('Failed to load image')).toBeInTheDocument();
       });
     });
 
@@ -176,7 +169,7 @@ describe('ImageContent', () => {
       render(<ImageContent images={images} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to load image(s)')).toBeInTheDocument();
+        expect(screen.getByText('Failed to load image')).toBeInTheDocument();
       });
     });
   });
@@ -310,11 +303,14 @@ describe('ImageContent', () => {
       mockFetchImageBase64.mockResolvedValue('data:image/png;base64,abc123');
 
       const images = [createImageContent('https://example.com/image1.jpg')];
-      render(<ImageContent images={images} />);
+      const { container } = render(<ImageContent images={images} />);
 
       await waitFor(() => {
         const img = screen.getByAltText('Image 1');
-        expect(img).toHaveClass('hover:cursor-pointer');
+        expect(img).toBeInTheDocument();
+        // The parent div has cursor-pointer class
+        const parentDiv = img.closest('.cursor-pointer');
+        expect(parentDiv).toBeInTheDocument();
       });
     });
 
