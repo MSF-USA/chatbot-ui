@@ -29,7 +29,9 @@ vi.mock('katex/dist/katex.min.css', () => ({}));
 
 // Mock next-intl for component tests
 // This provides a global fallback that returns translation keys,
-// ensuring tests don't fail due to missing NextIntlClientProvider context
+// ensuring tests don't fail due to missing NextIntlClientProvider context.
+// Tests that need real translations can override this with vi.mock in the test file
+// or use the testUtils render function which provides message lookup.
 vi.mock('next-intl', () => ({
   useTranslations:
     () => (key: string, params?: Record<string, string | number>) => {
