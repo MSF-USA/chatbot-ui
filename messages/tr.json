@@ -1,4 +1,6 @@
 {
+  "Run Typewriter Intro": "Daktilo Girişini Çalıştır",
+  "importBackupParseError": "Yedekleme dosyası ayrıştırılamadı. Lütfen geçerli JSON olduğundan emin olun.",
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
@@ -128,7 +130,7 @@
   "Description": "Açıklama",
   "A description for your prompt_": "İsteminiz için bir açıklama.",
   "Prompt": "İstem",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "İstem içeriği. Değişken belirtmek için {{}} kullanın. Örn: {{isim}} bir {{sıfat}} {{isim}}dir",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "İstem içeriği. Değişken belirtmek için '{{}}' kullanın. Örn: {{isim}} bir {{sıfat}} {{isim}}dir",
   "Save": "Kaydet",
   "A name for your prompt_": "İsteminiz için bir isim.",
   "New chat": "Yeni sohbet",
@@ -334,7 +336,19 @@
   "Team Templates": "Takım Şablonları",
   "selected": "seçili",
   "folders": "klasörler",
-  "agents": "ajanlar",
+  "agents": {
+    "exportAgent": "Ajanı dışa aktar",
+    "editAgent": "Ajanı düzenle",
+    "agentName": "Ajan adı",
+    "myResearchAssistant": "Araştırma asistanım",
+    "agentId": "Ajan kimliği",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Açıklama (isteğe bağlı)",
+    "descriptionPlaceholder": "Araştırma görevlerinde uzmanlaşmış ajan...",
+    "baseModel": "Temel model",
+    "formatDescription": "Format: asst_xxxxx (MSF AI Assistant Foundry'den)",
+    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
+  },
   "Quick Actions": "Hızlı İşlemler",
   "Type / in chat to access your prompts": "İstemlerinize erişmek için sohbette / yazın",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Sohbette / yazın, isteminizi seçin ve istendiğinde değişkenleri doldurun",
@@ -467,15 +481,43 @@
   "enterTagsPlaceholder": "Etiket ekle (Enter'a basın)",
   "enterPromptNamePlaceholder": "örn., E-posta Yanıtı",
   "enterPromptDescriptionPlaceholder": "Bu istem ne için?",
-  "enterPromptContentPlaceholder": "İsteminizi buraya yazın. Dinamik içerik için {{variable}} kullanın.",
+  "enterPromptContentPlaceholder": "İsteminizi buraya yazın. Dinamik içerik için '{{variable}}' kullanın.",
   "common": {
-    "contact": "İletişim"
+    "contact": "İletişim",
+    "close": "Kapat",
+    "remove": "Kaldır",
+    "tryAgain": "Tekrar dene",
+    "menu": "Menü",
+    "copyToClipboard": "Panoya kopyala",
+    "toggleDropdownMenu": "Açılır menüyü aç/kapat",
+    "toggleMenu": "Menüyü aç/kapat",
+    "closeModal": "Modalı kapat",
+    "dismissBanner": "Afişi kapat",
+    "searchEllipsis": "Ara...",
+    "addTagEllipsis": "Etiket ekle...",
+    "msfLogo": "MSF Logosu",
+    "importantInformation": "Önemli bilgi",
+    "noResults": "Sonuç bulunamadı",
+    "confirm": "Onayla",
+    "cancel": "İptal",
+    "discard": "Vazgeç",
+    "keepEditing": "Düzenlemeye devam et",
+    "yes": "Evet",
+    "no": "Hayır"
   },
   "errors": {
     "unexpectedErrorOccurred": "Beklenmeyen bir hata oluştu",
     "criticalErrorReload": "Kritik bir hata oluştu. Lütfen sayfayı yeniden yükleyin.",
     "reloadPage": "Sayfayı yeniden yükle",
-    "persistContactSupport": "Bu sorun devam ederse, lütfen destek ekibiyle iletişime geçin"
+    "persistContactSupport": "Bu sorun devam ederse, lütfen destek ekibiyle iletişime geçin",
+    "somethingWentWrong": "Bir şeyler yanlış gitti",
+    "anErrorOccurred": "Bir hata oluştu",
+    "copyErrorMessage": "Hata mesajını kopyala",
+    "contactSupport": "Bu sorun devam ederse, destek ekibiyle iletişime geçin",
+    "dismissError": "Hatayı kapat",
+    "applicationError": "Uygulama hatası",
+    "chatLoadError": "Sohbet yüklenirken hata oluştu",
+    "anErrorOccurredTryAgain": "Bir hata oluştu. Lütfen tekrar deneyin."
   },
   "auth": {
     "authenticationError": "Kimlik Doğrulama Hatası",
@@ -544,7 +586,53 @@
     "fullSizePreview": "Tam boyut önizleme",
     "enterSearchQueryPlaceholder": "Arama sorgunuzu veya sorunuzu girin...",
     "errorFetchingUrl": "URL içeriği alınırken bir hata oluştu",
-    "errorInitiatingSearch": "Web araması başlatılırken bir hata oluştu"
+    "errorInitiatingSearch": "Web araması başlatılırken bir hata oluştu",
+    "regenerate": "Yeniden oluştur",
+    "modelSwitchPrompt": "{original} başarısız oldu ama {fallback} başarılı oldu. Model değiştirilsin mi?",
+    "keepOriginalModel": "{model} olarak kalsın",
+    "switchToModel": "{model}'e geç",
+    "alwaysSwitchToModel": "Her zaman otomatik geç",
+    "translateMessage": "Mesajı çevir",
+    "translating": "Çevriliyor...",
+    "translationError": "Çeviri başarısız oldu",
+    "showOriginal": "Orijinali göster",
+    "translatedTo": "{language} diline çevrildi",
+    "searchLanguages": "Dil ara...",
+    "selectLanguage": "Dil seç",
+    "audioFromOriginal": "Orijinal metinden ses",
+    "audioFromTranslation": "{language} çevirisinden ses",
+    "thinking": "Düşünüyor...",
+    "viewReasoningProcess": "Akıl yürütme sürecini görüntüle",
+    "collapseThinking": "Düşünceyi daralt",
+    "expandThinking": "Düşünceyi genişlet",
+    "actionsDisabledForEmbed": "Yukarıdaki yerleştirilmiş içerikteki kontrolleri kullanın",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Çevriliyor ve işleniyor...",
+      "transcribingAudio": "Ses çevriliyor...",
+      "analyzingFiles": "Dosyalar analiz ediliyor...",
+      "analyzingDocuments": "Belgeler analiz ediliyor...",
+      "analyzingDocument": "Belge analiz ediliyor...",
+      "analyzingImages": "Görseller analiz ediliyor...",
+      "analyzingImage": "Görsel analiz ediliyor..."
+    },
+    "contentDescription": {
+      "text": "metin",
+      "imagesCount": "{count} görsel",
+      "filesCount": "{count} dosya",
+      "audioVideo": "ses/video",
+      "empty": "boş"
+    },
+    "discardChanges": "Değişiklikleri At",
+    "discardChangesMessage": "Kaydedilmemiş değişiklikleriniz var. Onları atmak istediğinize emin misiniz?",
+    "voiceInputStarting": "Başlatılıyor...",
+    "voiceInputRecording": "Kaydediliyor...",
+    "voiceInputTapToStop": "Durdurmak için dokunun",
+    "stopRecording": "Kaydı durdur",
+    "voiceInput": "Sesli Giriş",
+    "microphoneAccessDenied": "Mikrofona erişim reddedildi. Lütfen tarayıcı ayarlarından etkinleştirin.",
+    "microphoneAccessError": "Mikrofona erişim hatası: {message}",
+    "voiceInputTranscribing": "Çevriliyor...",
+    "ttsRightClickHint": "Ses seçenekleri için sağ tıklayın"
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",
@@ -552,29 +640,135 @@
     "quickActionsTitle": "Hızlı İşlemler",
     "quickActions": "Hızlı İşlemler"
   },
-  "agents": {
-    "exportAgent": "Ajanı dışa aktar",
-    "editAgent": "Ajanı düzenle",
-    "agentName": "Ajan adı",
-    "myResearchAssistant": "Araştırma asistanım",
-    "agentId": "Ajan kimliği",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Açıklama (isteğe bağlı)",
-    "descriptionPlaceholder": "Araştırma görevlerinde uzmanlaşmış ajan...",
-    "baseModel": "Temel model",
-    "formatDescription": "Format: asst_xxxxx (MSF AI Assistant Foundry'den)",
-    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
-  },
   "prompts": {
-    "buildReusablePrompts": "AI yardımıyla yeniden kullanılabilir istemler oluşturun"
+    "buildReusablePrompts": "AI yardımıyla yeniden kullanılabilir istemler oluşturun",
+    "noToneDefault": "Ton yok (varsayılanı kullan)",
+    "tagHelp": "Etiket yardımı",
+    "tagHelpContent": "İstemlerinizi kategorize etmek ve hızlı bulmak için etiketler kullanın. Örnek:",
+    "tagExamples": {
+      "email": "E-posta",
+      "marketing": "Pazarlama",
+      "technical": "Teknik",
+      "customerSupport": "Müşteri Desteği"
+    },
+    "variableHelp": "Değişken yardımı",
+    "variableHelpIntro": "İstemlerinizi dinamik hale getirmek için değişkenler kullanın:",
+    "requiredVariables": "Gerekli değişkenler (varsayılan değer yok):",
+    "optionalVariables": "İsteğe bağlı değişkenler (varsayılan değer ile):",
+    "userMustProvide": "Kullanıcı bir değer sağlamalıdır",
+    "userCanProvide": "Kullanıcı bir değer sağlayabilir veya varsayılan kullanılır",
+    "example": "Örnek:",
+    "variableExampleText": "'{{alıcı}}' kişisine '{{konu}}' hakkında '{{ton:profesyonel}}' bir e-posta '{{dil:Türkçe}}' olarak yaz",
+    "detectedVariables": "Algılanan değişkenler",
+    "required": "Gerekli",
+    "aiAssistant": "AI Asistan",
+    "whatToImprove": "Ne iyileştirilsin?",
+    "whatShouldPromptDo": "Bu istem ne yapmalı?",
+    "improvePlaceholder": "örn., Daha profesyonel yap, örnekler ekle, netliği artır...",
+    "generatePlaceholder": "örn., Alıcı ve konu için değişkenlerle profesyonel bir e-posta şablonu oluştur...",
+    "addContextOptional": "Bağlam ekle (isteğe bağlı)",
+    "revising": "Revize ediliyor...",
+    "generating": "Oluşturuluyor...",
+    "reviseWithAI": "AI ile revize et",
+    "generatePrompt": "İstem oluştur",
+    "revisionComplete": "Revizyon tamamlandı",
+    "generationComplete": "Oluşturma tamamlandı",
+    "revisedPrompt": "Revize edilmiş istem:",
+    "generatedPrompt": "Oluşturulan istem:",
+    "applyRevision": "Bu revizyonu uygula",
+    "useThisPrompt": "Bu istemi kullan",
+    "improvementsMade": "Yapılan iyileştirmeler:",
+    "tips": "İpuçları:",
+    "howAICanHelp": "AI nasıl yardımcı olabilir",
+    "helpItems": {
+      "improveClarity": "Netliği ve yapıyı geliştir",
+      "suggestVariables": "Yararlı değişkenler öner",
+      "addContext": "Bağlam ve örnekler ekle",
+      "optimize": "Daha iyi sonuçlar için optimize et"
+    },
+    "savePrompt": "İstemi kaydet",
+    "add": "Ekle"
   },
   "tones": {
     "createCustomVoiceProfile": "AI yardımıyla özel ses profili oluşturun",
-    "examplePlaceholder": "örn., Profesyonel ama dostane bir müşteri hizmetleri tonu oluşturun..."
+    "examplePlaceholder": "örn., Profesyonel ama dostane bir müşteri hizmetleri tonu oluşturun...",
+    "tagHelp": "Etiket yardımı",
+    "tagHelpContent": "Tonlarınızı kategorize etmek ve hızlı bulmak için etiketler kullanın. Örnek:",
+    "tagExamples": {
+      "professional": "Profesyonel",
+      "casual": "Gündelik",
+      "technical": "Teknik",
+      "marketing": "Pazarlama"
+    },
+    "add": "Ekle",
+    "aiToneAnalyzer": "AI Ton Analizörü",
+    "describeToneToCreate": "Oluşturmak istediğiniz tonu açıklayın",
+    "uploadContentSamples": "İçerik örnekleri yükleyin",
+    "analyzing": "Analiz ediliyor...",
+    "analyzeToneWithAI": "AI ile tonu analiz et",
+    "analysisComplete": "Analiz tamamlandı",
+    "generatedVoiceGuidelines": "Oluşturulan ses kılavuzları:",
+    "examplePhrases": "Örnek ifadeler:",
+    "suggestedTags": "Önerilen etiketler:",
+    "applyThisAnalysis": "Bu analizi uygula",
+    "detectedCharacteristics": "Algılanan özellikler:",
+    "howAICanHelp": "AI nasıl yardımcı olabilir",
+    "helpItems": {
+      "transcribe": "Ses/video içeriğini yazıya dök",
+      "analyzeContent": "İçerik örneklerini analiz et",
+      "extractPatterns": "Ton ve stil kalıplarını çıkar",
+      "generateGuidelines": "Ses kılavuzları oluştur",
+      "suggestTags": "İlgili etiketler öner"
+    },
+    "saveTone": "Tonu kaydet"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle"
+    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle",
+    "backToChat": "Sohbete geri dön",
+    "title": "Yardım Merkezi",
+    "subtitle": "Cevapları bulun, gizlilik hakkında bilgi edinin, destek alın",
+    "faq": {
+      "title": "Sık Sorulan Sorular",
+      "description": "AI asistanı kullanma hakkındaki yaygın sorulara cevaplar bulun",
+      "articles": "Makaleler",
+      "searchPlaceholder": "SSS'leri ara...",
+      "noResults": "Aramanızla eşleşen SSS bulunamadı",
+      "noResultsHint": "Farklı arama terimleri deneyin"
+    },
+    "privacy": {
+      "title": "Gizlilik ve Veri",
+      "description": "Verilerinizin nasıl saklandığını ve korunduğunu öğrenin",
+      "topics": "Konular",
+      "searchPlaceholder": "Gizlilik konularını ara...",
+      "noResults": "Aramanızla eşleşen gizlilik konusu bulunamadı",
+      "noResultsHint": "Farklı arama terimleri deneyin",
+      "bannerTitle": "Gizliliğiniz önemlidir",
+      "bannerDescription": "Tüm konuşmalar cihazınızda yerel olarak saklanır. Veri işleme, Azure altyapısını kullanan MSF sistemleri içinde gerçekleşir.",
+      "localStorageOnly": "Yalnızca yerel depolama",
+      "msfControlled": "MSF kontrollü",
+      "noPersonalData": "Kişisel veri yok",
+      "noSensitiveOps": "Hassas işlem yok"
+    },
+    "contact": {
+      "title": "İletişim ve Kaynaklar",
+      "description": "Ekiple iletişime geçin ve yararlı bağlantılara erişin",
+      "supportAvailable": "Destek mevcut",
+      "submitRequest": "Destek talebi gönderin",
+      "getHelp": "Ekipten yardım alın",
+      "requestDescription": "Yardıma mı ihtiyacınız var veya geri bildirim mi vermek istiyorsunuz? Destek formunu açmak için aşağıya tıklayın.",
+      "openSupportForm": "Destek formunu aç",
+      "otherWays": "Diğer iletişim yolları",
+      "emailSupport": "E-posta desteği",
+      "emailDescription": "Sorular, geri bildirim veya teknik sorunlar için bize e-posta gönderin"
+    },
+    "resources": {
+      "title": "Ek Kaynaklar",
+      "portalTitle": "AI Accelerator Portalı",
+      "portalDescription": "Belgeler, proje güncellemeleri ve eğitim materyalleri",
+      "githubTitle": "Açık Kaynak Deposu",
+      "githubDescription": "GitHub'da kodu görün, sorunları bildirin ve katkıda bulunun"
+    }
   },
   "settings": {
     "Settings": "Ayarlar",
@@ -642,9 +836,820 @@
     "FAQs, privacy policy, and guides": "SSS, gizlilik politikası ve kılavuzlar",
     "Contact Support": "Desteğe başvurun",
     "Popular Questions": "Popüler sorular",
-    "View all FAQs": "Tüm SSS'leri görüntüle"
+    "View all FAQs": "Tüm SSS'leri görüntüle",
+    "Delete legacy data after migration": "Taşıma sonrası eski verileri sil",
+    "frees up storage space": "depolama alanı boşaltır",
+    "Legacy data deleted": "Eski veriler silindi",
+    "freed": "boşaltıldı",
+    "Conversations": "Konuşmalar",
+    "Legacy": "Eski",
+    "Other": "Diğer",
+    "Loading": "Yükleniyor",
+    "Legacy Data Detected": "Eski Veri Algılandı",
+    "legacyDataDescription": "Önceki sürümden {size} veri var. Bunu taşıyabilir, dışa aktarabilir veya silebilirsiniz.",
+    "legacyDeleteSuccess": "Eski veriler başarıyla silindi ve {size} boşaltıldı.",
+    "legacyDeleteError": "Eski veriler silinirken hata oluştu. Lütfen tekrar deneyin.",
+    "Explore solutions": "Çözümleri keşfet",
+    "Migrate to Current Format": "Mevcut Formata Taşı",
+    "Export Legacy Data": "Eski Verileri Dışa Aktar",
+    "Delete Legacy Data": "Eski Verileri Sil",
+    "deleteLegacyConfirm": "Tüm eski verileri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "Deleting": "Siliniyor",
+    "Confirm Delete": "Silmeyi Onayla",
+    "Cancel": "İptal",
+    "Custom Instructions": "Özel Talimatlar",
+    "Personalization": "Kişiselleştirme",
+    "Display Name": "Görünen Ad",
+    "Display Name Description": "Adınızın selamlamalarda ve uygulama genelinde nasıl görüneceğini seçin",
+    "First Name": "Ad",
+    "Last Name": "Soyad",
+    "Full Name": "Tam Ad",
+    "Custom": "Özel",
+    "None": "Yok",
+    "Custom Display Name": "Özel Görünen Ad",
+    "Custom Display Name Placeholder": "Tercih ettiğiniz adı girin",
+    "howShouldWeAddressYou": "Size nasıl hitap etmemizi istersiniz?",
+    "displayNamePreview": "Önizleme: \"{greeting}\"",
+    "Streaming Speed": "Yayın Hızı",
+    "Slow": "Yavaş",
+    "Normal": "Normal",
+    "Fast": "Hızlı",
+    "Controls how smoothly text appears during AI responses": "AI yanıtlarında metnin ne kadar akıcı görüneceğini ayarlar",
+    "aboutYou": {
+      "title": "Hakkınızda",
+      "shareBasicInfo": "Yapay zeka ile temel bilgileri paylaş",
+      "shareBasicInfoDescription": "Etkinleştirildiğinde, yapay zeka profilinizden adınızı, unvanınızı ve departmanınızı bilecek",
+      "preferredName": "Tercih Edilen İsim",
+      "preferredNamePlaceholder": "Size nasıl hitap edilmesini istersiniz?",
+      "preferredNameDescription": "Görünen adınızı geçersiz kılar. Profil adınızı kullanmak için boş bırakın",
+      "additionalContext": "Ek Bağlam",
+      "additionalContextPlaceholder": "Örn. Saha operasyonlarında çalışıyorum, kısa yanıtları tercih ederim, sıkça tıbbi protokolleri sorarım...",
+      "additionalContextDescription": "Yapay zekanın sizinle ilgili bilmesini istediğiniz diğer bilgiler",
+      "preferredNameDescriptionWithSync": "Yapay zekanın size nasıl hitap edeceği. Boş bırakırsanız Genel Ayarlar'daki görünen adınız kullanılır."
+    },
+    "displayNameUIOnly": "Bu, adınızın uygulamada nasıl görüneceğini belirler. Sohbet Ayarlarında paylaşımı etkinleştirmediğiniz sürece yapay zeka bunu görmez.",
+    "tts": {
+      "title": "Metinden Sese",
+      "language": "Dil",
+      "voice": "Ses",
+      "multilingualVoices": "Çok Dilli Sesler",
+      "voices": "Sesler",
+      "rate": "Hız",
+      "pitch": "Perde",
+      "quality": "Ses Kalitesi",
+      "qualityDescription": "Daha yüksek kalite, daha iyi ses üretir ancak daha fazla bant genişliği kullanır",
+      "preview": "Önizleme",
+      "previewing": "Oynatılıyor...",
+      "previewFailed": "Önizleme sesi oluşturulamadı",
+      "previewText": "Bu, seçili ses ayarlarının bir önizlemesidir.",
+      "reset": "Sıfırla",
+      "default": "Varsayılan",
+      "slower": "Daha Yavaş",
+      "faster": "Daha Hızlı",
+      "lower": "Daha Düşük",
+      "higher": "Daha Yüksek",
+      "selectedVoice": "Seçili",
+      "noVoicesAvailable": "Bu dil için ses yok",
+      "quickSettings": "Ses Ayarları",
+      "overrideForThisMessage": "Bu mesaj için ayarları değiştir",
+      "speakWithSettings": "Konuş"
+    },
+    "Model Response Settings Description": "AI model yanıtları için varsayılan parametreleri yapılandırın. Farklı modeller farklı ayarlar kullanır.",
+    "Default Reasoning Effort": "Varsayılan Akıl Yürütme Çabası",
+    "reasoningEffortDescription": "Akıl yürütme modelleri için düşünme derinliğini kontrol eder. Daha yüksek çaba, daha ayrıntılı analiz sağlar.",
+    "Default Verbosity": "Varsayılan Detay Seviyesi",
+    "verbosityDescription": "GPT-5 modelleri için yanıt detay seviyesini kontrol eder."
   },
   "notFound": {
     "lostDog": "Kayıp köpek"
+  },
+  "emptyState": {
+    "greeting": "Size nasıl yardımcı olabilirim?",
+    "greetingWithName": "{name}, size nasıl yardımcı olabilirim?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Diyagram oluştur",
+        "prompt": "Diyagramlar ve akış şemaları oluşturmama nasıl yardımcı olabileceğinizi gösterin. Ne tür süreçleri, iş akışlarını veya sistemleri görselleştirmeme yardımcı olabilirsiniz? Birkaç örnek verin."
+      },
+      "draftContent": {
+        "title": "Profesyonel içerik yaz",
+        "prompt": "Profesyonel belgeler yazmada yardıma ihtiyacım var - e-postalar, raporlar, özetler. Farklı iş yazıları türlerinde nasıl yardımcı olabileceğinizi örneklerle gösterin."
+      },
+      "analyzeInformation": {
+        "title": "Bilgi analiz et",
+        "prompt": "Verileri veya bilgileri analiz etmeme nasıl yardımcı olabilirsiniz? Rakamları analiz etmenin, kalıpları bulmanın ve belgelerden veya veri setlerinden içgörüler çıkarmanın farklı yollarını gösterin."
+      },
+      "planOrganize": {
+        "title": "Planla ve organize et",
+        "prompt": "Proje planlamama veya işlerimi düzenlememe yardımcı olabilir misiniz? Farklı yapılarda gündemler, takvimler veya proje planları oluşturmayı örneklerle gösterin."
+      },
+      "brainstormIdeas": {
+        "title": "Fikir beyin fırtınası",
+        "prompt": "Bir sorun için çözümler üzerinde beyin fırtınası yapmak istiyorum. Yaratıcı düşünme ve fikir üretmeye nasıl yaklaştığınızı gösterin - hangi soruları sorarsınız ve olasılıkları nasıl keşfedersiniz?"
+      },
+      "buildPresentations": {
+        "title": "Sunumlar oluştur",
+        "prompt": "Sunumlar oluşturmama nasıl yardımcı olabilirsiniz? Farklı sunum yapıları, görsel öneriler ve farklı izleyiciler için bilgileri nasıl organize ettiğinizi örneklerle gösterin."
+      },
+      "workWithCode": {
+        "title": "Kodla çalış",
+        "prompt": "Kodlama veya betik yazımında yardımcı olabilir misiniz? Yeni kod yazma, sorunları hata ayıklama veya bir şeyin nasıl çalıştığını adım adım açıklama örneklerini gösterin."
+      },
+      "decisionSupport": {
+        "title": "Karar desteği",
+        "prompt": "Bir karar vermem gerekiyor ve seçeneklerimi nasıl değerlendireceğimden emin değilim. Seçimleri düşünmek için kullanabileceğiniz farklı çerçeveleri veya yaklaşımları gösterebilir misiniz?"
+      },
+      "summarizeSynthesize": {
+        "title": "Özetle ve sentezle",
+        "prompt": "Uzun belgeleri özetlememe veya birden fazla kaynaktan gelen bilgileri sentezlememe nasıl yardımcı olursunuz? Farklı özet formatları ve detay seviyelerini örneklerle gösterin."
+      },
+      "explainTopics": {
+        "title": "Karmaşık konuları açıkla",
+        "prompt": "Karmaşık kavramları basit terimlerle açıklayabilir misiniz? Karmaşık fikirleri nasıl parçaladığınızı, analojiler kullandığınızı ve farklı bilgi seviyelerine göre açıklamaları nasıl uyarladığınızı gösterin."
+      },
+      "createSchedules": {
+        "title": "Programlar oluştur",
+        "prompt": "Zamanımı organize etmeme ve programlar oluşturmama yardım edin. Gündemler, takvimler veya zaman tabanlı planları yapılandırmanın farklı yollarını örneklerle gösterin."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modeller",
+      "agents": "Ajanlar"
+    },
+    "sections": {
+      "baseModels": "Temel Modeller"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Gelişmiş Özellik",
+      "description": "Özelleştirilmiş yeteneklere sahip özel AI ajanları oluşturun ve yönetin. Bu ajanlar MSF AI Assistant Foundry örneğinde çalışır.",
+      "advancedFeatureTitle": "Gelişmiş Özellik - AI Assistant Teknik Ekibiyle Koordinasyon Gerektirir",
+      "advancedFeatureWarning": "Özel ajanlar yalnızca MSF AI Assistant Foundry örneğinde çalışır. Ajan kimlikleri, AI Assistant Teknik Ekibi tarafından bu özel örnekte oluşturulmalı ve kullanım öncesinde sizinle koordine edilmelidir.",
+      "createNewAgent": "Yeni Özel Ajan Oluştur",
+      "noAgentsTitle": "Özel Ajan Yok",
+      "noAgentsDescription": "Özelleştirilmiş araçlar ve davranışlarla AI yeteneklerinizi genişletmek için ilk özel ajanınızı oluşturun."
+    },
+    "advancedOptions": {
+      "title": "Gelişmiş Seçenekler",
+      "temperature": "Sıcaklık",
+      "fixedTemperatureNote": "Not: Bu model tutarlı performans için sabit bir sıcaklık değeri kullanır.",
+      "reasoningEffort": "Akıl Yürütme Çabası",
+      "minimal": "Minimal",
+      "low": "Düşük",
+      "medium": "Orta",
+      "high": "Yüksek",
+      "verbosity": "Ayrıntı Düzeyi"
+    },
+    "searchMode": {
+      "title": "Arama Modu",
+      "subtitle": "Gerektiğinde web aramasını kullan",
+      "routingLabel": "Arama yönlendirmesi:",
+      "whatsDifference": "Fark nedir?",
+      "privacyFocused": "Gizlilik odaklı (varsayılan)",
+      "privacyFocusedDescription": "Daha yavaş ama daha gizli",
+      "azureAgentMode": "Azure AI Ajan modu",
+      "azureAgentModeDescription": "Daha hızlı ama sohbet verilerini bulutta saklar",
+      "privacyInfoTitle": "Önemli gizlilik bilgisi",
+      "privacyInfoDescription": "Tüm konuşma Azure AI Foundry Ajanına gönderilir.",
+      "learnMoreDataStorage": "Veri depolama hakkında daha fazla bilgi edinin",
+      "privacyEnabled": "Gizlilik odaklı arama etkin",
+      "learnPrivacy": "Gizliliğinizin nasıl korunduğunu öğrenin"
+    },
+    "customAgent": {
+      "label": "Özel Ajan:",
+      "description": "Bu ajan her zaman araçlar etkinleştirilmiş olarak MSF AI Assistant Foundry örneğinde çalışır.",
+      "webSearch": "Gerçek zamanlı web araması",
+      "codeInterpreter": "Kod yorumlayıcı ve dosya analizi"
+    },
+    "header": {
+      "backToModels": "Modellere geri dön",
+      "knowledgeCutoff": "Bilgi kesme tarihi: {cutoff}",
+      "knowledgeCutoffLabel": "Bilgi sınırı"
+    },
+    "modelTypes": {
+      "foundational": "Temel",
+      "omni": "Çoklu",
+      "reasoning": "Akıl yürütme",
+      "agent": "Ajan"
+    },
+    "orderMode": {
+      "label": "Sırala",
+      "usage": "En Çok Kullanılan",
+      "name": "İsim (A-Z)",
+      "cutoff": "En Yeni Modeller",
+      "custom": "Özel",
+      "edit": "Düzenle",
+      "done": "Bitti",
+      "reset": "Sıfırla",
+      "resetTooltip": "Varsayılan sıraya sıfırla"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Gerçek zamanlı web araması"
+    },
+    "modelTypeIcons": {
+      "foundational": "Hızlı ve verimli genel amaçlı model",
+      "reasoning": "Karmaşık sorunlar için gelişmiş akıl yürütme",
+      "omni": "Geniş yeteneklere sahip çok modlu model",
+      "agent": "Gerçek zamanlı araçlar ve web erişimi olan ajan"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Bing aracılığıyla gerçek zamanlı web arama özellikli GPT-4.1 tabanlı AI modeli. Güncel bilgi, gerçek doğrulama ve güncel etkinlik farkındalığı sağlar. Güncel bilgi gerektiren araştırma, haber analizi ve gerçek doğrulama için idealdir.",
+      "knowledgeCutoff": "Gerçek zamanlı web arama"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Karmaşık akıl yürütme, kod üretimi ve teknik problem çözmede mükemmel OpenAI'nin en gelişmiş modeli. Analitik görevler, programlama zorlukları, araştırma ve detaylı açıklamalar için idealdir. Ayarlanabilir akıl yürütme çabası ve yanıt ayrıntı düzeyini destekler.",
+      "knowledgeCutoff": "6 Ağustos 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Yüksek kaliteyi korurken hız için optimize edilmiş daha hızlı, maliyet etkin GPT-5 varyantı. Rutin görevler, hızlı sorgular, araç yönlendirme ve hızlı yanıt süresi gerektiren uygulamalar için uygundur. Performans ve verimlilik arasında mükemmel denge.",
+      "knowledgeCutoff": "6 Ağustos 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Konuşma etkileşimi ve duygusal zeka için optimize edilmiş GPT-5'in özel varyantı. Empatik iletişim, ruh sağlığı desteği, yaratıcı yazarlık, beyin fırtınası ve doğal diyalogda mükemmeldir. Gündelik sohbet, danışmanlık senaryoları ve duygusal farkındalık gerektiren görevler için idealdir.",
+      "knowledgeCutoff": "1 Ekim 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Çığır açan problem çözme yeteneklerine sahip OpenAI'nin en gelişmiş akıl yürütme modeli. Karmaşık matematik, bilimsel akıl yürütme, kodlama zorlukları ve çok adımlı mantık görevlerinde mükemmeldir. Genişletilmiş 200K bağlam penceresi. Akıl yürütme çabası kontrolünü destekler.",
+      "knowledgeCutoff": "8 Nisan 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta'nın hızlı ve maliyet etkin modeli. Yazma, özetleme ve temel kodlama yardımı gibi günlük görevler için idealdir. Günlük iş için hız ve kalite arasında iyi denge.",
+      "knowledgeCutoff": "7 Mayıs 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Çalışmasını adım adım gösteren akıl yürütme uzmanı. Matematik problemleri, mantık bulmacaları ve karmaşık kavramları anlamada mükemmeldir. Bir problemi gerçek zamanlı nasıl düşündüğünü görün.",
+      "knowledgeCutoff": "20 Ocak 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Özellikle kodlama ve teknik yazımda güçlü çok yönlü model. Kod hata ayıklama, dokümantasyon yazma ve teknik kavramları açıklama için idealdir. Geliştirme görevleri için hızlı ve güvenilir.",
+      "knowledgeCutoff": "16 Nisan 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Nüanslı yanıtlarıyla bilinen xAI'nin çok yönlü modeli. Açık tartışmalar, yaratıcı projeler ve karmaşık problem çözme için idealdir.",
+      "knowledgeCutoff": "13 Mayıs 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Olağanüstü akıl yürütme, kodlama ve yaratıcı yeteneklere sahip Anthropic'in en yetenekli modeli. Karmaşık analiz, araştırma ve derin anlayış gerektiren görevler için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Kodlama, analiz ve yaratıcı görevlerde mükemmel performans sunan dengeli Claude modeli. Hızlı yanıt süreleriyle günlük kullanım için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Önceki nesil Claude Opus modeli. Karmaşık kodlama görevleri, detaylı analiz ve nüanslı anlayışta mükemmeldir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Hızlı görevler için optimize edilmiş hızlı ve maliyet etkin Claude modeli. Basit sorgular, özetlemeler ve toplu uygulamalar için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI'nin en gelişmiş modeli; karmaşık muhakeme, kod üretimi ve teknik problem çözmede uzman. Analitik görevler, programlama zorlukları, araştırma ve ayrıntılı açıklamalar için en iyisidir. Ayarlanabilir muhakeme derecesi ve yanıt uzunluğu desteği sunar.",
+      "knowledgeCutoff": "Aralık 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Konuşmaya ve duygusal zekaya özel olarak optimize edilmiş GPT-5.2 varyantı. Empatik iletişim, ruh sağlığı desteği, yaratıcı yazarlık, fikir üretimi ve doğal diyalogda üstündür. Gündelik sohbetler, danışmanlık senaryoları ve duygusal farkındalığın gerekli olduğu görevler için idealdir.",
+      "knowledgeCutoff": "Aralık 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Sohbete geri dön",
+    "title": "Arama Modu Açıklaması",
+    "subtitle": "Arama seçeneklerini ve verilerin nerede saklandığını anlayın",
+    "quickComparison": "Hızlı Karşılaştırma",
+    "noSearch": "Arama Yok",
+    "privacyFocused": "Gizlilik Odaklı",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Yanıt Hızı",
+    "fastest": "En Hızlı",
+    "slowerMultiStep": "Daha Yavaş (çok adımlı)",
+    "fasterDirect": "Daha Hızlı (doğrudan)",
+    "fullConversationStored": "Tam sohbet bulutta saklanıyor",
+    "whatsStoredInAzure": "Azure'da ne saklanıyor",
+    "nothingStateless": "Hiçbir şey (yalnızca durumsuz)",
+    "searchQueriesOnly": "Yalnızca arama sorguları",
+    "fullConversationHistory": "Tam sohbet geçmişi",
+    "modelAvailability": "Model Kullanılabilirliği",
+    "allModels": "Tüm modeller",
+    "gpt41Only": "Yalnızca GPT-4.1",
+    "searchTurnedOff": "Arama Kapalı",
+    "noSearchDescription": "Web arama özelliği olmadan en hızlı yanıtlar. Tam sohbet tarayıcınızda kalır ve bulutta hiçbir şey saklanmaz.",
+    "viewDetailsBelow": "Ayrıntılar için aşağıdaki teknik iş akışını görün.",
+    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle",
+    "legend": "Lejand:",
+    "legendNoSearch": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure OpenAI (durumsuz)",
+    "privacyFocusedMode": "Gizlilik Odaklı Mod",
+    "default": "Varsayılan",
+    "privacyDescription": "Gerektiğinde web aramasını kullanır ancak daha fazla adım içerdiği için daha yavaştır. Azure'da yalnızca arama sorguları saklanır - tam sohbet tarayıcınızda kalır.",
+    "legendPrivacy": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure AI Foundry (yalnızca arama sorguları) | Azure OpenAI (durumsuz)",
+    "azureAIFoundryMode": "Azure AI Foundry Modu",
+    "foundryDescription": "Yerleşik web arama özelliğiyle daha hızlı yanıtlar. Tam sohbet hem tarayıcınızda hem de Azure AI Foundry veritabanında saklanır.",
+    "legendFoundry": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure AI Foundry Ajanı (tam sohbet saklanır)",
+    "whyTheseOptions": "Neden bu seçenekler?",
+    "whyTheseOptionsText1": "AI Assistant'ın başlangıçta güvendiği Azure'un Bing Search API'si kullanımdan kaldırıldıktan sonra mevcut arama uygulamalarıdır.",
+    "whyTheseOptionsText2": "Ekip, daha gizlilik dostu arama alternatifleri aktif olarak araştırıyor. Şu anda her iki seçenek de Azure AI Foundry'nin arama yeteneklerini kullanıyor ancak paylaşılan konuşma verisi miktarı farklıdır.",
+    "azureDeprecatedBingApi": "Azure, Bing Search API'sini kullanımdan kaldırdı",
+    "footerNote": "Her iki mod da konuşmayı tarayıcınızda yerel olarak saklar. Model ayarlarından istediğiniz zaman modlar arasında geçiş yapabilirsiniz.",
+    "note": "Not:",
+    "loadingDiagram": "Diyagram yükleniyor..."
+  },
+  "transcription": {
+    "transcribesOnSend": "Gönderildiğinde yazıya döker",
+    "addInstructions": "Talimat ekle",
+    "instructionsPlaceholder": "Doğruluğu artırmak için bağlam (örn. isimler, terimler)",
+    "languages": {
+      "autoDetect": "Otomatik algıla",
+      "afrikaans": "Afrikaanca",
+      "arabic": "Arapça",
+      "armenian": "Ermenice",
+      "azerbaijani": "Azerice",
+      "belarusian": "Beyaz Rusça",
+      "bosnian": "Boşnakça",
+      "bulgarian": "Bulgarca",
+      "burmese": "Burmaca",
+      "catalan": "Katalanca",
+      "chinese": "Çince",
+      "croatian": "Hırvatça",
+      "czech": "Çekçe",
+      "danish": "Danca",
+      "dutch": "Flemenkçe",
+      "english": "İngilizce",
+      "estonian": "Estonca",
+      "finnish": "Fince",
+      "french": "Fransızca",
+      "galician": "Galiçyaca",
+      "german": "Almanca",
+      "greek": "Yunanca",
+      "hebrew": "İbranice",
+      "hindi": "Hintçe",
+      "hungarian": "Macarca",
+      "icelandic": "İzlandaca",
+      "indonesian": "Endonezce",
+      "italian": "İtalyanca",
+      "japanese": "Japonca",
+      "kannada": "Kannada",
+      "kazakh": "Kazakça",
+      "korean": "Korece",
+      "latvian": "Letonca",
+      "lithuanian": "Litvanca",
+      "macedonian": "Makedonca",
+      "malay": "Malayca",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepalce",
+      "norwegian": "Norveççe",
+      "persian": "Farsça",
+      "polish": "Lehçe",
+      "portuguese": "Portekizce",
+      "romanian": "Rumence",
+      "russian": "Rusça",
+      "serbian": "Sırpça",
+      "slovak": "Slovakça",
+      "slovenian": "Slovence",
+      "spanish": "İspanyolca",
+      "swahili": "Svahili",
+      "swedish": "İsveççe",
+      "tagalog": "Tagalogca",
+      "tamil": "Tamilce",
+      "thai": "Tayca",
+      "turkish": "Türkçe",
+      "ukrainian": "Ukraynaca",
+      "urdu": "Urduca",
+      "vietnamese": "Vietnamca",
+      "welsh": "Galce"
+    },
+    "inProgress": "Transkripsiyon devam ediyor",
+    "processingFile": "İşleniyor: {filename}",
+    "timeRemaining": "Kalan süre: {time}",
+    "maxDurationNote": "Büyük dosyalar {minutes} dakikaya kadar sürebilir",
+    "timedOut": "Transkripsiyon {minutes} dakika sonra zaman aşımına uğradı",
+    "timedOutToast": "Transkripsiyon zaman aşımına uğradı: {filename}",
+    "failed": "Transkripsiyon başarısız oldu: {error}",
+    "failedToast": "Transkripsiyon başarısız oldu: {filename}",
+    "unknownError": "Bilinmeyen hata",
+    "completed": "Transkripsiyon tamamlandı",
+    "completedToast": "Transkripsiyon tamamlandı: {filename}",
+    "placeholder": "[Transkripsiyon devam ediyor: {filename}]",
+    "loadingTranscript": "{filename} için transkript yükleniyor...",
+    "expiredOrDeleted": "Bu transkriptin süresi dolmuş veya silinmiş.",
+    "fetchError": "Transkript yüklenemedi. Lütfen tekrar deneyin.",
+    "transcriptExpired": "{filename} dosyasının transkriptinin süresi doldu. Gizlilik nedeniyle transkriptler {days} gün sonra otomatik olarak silinir.",
+    "expirationWarning": "{filename} dosyasının transkripti {days} gün içinde silinecek. Saklamak istiyorsanız içeriği kopyalayın."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Depolama kontrol ediliyor",
+      "analyzingData": "Verileriniz analiz ediliyor...",
+      "updateAvailable": "Güncelleme Mevcut",
+      "storageSpaceLimited": "Depolama Alanı Sınırlı",
+      "migratingData": "Veriler Taşınıyor",
+      "migrationComplete": "Veri Taşıma Tamamlandı",
+      "partiallyComplete": "Kısmen Tamamlandı",
+      "migrationFailed": "Veri Taşıma Başarısız"
+    },
+    "descriptions": {
+      "foundLegacyData": "Önceki bir sürümden veri bulduk. Geliştirilmiş sistemle çalışması için bu verileri taşımak ister misiniz?",
+      "storageSpaceWarning": "Verileriniz mevcut alandan daha fazla yer gerektiriyor. Artımlı taşıma modunu kullanmanızı öneririz.",
+      "pleaseWait": "Verileriniz güncellenirken lütfen bekleyin...",
+      "dataIsSafe": "Orijinal verileriniz güvende. Tekrar deneyebilir veya şimdilik atlayabilirsiniz.",
+      "itemsTooLarge": "Bu öğeler depolamaya sığmayacak kadar büyük. Dışa aktarabilir, yer açabilir veya bu öğeler olmadan devam edebilirsiniz.",
+      "settingsUpdated": "Ayarlarınız güncellendi."
+    },
+    "benefits": {
+      "title": "Faydalar",
+      "fasterPerformance": "Daha hızlı performans",
+      "betterReliability": "Daha yüksek güvenilirlik",
+      "dataPreserved": "Verileriniz korunur"
+    },
+    "options": {
+      "advancedOptions": "Gelişmiş seçenekler",
+      "useIncrementalMode": "Artımlı modu kullan",
+      "slowerButSafer": "daha yavaş ama daha güvenli",
+      "recommended": "önerilen",
+      "deleteLegacyData": "Taşıma sonrası eski verileri sil",
+      "freesUpSpace": "depolama alanı açar"
+    },
+    "actions": {
+      "skip": "Atla",
+      "migrateData": "Verileri Taşı",
+      "migrateAnyway": "Yine de Taşı",
+      "continue": "Devam Et",
+      "retry": "Tekrar Dene",
+      "exportBackupFirst": "Önce Yedeği Dışa Aktar",
+      "exportSkippedItems": "Atlanan Öğeleri Dışa Aktar"
+    },
+    "quota": {
+      "availableSpace": "Kullanılabilir alan",
+      "dataToMigrate": "Taşınacak veri",
+      "additionalSpaceNeeded": "Ekstra alan gerekli"
+    },
+    "progress": {
+      "migratingConversations": "Sohbetler taşınıyor",
+      "migratingPrompts": "Komutlar taşınıyor",
+      "migratingAgents": "Ajanlar taşınıyor",
+      "finishingUp": "Son işlemler yapılıyor"
+    },
+    "results": {
+      "successfullyMigrated": "Başarıyla taşındı",
+      "notes": "Notlar",
+      "couldNotMigrate": "Taşıma yapılamadı",
+      "legacyDataDeleted": "Eski veriler silindi",
+      "freed": "boşaltıldı"
+    },
+    "units": {
+      "conversation": "sohbet",
+      "conversations": "sohbetler",
+      "folder": "klasör",
+      "folders": "klasörler",
+      "prompt": "komut",
+      "prompts": "komutlar",
+      "customAgent": "özel ajan",
+      "customAgents": "özel ajanlar",
+      "item": "öğe",
+      "items": "öğeler"
+    }
+  },
+  "languageSwahili": "Svahili",
+  "welcomeBanner": {
+    "title": "AI Asistan V2'ye Hoş Geldiniz",
+    "whatsNew": "Yenilikler",
+    "whatsNewQuestion": "Yenilikler Neler?"
+  },
+  "welcomeV2": {
+    "backToChat": "Sohbete Dön",
+    "title": "AI Asistan V2'ye Hoş Geldiniz",
+    "subtitle": "Güçlü yeni özelliklerle tamamen yeniden tasarlandı",
+    "webSearch": {
+      "title": "Web Arama Modu",
+      "description": "AI'a gizliliğe odaklı seçeneklerle gerçek zamanlı web arama erişimi verin",
+      "quickAccess": "Hızlı erişim:",
+      "quickAccessInstructions": "Sohbet girişinin yanındaki + butonuna tıklayın → \"Web Arama\"yı seçin",
+      "setAsDefault": "Varsayılan yap:",
+      "setAsDefaultInstructions": "Model ayarlarını açın ve Web Arama Modu'nu etkinleştirin. Seçenekler:",
+      "privacyFocused": "Gizlilik Odaklı (varsayılan)",
+      "privacyFocusedDescription": "Yalnızca arama sorgusu dışarı gönderilir",
+      "azureAIFoundry": "Azure AI Foundry Modu",
+      "azureAIFoundryDescription": "Daha hızlı, ancak tüm sohbet dışarıda saklanır",
+      "learnMore": "Arama modları hakkında daha fazla bilgi edinin →"
+    },
+    "tones": {
+      "title": "Tonlar (Ses Profilleri)",
+      "description": "AI'ın yazım tarzı, resmiyeti ve kişiliğini kontrol edin",
+      "createTones": "1. Ton oluşturun:",
+      "createTonesInstructions": "Yan menüde Hızlı Eylemler → Tonlar sekmesi",
+      "useTones": "2. Tonları kullanın:",
+      "useTonesInstructions": "Sohbet girişinin yanındaki ton açılır menüsüne tıklayın",
+      "exampleProfessionalDesc": "Resmi, iş tonu",
+      "exampleCasualDesc": "Samimi, sohbet tarzı"
+    },
+    "aiAssist": {
+      "title": "İstemler ve Tonlar için AI Desteği",
+      "description": "AI'ın size daha iyi istemler ve tonlar oluşturmasında yardımcı olmasına izin verin",
+      "step1": "Yan menüden Hızlı Eylemler'i açın",
+      "step2": "{prompts} veya {tones} sekmesine gidin",
+      "step3": "AI Asistanı panelini bulun",
+      "getSuggestions": "Öneriler alın",
+      "getSuggestionsDesc": "AI taslağınızı analiz eder ve iyileştirmeler sunar",
+      "buildFromFiles": "Dosyalardan oluştur",
+      "buildFromFilesDesc": "İstem/ton üretmek için belgeler yükleyin",
+      "testBeforeSaving": "Kaydetmeden önce test edin",
+      "testBeforeSavingDesc": "Canlı sohbet önizlemesinde istemleri/tonları deneyin",
+      "step2Prefix": "Şuraya gidin:",
+      "step2Suffix": "sekmesi"
+    },
+    "customAgents": {
+      "title": "Özel Ajanlar",
+      "advancedBadge": "İLERİ SEVİYE",
+      "description": "Web arama ve kod yorumlama gibi gelişmiş yeteneklere sahip özel AI ajanları",
+      "advancedFeature": "İleri Seviye Özellik",
+      "advancedFeatureDesc": "Özel Ajanlar, Azure AI Foundry üzerinde özel araçlarla çalışır. Ajan kimliği oluşturmak için AI Asistanı teknik ekibi ile koordinasyon gerektirir.",
+      "howToAccess": "Nasıl erişilir:",
+      "howToAccessInstructions": "Ayarlar → Modeller → Ajanlar sekmesi",
+      "whatYouCanDo": "Yapabilecekleriniz:",
+      "configureAgents": "Ajana özel yetenekler ekleyin",
+      "importExport": "Ajan yapılandırmalarını içe/dışa aktarın",
+      "selectFromDropdown": "Model açılır menüsünden özel ajanları seçin"
+    },
+    "audioTranslation": {
+      "title": "Çevirili Sesli Yazıya Döküm",
+      "description": "Sesli dökümleri otomatik olarak 13+ dile çevirin",
+      "howToUse": "Nasıl kullanılır:",
+      "step1": "Bir ses veya video dosyası yükleyin",
+      "step2": "Transkripsiyon arayüzünde dil açılır menüsüne tıklayın",
+      "step3": "Hedef dilinizi seçin",
+      "availableLanguages": "Mevcut diller:",
+      "moreLanguages": "+7 tane daha"
+    },
+    "pwa": {
+      "title": "Mobil Uygulama Olarak Yükle",
+      "description": "Yerel deneyime sahip Progressive Web App",
+      "installTip": "İpucu: En iyi deneyim ve kimliğinizin korunması için oturum açtıktan sonra yükleyin.",
+      "howToInstall": "Nasıl yüklenir:",
+      "step1": "Hesabınıza giriş yapın",
+      "step2": "Ayrıntılı talimatlar için Ayarlar → Mobil Uygulama bölümünü açın",
+      "step3": "Mobilde: Tarayıcı menüsüne dokunun (⋮ veya ⚙️)",
+      "step4": "\"Ana ekrana ekle\" veya \"Uygulamayı Yükle\" seçeneğini arayın",
+      "step5": "Yükleme talimatlarını takip edin",
+      "benefits": "Avantajlar:",
+      "benefit1": "Ana ekrandan yerel uygulama gibi başlatılır",
+      "benefit2": "Tarayıcı arayüzü olmadan tam ekran",
+      "benefit3": "Kaydedilen konuşmalara çevrimdışı erişim"
+    }
+  },
+  "Professional": "Profesyonel",
+  "Casual": "Gündelik",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Bir ileti girin veya bir ileti seçmek için \"/\" yazın..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Yapay zekanın nasıl yanıt vereceğini kişiselleştirmek için kendi talimatlarınızı ekleyin. Bunlar, yardımcı, doğru ve güvenli yanıtlar sağlamak için temel davranış yönergeleriyle birleştirilir."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "İpucu: Kayıtlı ileti şablonlarından seçmek için \"/\" yazın."
+  },
+  "fileUpload": {
+    "uploading": "Yükleniyor...",
+    "transcribing": "Çözümleniyor...",
+    "complete": "Tamamlandı",
+    "failed": "Başarısız",
+    "uploadFiles": "Dosyaları yükle (ses, video veya metin)",
+    "autoDetect": "Otomatik algıla",
+    "fileNotAvailable": "Dosya düzenleme için mevcut değil",
+    "failedToOpenInEditor": "Dosya kod editöründe açılamadı. Lütfen tekrar deneyin.",
+    "extractingAudio": "Ses çıkarılıyor...",
+    "queuedForTranscription": "Yazıya dökme için kuyruğa alındı",
+    "transcribed": "Yazıya döküldü",
+    "transcriptionFailed": "Yazıya dökme başarısız oldu",
+    "extractedFromSmaller": "{percent}% daha küçükten çıkarıldı",
+    "textExtraction": "Metin çıkartma",
+    "opening": "Açılıyor...",
+    "openInEditor": "Editörde Aç",
+    "failedToUpload": "Yükleme başarısız oldu",
+    "attachment": "ek",
+    "attachments": "ekler"
+  },
+  "transcript": {
+    "originalTranscript": "Orijinal Transkript",
+    "transcript": "Transkript",
+    "transcriptionOf": "Şunun transkripsiyonu",
+    "translating": "Çeviriliyor...",
+    "copied": "Kopyalandı!",
+    "copy": "Kopyala",
+    "download": "İndir",
+    "translate": "Çevir",
+    "collapse": "Daralt",
+    "expand": "Genişlet",
+    "expandHint": "Orijinal transkripti görmek için \"Genişlet\"e tıklayın",
+    "listen": "Transkripti dinle",
+    "stopAudio": "Sesi durdur",
+    "openAsDocument": "Belge olarak aç"
+  },
+  "userMessage": {
+    "open": "Aç",
+    "showFullMessage": "Tüm mesajı göster",
+    "collapse": "Daralt",
+    "customTone": "Özel Ton"
+  },
+  "codeBlock": {
+    "openInEditor": "Editörde aç"
+  },
+  "artifact": {
+    "noContentToExport": "Dışa aktarılacak içerik yok",
+    "exportedAsHtml": "HTML olarak dışa aktarıldı",
+    "exportedAsMarkdown": "Markdown olarak dışa aktarıldı",
+    "exportedAsText": "Metin olarak dışa aktarıldı",
+    "generatingPdf": "PDF oluşturuluyor...",
+    "exportedAsPdf": "PDF olarak dışa aktarıldı",
+    "generatingDocx": "DOCX oluşturuluyor...",
+    "exportedAsDocx": "DOCX olarak dışa aktarıldı",
+    "failedToExportAs": "{format} olarak dışa aktarılamadı",
+    "document": "Belge",
+    "switchToCodeEditor": "Kod Editörüne Geç",
+    "exportDocument": "Belgeyi Dışa Aktar",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Düz Metin (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Kapat",
+    "editsNotSaved": "Düzenlemeler kaydedilmedi. Kaydetmek için mesajla gönderin veya indirin.",
+    "fileDownloaded": "Dosya indirildi",
+    "failedToDownload": "İndirilemedi",
+    "switchToDocumentEditor": "Belge Editörüne Geç",
+    "download": "İndir",
+    "fileIncludedWithMessage": "Dosya ve düzenlemeler mesajla birlikte gönderildi",
+    "closeEditor": "Editörü kapat",
+    "closeCodeEditor": "Kod editörünü kapat",
+    "startWriting": "Yazmaya başlayın...",
+    "toolbar": {
+      "bold": "Kalın",
+      "italic": "İtalik",
+      "underline": "Altı çizili",
+      "strikethrough": "Üzeri çizili",
+      "heading1": "Başlık 1",
+      "heading2": "Başlık 2",
+      "heading3": "Başlık 3",
+      "bulletList": "Madde İşaretli Liste",
+      "numberedList": "Numaralı Liste",
+      "codeBlock": "Kod Bloğu",
+      "quote": "Alıntı",
+      "insertTable": "Tablo Ekle",
+      "table": "Tablo",
+      "undo": "Geri al",
+      "redo": "Yinele"
+    },
+    "codeEditor": {
+      "startTyping": "Yazmaya başlayın veya AI’dan kod üretmesini isteyin",
+      "codeWillSync": "Kod, sohbet mesajlarından otomatik olarak senkronize edilecek",
+      "startCoding": "// Kodlamaya başlayın..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Her mesaj için web aramasını etkinleştirin.\n\nGerçek zamanlı Bing erişimiyle güncel bilgiler sunar.",
+    "attachTooltip": "Dosya, görsel veya ses/video ekleyin.\n\nDesteklenen formatlar:\n• Görseller: JPEG, PNG, GIF, WebP (en fazla 5MB, 10 adet)\n• Dokümanlar: PDF, DOCX, XLSX, PPTX, TXT, MD (en fazla 10MB, 3 adet)\n• Veri: CSV, JSON, XML, YAML (en fazla 10MB, 3 adet)\n• Kod: PY, JS, TS, JAVA, C, CPP, GO vb. (en fazla 10MB, 3 adet)\n• Ses/Video: MP3, WAV, MP4, WebM (en fazla 25MB, 1 dosya)\n\nToplam: 10 dosya, en fazla 50MB",
+    "transcribeTooltip": "Ses veya video dosyalarını transkripsiyon için yükleyin.\n\nDesteklenen formatlar: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaksimum boyut: 25MB\n\nMesajı gönderdiğinizde transkripsiyon otomatik olarak yapılır.",
+    "selected": "Seçildi",
+    "expandActions": "Eylemleri Genişlet",
+    "selectTone": "Ton Seçin",
+    "selectToneDescription": "Mesajlarınız için bir ses profili seçin",
+    "noToneDefault": "Ton Yok (Varsayılan)",
+    "useDefaultStyle": "Varsayılan yazı stilini kullan",
+    "noTonesCreated": "Henüz ton oluşturulmadı",
+    "createTonesHint": "Hızlı Eylemler'de tonlar oluşturun",
+    "translateDocumentTooltip": "Belgeleri başka bir dile çevirin.\n\nDesteklenen formatlar: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaksimum boyut: 40MB\n\n80'den fazla dili, isteğe bağlı sözlük dosyalarıyla destekler."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Yapay zekanın nasıl yanıt vereceğini özelleştirmek için kişisel talimatlarınızı ekleyin. Bunlar, yardımcı, doğru ve güvenli yanıtları garanti altına alan temel davranış yönergeleriyle birleştirilir.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "İpucu: Kayıtlı istem şablonlarından seçmek için \"/\" yazın.",
+  "storageWarning": {
+    "title": {
+      "warning": "Depolama Alanı Azalıyor",
+      "critical": "Depolama Alanı Neredeyse Dolu",
+      "emergency": "Depolama Alanı Dolu"
+    },
+    "message": {
+      "warning": "Tarayıcı depolamanızın % {percent}'i dolu.",
+      "critical": "Tarayıcı depolamanızın kapasitesi kritik düzeyde: % {percent}.",
+      "emergency": "Tarayıcı depolamanız neredeyse tamamen dolu: %{percent}!"
+    },
+    "consequence": "Depolama alanı dolarsa yeni konuşmalara erişiminizi kaybedebilir ve uygulama düzgün çalışmayabilir.",
+    "storageUsage": "Depolama Kullanımı",
+    "optionsToFreeSpace": "Alan boşaltma seçenekleri",
+    "clearOption": {
+      "keepRecent": "En son konuşmaları koru",
+      "olderThan": "Şu tarihten eski konuşmaları sil",
+      "days": {
+        "7": "7 gün",
+        "14": "14 gün",
+        "30": "30 gün",
+        "60": "60 gün",
+        "90": "90 gün"
+      }
+    },
+    "estimate": {
+      "willRemove": "Bu işlem {count} konuşmayı kaldıracak",
+      "willFree": "Tahmini boşaltılacak alan: {size}"
+    },
+    "action": {
+      "exportFirst": "Önce Verileri Dışa Aktar",
+      "clearNow": "Şimdi Temizle",
+      "dismiss": "Kapat",
+      "cancel": "İptal"
+    },
+    "confirm": {
+      "title": "Temizlemeyi Onayla",
+      "message": "Bu işlem {count} konuşmayı kalıcı olarak silecek. Bu işlem geri alınamaz."
+    },
+    "clearing": {
+      "title": "Depolama Temizleniyor",
+      "message": "Konuşmalar silinirken lütfen bekleyin..."
+    },
+    "success": {
+      "title": "Depolama Temizlendi",
+      "message": "{count} konuşma başarıyla silindi ve {size} boşaltıldı."
+    },
+    "error": {
+      "title": "Temizleme Başarısız",
+      "message": "Konuşmalar temizlenirken bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "close": "Kapat"
+  },
+  "support": {
+    "selectOrganization": "Kuruluşunuzu seçin",
+    "organizationDescription": "Uygun destek kişisini görmek için MSF kuruluşunuzu seçin",
+    "autoDetect": "Otomatik algıla",
+    "resetToAutoDetect": "Otomatik algılamaya sıfırla",
+    "organizations": {
+      "USA": "MSF ABD",
+      "OCG": "OCG (Cenevre)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Saha / Diğer"
+    },
+    "emailSupport": "E-posta Desteği",
+    "emailDescription": "{organization} destek ekibiyle iletişime geçin",
+    "escalationTitle": "Saha & Diğer MSF Personeli",
+    "escalationDescription": "Destek için kuruluşunuzun BT yönlendirme yolunu izleyin",
+    "escalationShort": "Yerel BT desteğinizle iletişime geçin",
+    "escalationStep1": "Önce yerel BT desteğinizle iletişime geçin",
+    "escalationStep2": "Çözülmezse, Operasyonel Merkezinizin (OC) BT departmanına yönlendirin",
+    "escalationStep3": "Hâlâ çözülmezse, OC BT ekibi konuyu SITS’e (Ortak BT Hizmetleri) yönlendirebilir"
+  },
+  "translateDocumentDropdown": "Belgeyi Çevir",
+  "documentTranslation": {
+    "title": "Belge Çevirisi",
+    "targetLanguage": "Hedef Dil",
+    "sourceLanguage": "Kaynak Dil",
+    "searchLanguage": "Dilleri ara...",
+    "noLanguagesFound": "Dil bulunamadı",
+    "autoDetect": "Belirtilmemişse otomatik algılansın",
+    "glossary": "Sözlük Dosyası",
+    "glossaryHelp": "Özel terimler için CSV, TSV veya XLIFF sözlük dosyası yükleyin",
+    "uploadGlossary": "Sözlük Yükle",
+    "glossaryTooLarge": "Sözlük dosyası çok büyük. Maksimum boyut {maxSize}.",
+    "outputFilename": "Çıktı Dosya Adı",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Belgeyi Çevir",
+    "translating": "Çevriliyor...",
+    "noDocumentError": "Lütfen çevrilecek bir belge seçin.",
+    "noTargetLanguageError": "Lütfen bir hedef dil seçin.",
+    "documentTooLarge": "Belge çok büyük. Maksimum boyut {maxSize}.",
+    "translationSuccess": "Belge başarıyla çevrildi",
+    "translationFailed": "Çeviri başarısız: {error}",
+    "invalidReference": "Geçersiz belge çeviri referansı",
+    "documentNotFound": "Çevrilmiş belge bulunamadı veya süresi doldu",
+    "downloadFailed": "Çevrilmiş belge indirilemedi",
+    "downloadSuccess": "Belge başarıyla indirildi",
+    "translatedTo": "{language} diline çevrildi",
+    "download": "İndir",
+    "downloading": "İndiriliyor...",
+    "expired": "Bu çevirinin süresi doldu ve artık erişilemez",
+    "expiresSoon": "{days} gün içinde süresi dolacak - lütfen yakında indirin",
+    "expires": "{days} gün boyunca kullanılabilir",
+    "learnMore": "Daha fazla bilgi edinin",
+    "advancedOptions": "Gelişmiş seçenekler"
   }
 }

@@ -9,7 +9,7 @@ import {
   badRequestResponse,
   handleApiError,
   unauthorizedResponse,
-} from '@/lib/utils/server/apiResponse';
+} from '@/lib/utils/server/api/apiResponse';
 
 import { auth } from '@/auth';
 import {

@@ -40,24 +40,24 @@ describe('Model Configuration', () => {
   });
 
   describe('getDefaultModel', () => {
-    it('returns gpt-5-chat for localhost', () => {
+    it('returns gpt-5.2-chat for localhost', () => {
       vi.stubEnv('NEXT_PUBLIC_ENV', undefined);
-      expect(getDefaultModel()).toBe('gpt-5-chat');
+      expect(getDefaultModel()).toBe('gpt-5.2-chat');
     });
 
-    it('returns gpt-5-chat for dev', () => {
+    it('returns gpt-5.2-chat for dev', () => {
       vi.stubEnv('NEXT_PUBLIC_ENV', 'dev');
-      expect(getDefaultModel()).toBe('gpt-5-chat');
+      expect(getDefaultModel()).toBe('gpt-5.2-chat');
     });
 
-    it('returns gpt-5-chat for prod', () => {
+    it('returns gpt-5.2-chat for prod', () => {
       vi.stubEnv('NEXT_PUBLIC_ENV', 'prod');
-      expect(getDefaultModel()).toBe('gpt-5-chat');
+      expect(getDefaultModel()).toBe('gpt-5.2-chat');
     });
 
-    it('returns gpt-5-chat for production', () => {
+    it('returns gpt-5.2-chat for production', () => {
       vi.stubEnv('NEXT_PUBLIC_ENV', 'production');
-      expect(getDefaultModel()).toBe('gpt-5-chat');
+      expect(getDefaultModel()).toBe('gpt-5.2-chat');
     });
   });
 
@@ -67,7 +67,7 @@ describe('Model Configuration', () => {
       const config = getModelConfig();
 
       expect(config).toBeDefined();
-      expect(config.defaultModel).toBe('gpt-5-chat');
+      expect(config.defaultModel).toBe('gpt-5.2-chat');
     });
 
     it('includes disabled models list for prod', () => {
@@ -82,8 +82,8 @@ describe('Model Configuration', () => {
   describe('isModelDisabled', () => {
     it('returns false for enabled models in prod', () => {
       vi.stubEnv('NEXT_PUBLIC_ENV', 'prod');
-      expect(isModelDisabled('gpt-5-chat')).toBe(false);
-      expect(isModelDisabled('gpt-5')).toBe(false);
+      expect(isModelDisabled('gpt-5.2-chat')).toBe(false);
+      expect(isModelDisabled('gpt-5.2')).toBe(false);
       expect(isModelDisabled('gpt-4.1')).toBe(false);
     });
 
@@ -99,9 +99,9 @@ describe('Model Configuration', () => {
   });
 
   describe('Default Model Properties', () => {
-    it('default model is gpt-5-chat with search mode enabled', () => {
+    it('default model is gpt-5.2-chat with search mode enabled', () => {
       const defaultModel = getDefaultModel();
-      expect(defaultModel).toBe('gpt-5-chat');
+      expect(defaultModel).toBe('gpt-5.2-chat');
     });
 
     it('ensures consistency across all environments', () => {
@@ -115,7 +115,7 @@ describe('Model Configuration', () => {
         }
 
         const defaultModel = getDefaultModel();
-        expect(defaultModel).toBe('gpt-5-chat');
+        expect(defaultModel).toBe('gpt-5.2-chat');
       });
     });
   });

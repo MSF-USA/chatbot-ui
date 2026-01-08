@@ -62,7 +62,7 @@ describe('Model Configuration', () => {
   describe('Agent Configuration', () => {
     it('GPT-4.1 should have correct agent ID with Bing grounding', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].agentId).toBe(
-        'asst_Puf3ldskHlYHmW5z9aQy5fZL',
+        'asst_sbddkxz8DLyCXATINdB10pys',
       );
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].isAgent).toBe(true);
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].modelType).toBe('agent');
@@ -129,28 +129,32 @@ describe('Model Configuration', () => {
   });
 
   describe('Knowledge Cutoffs', () => {
-    it('all models should have knowledge cutoff dates', () => {
+    it('all models should have knowledge cutoff dates defined', () => {
       Object.values(OpenAIModels).forEach((model) => {
-        expect(model.knowledgeCutoff).toBeDefined();
-        expect(model.knowledgeCutoff).not.toBe('');
+        // knowledgeCutoffDate should be defined (can be empty string for agent models)
+        expect(model.knowledgeCutoffDate).toBeDefined();
       });
     });
 
-    it('knowledge cutoffs should be properly formatted', () => {
+    it('knowledge cutoffs should be in ISO format or empty for agents', () => {
       Object.values(OpenAIModels).forEach((model) => {
-        // Should match format like "Aug 6, 2025 8:00 PM" or "May 13, 2025 12:16 AM"
-        // or special cases like "Real-time web search" for agent models
-        // or simplified date format like "Jan 20, 2025" for some models
-        const cutoff = model.knowledgeCutoff || '';
-        const isFullDateFormat =
-          /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(cutoff);
-        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(
-          cutoff,
-        );
-        const isSpecialCase = cutoff === 'Real-time web search';
-        expect(isFullDateFormat || isSimpleDateFormat || isSpecialCase).toBe(
-          true,
-        );
+        const cutoff = model.knowledgeCutoffDate || '';
+
+        if (cutoff === '') {
+          // Empty string is valid for agent models with real-time search
+          expect(model.isAgent).toBe(true);
+          return;
+        }
+
+        // ISO formats:
+        // - Month only: "2025-12" or "2025-01"
+        // - Date only: "2025-01-20"
+        // - Date with time: "2025-08-06T20:00"
+        const isMonthOnly = /^\d{4}-\d{2}$/.test(cutoff);
+        const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(cutoff);
+        const isDateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(cutoff);
+
+        expect(isMonthOnly || isDateOnly || isDateTime).toBe(true);
       });
     });
   });
@@ -176,7 +180,7 @@ describe('Model Configuration', () => {
         expect(model.tokenLimit).toBeGreaterThan(0);
         expect(model.description).toBeDefined();
         expect(model.provider).toBeDefined();
-        expect(model.knowledgeCutoff).toBeDefined();
+        expect(model.knowledgeCutoffDate).toBeDefined();
         expect(model.sdk).toBeDefined();
         expect(model.supportsTemperature).toBeDefined();
         // Note: searchMode is now controlled at request level via SearchMode enum, not model-level

@@ -410,28 +410,25 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
             className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <IconInfoCircle size={14} />
-            <span>Tag Help</span>
+            <span>{t('tones.tagHelp')}</span>
           </button>
         </div>
 
         {showTagHelp && (
           <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300">
-            <p className="mb-2">
-              <strong>Use tags</strong> to categorize and quickly find your
-              tones. Examples:
-            </p>
+            <p className="mb-2">{t('tones.tagHelpContent')}</p>
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                professional
+                {t('tones.tagExamples.professional')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                casual
+                {t('tones.tagExamples.casual')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                technical
+                {t('tones.tagExamples.technical')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                marketing
+                {t('tones.tagExamples.marketing')}
               </span>
             </div>
           </div>
@@ -450,7 +447,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
             onClick={handleAddTag}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
-            Add
+            {t('tones.add')}
           </button>
         </div>
 
@@ -488,7 +485,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         <div className="flex items-center gap-2">
           <IconVolume size={16} className="text-purple-500" />
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-            AI Tone Analyzer
+            {t('tones.aiToneAnalyzer')}
           </h3>
         </div>
       </div>
@@ -497,9 +494,9 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         {/* Analysis Goal Input */}
         <div>
           <label className="block text-xs font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Describe the tone you want to create{' '}
+            {t('tones.describeToneToCreate')}{' '}
             <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">
-              (optional)
+              ({t('Optional')})
             </span>
           </label>
           <textarea
@@ -515,9 +512,9 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         {/* File Upload Section */}
         <div>
           <label className="block text-xs font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Upload Content Samples{' '}
+            {t('tones.uploadContentSamples')}{' '}
             <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">
-              (optional)
+              ({t('Optional')})
             </span>
           </label>
           <FileUploadSection
@@ -541,12 +538,12 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           {isAnalyzing ? (
             <>
               <IconLoader2 size={16} className="animate-spin" />
-              <span>Analyzing...</span>
+              <span>{t('tones.analyzing')}</span>
             </>
           ) : (
             <>
               <IconSparkles size={16} />
-              <span>Analyze Tone with AI</span>
+              <span>{t('tones.analyzeToneWithAI')}</span>
             </>
           )}
         </button>
@@ -558,7 +555,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
               <div className="flex items-center gap-2 mb-3">
                 <IconCheck size={16} className="text-green-500" />
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                  Analysis Complete
+                  {t('tones.analysisComplete')}
                 </h4>
               </div>
 
@@ -566,7 +563,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
               {analysisResult.voiceRules && (
                 <div className="mb-4">
                   <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Generated Voice Guidelines:
+                    {t('tones.generatedVoiceGuidelines')}
                   </div>
                   <div className="p-3 bg-white dark:bg-[#2a2a2a] border border-gray-200 dark:border-gray-700 rounded-lg max-h-48 overflow-y-auto">
                     <pre className="text-xs text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
@@ -580,7 +577,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
               {analysisResult.examples && (
                 <div className="mb-4">
                   <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Example Phrases:
+                    {t('tones.examplePhrases')}
                   </div>
                   <div className="p-3 bg-white dark:bg-[#2a2a2a] border border-gray-200 dark:border-gray-700 rounded-lg max-h-32 overflow-y-auto">
                     <pre className="text-xs text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
@@ -595,7 +592,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
                 analysisResult.suggestedTags.length > 0 && (
                   <div className="mb-4">
                     <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Suggested Tags:
+                      {t('tones.suggestedTags')}
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {analysisResult.suggestedTags.map((tag, index) => (
@@ -616,7 +613,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
                 className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors"
               >
                 <IconCheck size={14} />
-                Apply This Analysis
+                {t('tones.applyThisAnalysis')}
               </button>
 
               {/* Characteristics */}
@@ -624,7 +621,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
                 analysisResult.characteristics.length > 0 && (
                   <div className="mt-4">
                     <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Detected Characteristics:
+                      {t('tones.detectedCharacteristics')}
                     </div>
                     <div className="space-y-2">
                       {analysisResult.characteristics.map((char, index) => (
@@ -653,15 +650,15 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
             <div className="flex items-center gap-2 mb-2">
               <IconInfoCircle size={14} className="text-gray-400" />
               <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                How AI Can Help
+                {t('tones.howAICanHelp')}
               </h4>
             </div>
             <ul className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
-              <li>• Transcribe audio/video content</li>
-              <li>• Analyze your content samples</li>
-              <li>• Extract tone and style patterns</li>
-              <li>• Generate voice guidelines</li>
-              <li>• Suggest relevant tags</li>
+              <li>• {t('tones.helpItems.transcribe')}</li>
+              <li>• {t('tones.helpItems.analyzeContent')}</li>
+              <li>• {t('tones.helpItems.extractPatterns')}</li>
+              <li>• {t('tones.helpItems.generateGuidelines')}</li>
+              <li>• {t('tones.helpItems.suggestTags')}</li>
             </ul>
           </div>
         )}
@@ -676,7 +673,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         onClick={handleClose}
         className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
-        Cancel
+        {t('Cancel')}
       </button>
       <button
         onClick={handleSave}
@@ -684,7 +681,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <IconCheck size={16} />
-        <span>Save Tone</span>
+        <span>{t('tones.saveTone')}</span>
       </button>
     </div>
   );

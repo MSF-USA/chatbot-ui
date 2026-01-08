@@ -2,12 +2,22 @@ import {
   IconBlockquote,
   IconChevronDown,
   IconChevronUp,
+  IconLayoutCards,
+  IconList,
 } from '@tabler/icons-react';
-import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Citation } from '@/types/rag';
 
 import { CitationItem } from './CitationItem';
+import { CitationListItem } from './CitationListItem';
 
 interface CitationListProps {
   citations: Citation[];
@@ -16,6 +26,7 @@ interface CitationListProps {
 export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollDirection, setScrollDirection] = useState<
     'left' | 'right' | null
@@ -35,6 +46,25 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
     }
     return acc;
   }, []);
+
+  // Extract unique domains for header favicon display
+  const uniqueDomainCitations = useMemo(() => {
+    const seen = new Set<string>();
+    return uniqueCitations.filter((c) => {
+      try {
+        const domain = new URL(c.url).hostname;
+        if (seen.has(domain)) return false;
+        seen.add(domain);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+  }, [uniqueCitations]);
+
+  const MAX_HEADER_FAVICONS = 5;
+  const visibleFavicons = uniqueDomainCitations.slice(0, MAX_HEADER_FAVICONS);
+  const overflowCount = uniqueDomainCitations.length - MAX_HEADER_FAVICONS;
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -136,6 +166,15 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
     setIsExpanded(!isExpanded);
   };
 
+  const toggleViewMode = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setViewMode(viewMode === 'cards' ? 'list' : 'cards');
+    // Auto-expand when toggling view mode if not already expanded
+    if (!isExpanded) {
+      setIsExpanded(true);
+    }
+  };
+
   if (uniqueCitations.length === 0) return null;
 
   return (
@@ -162,36 +201,98 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
             </span>
           </div>
         </div>
-        <div className="ml-auto text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200">
-          {isExpanded ? (
-            <IconChevronUp size={18} />
-          ) : (
-            <IconChevronDown size={18} />
-          )}
+
+        {/* Header favicons showing unique source domains */}
+        {visibleFavicons.length > 0 && (
+          <div className="flex items-center gap-1 ml-3 pl-3 border-l border-gray-300 dark:border-gray-600">
+            {visibleFavicons.map((citation) => {
+              const hostname = new URL(citation.url).hostname;
+              const displayDomain = hostname.replace(/^www\./, '');
+              return (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={citation.url}
+                  src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
+                  alt={`${displayDomain}`}
+                  title={displayDomain}
+                  width={14}
+                  height={14}
+                  className="rounded-sm opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                />
+              );
+            })}
+            {overflowCount > 0 && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-0.5">
+                +{overflowCount}
+              </span>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-1 ml-auto">
+          {/* View mode toggle button */}
+          <button
+            onClick={toggleViewMode}
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+            title={
+              viewMode === 'cards'
+                ? 'Switch to list view'
+                : 'Switch to card view'
+            }
+          >
+            {viewMode === 'cards' ? (
+              <IconList size={16} />
+            ) : (
+              <IconLayoutCards size={16} />
+            )}
+          </button>
+
+          <div className="text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200">
+            {isExpanded ? (
+              <IconChevronUp size={18} />
+            ) : (
+              <IconChevronDown size={18} />
+            )}
+          </div>
         </div>
       </div>
 
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+          isExpanded
+            ? viewMode === 'cards'
+              ? 'max-h-[200px] opacity-100'
+              : 'max-h-[400px] opacity-100'
+            : 'max-h-0 opacity-0'
         }`}
       >
-        <div
-          ref={scrollContainerRef}
-          className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
-          style={{ scrollBehavior: 'auto' }}
-          onMouseMove={handleReactMouseMove}
-          onMouseLeave={handleReactMouseLeave}
-        >
-          {uniqueCitations.map((citation, index) => (
-            <div
-              key={citation.number || citation.url || index}
-              className="flex-shrink-0"
-            >
-              <CitationItem citation={citation} />
-            </div>
-          ))}
-        </div>
+        {viewMode === 'cards' ? (
+          <div
+            ref={scrollContainerRef}
+            className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
+            style={{ scrollBehavior: 'auto' }}
+            onMouseMove={handleReactMouseMove}
+            onMouseLeave={handleReactMouseLeave}
+          >
+            {uniqueCitations.map((citation, index) => (
+              <div
+                key={citation.number || citation.url || index}
+                className="flex-shrink-0"
+              >
+                <CitationItem citation={citation} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 pt-3 overflow-y-auto max-h-[350px]">
+            {uniqueCitations.map((citation, index) => (
+              <CitationListItem
+                key={citation.number || citation.url || index}
+                citation={citation}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

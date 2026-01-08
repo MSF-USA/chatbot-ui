@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 
 import { ServiceContainer } from '@/lib/services/ServiceContainer';
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 import { AgentEnricher } from '@/lib/services/chat/enrichers/AgentEnricher';
 import { RAGEnricher } from '@/lib/services/chat/enrichers/RAGEnricher';
 import { ToolRouterEnricher } from '@/lib/services/chat/enrichers/ToolRouterEnricher';
@@ -11,9 +12,9 @@ import { FileProcessor } from '@/lib/services/chat/processors/FileProcessor';
 import { ImageProcessor } from '@/lib/services/chat/processors/ImageProcessor';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { env } from '@/config/environment';
 
@@ -63,8 +64,9 @@ import { env } from '@/config/environment';
  * - Non-streaming: application/json with { text: string }
  */
 export async function POST(req: NextRequest): Promise<Response> {
-  // Request timeout (60 seconds for standard chat, 5 minutes for file processing)
-  const timeoutMs = 60000; // 60 seconds
+  // Request timeout increased to handle large file downloads + processing
+  // Large video files (351MB+) can take 60-90s to download, plus extraction and batch job submission
+  const timeoutMs = 300000; // 5 minutes for file processing scenarios
 
   try {
     // Create timeout promise
@@ -109,9 +111,15 @@ export async function POST(req: NextRequest): Promise<Response> {
       // 3. Build pipeline
       console.log('[Unified Chat] Building pipeline...');
       const inputValidator = new InputValidator();
+      // Create blob storage client for batch transcription support
+      const blobStorageClient = createBlobStorageClient(context.session);
       const pipeline = new ChatPipeline([
         // Content processors
-        new FileProcessor(fileProcessingService, inputValidator),
+        new FileProcessor(
+          fileProcessingService,
+          inputValidator,
+          blobStorageClient,
+        ),
         new ImageProcessor(),
 
         // Feature enrichers

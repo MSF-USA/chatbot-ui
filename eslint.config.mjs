@@ -35,6 +35,7 @@ export default [
         navigator: "readonly",
         localStorage: "readonly",
         sessionStorage: "readonly",
+        Audio: "readonly",
         console: "readonly",
         fetch: "readonly",
         Response: "readonly",
@@ -104,6 +105,7 @@ export default [
         btoa: "readonly",
         atob: "readonly",
         queueMicrotask: "readonly",
+        XMLHttpRequest: "readonly",
         // Node.js globals
         global: "readonly",
         process: "readonly",

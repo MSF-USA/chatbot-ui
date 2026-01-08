@@ -51,12 +51,14 @@ import { SearchMode } from '@/types/searchMode';
 import { SearchModal } from './components/SearchModal';
 import { SidebarHeader } from './components/SidebarHeader';
 import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
+import { ConfirmDialog } from '@/components/UI/ConfirmDialog';
 import { DropdownPortal } from '@/components/UI/DropdownPortal';
 import Modal from '@/components/UI/Modal';
 
 import { ConversationItem } from './ConversationItem';
 import { UserMenu } from './UserMenu';
 
+import { useArtifactStore } from '@/client/stores/artifactStore';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -99,6 +101,16 @@ export function Sidebar() {
   const [showNewChatMenu, setShowNewChatMenu] = useState(false);
   const [showNewFolderMenu, setShowNewFolderMenu] = useState(false);
   const [showFolderMenuId, setShowFolderMenuId] = useState<string | null>(null);
+
+  // Discard changes dialog state
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
+  const [pendingConversationId, setPendingConversationId] = useState<
+    string | null
+  >(null);
+
+  // Artifact store for checking unsaved document changes
+  const { isArtifactOpen, hasUnsavedChanges, closeArtifact } =
+    useArtifactStore();
 
   // File input ref for importing conversations
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -238,7 +250,7 @@ export function Sidebar() {
 
     const newConversation: Conversation = {
       id: uuidv4(),
-      name: t('New Conversation'),
+      name: '',
       messages: [],
       model: modelWithDefaults,
       prompt: systemPrompt || '',
@@ -252,7 +264,39 @@ export function Sidebar() {
   };
 
   const handleSelectConversation = (conversationId: string) => {
+    // Skip if already selected
+    if (conversationId === selectedConversation?.id) return;
+
+    // Check if document viewer is open with unsaved changes
+    if (isArtifactOpen && hasUnsavedChanges()) {
+      // Store the pending conversation and show dialog
+      setPendingConversationId(conversationId);
+      setShowDiscardDialog(true);
+      return;
+    }
+
+    // If artifact is open but no changes, close it silently
+    if (isArtifactOpen) {
+      closeArtifact();
+    }
+
     selectConversation(conversationId);
+  };
+
+  // Handle discard confirmation
+  const handleDiscardConfirm = () => {
+    if (pendingConversationId) {
+      closeArtifact();
+      selectConversation(pendingConversationId);
+    }
+    setShowDiscardDialog(false);
+    setPendingConversationId(null);
+  };
+
+  // Handle discard cancel
+  const handleDiscardCancel = () => {
+    setShowDiscardDialog(false);
+    setPendingConversationId(null);
   };
 
   const handleDeleteConversation = (
@@ -856,6 +900,18 @@ export function Sidebar() {
         accept=".json"
         onChange={handleImportConversation}
         style={{ display: 'none' }}
+      />
+
+      {/* Discard changes confirmation dialog */}
+      <ConfirmDialog
+        isOpen={showDiscardDialog}
+        title={t('chat.discardChanges')}
+        message={t('chat.discardChangesMessage')}
+        confirmLabel={t('common.discard')}
+        cancelLabel={t('common.keepEditing')}
+        confirmVariant="danger"
+        onConfirm={handleDiscardConfirm}
+        onCancel={handleDiscardCancel}
       />
     </>
   );

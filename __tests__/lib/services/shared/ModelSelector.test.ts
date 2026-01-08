@@ -27,8 +27,8 @@ describe('ModelSelector', () => {
 
       const result = selector.selectModel(model, messages);
 
-      expect(result.modelId).toBe('gpt-5');
-      expect(result.modelConfig.id).toBe('gpt-5');
+      expect(result.modelId).toBe('gpt-5.2');
+      expect(result.modelConfig.id).toBe('gpt-5.2');
     });
 
     it('should keep model when images detected but upgrade not applicable', () => {
@@ -63,8 +63,8 @@ describe('ModelSelector', () => {
 
       const result = selector.selectModel(model, messages);
 
-      expect(result.modelId).toBe('gpt-5');
-      expect(result.modelConfig.id).toBe('gpt-5');
+      expect(result.modelId).toBe('gpt-5.2');
+      expect(result.modelConfig.id).toBe('gpt-5.2');
     });
 
     it('should fallback to default model for invalid model ID', () => {
@@ -157,8 +157,8 @@ describe('ModelSelector', () => {
   describe('isValidModel', () => {
     it('should return true for valid model IDs', () => {
       expect(selector.isValidModel('gpt-4.1')).toBe(true);
-      expect(selector.isValidModel('gpt-5')).toBe(true);
-      expect(selector.isValidModel('gpt-5-chat')).toBe(true);
+      expect(selector.isValidModel('gpt-5.2')).toBe(true);
+      expect(selector.isValidModel('gpt-5.2-chat')).toBe(true);
       expect(selector.isValidModel('o3')).toBe(true);
     });
 
@@ -197,8 +197,8 @@ describe('ModelSelector', () => {
 
   describe('supportsVision', () => {
     it('should return true for vision models', () => {
-      expect(selector.supportsVision('gpt-5')).toBe(true);
-      expect(selector.supportsVision('gpt-5-chat')).toBe(true);
+      expect(selector.supportsVision('gpt-5.2')).toBe(true);
+      expect(selector.supportsVision('gpt-5.2-chat')).toBe(true);
       expect(selector.supportsVision('grok-3')).toBe(true);
     });
 
@@ -224,9 +224,9 @@ describe('ModelSelector', () => {
 
       const result = selector.selectModel(model, messages);
 
-      expect(result.modelId).toBe('gpt-5');
+      expect(result.modelId).toBe('gpt-5.2');
       expect(result.modelConfig).toBeDefined();
-      expect(result.modelConfig.id).toBe('gpt-5');
+      expect(result.modelConfig.id).toBe('gpt-5.2');
     });
 
     it('should handle image conversation without breaking', () => {
@@ -286,8 +286,8 @@ describe('ModelSelector', () => {
 
       const result = selector.selectModel(visionModel, messages);
 
-      expect(result.modelId).toBe('gpt-5');
-      expect(result.modelConfig.id).toBe('gpt-5');
+      expect(result.modelId).toBe('gpt-5.2');
+      expect(result.modelConfig.id).toBe('gpt-5.2');
     });
   });
 });

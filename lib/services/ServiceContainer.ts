@@ -8,6 +8,7 @@ import { ToolRouterService } from './chat/ToolRouterService';
 import { ModelSelector, StreamingService, ToneService } from './shared';
 
 import { env } from '@/config/environment';
+import { AnthropicFoundry } from '@anthropic-ai/foundry-sdk';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -37,6 +38,7 @@ export class ServiceContainer {
   // Azure clients (expensive to create, should be reused)
   private azureOpenAIClient!: AzureOpenAI;
   private openAIClient!: OpenAI;
+  private anthropicFoundryClient!: AnthropicFoundry;
 
   // Core services (stateless, safe to reuse)
   private modelSelector!: ModelSelector;
@@ -95,6 +97,20 @@ export class ServiceContainer {
       apiKey: env.OPENAI_API_KEY || 'placeholder', // Required by SDK even if not used
     });
 
+    // Anthropic Foundry client for Claude models via Azure AI Foundry
+    // Uses Entra ID authentication (same as Azure OpenAI)
+    // Derives endpoint from AZURE_AI_FOUNDRY_ENDPOINT: https://<resource>.services.ai.azure.com/anthropic
+    const anthropicBaseUrl = env.AZURE_AI_FOUNDRY_ENDPOINT?.replace(
+      /\/api\/projects\/.*$/,
+      '',
+    );
+    if (anthropicBaseUrl) {
+      this.anthropicFoundryClient = new AnthropicFoundry({
+        azureADTokenProvider: async () => azureADTokenProvider(),
+        baseURL: `${anthropicBaseUrl}/anthropic`,
+      });
+    }
+
     // 2. Initialize stateless services
     this.modelSelector = new ModelSelector();
     this.toneService = new ToneService();
@@ -110,6 +126,7 @@ export class ServiceContainer {
     this.standardChatService = new StandardChatService(
       this.azureOpenAIClient,
       this.openAIClient,
+      this.anthropicFoundryClient,
       this.modelSelector,
       this.toneService,
       this.streamingService,
@@ -134,6 +151,10 @@ export class ServiceContainer {
 
   public getOpenAIClient(): OpenAI {
     return this.openAIClient;
+  }
+
+  public getAnthropicFoundryClient(): AnthropicFoundry {
+    return this.anthropicFoundryClient;
   }
 
   public getModelSelector(): ModelSelector {

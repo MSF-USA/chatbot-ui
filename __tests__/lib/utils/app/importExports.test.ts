@@ -87,33 +87,31 @@ describe('cleanData Functions', () => {
       ] as ExportFormatV1;
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
-      expect(obj).toEqual({
-        version: 5,
-        history: [
-          {
-            id: 1,
-            name: 'conversation 1',
-            messages: [
-              {
-                role: 'user',
-                content: "what's up ?",
-              },
-              {
-                role: 'assistant',
-                content: 'Hi',
-              },
-            ],
-            model: OpenAIModels[OpenAIModelID.GPT_5_2],
-            prompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: DEFAULT_TEMPERATURE,
-            folderId: null,
-          },
-        ],
-        folders: [],
-        prompts: [],
-        tones: [],
-        customAgents: [],
+      expect(obj.version).toBe(5);
+      expect(obj.folders).toEqual([]);
+      expect(obj.prompts).toEqual([]);
+      expect(obj.tones).toEqual([]);
+      expect(obj.customAgents).toEqual([]);
+      expect(obj.history).toHaveLength(1);
+      // Check conversation properties
+      const conv = obj.history[0];
+      expect(conv.id).toBe(1);
+      expect(conv.name).toBe('conversation 1');
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2_CHAT]);
+      expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
+      expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
+      expect(conv.folderId).toBeNull();
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(conv.messages).toHaveLength(2);
+      expect(conv.messages[0]).toEqual({
+        role: 'user',
+        content: "what's up ?",
       });
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = conv.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.activeIndex).toBe(0);
+      expect(assistantGroup.versions[0].content).toBe('Hi');
     });
   });
 
@@ -145,39 +143,37 @@ describe('cleanData Functions', () => {
       } as ExportFormatV2;
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
-      expect(obj).toEqual({
-        version: 5,
-        history: [
-          {
-            id: '1',
-            name: 'conversation 1',
-            messages: [
-              {
-                role: 'user',
-                content: "what's up ?",
-              },
-              {
-                role: 'assistant',
-                content: 'Hi',
-              },
-            ],
-            model: OpenAIModels[OpenAIModelID.GPT_5_2],
-            prompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: DEFAULT_TEMPERATURE,
-            folderId: null,
-          },
-        ],
-        folders: [
-          {
-            id: '1',
-            name: 'folder 1',
-            type: 'chat',
-          },
-        ],
-        prompts: [],
-        tones: [],
-        customAgents: [],
+      expect(obj.version).toBe(5);
+      expect(obj.prompts).toEqual([]);
+      expect(obj.tones).toEqual([]);
+      expect(obj.customAgents).toEqual([]);
+      expect(obj.folders).toEqual([
+        {
+          id: '1',
+          name: 'folder 1',
+          type: 'chat',
+        },
+      ]);
+      expect(obj.history).toHaveLength(1);
+      // Check conversation properties
+      const conv = obj.history[0];
+      expect(conv.id).toBe('1');
+      expect(conv.name).toBe('conversation 1');
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2_CHAT]);
+      expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
+      expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
+      expect(conv.folderId).toBeNull();
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(conv.messages).toHaveLength(2);
+      expect(conv.messages[0]).toEqual({
+        role: 'user',
+        content: "what's up ?",
       });
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = conv.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.activeIndex).toBe(0);
+      expect(assistantGroup.versions[0].content).toBe('Hi');
     });
   });
 
@@ -226,48 +222,47 @@ describe('cleanData Functions', () => {
 
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
-      expect(obj).toEqual({
-        version: 5,
-        history: [
-          {
-            id: '1',
-            name: 'conversation 1',
-            messages: [
-              {
-                role: 'user',
-                content: "what's up ?",
-              },
-              {
-                role: 'assistant',
-                content: 'Hi',
-              },
-            ],
-            model: OpenAIModels[OpenAIModelID.GPT_5_2],
-            prompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: DEFAULT_TEMPERATURE,
-            folderId: null,
-          },
-        ],
-        folders: [
-          {
-            id: '1',
-            name: 'folder 1',
-            type: 'chat',
-          },
-        ],
-        prompts: [
-          {
-            id: '1',
-            name: 'prompt 1',
-            description: '',
-            content: '',
-            model: OpenAIModels[OpenAIModelID.GPT_5_2],
-            folderId: null,
-          },
-        ],
-        tones: [],
-        customAgents: [],
+      expect(obj.version).toBe(5);
+      expect(obj.tones).toEqual([]);
+      expect(obj.customAgents).toEqual([]);
+      expect(obj.folders).toEqual([
+        {
+          id: '1',
+          name: 'folder 1',
+          type: 'chat',
+        },
+      ]);
+      expect(obj.prompts).toEqual([
+        {
+          id: '1',
+          name: 'prompt 1',
+          description: '',
+          content: '',
+          model: OpenAIModels[OpenAIModelID.GPT_5_2],
+          folderId: null,
+        },
+      ]);
+      expect(obj.history).toHaveLength(1);
+      // Check conversation properties
+      const conv = obj.history[0];
+      expect(conv.id).toBe('1');
+      expect(conv.name).toBe('conversation 1');
+      // v4 format preserves the explicit model from import data
+      expect(conv.model).toEqual(OpenAIModels[OpenAIModelID.GPT_5_2]);
+      expect(conv.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
+      expect(conv.temperature).toBe(DEFAULT_TEMPERATURE);
+      expect(conv.folderId).toBeNull();
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(conv.messages).toHaveLength(2);
+      expect(conv.messages[0]).toEqual({
+        role: 'user',
+        content: "what's up ?",
       });
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = conv.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.activeIndex).toBe(0);
+      expect(assistantGroup.versions[0].content).toBe('Hi');
     });
 
     it('should handle v4 data with missing folders and prompts fields', () => {
@@ -288,7 +283,7 @@ describe('cleanData Functions', () => {
                 content: 'Hi',
               },
             ],
-            model: OpenAIModels[OpenAIModelID.GPT_5],
+            model: OpenAIModels[OpenAIModelID.GPT_5_2],
             prompt: DEFAULT_SYSTEM_PROMPT,
             temperature: DEFAULT_TEMPERATURE,
             folderId: null,

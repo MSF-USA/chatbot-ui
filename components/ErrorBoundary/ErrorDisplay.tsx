@@ -1,12 +1,11 @@
 'use client';
 
 import { IconAlertTriangle, IconCopy, IconRefresh } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { FEEDBACK_EMAIL } from '@/types/contact';
 
 interface ErrorDisplayProps {
   error: Error & { digest?: string };
@@ -26,11 +25,10 @@ export function ErrorDisplay({
   showSupportInfo = true,
 }: ErrorDisplayProps) {
   const t = useTranslations();
-  const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
 
-  const supportEmail =
-    session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL;
+  // Use default feedback email - error contexts may not have session providers
+  const supportEmail = FEEDBACK_EMAIL;
 
   const copyErrorToClipboard = async () => {
     const errorText = `Error: ${error.message || 'An error occurred'}${error.digest ? `\nError ID: ${error.digest}` : ''}`;

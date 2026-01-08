@@ -244,12 +244,12 @@ describe('Chat Utilities', () => {
 
   describe('checkIsModelValid', () => {
     describe('OpenAI Models', () => {
-      it('should return true for valid GPT-5 model', () => {
-        expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
+      it('should return true for valid GPT-5.2 model', () => {
+        expect(checkIsModelValid('gpt-5.2', OpenAIModelID)).toBe(true);
       });
 
-      it('should return true for valid GPT-5 Chat model', () => {
-        expect(checkIsModelValid('gpt-5-chat', OpenAIModelID)).toBe(true);
+      it('should return true for valid GPT-5.2 Chat model', () => {
+        expect(checkIsModelValid('gpt-5.2-chat', OpenAIModelID)).toBe(true);
       });
 
       it('should return true for valid o3 model', () => {
@@ -278,8 +278,8 @@ describe('Chat Utilities', () => {
     });
 
     describe('Vision Models', () => {
-      it('should return true for GPT-5 with vision capabilities', () => {
-        expect(checkIsModelValid('gpt-5', OpenAIVisionModelID)).toBe(true);
+      it('should return true for GPT-5.2 with vision capabilities', () => {
+        expect(checkIsModelValid('gpt-5.2', OpenAIVisionModelID)).toBe(true);
       });
 
       it('should return true for Grok with vision capabilities', () => {
@@ -311,20 +311,20 @@ describe('Chat Utilities', () => {
       });
 
       it('should be case-sensitive', () => {
-        expect(checkIsModelValid('GPT-5', OpenAIModelID)).toBe(false);
-        expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
+        expect(checkIsModelValid('GPT-5.2', OpenAIModelID)).toBe(false);
+        expect(checkIsModelValid('gpt-5.2', OpenAIModelID)).toBe(true);
       });
     });
 
     describe('Edge cases', () => {
       it('should handle model IDs with similar prefixes', () => {
-        // gpt-5 vs gpt-5-chat
-        expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
-        expect(checkIsModelValid('gpt-5-chat', OpenAIModelID)).toBe(true);
+        // gpt-5.2 vs gpt-5.2-chat
+        expect(checkIsModelValid('gpt-5.2', OpenAIModelID)).toBe(true);
+        expect(checkIsModelValid('gpt-5.2-chat', OpenAIModelID)).toBe(true);
       });
 
       it('should not match partial model IDs', () => {
-        expect(checkIsModelValid('gpt-5-fake', OpenAIModelID)).toBe(false);
+        expect(checkIsModelValid('gpt-5.2-fake', OpenAIModelID)).toBe(false);
         expect(checkIsModelValid('gpt', OpenAIModelID)).toBe(false);
       });
     });
@@ -410,13 +410,13 @@ describe('Chat Utilities', () => {
       ];
 
       const isImage = isImageConversation(messages);
-      const modelId = 'gpt-5';
+      const modelId = 'gpt-5.2';
       const isValidStandard = checkIsModelValid(modelId, OpenAIModelID);
       const isValidVision = checkIsModelValid(modelId, OpenAIVisionModelID);
 
       expect(isImage).toBe(true);
       expect(isValidStandard).toBe(true);
-      expect(isValidVision).toBe(true); // gpt-5 supports vision
+      expect(isValidVision).toBe(true); // gpt-5.2 supports vision
     });
   });
 });

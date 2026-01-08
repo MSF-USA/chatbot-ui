@@ -13,6 +13,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Hoist mocks before imports
 const mockAuth = vi.hoisted(() => vi.fn());
 const mockCleanMarkdown = vi.hoisted(() => vi.fn());
+const mockDetectLanguage = vi.hoisted(() => vi.fn());
+const mockIsMultilingualVoice = vi.hoisted(() => vi.fn());
+const mockResolveVoiceForLanguage = vi.hoisted(() => vi.fn());
+const mockGetBaseLanguageCode = vi.hoisted(() => vi.fn());
 
 // Mock dependencies
 vi.mock('@/auth', () => ({
@@ -21,6 +25,18 @@ vi.mock('@/auth', () => ({
 
 vi.mock('@/lib/utils/app/clean', () => ({
   cleanMarkdown: mockCleanMarkdown,
+}));
+
+vi.mock('@/lib/services/languageDetection', () => ({
+  detectLanguage: mockDetectLanguage,
+}));
+
+vi.mock('@/lib/data/ttsVoices', () => ({
+  isMultilingualVoice: mockIsMultilingualVoice,
+  resolveVoiceForLanguage: mockResolveVoiceForLanguage,
+  getBaseLanguageCode: mockGetBaseLanguageCode,
+  getDefaultVoiceForLocale: vi.fn(() => ({ name: 'en-US-AvaNeural' })),
+  getTTSLocaleForAppLocale: vi.fn((locale) => `${locale}-US`),
 }));
 
 // Mock Azure Speech SDK - we won't test full synthesis, just validation
@@ -55,6 +71,16 @@ describe('/api/chat/tts', () => {
 
     // Setup clean markdown mock - default passes through text
     mockCleanMarkdown.mockImplementation((text) => text);
+
+    // Setup language detection mock
+    mockDetectLanguage.mockResolvedValue({ language: 'en', confidence: 0.95 });
+
+    // Setup voice resolution mocks
+    mockIsMultilingualVoice.mockReturnValue(false);
+    mockResolveVoiceForLanguage.mockReturnValue('en-US-AvaNeural');
+    mockGetBaseLanguageCode.mockImplementation((locale) =>
+      locale.split('-')[0].toLowerCase(),
+    );
 
     // Mock environment variable
     process.env.OPENAI_API_KEY = 'test-api-key';
@@ -114,7 +140,7 @@ describe('/api/chat/tts', () => {
       const data = await parseJsonResponse(response);
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe('No text provided');
+      expect(data.error).toBe('Text could not be processed');
     });
 
     it('handles whitespace text (passes validation but may fail synthesis)', async () => {
@@ -297,6 +323,218 @@ describe('/api/chat/tts', () => {
       }
 
       expect(mockCleanMarkdown).toHaveBeenCalledWith(multiParagraph);
+    });
+  });
+
+  describe('TTS Settings and Voice Resolution', () => {
+    it('skips language detection when global voice is multilingual', async () => {
+      mockIsMultilingualVoice.mockReturnValue(true);
+
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          globalVoice: 'en-US-AvaMultilingualNeural',
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should check if globalVoice is multilingual
+      expect(mockIsMultilingualVoice).toHaveBeenCalledWith(
+        'en-US-AvaMultilingualNeural',
+      );
+
+      // Should NOT detect language when multilingual voice is used
+      expect(mockDetectLanguage).not.toHaveBeenCalled();
+    });
+
+    it('detects language when global voice is not multilingual', async () => {
+      mockIsMultilingualVoice.mockReturnValue(false);
+
+      const request = createTTSRequest({
+        body: {
+          text: 'Bonjour le monde',
+          globalVoice: 'en-US-AvaNeural',
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should detect language for non-multilingual voice
+      expect(mockDetectLanguage).toHaveBeenCalledWith('Bonjour le monde');
+    });
+
+    it('uses explicit voiceName override without checking settings', async () => {
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          voiceName: 'fr-FR-DeniseNeural',
+          globalVoice: 'en-US-AvaMultilingualNeural',
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should NOT check if voice is multilingual when explicit override provided
+      expect(mockIsMultilingualVoice).not.toHaveBeenCalled();
+      // Should NOT detect language when explicit override provided
+      expect(mockDetectLanguage).not.toHaveBeenCalled();
+    });
+
+    it('passes language voice preferences to resolver', async () => {
+      mockIsMultilingualVoice.mockReturnValue(false);
+      mockGetBaseLanguageCode.mockReturnValue('en');
+
+      const languageVoices = {
+        en: 'en-IE-EmilyNeural',
+        fr: 'fr-FR-DeniseNeural',
+      };
+
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          globalVoice: 'en-US-AvaNeural',
+          languageVoices,
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should call resolveVoiceForLanguage with settings including languageVoices
+      expect(mockResolveVoiceForLanguage).toHaveBeenCalledWith(
+        'en',
+        expect.objectContaining({
+          languageVoices: expect.objectContaining({
+            en: 'en-IE-EmilyNeural',
+            fr: 'fr-FR-DeniseNeural',
+          }),
+        }),
+      );
+    });
+
+    it('uses pre-detected language hint when provided', async () => {
+      mockIsMultilingualVoice.mockReturnValue(false);
+      mockGetBaseLanguageCode.mockReturnValue('fr');
+
+      const request = createTTSRequest({
+        body: {
+          text: 'Bonjour',
+          detectedLanguage: 'fr',
+          globalVoice: 'en-US-AvaNeural',
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should NOT call language detection when hint is provided
+      expect(mockDetectLanguage).not.toHaveBeenCalled();
+
+      // Should use the provided language hint
+      expect(mockGetBaseLanguageCode).toHaveBeenCalledWith('fr');
+    });
+
+    it('falls back to default settings when none provided', async () => {
+      mockIsMultilingualVoice.mockReturnValue(true);
+
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          // No globalVoice or languageVoices provided
+        },
+      });
+
+      try {
+        await POST(request);
+      } catch {
+        // Expected without full SDK
+      }
+
+      // Should check the default global voice (en-US-AvaMultilingualNeural)
+      expect(mockIsMultilingualVoice).toHaveBeenCalledWith(
+        'en-US-AvaMultilingualNeural',
+      );
+    });
+  });
+
+  describe('Rate and Pitch Validation', () => {
+    it('returns 400 when rate is below minimum', async () => {
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          rate: 0.3, // Below 0.5 minimum
+        },
+      });
+
+      const response = await POST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Rate must be between 0.5 and 2.0');
+    });
+
+    it('returns 400 when rate is above maximum', async () => {
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          rate: 2.5, // Above 2.0 maximum
+        },
+      });
+
+      const response = await POST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Rate must be between 0.5 and 2.0');
+    });
+
+    it('returns 400 when pitch is below minimum', async () => {
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          pitch: -60, // Below -50 minimum
+        },
+      });
+
+      const response = await POST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Pitch must be between -50 and 50');
+    });
+
+    it('returns 400 when pitch is above maximum', async () => {
+      const request = createTTSRequest({
+        body: {
+          text: 'Hello world',
+          pitch: 60, // Above 50 maximum
+        },
+      });
+
+      const response = await POST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Pitch must be between -50 and 50');
     });
   });
 });

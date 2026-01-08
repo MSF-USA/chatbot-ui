@@ -1,11 +1,9 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { useTranslations } from 'next-intl';
-
 import { useChat } from '@/client/hooks/chat/useChat';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 
-import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+import { MessageContentAnalyzer } from '@/lib/utils/shared/chat/messageContentAnalyzer';
 
 import {
   FileMessageContent,
@@ -13,6 +11,9 @@ import {
   Message,
   MessageType,
   TextMessageContent,
+  VersionInfo,
+  isAssistantMessageGroup,
+  isLegacyMessage,
 } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
@@ -30,6 +31,10 @@ export interface Props {
   onQuestionClick?: (question: string) => void;
   onRegenerate?: () => void;
   onSaveAsPrompt?: (content: string) => void;
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
 }
 
 export const ChatMessage: FC<Props> = ({
@@ -39,8 +44,10 @@ export const ChatMessage: FC<Props> = ({
   onQuestionClick,
   onRegenerate,
   onSaveAsPrompt,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
 }) => {
-  const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
   const { isStreaming: messageIsStreaming } = useChat();
@@ -48,7 +55,6 @@ export const ChatMessage: FC<Props> = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [messageContent, setMessageContent] = useState(message.content);
-  const [messagedCopied, setMessageCopied] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -77,14 +83,21 @@ export const ChatMessage: FC<Props> = ({
     if (!selectedConversation) return;
 
     const messages = [...selectedConversation.messages];
-    const findIndex = messages.findIndex((elm) => elm === message);
+    // Find the message - only user messages can be deleted (which are legacy Messages)
+    const findIndex = messages.findIndex(
+      (elm) => isLegacyMessage(elm) && elm === message,
+    );
 
     if (findIndex < 0) return;
 
-    if (
+    // Check if next entry is an assistant message (group or legacy)
+    const nextEntry = messages[findIndex + 1];
+    const nextIsAssistant =
       findIndex < messages.length - 1 &&
-      messages[findIndex + 1].role === 'assistant'
-    ) {
+      (isAssistantMessageGroup(nextEntry) ||
+        (isLegacyMessage(nextEntry) && nextEntry.role === 'assistant'));
+
+    if (nextIsAssistant) {
       messages.splice(findIndex, 2);
     } else {
       messages.splice(findIndex, 1);
@@ -101,19 +114,6 @@ export const ChatMessage: FC<Props> = ({
       e.preventDefault();
       handleEditMessage();
     }
-  };
-
-  const copyOnClick = () => {
-    if (!navigator.clipboard) return;
-
-    const analyzer = new MessageContentAnalyzer(message);
-    const content = analyzer.extractText();
-    navigator.clipboard.writeText(content).then(() => {
-      setMessageCopied(true);
-      setTimeout(() => {
-        setMessageCopied(false);
-      }, 2000);
-    });
   };
 
   const handleSaveAsPromptClick = () => {
@@ -156,35 +156,6 @@ export const ChatMessage: FC<Props> = ({
     return { images, files, text };
   };
 
-  // Handle translate action - sends a new message to translate the transcript
-  const handleTranslate = (transcript: string, targetLanguage: string) => {
-    if (!onQuestionClick) return;
-
-    // Language names for better readability in the prompt
-    const languageNames: Record<string, string> = {
-      en: 'English',
-      es: 'Spanish',
-      fr: 'French',
-      de: 'German',
-      nl: 'Dutch',
-      it: 'Italian',
-      pt: 'Portuguese',
-      ru: 'Russian',
-      zh: 'Chinese',
-      ja: 'Japanese',
-      ko: 'Korean',
-      ar: 'Arabic',
-      hi: 'Hindi',
-    };
-
-    const languageName = languageNames[targetLanguage] || targetLanguage;
-
-    // Send the translation request immediately
-    onQuestionClick(
-      `Please translate the following transcript to ${languageName}:\n\n${transcript}`,
-    );
-  };
-
   // Render transcript viewer for transcription messages
   if (message.transcript && message.role === 'assistant') {
     return (
@@ -192,18 +163,18 @@ export const ChatMessage: FC<Props> = ({
         <AssistantMessage
           content={typeof message.content === 'string' ? message.content : ''}
           message={message}
-          copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
-          messageCopied={messagedCopied}
           onRegenerate={onRegenerate}
+          versionInfo={versionInfo}
+          onPreviousVersion={onPreviousVersion}
+          onNextVersion={onNextVersion}
         >
           <TranscriptViewer
             filename={message.transcript.filename}
             transcript={message.transcript.transcript}
             processedContent={message.transcript.processedContent}
-            onTranslate={handleTranslate}
           />
         </AssistantMessage>
       </div>
@@ -237,7 +208,7 @@ export const ChatMessage: FC<Props> = ({
         >
           <FileContent files={files} images={images} />
           {text && (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+            <div className="prose dark:prose-invert prose-p:my-2 text-gray-800 dark:text-white max-w-none mt-2">
               {text.text}
             </div>
           )}
@@ -249,12 +220,13 @@ export const ChatMessage: FC<Props> = ({
           <AssistantMessage
             content={textContent}
             message={message}
-            copyOnClick={copyOnClick}
             messageIsStreaming={messageIsStreaming}
             messageIndex={messageIndex}
             selectedConversation={selectedConversation}
-            messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
+            versionInfo={versionInfo}
+            onPreviousVersion={onPreviousVersion}
+            onNextVersion={onNextVersion}
           >
             <div className="mb-3">
               <FileContent files={files} images={images} />
@@ -292,7 +264,7 @@ export const ChatMessage: FC<Props> = ({
         >
           <ImageContent images={images} />
           {text && (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+            <div className="prose dark:prose-invert prose-p:my-2 text-gray-800 dark:text-white max-w-none mt-2">
               {text.text}
             </div>
           )}
@@ -304,12 +276,13 @@ export const ChatMessage: FC<Props> = ({
           <AssistantMessage
             content={textContent}
             message={message}
-            copyOnClick={copyOnClick}
             messageIsStreaming={messageIsStreaming}
             messageIndex={messageIndex}
             selectedConversation={selectedConversation}
-            messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
+            versionInfo={versionInfo}
+            onPreviousVersion={onPreviousVersion}
+            onNextVersion={onNextVersion}
           >
             <div className="mb-3">
               <ImageContent images={images} />
@@ -327,7 +300,6 @@ export const ChatMessage: FC<Props> = ({
     return (
       <ChatMessageText
         message={message}
-        copyOnClick={copyOnClick}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         setIsTyping={setIsTyping}
@@ -342,11 +314,13 @@ export const ChatMessage: FC<Props> = ({
         messageIsStreaming={messageIsStreaming}
         messageIndex={messageIndex}
         selectedConversation={selectedConversation}
-        messageCopied={messagedCopied}
         onEdit={onEdit}
         onQuestionClick={onQuestionClick}
         onRegenerate={onRegenerate}
         onSaveAsPrompt={handleSaveAsPromptClick}
+        versionInfo={versionInfo}
+        onPreviousVersion={onPreviousVersion}
+        onNextVersion={onNextVersion}
       />
     );
   } else {

@@ -15,6 +15,13 @@ vi.mock('@/components/Chat/Citations/CitationItem', () => ({
   ),
 }));
 
+// Mock CitationListItem component
+vi.mock('@/components/Chat/Citations/CitationListItem', () => ({
+  CitationListItem: ({ citation }: { citation: Citation }) => (
+    <div data-testid={`list-citation-${citation.number}`}>{citation.title}</div>
+  ),
+}));
+
 // Mock next/link
 vi.mock('next/link', () => ({
   default: ({ children, ...props }: any) => <a {...props}>{children}</a>,
@@ -360,6 +367,264 @@ describe('CitationList', () => {
 
       const count = screen.getByText('3');
       expect(count).toBeInTheDocument();
+    });
+  });
+
+  describe('Header Favicons', () => {
+    const citationsWithDifferentDomains: Citation[] = [
+      {
+        title: 'News Article',
+        url: 'https://news.com/1',
+        date: '2024-01-01',
+        number: 1,
+      },
+      {
+        title: 'Tech Article',
+        url: 'https://techcrunch.com/2',
+        date: '2024-01-02',
+        number: 2,
+      },
+      {
+        title: 'Another News',
+        url: 'https://news.com/3',
+        date: '2024-01-03',
+        number: 3,
+      },
+    ];
+
+    it('displays unique domain favicons in header', () => {
+      const { container } = render(
+        <CitationList citations={citationsWithDifferentDomains} />,
+      );
+
+      // Query for images with title attribute (header favicons have title for hover)
+      const favicons = container.querySelectorAll('img[title]');
+      // Should show 2 unique domains (news.com and techcrunch.com)
+      expect(favicons.length).toBe(2);
+    });
+
+    it('deduplicates favicons by domain', () => {
+      const duplicateDomainCitations: Citation[] = [
+        {
+          title: 'Article 1',
+          url: 'https://example.com/1',
+          date: '2024-01-01',
+          number: 1,
+        },
+        {
+          title: 'Article 2',
+          url: 'https://example.com/2',
+          date: '2024-01-02',
+          number: 2,
+        },
+        {
+          title: 'Article 3',
+          url: 'https://example.com/3',
+          date: '2024-01-03',
+          number: 3,
+        },
+      ];
+
+      const { container } = render(
+        <CitationList citations={duplicateDomainCitations} />,
+      );
+
+      // Query for images with title attribute (header favicons have title for hover)
+      const favicons = container.querySelectorAll('img[title]');
+      expect(favicons.length).toBe(1);
+    });
+
+    it('shows overflow indicator when more than 5 unique domains', () => {
+      const manyDomainCitations: Citation[] = Array.from(
+        { length: 8 },
+        (_, i) => ({
+          title: `Article ${i + 1}`,
+          url: `https://domain${i + 1}.com/article`,
+          date: '2024-01-01',
+          number: i + 1,
+        }),
+      );
+
+      render(<CitationList citations={manyDomainCitations} />);
+
+      // Should show +3 overflow indicator (8 domains - 5 visible)
+      expect(screen.getByText('+3')).toBeInTheDocument();
+    });
+
+    it('does not show overflow indicator when 5 or fewer unique domains', () => {
+      const fewDomainCitations: Citation[] = Array.from(
+        { length: 5 },
+        (_, i) => ({
+          title: `Article ${i + 1}`,
+          url: `https://domain${i + 1}.com/article`,
+          date: '2024-01-01',
+          number: i + 1,
+        }),
+      );
+
+      render(<CitationList citations={fewDomainCitations} />);
+
+      expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
+    });
+
+    it('uses Google Favicon API for icons', () => {
+      const { container } = render(
+        <CitationList citations={citationsWithDifferentDomains} />,
+      );
+
+      const favicon = container.querySelector('img');
+      expect(favicon).toHaveAttribute(
+        'src',
+        expect.stringContaining('google.com/s2/favicons'),
+      );
+    });
+
+    it('displays domain name on hover (title attribute)', () => {
+      const { container } = render(
+        <CitationList citations={citationsWithDifferentDomains} />,
+      );
+
+      const favicons = container.querySelectorAll('img[title]');
+      expect(favicons.length).toBe(2);
+
+      // Check that favicons have title attributes with domain names
+      const titles = Array.from(favicons).map((img) =>
+        img.getAttribute('title'),
+      );
+      expect(titles).toContain('news.com');
+      expect(titles).toContain('techcrunch.com');
+    });
+  });
+
+  describe('View Mode Toggle', () => {
+    it('renders view mode toggle button', () => {
+      render(<CitationList citations={mockCitations} />);
+
+      const toggleButton = screen.getByTitle(/switch to/i);
+      expect(toggleButton).toBeInTheDocument();
+    });
+
+    it('starts in cards view mode by default', async () => {
+      const { container } = render(<CitationList citations={mockCitations} />);
+
+      const header = screen.getByText('Sources').closest('div');
+      fireEvent.click(header!);
+
+      await waitFor(() => {
+        // Should show CitationItem components (cards view)
+        expect(screen.getByTestId('citation-1')).toBeInTheDocument();
+        // Should not show CitationListItem components
+        expect(screen.queryByTestId('list-citation-1')).not.toBeInTheDocument();
+      });
+    });
+
+    it('switches to list view when toggle clicked', async () => {
+      render(<CitationList citations={mockCitations} />);
+
+      // Expand first
+      const header = screen.getByText('Sources').closest('div');
+      fireEvent.click(header!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('citation-1')).toBeInTheDocument();
+      });
+
+      // Click toggle button
+      const toggleButton = screen.getByTitle(/switch to list/i);
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        // Should show CitationListItem components (list view)
+        expect(screen.getByTestId('list-citation-1')).toBeInTheDocument();
+        // Should not show CitationItem components
+        expect(screen.queryByTestId('citation-1')).not.toBeInTheDocument();
+      });
+    });
+
+    it('switches back to cards view when toggle clicked again', async () => {
+      render(<CitationList citations={mockCitations} />);
+
+      // Expand first
+      const header = screen.getByText('Sources').closest('div');
+      fireEvent.click(header!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('citation-1')).toBeInTheDocument();
+      });
+
+      // Switch to list view
+      const toggleButton = screen.getByTitle(/switch to list/i);
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('list-citation-1')).toBeInTheDocument();
+      });
+
+      // Switch back to cards view
+      const toggleButtonAgain = screen.getByTitle(/switch to card/i);
+      fireEvent.click(toggleButtonAgain);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('citation-1')).toBeInTheDocument();
+        expect(screen.queryByTestId('list-citation-1')).not.toBeInTheDocument();
+      });
+    });
+
+    it('toggle does not collapse when already expanded', async () => {
+      const { container } = render(<CitationList citations={mockCitations} />);
+
+      // Expand first
+      const header = screen.getByText('Sources').closest('div');
+      fireEvent.click(header!);
+
+      await waitFor(() => {
+        const citationsContainer = container.querySelector('.overflow-hidden');
+        expect(citationsContainer).toHaveClass('opacity-100');
+      });
+
+      // Click toggle - should not collapse
+      const toggleButton = screen.getByTitle(/switch to/i);
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        const citationsContainer = container.querySelector('.overflow-hidden');
+        expect(citationsContainer).toHaveClass('opacity-100');
+      });
+    });
+
+    it('auto-expands when toggling view mode while collapsed', async () => {
+      const { container } = render(<CitationList citations={mockCitations} />);
+
+      // Start collapsed
+      const citationsContainer = container.querySelector('.overflow-hidden');
+      expect(citationsContainer).toHaveClass('max-h-0');
+
+      // Click toggle without expanding first
+      const toggleButton = screen.getByTitle(/switch to/i);
+      fireEvent.click(toggleButton);
+
+      // Should auto-expand
+      await waitFor(() => {
+        const expandedContainer = container.querySelector('.overflow-hidden');
+        expect(expandedContainer).toHaveClass('opacity-100');
+        expect(expandedContainer).not.toHaveClass('max-h-0');
+      });
+    });
+
+    it('shows correct icon based on current view mode', async () => {
+      render(<CitationList citations={mockCitations} />);
+
+      // Default should show list icon (to switch to list view)
+      expect(screen.getByTitle('Switch to list view')).toBeInTheDocument();
+
+      // Click toggle
+      const toggleButton = screen.getByTitle('Switch to list view');
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        // Now should show cards icon (to switch back to card view)
+        expect(screen.getByTitle('Switch to card view')).toBeInTheDocument();
+      });
     });
   });
 });

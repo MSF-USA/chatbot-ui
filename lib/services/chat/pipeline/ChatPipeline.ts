@@ -1,9 +1,21 @@
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { ErrorCode, ErrorSeverity, PipelineError } from '@/lib/types/errors';
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
+import { ErrorCode, ErrorSeverity, PipelineError } from '@/types/errors';
 
 import { ChatContext } from './ChatContext';
 import { PipelineStage } from './PipelineStage';
+
+/** Union of all possible message content types */
+type MessageContent =
+  | TextMessageContent
+  | ImageMessageContent
+  | FileMessageContent;
 
 /**
  * Timeout configuration for pipeline stages (in milliseconds).
@@ -15,7 +27,7 @@ import { PipelineStage } from './PipelineStage';
  * - Pipeline continues with next stage
  */
 const STAGE_TIMEOUTS: Record<string, number> = {
-  FileProcessor: 30000, // 30s for file download/processing
+  FileProcessor: 180000, // 180s (3 min) for large file download + extraction + processing
   ImageProcessor: 5000, // 5s for image validation
   RAGEnricher: 10000, // 10s for knowledge base search
   ToolRouterEnricher: 45000, // 45s for web search (AI agent + Bing search + result processing)
@@ -168,6 +180,15 @@ export class ChatPipeline {
         );
         context = { ...context, errors };
 
+        // Special handling for FileProcessor failures:
+        // Remove file_url content from messages to prevent Azure OpenAI errors
+        if (stage.name === 'FileProcessor') {
+          console.warn(
+            '[Pipeline] FileProcessor failed, sanitizing file_url content from messages',
+          );
+          context = this.sanitizeFileUrlsOnError(context);
+        }
+
         // Continue to next stage
       }
     }
@@ -232,5 +253,94 @@ export class ChatPipeline {
         );
       }, timeoutMs);
     });
+  }
+
+  /**
+   * Sanitizes messages when FileProcessor fails to prevent file_url content
+   * from reaching downstream handlers that don't support it.
+   *
+   * This ensures graceful degradation: the chat can continue without the file
+   * content, with an informative message about the failure.
+   *
+   * @param context - The current chat context
+   * @returns Updated context with sanitized messages
+   */
+  private sanitizeFileUrlsOnError(context: ChatContext): ChatContext {
+    const sanitizedMessages: Message[] = context.messages.map((message) => {
+      if (typeof message.content === 'string') {
+        return message;
+      }
+
+      if (!Array.isArray(message.content)) {
+        return message;
+      }
+
+      // Check if this message has file_url content
+      const hasFileUrl = message.content.some(
+        (c: MessageContent) => c.type === 'file_url',
+      );
+
+      if (!hasFileUrl) {
+        return message;
+      }
+
+      // Filter out file_url content
+      const sanitizedContent = message.content.filter(
+        (c: MessageContent) => c.type !== 'file_url',
+      );
+
+      // Add notice about failed file processing
+      const fileUrlCount = message.content.filter(
+        (c: MessageContent) => c.type === 'file_url',
+      ).length;
+
+      const notice =
+        fileUrlCount === 1
+          ? '[Note: The uploaded file could not be processed]'
+          : `[Note: ${fileUrlCount} uploaded files could not be processed]`;
+
+      // Add notice to existing text content or create new text content
+      const textContent = sanitizedContent.find(
+        (c: MessageContent) => c.type === 'text',
+      );
+      if (textContent && 'text' in textContent) {
+        (textContent as TextMessageContent).text =
+          `${notice}\n\n${(textContent as TextMessageContent).text}`;
+      } else {
+        sanitizedContent.unshift({
+          type: 'text',
+          text: notice,
+        } as TextMessageContent);
+      }
+
+      // If only text remains, convert to string
+      if (
+        sanitizedContent.length === 1 &&
+        sanitizedContent[0].type === 'text' &&
+        'text' in sanitizedContent[0]
+      ) {
+        return {
+          ...message,
+          content: (sanitizedContent[0] as TextMessageContent).text,
+        };
+      }
+
+      return {
+        ...message,
+        content: sanitizedContent,
+      };
+    });
+
+    return {
+      ...context,
+      messages: sanitizedMessages,
+      processedContent: {
+        ...context.processedContent,
+        metadata: {
+          ...context.processedContent?.metadata,
+          fileProcessingFailed: true,
+        },
+      },
+    };
   }
 }

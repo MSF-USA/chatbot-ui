@@ -5,6 +5,7 @@ import { ModelSelector } from '@/lib/services/shared';
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { DisplayNamePreference } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 /**
@@ -23,6 +24,15 @@ export interface ProcessedContent {
   transcripts?: {
     filename: string;
     transcript: string;
+  }[];
+
+  /** Pending transcription jobs (for files >25MB that use async processing) */
+  pendingTranscriptions?: {
+    filename: string;
+    jobId: string;
+    blobPath?: string; // Only for batch jobs
+    totalChunks?: number; // Only for chunked jobs
+    jobType?: 'chunked' | 'batch';
   }[];
 
   /** Validated image URLs (if images present) */
@@ -85,6 +95,24 @@ export interface ChatContext {
   /** Response verbosity */
   verbosity?: 'low' | 'medium' | 'high';
 
+  /** Raw user prompt from request (before building full system prompt) */
+  rawUserPrompt?: string;
+
+  /** Whether to include user info in system prompt */
+  includeUserInfoInPrompt?: boolean;
+
+  /** User's preferred name (overrides profile displayName) */
+  preferredName?: string;
+
+  /** Additional user context for the AI */
+  userContext?: string;
+
+  /** Display name preference from General Settings (for deriving name fallback) */
+  displayNamePreference?: DisplayNamePreference;
+
+  /** Custom display name from General Settings */
+  customDisplayName?: string;
+
   // ========================================
   // FEATURE FLAGS
   // ========================================
@@ -105,6 +133,12 @@ export interface ChatContext {
 
   /** Tone configuration (voice/writing style) */
   tone?: Tone;
+
+  /** Streaming speed configuration for smooth text output */
+  streamingSpeed?: {
+    charsPerBatch: number;
+    delayMs: number;
+  };
 
   // ========================================
   // CONTENT ANALYSIS (Populated by middleware)

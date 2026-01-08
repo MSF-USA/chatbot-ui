@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Este necesară cheia API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Introduceți cheia API OpenAI în partea stângă jos a barei laterale",
   "Stop Generating": "Nu mai generați",
-  "Prompt limit is {{maxLength}} characters": "Limita mesajelor este de {{maxLength}} caractere",
+  "Prompt limit is {{maxLength}} characters": "Limita promptului este de {{maxLength}} caractere",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limita mesajelor este de {{maxLength}} caractere. Ați introdus {{valueLength}} caractere.",
   "System Prompt": "Solicitări de sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sunteți ChatGPT, un model de limbă mare antrenat de OpenAI. Urmați cu atenție instrucțiunile de utilizare. Vă rugăm să răspundeți folosind markdown.",
@@ -129,7 +129,7 @@
   "Description": "Descriere",
   "A description for your prompt_": "Descrierea solicitării prompt.",
   "Prompt": "prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați {{}} pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați '{{}}' pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
   "Save": "Salvează",
   "A name for your prompt_": "Un nume pentru promptul tău.",
   "New conversation": "Conversație nouă",
@@ -217,7 +217,7 @@
   "Options": "Opțiuni",
   "Are you sure you want to delete this folder?": "Sigur doriți să ștergeți acest folder?",
   "New Prompt": "Solicitare nouă",
-  "Edit Prompt": "Editare solicitare",
+  "Edit Prompt": "Editează Prompt",
   "Prompt name": "Nume solicitare",
   "Prompt content": "Conținut solicitare",
   "Are you sure you want to delete this prompt?": "Sigur doriți să ștergeți această solicitare?",
@@ -328,13 +328,25 @@
   "Tones": "Tonuri",
   "Create Your First Tone": "Creați primul ton",
   "Search tones": "Căutați tonuri...",
-  "Voice Guidelines": "Linii directoare de ton",
+  "Voice Guidelines": "Ghiduri Vocale",
   "Examples": "Exemple",
   "Select a tone to view details": "Selectați un ton pentru a vizualiza detalii",
   "Team Templates": "Șabloane de echipă",
   "selected": "selectat",
   "folders": "dosare",
-  "agents": "agenți",
+  "agents": {
+    "exportAgent": "Exportă agentul",
+    "editAgent": "Editează agentul",
+    "agentName": "Numele agentului",
+    "myResearchAssistant": "Asistentul meu de cercetare",
+    "agentId": "ID agent",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Descriere (opțional)",
+    "descriptionPlaceholder": "Agent specializat pentru sarcini de cercetare...",
+    "baseModel": "Model de bază",
+    "formatDescription": "Format: asst_xxxxx (de la MSF AI Assistant Foundry)",
+    "importantInfo": "Acest agent va avea acces la contextul conversației și va putea folosi aceleași instrumente ca modelele standard. Asigurați-vă că ID-ul agentului este corect deoarece nu poate fi modificat ulterior."
+  },
   "Quick Actions": "Acțiuni rapide",
   "Type / in chat to access your prompts": "Tastați / în chat pentru a accesa solicitările",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Tastați / în chat, selectați solicitarea și completați variabilele când vi se solicită",
@@ -381,7 +393,6 @@
   "Custom Agents": "Agenți Personalizați",
   "Delete template and all its items": "Șterge șablonul și toate elementele sale",
   "Description (Optional)": "Descriere (Opțional)",
-  "Edit Prompt": "Editează Prompt",
   "Edit Tone": "Editează Ton",
   "Email Response Template": "Șablon Răspuns Email",
   "Example Prompt": "Exemplu Prompt",
@@ -441,7 +452,6 @@
   "msf_logo_alt": "Logo MSF",
   "collapse_sidebar": "Restrânge bara laterală",
   "expand_sidebar": "Extinde bara laterală",
-  "Voice Guidelines": "Ghiduri Vocale",
   "Please upload some content or describe the tone you want": "Vă rugăm încărcați conținut sau descrieți tonul dorit",
   "Untitled Tone": "Ton Fără Titlu",
   "Failed to analyze tone": "Analiza tonului a eșuat",
@@ -469,15 +479,43 @@
   "enterTagsPlaceholder": "Adaugă etichete (apasă Enter)",
   "enterPromptNamePlaceholder": "de ex., Răspuns email",
   "enterPromptDescriptionPlaceholder": "Pentru ce este acest prompt?",
-  "enterPromptContentPlaceholder": "Scrie promptul tău aici. Folosește {{variable}} pentru conținut dinamic.",
+  "enterPromptContentPlaceholder": "Scrie promptul tău aici. Folosește '{{variable}}' pentru conținut dinamic.",
   "common": {
-    "contact": "Contact"
+    "contact": "Contact",
+    "close": "Închide",
+    "remove": "Elimină",
+    "tryAgain": "Reîncercați",
+    "menu": "Meniu",
+    "copyToClipboard": "Copiază în clipboard",
+    "toggleDropdownMenu": "Comută meniul drop-down",
+    "toggleMenu": "Comută meniul",
+    "closeModal": "Închide fereastra modală",
+    "dismissBanner": "Închide banner-ul",
+    "searchEllipsis": "Caută...",
+    "addTagEllipsis": "Adaugă o etichetă...",
+    "msfLogo": "Sigla MSF",
+    "importantInformation": "Informații importante",
+    "noResults": "Niciun rezultat găsit",
+    "confirm": "Confirmă",
+    "cancel": "Anulează",
+    "discard": "Renunță",
+    "keepEditing": "Continuă editarea",
+    "yes": "Da",
+    "no": "Nu"
   },
   "errors": {
     "unexpectedErrorOccurred": "A apărut o eroare neașteptată",
     "criticalErrorReload": "A apărut o eroare critică. Vă rugăm reîncărcați pagina.",
     "reloadPage": "Reîncarcă pagina",
-    "persistContactSupport": "Dacă această problemă persistă, vă rugăm contactați asistența"
+    "persistContactSupport": "Dacă această problemă persistă, vă rugăm contactați asistența",
+    "somethingWentWrong": "Ceva nu a mers bine",
+    "anErrorOccurred": "A apărut o eroare",
+    "copyErrorMessage": "Copiază mesajul de eroare",
+    "contactSupport": "Dacă problema persistă, vă rugăm să contactați suportul la",
+    "dismissError": "Închide eroarea",
+    "applicationError": "Eroare a aplicației",
+    "chatLoadError": "A apărut o eroare la încărcarea chatului",
+    "anErrorOccurredTryAgain": "A apărut o eroare. Vă rugăm să încercați din nou."
   },
   "auth": {
     "authenticationError": "Eroare de autentificare",
@@ -546,7 +584,53 @@
     "fullSizePreview": "Previzualizare la dimensiune completă",
     "enterSearchQueryPlaceholder": "Introduceți interogarea sau întrebarea de căutare...",
     "errorFetchingUrl": "A apărut o eroare la preluarea conținutului URL",
-    "errorInitiatingSearch": "A apărut o eroare la inițierea căutării web"
+    "errorInitiatingSearch": "A apărut o eroare la inițierea căutării web",
+    "regenerate": "Regenerare",
+    "modelSwitchPrompt": "{original} a eșuat, dar {fallback} a reușit. Doriți să schimbați modelul?",
+    "keepOriginalModel": "Păstrează {model}",
+    "switchToModel": "Comută la {model}",
+    "alwaysSwitchToModel": "Comută automat întotdeauna",
+    "translateMessage": "Tradu mesajul",
+    "translating": "Se traduce...",
+    "translationError": "Traducerea a eșuat",
+    "showOriginal": "Afișează originalul",
+    "translatedTo": "Tradus în {language}",
+    "searchLanguages": "Caută limbi...",
+    "selectLanguage": "Selectează limba",
+    "audioFromOriginal": "Audio din textul original",
+    "audioFromTranslation": "Audio din traducerea în {language}",
+    "thinking": "Se procesează...",
+    "viewReasoningProcess": "Vezi procesul de raționament",
+    "collapseThinking": "Restrânge raționamentul",
+    "expandThinking": "Extinde raționamentul",
+    "actionsDisabledForEmbed": "Utilizați controalele din conținutul încorporat de mai sus",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Se transcrie și se procesează...",
+      "transcribingAudio": "Se transcrie audio...",
+      "analyzingFiles": "Se analizează fișierele...",
+      "analyzingDocuments": "Se analizează documentele...",
+      "analyzingDocument": "Se analizează documentul...",
+      "analyzingImages": "Se analizează imaginile...",
+      "analyzingImage": "Se analizează imaginea..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} imagine(imagini)",
+      "filesCount": "{count} fișier(e)",
+      "audioVideo": "audio/video",
+      "empty": "gol"
+    },
+    "discardChanges": "Renunță la modificări",
+    "discardChangesMessage": "Aveți modificări nesalvate. Sigur doriți să renunțați la ele?",
+    "voiceInputStarting": "Se pornește...",
+    "voiceInputRecording": "Se înregistrează...",
+    "voiceInputTapToStop": "Atingeți pentru a opri",
+    "stopRecording": "Opriți înregistrarea",
+    "voiceInput": "Introducere vocală",
+    "microphoneAccessDenied": "Accesul la microfon este refuzat. Vă rugăm să îl activați în setările browserului.",
+    "microphoneAccessError": "Eroare de acces la microfon: {message}",
+    "voiceInputTranscribing": "Transcriere în curs...",
+    "ttsRightClickHint": "Faceți clic dreapta pentru opțiuni de voce"
   },
   "sidebar": {
     "collapseSidebar": "Restrânge bara laterală",
@@ -554,29 +638,135 @@
     "quickActionsTitle": "Acțiuni rapide",
     "quickActions": "Acțiuni rapide"
   },
-  "agents": {
-    "exportAgent": "Exportă agentul",
-    "editAgent": "Editează agentul",
-    "agentName": "Numele agentului",
-    "myResearchAssistant": "Asistentul meu de cercetare",
-    "agentId": "ID agent",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Descriere (opțional)",
-    "descriptionPlaceholder": "Agent specializat pentru sarcini de cercetare...",
-    "baseModel": "Model de bază",
-    "formatDescription": "Format: asst_xxxxx (de la MSF AI Assistant Foundry)",
-    "importantInfo": "Acest agent va avea acces la contextul conversației și va putea folosi aceleași instrumente ca modelele standard. Asigurați-vă că ID-ul agentului este corect deoarece nu poate fi modificat ulterior."
-  },
   "prompts": {
-    "buildReusablePrompts": "Construiește prompt-uri reutilizabile cu asistență AI"
+    "buildReusablePrompts": "Construiește prompt-uri reutilizabile cu asistență AI",
+    "noToneDefault": "Fără ton (utilizează implicitul)",
+    "tagHelp": "Ajutor Etichetă",
+    "tagHelpContent": "Folosiți etichete pentru a categorisi și găsi rapid prompturile. Exemple:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "tehnic",
+      "customerSupport": "asistență-clienți"
+    },
+    "variableHelp": "Ajutor Variabilă",
+    "variableHelpIntro": "Folosiți variabile pentru a face prompturile dinamice:",
+    "requiredVariables": "Variabile necesare (fără implicit):",
+    "optionalVariables": "Variabile opționale (cu implicit):",
+    "userMustProvide": "Utilizatorul trebuie să furnizeze o valoare",
+    "userCanProvide": "Utilizatorul poate furniza o valoare sau se utilizează valoarea implicită",
+    "example": "Exemplu:",
+    "variableExampleText": "Scrie un email '{{tone:profesional}}' către '{{recipient}}' despre '{{topic}}' în '{{language:English}}'",
+    "detectedVariables": "Variabile detectate",
+    "required": "Necesar",
+    "aiAssistant": "Asistent AI",
+    "whatToImprove": "Ce doriți să îmbunătățiți?",
+    "whatShouldPromptDo": "Ce ar trebui să facă acest prompt?",
+    "improvePlaceholder": "ex: Fă-l mai profesional, adaugă exemple, îmbunătățește claritatea...",
+    "generatePlaceholder": "ex: Generează un șablon de email profesional cu variabile pentru destinatar și subiect...",
+    "addContextOptional": "Adaugă context (opțional)",
+    "revising": "Se revizuiește...",
+    "generating": "Se generează...",
+    "reviseWithAI": "Revizuiește cu AI",
+    "generatePrompt": "Generează Prompt",
+    "revisionComplete": "Revizuire finalizată",
+    "generationComplete": "Generare finalizată",
+    "revisedPrompt": "Prompt revizuit:",
+    "generatedPrompt": "Prompt generat:",
+    "applyRevision": "Aplică această revizuire",
+    "useThisPrompt": "Folosește acest prompt",
+    "improvementsMade": "Îmbunătățiri realizate:",
+    "tips": "Sfaturi:",
+    "howAICanHelp": "Cum vă poate ajuta AI",
+    "helpItems": {
+      "improveClarity": "Îmbunătățește claritatea și structura",
+      "suggestVariables": "Sugerează variabile utile",
+      "addContext": "Adaugă context și exemple",
+      "optimize": "Optimizează pentru rezultate mai bune"
+    },
+    "savePrompt": "Salvează Prompt",
+    "add": "Adaugă"
   },
   "tones": {
     "createCustomVoiceProfile": "Creează un profil vocal personalizat cu asistență AI",
-    "examplePlaceholder": "de ex. Creează un ton profesional dar prietenos pentru asistență clienți..."
+    "examplePlaceholder": "de ex. Creează un ton profesional dar prietenos pentru asistență clienți...",
+    "tagHelp": "Ajutor Etichetă",
+    "tagHelpContent": "Folosiți etichete pentru a categorisi și găsi rapid tonurile. Exemple:",
+    "tagExamples": {
+      "professional": "profesional",
+      "casual": "lejer",
+      "technical": "tehnic",
+      "marketing": "marketing"
+    },
+    "add": "Adaugă",
+    "aiToneAnalyzer": "Analizator de ton AI",
+    "describeToneToCreate": "Descrie tonul pe care dorești să-l creezi",
+    "uploadContentSamples": "Încarcă mostre de conținut",
+    "analyzing": "Se analizează...",
+    "analyzeToneWithAI": "Analizează tonul cu AI",
+    "analysisComplete": "Analiza a fost finalizată",
+    "generatedVoiceGuidelines": "Ghiduri de voce generate:",
+    "examplePhrases": "Exemple de fraze:",
+    "suggestedTags": "Etichete sugerate:",
+    "applyThisAnalysis": "Aplică această analiză",
+    "detectedCharacteristics": "Caracteristici detectate:",
+    "howAICanHelp": "Cum te poate ajuta AI",
+    "helpItems": {
+      "transcribe": "Transcrie conținut audio/video",
+      "analyzeContent": "Analizează mostrele tale de conținut",
+      "extractPatterns": "Extrage tipare de ton și stil",
+      "generateGuidelines": "Generează ghiduri de voce",
+      "suggestTags": "Sugerează etichete relevante"
+    },
+    "saveTone": "Salvează tonul"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Vizualizează diagrama fluxului tehnic"
+    "viewTechnicalFlowDiagram": "Vizualizează diagrama fluxului tehnic",
+    "backToChat": "Înapoi la chat",
+    "title": "Centrul de ajutor",
+    "subtitle": "Găsește răspunsuri, află despre confidențialitate și obține suport",
+    "faq": {
+      "title": "Întrebări frecvente",
+      "description": "Găsește răspunsuri la întrebări comune despre utilizarea AI Assistant",
+      "articles": "articole",
+      "searchPlaceholder": "Caută în întrebări frecvente...",
+      "noResults": "Nicio întrebare frecventă nu corespunde căutării tale",
+      "noResultsHint": "Încearcă un alt termen de căutare"
+    },
+    "privacy": {
+      "title": "Confidențialitate & date",
+      "description": "Află cum sunt stocate și protejate datele tale",
+      "topics": "subiecte",
+      "searchPlaceholder": "Caută subiecte despre confidențialitate...",
+      "noResults": "Niciun subiect despre confidențialitate nu corespunde căutării",
+      "noResultsHint": "Încearcă un alt termen de căutare",
+      "bannerTitle": "Confidențialitatea ta contează",
+      "bannerDescription": "Toate conversațiile sunt stocate local pe dispozitivul tău. Procesarea datelor are loc în sistemele MSF, folosind infrastructura Azure.",
+      "localStorageOnly": "Doar stocare locală",
+      "msfControlled": "Controlat de MSF",
+      "noPersonalData": "Fără date personale",
+      "noSensitiveOps": "Fără operațiuni sensibile"
+    },
+    "contact": {
+      "title": "Contact & Resurse",
+      "description": "Ia legătura cu echipa noastră și accesează linkuri utile",
+      "supportAvailable": "Suport disponibil",
+      "submitRequest": "Trimite o solicitare de suport",
+      "getHelp": "Primește ajutor de la echipa noastră",
+      "requestDescription": "Ai nevoie de ajutor sau dorești să oferi feedback? Apasă mai jos pentru a deschide formularul de suport.",
+      "openSupportForm": "Deschide formularul de suport",
+      "otherWays": "Alte modalități de contact",
+      "emailSupport": "Suport prin email",
+      "emailDescription": "Trimite-ne un email pentru întrebări, feedback sau probleme tehnice"
+    },
+    "resources": {
+      "title": "Resurse suplimentare",
+      "portalTitle": "Portal AI Accelerator",
+      "portalDescription": "Documentație, actualizări de proiect și materiale de instruire",
+      "githubTitle": "Depozit Open Source",
+      "githubDescription": "Vezi codul, raportează probleme și contribuie pe GitHub"
+    }
   },
   "settings": {
     "Settings": "Setări",
@@ -644,9 +834,822 @@
     "FAQs, privacy policy, and guides": "Întrebări frecvente, politică de confidențialitate și ghiduri",
     "Contact Support": "Contactați asistența",
     "Popular Questions": "Întrebări populare",
-    "View all FAQs": "Vezi toate întrebările frecvente"
+    "View all FAQs": "Vezi toate întrebările frecvente",
+    "Delete legacy data after migration": "Șterge datele vechi după migrare",
+    "frees up storage space": "eliberează spațiu de stocare",
+    "Legacy data deleted": "Datele vechi au fost șterse",
+    "freed": "eliberat",
+    "Conversations": "Conversații",
+    "Legacy": "Vechi",
+    "Other": "Altele",
+    "Loading": "Se încarcă",
+    "Legacy Data Detected": "Date vechi detectate",
+    "legacyDataDescription": "Aveți {size} de date dintr-o versiune anterioară. Acestea pot fi migrate, exportate sau șterse pentru a elibera spațiu.",
+    "legacyDeleteSuccess": "Datele vechi au fost șterse și {size} au fost eliberate.",
+    "legacyDeleteError": "Nu s-au putut șterge datele vechi. Vă rugăm să încercați din nou.",
+    "Explore solutions": "Explorează soluții",
+    "Migrate to Current Format": "Migrează la formatul actual",
+    "Export Legacy Data": "Exportă datele vechi",
+    "Delete Legacy Data": "Șterge datele vechi",
+    "deleteLegacyConfirm": "Sigur doriți să ștergeți toate datele vechi? Această acțiune nu poate fi anulată.",
+    "Deleting": "Se șterge",
+    "Confirm Delete": "Confirmă ștergerea",
+    "Cancel": "Anulează",
+    "Custom Instructions": "Instrucțiuni personalizate",
+    "Personalization": "Personalizare",
+    "Display Name": "Nume afișat",
+    "Display Name Description": "Alegeți cum apare numele dumneavoastră în salutări și în aplicație",
+    "First Name": "Prenume",
+    "Last Name": "Nume",
+    "Full Name": "Nume complet",
+    "Custom": "Personalizat",
+    "None": "Niciunul",
+    "Custom Display Name": "Nume afișat personalizat",
+    "Custom Display Name Placeholder": "Introduceți numele preferat",
+    "howShouldWeAddressYou": "Cum doriți să vă adresăm?",
+    "displayNamePreview": "Previzualizare: „{greeting}”",
+    "Streaming Speed": "Viteza de redare",
+    "Slow": "Încet",
+    "Normal": "Normal",
+    "Fast": "Rapid",
+    "Controls how smoothly text appears during AI responses": "Controlează cât de cursiv apare textul în timpul răspunsurilor AI",
+    "aboutYou": {
+      "title": "Despre tine",
+      "shareBasicInfo": "Partajează informații de bază cu AI-ul",
+      "shareBasicInfoDescription": "Când este activat, AI-ul va ști numele, funcția și departamentul tău din profil",
+      "preferredName": "Nume preferat",
+      "preferredNamePlaceholder": "Cum ai dori să fii apelat?",
+      "preferredNameDescription": "Suprascrie numele afișat. Lasă necompletat pentru a folosi numele din profil",
+      "additionalContext": "Context suplimentar",
+      "additionalContextPlaceholder": "Ex.: Lucrez în operațiuni de teren, prefer răspunsuri concise, întreb des despre protocoale medicale...",
+      "additionalContextDescription": "Orice altă informație pe care ai dori ca AI-ul să o știe despre tine",
+      "preferredNameDescriptionWithSync": "Cum vă va adresa AI-ul. Lăsați necompletat pentru a folosi numele afișat din Setările generale."
+    },
+    "displayNameUIOnly": "Aceasta controlează modul în care apare numele dumneavoastră în aplicație. AI-ul nu îl vede decât dacă activați partajarea în Setările chatului.",
+    "tts": {
+      "title": "Text-în-vorbire",
+      "language": "Limbă",
+      "voice": "Voce",
+      "multilingualVoices": "Voci multilingve",
+      "voices": "Voci",
+      "rate": "Viteză",
+      "pitch": "Ton",
+      "quality": "Calitate audio",
+      "qualityDescription": "Calitatea superioară oferă un sunet mai bun, dar folosește mai multă lățime de bandă",
+      "preview": "Previzualizare",
+      "previewing": "Redare...",
+      "previewFailed": "Nu s-a putut genera previzualizarea audio",
+      "previewText": "Aceasta este o previzualizare a setărilor de voce selectate.",
+      "reset": "Resetează",
+      "default": "Implicit",
+      "slower": "Mai încet",
+      "faster": "Mai rapid",
+      "lower": "Mai jos",
+      "higher": "Mai sus",
+      "selectedVoice": "Selectat",
+      "noVoicesAvailable": "Nu există voci disponibile pentru această limbă",
+      "quickSettings": "Setări voce",
+      "overrideForThisMessage": "Ajustați setările pentru acest mesaj",
+      "speakWithSettings": "Redă"
+    },
+    "Model Response Settings Description": "Configurați parametrii implicați în răspunsurile modelului AI. Modelele diferite folosesc setări diferite.",
+    "Default Reasoning Effort": "Efort de Raționament Implicit",
+    "reasoningEffortDescription": "Controlează profunzimea raționamentului pentru modelele de analiză. Un efort mai mare produce o analiză mai detaliată.",
+    "Default Verbosity": "Nivel de Detaliere Implicit",
+    "verbosityDescription": "Controlează nivelul de detaliere al răspunsurilor pentru modelele GPT-5."
   },
   "notFound": {
     "lostDog": "Câine pierdut"
+  },
+  "Run Typewriter Intro": "Rulează introducerea cu mașina de scris",
+  "transcription": {
+    "transcribesOnSend": "Transcriere la trimitere",
+    "addInstructions": "Adaugă instrucțiuni",
+    "instructionsPlaceholder": "Context pentru îmbunătățirea acurateței (ex: nume, termeni)",
+    "languages": {
+      "autoDetect": "Detectare automată",
+      "afrikaans": "Afrikaans",
+      "arabic": "Arabă",
+      "armenian": "Armeană",
+      "azerbaijani": "Azeră",
+      "belarusian": "Bielorusă",
+      "bosnian": "Bosniacă",
+      "bulgarian": "Bulgară",
+      "burmese": "Birmaneză",
+      "catalan": "Catalană",
+      "chinese": "Chineză",
+      "croatian": "Croată",
+      "czech": "Cehă",
+      "danish": "Daneză",
+      "dutch": "Olandeză",
+      "english": "Engleză",
+      "estonian": "Estonă",
+      "finnish": "Finlandeză",
+      "french": "Franceză",
+      "galician": "Galegă",
+      "german": "Germană",
+      "greek": "Greacă",
+      "hebrew": "Ebraică",
+      "hindi": "Hindi",
+      "hungarian": "Maghiară",
+      "icelandic": "Islandeză",
+      "indonesian": "Indoneziană",
+      "italian": "Italiană",
+      "japanese": "Japoneză",
+      "kannada": "Kannada",
+      "kazakh": "Kazahă",
+      "korean": "Coreeană",
+      "latvian": "Letonă",
+      "lithuanian": "Lituaniană",
+      "macedonian": "Macedoneană",
+      "malay": "Malaieză",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepaleză",
+      "norwegian": "Norvegiană",
+      "persian": "Persană",
+      "polish": "Poloneză",
+      "portuguese": "Portugheză",
+      "romanian": "Română",
+      "russian": "Rusă",
+      "serbian": "Sârbă",
+      "slovak": "Slovacă",
+      "slovenian": "Slovenă",
+      "spanish": "Spaniolă",
+      "swahili": "Swahili",
+      "swedish": "Suedeză",
+      "tagalog": "Tagalog",
+      "tamil": "Tamilă",
+      "thai": "Thailandeză",
+      "turkish": "Turcă",
+      "ukrainian": "Ucraineană",
+      "urdu": "Urdu",
+      "vietnamese": "Vietnameză",
+      "welsh": "Galeză"
+    },
+    "inProgress": "Transcriere în curs",
+    "processingFile": "Se procesează: {filename}",
+    "timeRemaining": "Timp rămas: {time}",
+    "maxDurationNote": "Fișierele mari pot dura până la {minutes} minute",
+    "timedOut": "Transcrierea a expirat după {minutes} minute",
+    "timedOutToast": "Transcriere expirată: {filename}",
+    "failed": "Transcriere eșuată: {error}",
+    "failedToast": "Transcriere eșuată: {filename}",
+    "unknownError": "Eroare necunoscută",
+    "completed": "Transcriere finalizată",
+    "completedToast": "Transcriere finalizată: {filename}",
+    "placeholder": "[Transcriere în curs: {filename}]",
+    "loadingTranscript": "Se încarcă transcrierea pentru {filename}...",
+    "expiredOrDeleted": "Această transcriere a expirat sau a fost ștearsă.",
+    "fetchError": "Nu s-a putut încărca transcrierea. Vă rugăm să încercați din nou.",
+    "transcriptExpired": "Transcrierea pentru {filename} a expirat. Transcrierile sunt șterse automat după {days} zile pentru confidențialitate.",
+    "expirationWarning": "Transcrierea pentru {filename} va expira în {days} zi(le). Salvați conținutul dacă aveți nevoie de el."
+  },
+  "importBackupParseError": "Nu s-a putut analiza fișierul de backup. Asigurați-vă că este un fișier JSON valid.",
+  "emptyState": {
+    "greeting": "Cu ce vă pot ajuta?",
+    "greetingWithName": "Cu ce vă pot ajuta, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Creează diagrame",
+        "prompt": "Arată-mi cum poți crea diagrame și scheme. Ce fel de procese, fluxuri de lucru sau sisteme mă poți ajuta să vizualizez? Dă-mi câteva exemple."
+      },
+      "draftContent": {
+        "title": "Redactează conținut profesional",
+        "prompt": "Am nevoie de ajutor pentru a scrie documente profesionale - e-mailuri, rapoarte, rezumate. Poți să-mi arăți exemple despre cum poți ajuta cu diferite tipuri de scrieri de afaceri?"
+      },
+      "analyzeInformation": {
+        "title": "Analizează informații",
+        "prompt": "Cum mă poți ajuta să analizez date sau informații? Arată-mi diverse moduri în care poți descompune cifrele, identifica tipare sau extrage concluzii din documente sau seturi de date."
+      },
+      "planOrganize": {
+        "title": "Planificare și organizare",
+        "prompt": "Mă poți ajuta să planific proiecte sau să organizez munca? Dă-mi exemple de moduri în care poți crea cronograme, agende sau planuri de proiect cu diverse structuri."
+      },
+      "brainstormIdeas": {
+        "title": "Generare de idei",
+        "prompt": "Vreau să găsesc soluții pentru o problemă. Arată-mi cum abordezi gândirea creativă și generarea de idei - ce fel de întrebări ai pune și cum explorezi posibilitățile?"
+      },
+      "buildPresentations": {
+        "title": "Creează prezentări",
+        "prompt": "Cum mă poți ajuta să creez prezentări? Arată-mi exemple cu diferite structuri de prezentare, sugestii vizuale și cum organizezi informațiile pentru diferite audiențe."
+      },
+      "workWithCode": {
+        "title": "Lucrează cu cod",
+        "prompt": "Poți ajuta cu programare sau scripturi? Dă-mi exemple – fie că scrii cod nou, depanezi probleme sau explici cum funcționează ceva, pas cu pas."
+      },
+      "decisionSupport": {
+        "title": "Asistență pentru decizie",
+        "prompt": "Trebuie să iau o decizie, dar nu știu cum să-mi evaluez opțiunile. Poți să-mi arăți diverse cadre sau metode pe care le folosești pentru a analiza alegerile?"
+      },
+      "summarizeSynthesize": {
+        "title": "Rezumă și sintetizează",
+        "prompt": "Cum poți ajuta la rezumarea documentelor lungi sau la sintetizarea informațiilor din surse multiple? Arată-mi exemple de diferite formate de rezumat și niveluri de detaliu."
+      },
+      "explainTopics": {
+        "title": "Explică subiecte complexe",
+        "prompt": "Poți explica concepte complicate în termeni simpli? Arată-mi cum descompui ideile complexe, folosești analogii și adaptezi explicațiile pentru niveluri diferite de cunoștințe."
+      },
+      "createSchedules": {
+        "title": "Creează programe",
+        "prompt": "Am nevoie de ajutor pentru organizarea timpului și crearea programelor. Arată-mi diverse moduri de a structura agende, calendare sau planuri bazate pe timp, cu exemple."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modele",
+      "agents": "Agenți"
+    },
+    "sections": {
+      "baseModels": "Modele de bază"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Funcționalitate avansată",
+      "description": "Creați și gestionați agenți AI personalizați cu capacități specializate. Acești agenți rulează pe instanța MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Funcționalitate avansată - Necesită coordonare cu echipa tehnică AI Assistant",
+      "advancedFeatureWarning": "Agenții personalizați funcționează doar pe instanța MSF AI Assistant Foundry. ID-urile agenților trebuie create de echipa tehnică AI Assistant în această instanță și coordonate cu dumneavoastră înainte de utilizare.",
+      "createNewAgent": "Creează agent personalizat nou",
+      "noAgentsTitle": "Niciun agent personalizat momentan",
+      "noAgentsDescription": "Creați primul dvs. agent personalizat pentru a extinde capacitățile AI cu instrumente și comportamente specializate."
+    },
+    "advancedOptions": {
+      "title": "Opțiuni avansate",
+      "temperature": "Temperatură",
+      "fixedTemperatureNote": "Notă: Acest model folosește valori fixe de temperatură pentru performanță constantă.",
+      "reasoningEffort": "Nivel de raționament",
+      "minimal": "Minimal",
+      "low": "Scăzut",
+      "medium": "Mediu",
+      "high": "Ridicat",
+      "verbosity": "Nivel de detaliu"
+    },
+    "searchMode": {
+      "title": "Modul de căutare",
+      "subtitle": "Va utiliza căutarea web când este necesar",
+      "routingLabel": "Rutare căutare:",
+      "whatsDifference": "Care este diferența?",
+      "privacyFocused": "Axat pe confidențialitate (implicit)",
+      "privacyFocusedDescription": "Mai lent, dar mai privat",
+      "azureAgentMode": "Mod agent Azure AI",
+      "azureAgentModeDescription": "Mai rapid, dar stochează datele conversației în cloud",
+      "privacyInfoTitle": "Informații importante despre confidențialitate",
+      "privacyInfoDescription": "Întreaga dvs. conversație va fi trimisă către agentul Azure AI Foundry.",
+      "learnMoreDataStorage": "Aflați mai multe despre stocarea datelor",
+      "privacyEnabled": "Căutare axată pe confidențialitate activată",
+      "learnPrivacy": "Află cum este protejată confidențialitatea ta"
+    },
+    "customAgent": {
+      "label": "Agent personalizat:",
+      "description": "Acest agent rulează pe instanța MSF AI Assistant Foundry cu instrumentele mereu activate.",
+      "webSearch": "Căutare web în timp real",
+      "codeInterpreter": "Interpretare cod și analiză fișiere"
+    },
+    "header": {
+      "backToModels": "Înapoi la modele",
+      "knowledgeCutoff": "Limită de cunoștințe: {cutoff}",
+      "knowledgeCutoffLabel": "Dată limită a cunoștințelor"
+    },
+    "modelTypes": {
+      "foundational": "fundamental",
+      "omni": "omni",
+      "reasoning": "raționament",
+      "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Sortare după",
+      "usage": "Cele mai utilizate",
+      "name": "Nume (A-Z)",
+      "cutoff": "Modele noi",
+      "custom": "Personalizat",
+      "edit": "Editează",
+      "done": "Gata",
+      "reset": "Resetează",
+      "resetTooltip": "Resetează la ordinea implicită"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Căutare web în timp real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Model general rapid și eficient",
+      "reasoning": "Raționament extins pentru probleme complexe",
+      "omni": "Model multimodal cu capacități extinse",
+      "agent": "Agent cu instrumente în timp real și acces web"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Model AI bazat pe GPT-4.1 cu căutare web în timp real prin Bing. Oferă informații actualizate, verificare a faptelor și monitorizare a evenimentelor curente. Ideal pentru cercetări ce necesită informații recente, analiză de știri și verificare a faptelor.",
+      "knowledgeCutoff": "Căutare web în timp real"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Cel mai avansat model OpenAI, excelent în raționament complex, generare de cod și rezolvare de probleme tehnice. Ideal pentru sarcini analitice, provocări de programare, cercetare și explicații detaliate. Permite ajustarea nivelului de raționament și a detaliului răspunsului.",
+      "knowledgeCutoff": "6 aug 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Variantă mai rapidă și mai economică a GPT-5, optimizată pentru viteză menținând o calitate ridicată. Perfect pentru sarcini zilnice, întrebări rapide, rutare prin instrumente și aplicații ce necesită timpi de răspuns scurți. Oferă un echilibru excelent între performanță și eficiență.",
+      "knowledgeCutoff": "6 aug 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Variantă specializată a GPT-5, optimizată pentru interacțiuni conversaționale și inteligență emoțională. Excelează în comunicare empatică, suport pentru sănătatea mintală, scriere creativă, brainstorming și dialog natural. Ideal pentru conversații informale, consiliere sau sarcini care necesită conștientizare emoțională.",
+      "knowledgeCutoff": "1 oct 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Cel mai avansat model de raționament de la OpenAI, cu capabilități inovatoare de rezolvare a problemelor. Excelează în matematică complexă, raționament științific, provocări de programare și sarcini logice în mai mulți pași. Fereastră extinsă de context de 200K. Permite controlul efortului de raționare.",
+      "knowledgeCutoff": "8 apr. 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Model rapid și eficient din punct de vedere al costurilor de la Meta. Ideal pentru sarcini zilnice precum redactare, rezumate și suport de bază pentru programare. Oferă un echilibru bun între viteză și calitate pentru munca de rutină.",
+      "knowledgeCutoff": "7 mai 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Specialist în raționament care își arată logica pas cu pas. Excelent pentru probleme de matematică, puzzle-uri logice și înțelegerea conceptelor complexe. Poți vedea cum gândește în timp real.",
+      "knowledgeCutoff": "20 ian. 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Model versatil, deosebit de bun la programare și redactare tehnică. Ideal pentru depanare de cod, scriere de documentație și explicarea conceptelor tehnice. Rapid și de încredere pentru lucrul de dezvoltare.",
+      "knowledgeCutoff": "16 apr. 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Model versatil de la xAI, cunoscut pentru răspunsuri nuanțate. Ideal pentru discuții deschise, proiecte creative și rezolvarea problemelor complexe.",
+      "knowledgeCutoff": "13 mai 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Cel mai capabil model de la Anthropic, cu abilități excepționale de raționament, programare și creație. Recomandat pentru analize complexe, cercetare și sarcini ce necesită înțelegere aprofundată.",
+      "knowledgeCutoff": "ianuarie 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Model Claude echilibrat, cu performanțe excelente în programare, analiză și sarcini creative. Potrivit pentru uz zilnic, cu timp de răspuns rapid.",
+      "knowledgeCutoff": "ianuarie 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Generația anterioară a modelului Claude Opus. Excelent pentru sarcini complexe de programare, analize detaliate și înțelegere nuanțată.",
+      "knowledgeCutoff": "ianuarie 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Model Claude rapid și economic, optimizat pentru sarcini rapide. Ideal pentru întrebări simple, rezumate și aplicații cu volum mare.",
+      "knowledgeCutoff": "ianuarie 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Cel mai avansat model OpenAI, performant în raționamente complexe, generare de cod și rezolvarea problemelor tehnice. Ideal pentru sarcini analitice, provocări de programare, cercetare și explicații detaliate. Permite ajustarea efortului de raționare și a detaliului răspunsului.",
+      "knowledgeCutoff": "Decembrie 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variantă specializată a modelului GPT-5.2, optimizată pentru interacțiuni conversaționale și inteligență emoțională. Excelează în comunicare empatică, suport pentru sănătate mintală, scriere creativă, brainstorming și dialog natural. Recomandat pentru conversații lejere, consiliere și sarcini care necesită conștientizare emoțională.",
+      "knowledgeCutoff": "Decembrie 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Înapoi la chat",
+    "title": "Explicație Mod Căutare",
+    "subtitle": "Înțelegerea opțiunilor de căutare și unde sunt stocate datele tale",
+    "quickComparison": "Comparație rapidă",
+    "noSearch": "Fără căutare",
+    "privacyFocused": "Orientat pe confidențialitate",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Viteza răspunsului",
+    "fastest": "Cea mai rapidă",
+    "slowerMultiStep": "Mai lent (mai mulți pași)",
+    "fasterDirect": "Mai rapid (direct)",
+    "fullConversationStored": "Întreaga conversație stocată în cloud",
+    "whatsStoredInAzure": "Ce este stocat în Azure",
+    "nothingStateless": "Nimic (doar fără stare)",
+    "searchQueriesOnly": "Doar interogări de căutare",
+    "fullConversationHistory": "Întregul istoric al conversațiilor",
+    "modelAvailability": "Disponibilitatea modelului",
+    "allModels": "Toate modelele",
+    "gpt41Only": "Doar GPT-4.1",
+    "searchTurnedOff": "Căutare dezactivată",
+    "noSearchDescription": "Răspunsuri foarte rapide, fără posibilitatea de căutare pe web. Întreaga conversație rămâne în browserul tău – nimic nu este stocat în cloud.",
+    "viewDetailsBelow": "Pentru detalii suplimentare, vezi fluxul tehnic de mai jos.",
+    "viewTechnicalFlowDiagram": "Vezi diagrama fluxului tehnic",
+    "legend": "Legendă:",
+    "legendNoSearch": "Browserul dvs. (stocare locală) | Serverul Asistentului AI | Azure OpenAI (fără stocare de stare)",
+    "privacyFocusedMode": "Mod axat pe confidențialitate",
+    "default": "Implicit",
+    "privacyDescription": "Folosește căutarea web când este nevoie, dar este mai lent deoarece implică mai mulți pași. Doar interogările de căutare sunt stocate în Azure – conversația completă rămâne în browserul dvs.",
+    "legendPrivacy": "Browserul dvs. (stocare locală) | Serverul Asistentului AI | Azure AI Foundry (doar interogări de căutare) | Azure OpenAI (fără stocare de stare)",
+    "azureAIFoundryMode": "Mod Azure AI Foundry",
+    "foundryDescription": "Răspunsuri mai rapide cu funcție de căutare web integrată. Conversația completă este stocată în baza de date Azure AI Foundry, nu doar în browserul dvs.",
+    "legendFoundry": "Browserul dvs. (stocare locală) | Serverul Asistentului AI | Azure AI Foundry Agent (stochează conversația completă)",
+    "whyTheseOptions": "De ce aceste opțiuni?",
+    "whyTheseOptionsText1": "Acestea sunt implementările de căutare disponibile după ce Azure a dezafectat Bing Search API, pe care Asistentul AI se baza inițial.",
+    "whyTheseOptionsText2": "Echipa explorează activ alternative de căutare mai axate pe confidențialitate. Ambele opțiuni actuale folosesc funcționalitățile de căutare ale Azure AI Foundry, dar diferă prin cantitatea de date din conversație care este partajată.",
+    "azureDeprecatedBingApi": "Azure a dezafectat Bing Search API",
+    "footerNote": "Ambele moduri stochează conversația local, în browserul dvs. Puteți schimba modul oricând din setările modelului.",
+    "note": "Notă:",
+    "loadingDiagram": "Se încarcă diagrama..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Se verifică stocarea",
+      "analyzingData": "Se analizează datele...",
+      "updateAvailable": "Actualizare disponibilă",
+      "storageSpaceLimited": "Spațiu de stocare limitat",
+      "migratingData": "Se migrează datele",
+      "migrationComplete": "Migrare finalizată",
+      "partiallyComplete": "Parțial finalizat",
+      "migrationFailed": "Migrare eșuată"
+    },
+    "descriptions": {
+      "foundLegacyData": "Am găsit date dintr-o versiune anterioară. Doriți să le migrați pentru a funcționa cu sistemul îmbunătățit?",
+      "storageSpaceWarning": "Datele dvs. necesită mai mult spațiu decât cel disponibil în prezent. Recomandăm să folosiți modul de migrare incrementală.",
+      "pleaseWait": "Vă rugăm să așteptați în timp ce actualizăm datele...",
+      "dataIsSafe": "Datele originale sunt în siguranță. Puteți încerca din nou sau să omiteți deocamdată.",
+      "itemsTooLarge": "Aceste elemente sunt prea mari pentru spațiul de stocare. Le puteți exporta, elibera spațiu sau continua fără ele.",
+      "settingsUpdated": "Setările au fost actualizate."
+    },
+    "benefits": {
+      "title": "Beneficii",
+      "fasterPerformance": "Performanță mai rapidă",
+      "betterReliability": "Fiabilitate mai bună",
+      "dataPreserved": "Datele dvs. sunt păstrate"
+    },
+    "options": {
+      "advancedOptions": "Opțiuni avansate",
+      "useIncrementalMode": "Utilizați modul incremental",
+      "slowerButSafer": "mai lent, dar mai sigur",
+      "recommended": "recomandat",
+      "deleteLegacyData": "Ștergeți datele vechi după migrare",
+      "freesUpSpace": "eliberează spațiul de stocare"
+    },
+    "actions": {
+      "skip": "Omitere",
+      "migrateData": "Migrează datele",
+      "migrateAnyway": "Migrează oricum",
+      "continue": "Continuă",
+      "retry": "Reîncercare",
+      "exportBackupFirst": "Exportați o copie de rezervă mai întâi",
+      "exportSkippedItems": "Exportați elementele omise"
+    },
+    "quota": {
+      "availableSpace": "Spațiu disponibil",
+      "dataToMigrate": "Date de migrat",
+      "additionalSpaceNeeded": "Spațiu suplimentar necesar"
+    },
+    "progress": {
+      "migratingConversations": "Se migrează conversațiile",
+      "migratingPrompts": "Se migrează prompturile",
+      "migratingAgents": "Se migrează agenții",
+      "finishingUp": "Se finalizează"
+    },
+    "results": {
+      "successfullyMigrated": "Migrat cu succes",
+      "notes": "Note",
+      "couldNotMigrate": "Nu s-a putut migra",
+      "legacyDataDeleted": "Date vechi șterse",
+      "freed": "eliberat"
+    },
+    "units": {
+      "conversation": "conversație",
+      "conversations": "conversații",
+      "folder": "dosar",
+      "folders": "dosare",
+      "prompt": "prompt",
+      "prompts": "prompturi",
+      "customAgent": "agent personalizat",
+      "customAgents": "agenți personalizați",
+      "item": "element",
+      "items": "elemente"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Bine ați venit la AI Assistant V2",
+    "whatsNew": "Noutăți",
+    "whatsNewQuestion": "Ce e nou?"
+  },
+  "welcomeV2": {
+    "backToChat": "Înapoi la chat",
+    "title": "Bine ați venit la AI Assistant V2",
+    "subtitle": "O reproiectare completă cu funcționalități noi puternice",
+    "webSearch": {
+      "title": "Mod Căutare Web",
+      "description": "Oferiți AI acces la căutare web în timp real cu opțiuni axate pe confidențialitate",
+      "quickAccess": "Acces rapid:",
+      "quickAccessInstructions": "Faceți clic pe butonul + de lângă câmpul de chat → Selectați „Căutare Web”",
+      "setAsDefault": "Setează ca implicit:",
+      "setAsDefaultInstructions": "Deschideți setările modelului și activați modul Căutare Web. Alegeți dintre:",
+      "privacyFocused": "Axat pe confidențialitate (implicit)",
+      "privacyFocusedDescription": "Doar interogarea de căutare este trimisă extern",
+      "azureAIFoundry": "Mod Azure AI Foundry",
+      "azureAIFoundryDescription": "Mai rapid, dar toată conversația este stocată extern",
+      "learnMore": "Află mai multe despre modurile de căutare →"
+    },
+    "tones": {
+      "title": "Tonuri (Profiluri de voce)",
+      "description": "Controlează stilul de scriere al AI, nivelul de formalitate și personalitatea",
+      "createTones": "1. Creează tonuri:",
+      "createTonesInstructions": "Acțiuni rapide în bara laterală → fila Tonuri",
+      "useTones": "2. Folosește tonuri:",
+      "useTonesInstructions": "Faceți clic pe lista de tonuri de lângă chat",
+      "exampleProfessionalDesc": "Ton formal, de business",
+      "exampleCasualDesc": "Prietenos, conversațional"
+    },
+    "aiAssist": {
+      "title": "Asistent AI pentru Prompturi & Tonuri",
+      "description": "Lasă AI să te ajute să creezi prompturi și tonuri mai bune, mai rapid",
+      "step1": "Deschide Acțiuni rapide în bara laterală",
+      "step2": "Navighează la fila {prompts} sau {tones}",
+      "step3": "Caută panoul Asistent AI",
+      "getSuggestions": "Obține sugestii",
+      "getSuggestionsDesc": "AI analizează draftul și oferă îmbunătățiri",
+      "buildFromFiles": "Construiește din fișiere",
+      "buildFromFilesDesc": "Încarcă documente pentru a genera prompturi/tonuri",
+      "testBeforeSaving": "Testează înainte de a salva",
+      "testBeforeSavingDesc": "Testează prompturile/tonurile într-o previzualizare chat live",
+      "step2Prefix": "Navigați la",
+      "step2Suffix": "fila"
+    },
+    "customAgents": {
+      "title": "Agenți personalizați",
+      "advancedBadge": "AVANSAT",
+      "description": "Agenți AI specializați cu capabilități avansate precum căutare web și interpretare de cod",
+      "advancedFeature": "Funcționalitate avansată",
+      "advancedFeatureDesc": "Agenții personalizați rulează pe Azure AI Foundry cu unelte specializate. Crearea ID-urilor de agent necesită coordonare cu echipa tehnică AI Assistant.",
+      "howToAccess": "Cum se accesează:",
+      "howToAccessInstructions": "Setări → Modele → fila Agenți",
+      "whatYouCanDo": "Ce puteți face:",
+      "configureAgents": "Configurați agenți cu capabilități specializate",
+      "importExport": "Importați/exportați configurații de agenți",
+      "selectFromDropdown": "Selectați agenți personalizați din lista de modele"
+    },
+    "audioTranslation": {
+      "title": "Transcriere audio cu traducere",
+      "description": "Traduce automat transcrierile audio în peste 13 limbi",
+      "howToUse": "Cum se utilizează:",
+      "step1": "Încarcă un fișier audio sau video",
+      "step2": "Fă clic pe meniul derulant de limbi în interfața de transcriere",
+      "step3": "Selectează limba țintă",
+      "availableLanguages": "Limbi disponibile:",
+      "moreLanguages": "+7 altele"
+    },
+    "pwa": {
+      "title": "Instalează ca aplicație mobilă",
+      "description": "Aplicație web progresivă cu experiență nativă",
+      "installTip": "Sfat: Instalează după autentificare pentru a păstra sesiunea și a beneficia de cea mai bună experiență.",
+      "howToInstall": "Cum să instalezi:",
+      "step1": "Autentifică-te în contul tău",
+      "step2": "Deschide Setări → Aplicație mobilă pentru instrucțiuni detaliate",
+      "step3": "Pe mobil: Atinge meniul browserului (⋮ sau ⚙️)",
+      "step4": "Caută „Adaugă pe ecranul de pornire” sau „Instalează aplicația”",
+      "step5": "Urmărește instrucțiunile pentru instalare",
+      "benefits": "Beneficii:",
+      "benefit1": "Deschidere rapidă ca o aplicație nativă de pe ecranul principal",
+      "benefit2": "Ecran complet, fără interfața browserului",
+      "benefit3": "Acces offline la conversațiile salvate"
+    }
+  },
+  "Professional": "Profesional",
+  "Casual": "Lejer",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Introduceți un prompt sau tastați \"/\" pentru a selecta un prompt..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Adăugați instrucțiuni personale pentru a personaliza modul în care răspunde AI-ul. Acestea sunt combinate cu ghiduri de comportament de bază care asigură răspunsuri utile, corecte și sigure."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate."
+  },
+  "fileUpload": {
+    "uploading": "Se încarcă...",
+    "transcribing": "Se transcrie...",
+    "complete": "Complet",
+    "failed": "Eșuat",
+    "uploadFiles": "Încărcați fișiere (audio, video sau text)",
+    "autoDetect": "Detectare automată",
+    "fileNotAvailable": "Fișierul nu este disponibil pentru editare",
+    "failedToOpenInEditor": "Nu s-a putut deschide fișierul în editorul de cod. Vă rugăm să încercați din nou.",
+    "extractingAudio": "Se extrage audio...",
+    "queuedForTranscription": "În așteptare pentru transcriere",
+    "transcribed": "Transcris",
+    "transcriptionFailed": "Transcriere eșuată",
+    "extractedFromSmaller": "Extras din {percent}% mai mic",
+    "textExtraction": "Extracție text",
+    "opening": "Se deschide...",
+    "openInEditor": "Deschide în editor",
+    "failedToUpload": "Încărcarea a eșuat",
+    "attachment": "atașament",
+    "attachments": "atașamente"
+  },
+  "transcript": {
+    "originalTranscript": "Transcriere originală",
+    "transcript": "Transcriere",
+    "transcriptionOf": "Transcriere pentru",
+    "translating": "Se traduce...",
+    "copied": "Copiat!",
+    "copy": "Copiază",
+    "download": "Descarcă",
+    "translate": "Tradu",
+    "collapse": "Restrânge",
+    "expand": "Extinde",
+    "expandHint": "Faceți clic pe \"Extinde\" pentru a vedea transcrierea originală",
+    "listen": "Ascultă transcrierea",
+    "stopAudio": "Oprește audio",
+    "openAsDocument": "Deschide ca document"
+  },
+  "userMessage": {
+    "open": "Deschide",
+    "showFullMessage": "Afișează mesajul complet",
+    "collapse": "Restrânge",
+    "customTone": "Ton personalizat"
+  },
+  "codeBlock": {
+    "openInEditor": "Deschide în editor"
+  },
+  "artifact": {
+    "noContentToExport": "Nu există conținut de exportat",
+    "exportedAsHtml": "Exportat ca HTML",
+    "exportedAsMarkdown": "Exportat ca Markdown",
+    "exportedAsText": "Exportat ca text",
+    "generatingPdf": "Se generează PDF...",
+    "exportedAsPdf": "Exportat ca PDF",
+    "generatingDocx": "Se generează DOCX...",
+    "exportedAsDocx": "Exportat ca DOCX",
+    "failedToExportAs": "Nu s-a putut exporta ca {format}",
+    "document": "Document",
+    "switchToCodeEditor": "Comutați la editorul de cod",
+    "exportDocument": "Exportă documentul",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Text simplu (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Închide",
+    "editsNotSaved": "Modificările nu sunt salvate. Trimiteți prin mesaj sau descărcați pentru a salva modificările.",
+    "fileDownloaded": "Fișier descărcat",
+    "failedToDownload": "Descărcarea a eșuat",
+    "switchToDocumentEditor": "Comutați la editorul de documente",
+    "download": "Descărcați",
+    "fileIncludedWithMessage": "Fișier și modificări incluse în mesaj",
+    "closeEditor": "Închide editorul",
+    "closeCodeEditor": "Închide editorul de cod",
+    "startWriting": "Începeți să scrieți...",
+    "toolbar": {
+      "bold": "Aldin",
+      "italic": "Cursiv",
+      "underline": "Subliniere",
+      "strikethrough": "Tăiere",
+      "heading1": "Titlu 1",
+      "heading2": "Titlu 2",
+      "heading3": "Titlu 3",
+      "bulletList": "Listă cu puncte",
+      "numberedList": "Listă numerotată",
+      "codeBlock": "Bloc de cod",
+      "quote": "Citat",
+      "insertTable": "Inserează tabel",
+      "table": "Tabel",
+      "undo": "Anulează",
+      "redo": "Refă"
+    },
+    "codeEditor": {
+      "startTyping": "Începeți să tastați sau solicitați AI să genereze cod",
+      "codeWillSync": "Codul se va sincroniza automat din mesajele din chat",
+      "startCoding": "// Începeți să scrieți cod..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Activează căutarea web pentru fiecare mesaj.\n\nOferă informații actualizate folosind acces Bing în timp real.",
+    "attachTooltip": "Atașați fișiere, imagini sau audio/video.\n\nFormate acceptate:\n• Imagini: JPEG, PNG, GIF, WebP (maxim 5MB, până la 10)\n• Documente: PDF, DOCX, XLSX, PPTX, TXT, MD (maxim 10MB, până la 3)\n• Date: CSV, JSON, XML, YAML (maxim 10MB, până la 3)\n• Cod: PY, JS, TS, JAVA, C, CPP, GO etc. (maxim 10MB, până la 3)\n• Audio/Video: MP3, WAV, MP4, WebM (maxim 25MB, 1 fișier)\n\nTotal: 10 fișiere, maximum 50MB",
+    "transcribeTooltip": "Încărcați fișiere audio sau video pentru transcriere.\n\nFormate acceptate: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nDimensiune maximă: 25MB\n\nTranscrierea se face automat când trimiteți mesajul.",
+    "selected": "Selectat",
+    "expandActions": "Extindeți Acțiunile",
+    "selectTone": "Selectați tonul",
+    "selectToneDescription": "Alegeți un profil vocal pentru mesajele dumneavoastră",
+    "noToneDefault": "Fără ton (implicit)",
+    "useDefaultStyle": "Folosiți stilul de scriere implicit",
+    "noTonesCreated": "Nu au fost create tonuri încă",
+    "createTonesHint": "Creați tonuri în Acțiuni rapide",
+    "translateDocumentTooltip": "Tradu documente în altă limbă.\n\nFormate acceptate: Word, Excel, PowerPoint, PDF, HTML, TXT\nDimensiune maximă: 40MB\n\nSuportă peste 80 de limbi, cu fișiere glosar opționale."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Adăugați instrucțiunile personale pentru a personaliza modul în care răspunde AI. Acestea sunt combinate cu liniile directoare de bază care asigură răspunsuri utile, corecte și sigure.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Sfat: Tastați \"/\" pentru a selecta dintre șabloanele de prompt salvate.",
+  "storageWarning": {
+    "title": {
+      "warning": "Spațiu de stocare redus",
+      "critical": "Spațiul de stocare aproape plin",
+      "emergency": "Spațiu de stocare plin"
+    },
+    "message": {
+      "warning": "Spațiul de stocare al browserului este la {percent}% din capacitate.",
+      "critical": "Spațiul de stocare al browserului este critic de scăzut, la {percent}% din capacitate.",
+      "emergency": "Spațiul de stocare al browserului este aproape complet plin, la {percent}%!"
+    },
+    "consequence": "Dacă spațiul de stocare se umple, este posibil să pierdeți accesul la noi conversații, iar aplicația poate înceta să funcționeze corect.",
+    "storageUsage": "Utilizare spațiu de stocare",
+    "optionsToFreeSpace": "Opțiuni pentru eliberarea spațiului",
+    "clearOption": {
+      "keepRecent": "Păstrează cele mai recente conversații",
+      "olderThan": "Șterge conversațiile mai vechi de",
+      "days": {
+        "7": "7 zile",
+        "14": "14 zile",
+        "30": "30 de zile",
+        "60": "60 de zile",
+        "90": "90 de zile"
+      }
+    },
+    "estimate": {
+      "willRemove": "Aceasta va elimina {count} conversații",
+      "willFree": "Spațiu estimat eliberat: {size}"
+    },
+    "action": {
+      "exportFirst": "Exportați datele mai întâi",
+      "clearNow": "Șterge acum",
+      "dismiss": "Ignoră",
+      "cancel": "Anulează"
+    },
+    "confirm": {
+      "title": "Confirmare ștergere",
+      "message": "Aceasta va șterge definitiv {count} conversații. Acțiunea nu poate fi anulată."
+    },
+    "clearing": {
+      "title": "Se șterge spațiul de stocare",
+      "message": "Vă rugăm să așteptați cât timp conversațiile sunt eliminate..."
+    },
+    "success": {
+      "title": "Spațiul de stocare a fost șters",
+      "message": "Au fost eliminate cu succes {count} conversații, eliberând {size}."
+    },
+    "error": {
+      "title": "Ștergerea a eșuat",
+      "message": "A apărut o eroare la ștergerea conversațiilor. Vă rugăm să încercați din nou."
+    },
+    "close": "Închide"
+  },
+  "support": {
+    "selectOrganization": "Selectați organizația dumneavoastră",
+    "organizationDescription": "Alegeți organizația MSF pentru a vedea contactul corespunzător pentru suport",
+    "autoDetect": "Detectare automată",
+    "resetToAutoDetect": "Resetați la detectare automată",
+    "organizations": {
+      "USA": "MSF SUA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Teren / Altă organizație"
+    },
+    "emailSupport": "Suport prin e-mail",
+    "emailDescription": "Contactați echipa de suport {organization}",
+    "escalationTitle": "Personal de teren și alți angajați MSF",
+    "escalationDescription": "Urmați procedura de escaladare IT a organizației dumneavoastră pentru suport",
+    "escalationShort": "Contactați suportul IT local",
+    "escalationStep1": "Contactați mai întâi suportul IT local",
+    "escalationStep2": "Dacă problema nu este rezolvată, escaladați către departamentul IT al Centrului Operațional (OC)",
+    "escalationStep3": "Dacă încă nu este rezolvată, OC IT poate escalada către SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Tradu Documentul",
+  "documentTranslation": {
+    "title": "Traducere Document",
+    "targetLanguage": "Limba țintă",
+    "sourceLanguage": "Limba sursă",
+    "searchLanguage": "Caută limbi...",
+    "noLanguagesFound": "Nicio limbă găsită",
+    "autoDetect": "Detectare automată dacă nu este specificat",
+    "glossary": "Fișier Glosar",
+    "glossaryHelp": "Încarcă un fișier glosar CSV, TSV sau XLIFF pentru terminologie personalizată",
+    "uploadGlossary": "Încarcă Glosar",
+    "glossaryTooLarge": "Fișierul glosar este prea mare. Dimensiunea maximă este {maxSize}.",
+    "outputFilename": "Nume fișier rezultat",
+    "outputFilenamePlaceholder": "document_ro.docx",
+    "translateButton": "Tradu Documentul",
+    "translating": "Se traduce...",
+    "noDocumentError": "Vă rugăm să selectați un document pentru traducere.",
+    "noTargetLanguageError": "Vă rugăm să selectați o limbă țintă.",
+    "documentTooLarge": "Documentul este prea mare. Dimensiunea maximă este {maxSize}.",
+    "translationSuccess": "Documentul a fost tradus cu succes",
+    "translationFailed": "Traducerea a eșuat: {error}",
+    "invalidReference": "Referință invalidă pentru traducerea documentului",
+    "documentNotFound": "Documentul tradus nu a fost găsit sau a expirat",
+    "downloadFailed": "Descărcarea documentului tradus a eșuat",
+    "downloadSuccess": "Documentul a fost descărcat cu succes",
+    "translatedTo": "Tradus în {language}",
+    "download": "Descarcă",
+    "downloading": "Se descarcă...",
+    "expired": "Această traducere a expirat și nu mai este disponibilă",
+    "expiresSoon": "Expiră în {days} zi(le) - descărcați cât mai curând",
+    "expires": "Disponibil pentru {days} zile",
+    "learnMore": "Află mai multe",
+    "advancedOptions": "Opțiuni avansate"
   }
 }

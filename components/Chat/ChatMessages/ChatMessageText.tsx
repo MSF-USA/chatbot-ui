@@ -1,13 +1,12 @@
 import React, { Dispatch, FC, KeyboardEvent, SetStateAction } from 'react';
 
-import { Conversation, Message } from '@/types/chat';
+import { Conversation, Message, VersionInfo } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
 
 interface ChatMessageTextProps {
   message: Message;
-  copyOnClick: () => void;
   isEditing: boolean;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
   setIsTyping: Dispatch<SetStateAction<boolean>>;
@@ -22,16 +21,18 @@ interface ChatMessageTextProps {
   messageIsStreaming: boolean;
   messageIndex: number;
   selectedConversation: Conversation | null;
-  messageCopied: boolean;
   onEdit?: (message: Message) => void;
   onQuestionClick?: (question: string) => void;
   onRegenerate?: () => void;
   onSaveAsPrompt?: () => void;
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
 }
 
 export const ChatMessageText: FC<ChatMessageTextProps> = ({
   message,
-  copyOnClick,
   isEditing,
   setIsEditing,
   setIsTyping,
@@ -46,11 +47,13 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
   messageIsStreaming,
   messageIndex,
   selectedConversation,
-  messageCopied,
   onEdit,
   onQuestionClick,
   onRegenerate,
   onSaveAsPrompt,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
 }) => {
   const { role, content } = message;
 
@@ -63,12 +66,13 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
         <AssistantMessage
           content={content as string}
           message={message}
-          copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
-          messageCopied={messageCopied}
           onRegenerate={onRegenerate}
+          versionInfo={versionInfo}
+          onPreviousVersion={onPreviousVersion}
+          onNextVersion={onNextVersion}
         />
       ) : (
         <UserMessage

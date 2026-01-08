@@ -1,9 +1,14 @@
 import {
   IconDevices,
+  IconId,
   IconLanguage,
   IconMoon,
+  IconPencil,
   IconSettings,
   IconSun,
+  IconUser,
+  IconUserCircle,
+  IconUserOff,
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
 
@@ -11,8 +16,12 @@ import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useUI } from '@/client/hooks/ui/useUI';
 
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
+import { DisplayNamePreference } from '@/types/settings';
 import { Settings } from '@/types/settings';
 
 import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
@@ -59,7 +68,35 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
   prefetchedProfile,
 }) => {
   const t = useTranslations();
+
+  // Display name preference options with icons
+  const displayNameOptions = [
+    {
+      key: 'firstName' as const,
+      icon: IconUserCircle,
+      tooltip: t('settings.First Name'),
+    },
+    {
+      key: 'lastName' as const,
+      icon: IconId,
+      tooltip: t('settings.Last Name'),
+    },
+    {
+      key: 'fullName' as const,
+      icon: IconUser,
+      tooltip: t('settings.Full Name'),
+    },
+    { key: 'custom' as const, icon: IconPencil, tooltip: t('settings.Custom') },
+    { key: 'none' as const, icon: IconUserOff, tooltip: t('settings.None') },
+  ];
+
   const { theme, setTheme } = useUI();
+  const {
+    displayNamePreference,
+    customDisplayName,
+    setDisplayNamePreference,
+    setCustomDisplayName,
+  } = useSettings();
   const [fullProfile, setFullProfile] = useState<FullUserProfile | null>(
     prefetchedProfile || null,
   );
@@ -103,80 +140,120 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
           </h2>
         </div>
 
-        {/* User Profile Information */}
+        {/* User Profile Information with Display Name Preferences */}
         {user && (
           <div className="bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-            <div className="grid grid-cols-2 gap-2">
-              {(user?.displayName || fullProfile?.displayName) && (
-                <div className="col-span-2 mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
-                      {fullProfile?.photoUrl ? (
-                        <Image
-                          src={fullProfile.photoUrl}
-                          alt={user?.displayName || 'User'}
-                          fill
-                          className="rounded-full object-cover"
-                        />
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 text-blue-600 dark:text-blue-300"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="text-sm font-medium text-black dark:text-white">
-                      {user?.displayName || fullProfile?.displayName}
-                    </div>
-                  </div>
+            {/* Profile Info Row */}
+            <div className="flex items-start gap-4">
+              {/* Photo - larger 64px */}
+              <div className="h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                {fullProfile?.photoUrl ? (
+                  <Image
+                    src={fullProfile.photoUrl}
+                    alt={user?.displayName || 'User'}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-blue-600 dark:text-blue-300"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </div>
+
+              {/* Info Column */}
+              <div className="flex-1 min-w-0">
+                <div className="text-base font-medium text-black dark:text-white">
+                  {user?.displayName || fullProfile?.displayName}
                 </div>
-              )}
-              {fullProfile?.jobTitle && (
-                <div className="col-span-2 sm:col-span-1 mt-2">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('settings.Job Title')}
+                {(fullProfile?.jobTitle || fullProfile?.department) && (
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {[fullProfile.jobTitle, fullProfile.department]
+                      .filter(Boolean)
+                      .join(' • ')}
                   </div>
-                  <div className="text-sm font-medium text-black dark:text-white">
-                    {fullProfile.jobTitle}
-                  </div>
-                </div>
-              )}
-              {fullProfile?.department && (
-                <div className="col-span-2 sm:col-span-1 mt-2">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('settings.Department')}
-                  </div>
-                  <div className="text-sm font-medium text-black dark:text-white">
-                    {fullProfile.department}
-                  </div>
-                </div>
-              )}
-              {(user?.mail || fullProfile?.mail) && (
-                <div className="col-span-2 mt-2">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('settings.Email')}
-                  </div>
-                  <div className="text-sm font-medium text-black dark:text-white">
+                )}
+                {(user?.mail || fullProfile?.mail) && (
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                     {user?.mail || fullProfile?.mail}
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200 dark:border-gray-600 my-4" />
+
+            {/* Display Name Preference */}
+            <div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                {t('settings.howShouldWeAddressYou')}
+              </div>
+
+              {/* Icon Buttons */}
+              <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 w-fit">
+                {displayNameOptions.map(({ key, icon: Icon, tooltip }) => (
+                  <Tooltip key={key} content={tooltip}>
+                    <button
+                      onClick={() => setDisplayNamePreference(key)}
+                      className={`p-2 rounded-md transition-all ${
+                        displayNamePreference === key
+                          ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <Icon size={18} />
+                    </button>
+                  </Tooltip>
+                ))}
+              </div>
+
+              {/* Custom Name Input */}
+              {displayNamePreference === 'custom' && (
+                <div className="mt-3">
+                  <input
+                    type="text"
+                    value={customDisplayName}
+                    onChange={(e) => setCustomDisplayName(e.target.value)}
+                    placeholder={t('settings.Custom Display Name Placeholder')}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    maxLength={50}
+                  />
                 </div>
               )}
+
+              {/* Preview */}
+              <div className="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">
+                {(() => {
+                  const previewName = getUserDisplayName(
+                    user,
+                    displayNamePreference,
+                    customDisplayName,
+                  );
+                  return t('settings.displayNamePreview', {
+                    greeting: previewName
+                      ? t('emptyState.greetingWithName', { name: previewName })
+                      : t('emptyState.greeting'),
+                  });
+                })()}
+              </div>
+
+              {/* UI-only note */}
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {t('settings.displayNameUIOnly')}
+              </p>
             </div>
           </div>
         )}
-
-        {/* Sign Out Button - Aligned Right */}
-        <div className="flex justify-end">
-          <SignInSignOut />
-        </div>
 
         {/* App Settings Header */}
         <div>
@@ -247,6 +324,11 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Sign Out Button - Aligned Right */}
+      <div className="flex justify-end">
+        <SignInSignOut />
       </div>
 
       {/* Version Information - At Very Bottom */}

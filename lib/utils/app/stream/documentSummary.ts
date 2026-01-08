@@ -2,10 +2,11 @@ import { Session } from 'next-auth';
 
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
-import { loadDocument } from '@/lib/utils/server/file-handling';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { loadDocument } from '@/lib/utils/server/file/fileHandling';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { ImageMessageContent } from '@/types/chat';
+import { OpenAIModels } from '@/types/openai';
 
 import { env } from '@/config/environment';
 import {
@@ -39,6 +40,10 @@ async function summarizeChunk(
 ): Promise<string | null> {
   const summaryPrompt: string = `Summarize the following text with relevance to the prompt, but keep enough details to maintain the tone, character, and content of the original. If nothing is relevant, then return an empty string:\n\n\`\`\`prompt\n${prompt}\`\`\`\n\n\`\`\`text\n${chunk}\n\`\`\``;
 
+  // Check if model supports custom temperature values
+  const modelConfig = Object.values(OpenAIModels).find((m) => m.id === modelId);
+  const supportsTemperature = modelConfig?.supportsTemperature !== false;
+
   try {
     const chunkSummary = await azureOpenai.chat.completions.create({
       model: modelId,
@@ -53,7 +58,7 @@ async function summarizeChunk(
           content: summaryPrompt,
         },
       ],
-      temperature: 0.1,
+      ...(supportsTemperature && { temperature: 0.1 }),
       max_completion_tokens: 5000,
       stream: false,
       user: JSON.stringify(user),
@@ -70,7 +75,7 @@ export async function parseAndQueryFileOpenAI({
   file,
   prompt,
   modelId,
-  maxLength = 6000,
+  maxLength = 16000,
   user,
   botId,
   stream = true,
@@ -173,6 +178,10 @@ export async function parseAndQueryFileOpenAI({
         ]
       : finalPrompt;
 
+  // Check if model supports custom temperature values
+  const modelConfig = Object.values(OpenAIModels).find((m) => m.id === modelId);
+  const supportsTemperature = modelConfig?.supportsTemperature !== false;
+
   const commonParams = {
     model: modelId,
     messages: [
@@ -186,7 +195,7 @@ export async function parseAndQueryFileOpenAI({
         content: userMessageContent,
       },
     ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-    temperature: 0.1,
+    ...(supportsTemperature && { temperature: 0.1 }),
     max_completion_tokens: 5000,
     stream: stream,
     user: JSON.stringify(user),

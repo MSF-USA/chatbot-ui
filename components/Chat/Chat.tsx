@@ -17,7 +17,9 @@ import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
 import { useModalState } from '@/client/hooks/ui/useModalSync';
 import { useUI } from '@/client/hooks/ui/useUI';
 
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
+import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 
 import { PromptModal } from '@/components/Prompts/PromptModal';
 
@@ -29,8 +31,10 @@ import { EmptyState } from './EmptyState/EmptyState';
 import { SuggestedPrompts } from './EmptyState/SuggestedPrompts';
 import { LoadingScreen } from './LoadingScreen';
 import { ModelSelect } from './ModelSelect';
+import { ModelSwitchPrompt } from './ModelSwitchPrompt';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 
 const CodeArtifact = dynamic(
   () => import('@/components/CodeEditor/CodeArtifact'),
@@ -77,6 +81,11 @@ export function Chat({
     citations,
     clearError,
     loadingMessage,
+    isRetrying,
+    showModelSwitchPrompt,
+    originalModelId,
+    dismissModelSwitchPrompt,
+    acceptModelSwitch,
   } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, showChatbar } = useUI();
   const {
@@ -85,6 +94,8 @@ export function Chat({
     systemPrompt,
     temperature,
     defaultSearchMode,
+    displayNamePreference,
+    customDisplayName,
     addPrompt,
   } = useSettings();
   const {
@@ -184,6 +195,17 @@ export function Chat({
     sendMessage,
   });
 
+  // Version navigation callback for message versioning
+  const handleNavigateVersion = useCallback(
+    (messageIndex: number, direction: 'prev' | 'next') => {
+      if (!selectedConversation) return;
+      useConversationStore
+        .getState()
+        .navigateVersion(selectedConversation.id, messageIndex, direction);
+    },
+    [selectedConversation],
+  );
+
   const {
     isSavePromptModalOpen,
     savePromptContent,
@@ -224,7 +246,15 @@ export function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModelSelectOpen]);
 
-  useAutoDismissError(error, clearError, 10000);
+  // Clear error when switching conversations
+  useEffect(() => {
+    clearError();
+  }, [selectedConversation?.id, clearError]);
+
+  // Only auto-dismiss errors that can't be regenerated (e.g., during retry)
+  // When regenerate is available, let the user decide when to dismiss
+  const canRegenerate = !!error && !isRetrying;
+  useAutoDismissError(canRegenerate ? null : error, clearError, 10000);
 
   const messages = selectedConversation?.messages || [];
   const hasMessages =
@@ -282,10 +312,11 @@ export function Chat({
               <div className="w-full flex flex-col items-center justify-center gap-6 -translate-y-12">
                 {/* Logo and Heading */}
                 <EmptyState
-                  userName={
-                    session?.user?.givenName ||
-                    session?.user?.displayName?.split(' ')[0]
-                  }
+                  userName={getUserDisplayName(
+                    session?.user,
+                    displayNamePreference,
+                    customDisplayName,
+                  )}
                 />
 
                 {/* Centered Chat Input */}
@@ -330,13 +361,34 @@ export function Chat({
                 onSelectPrompt={handleSelectPrompt}
                 onRegenerate={handleRegenerate}
                 onSaveAsPrompt={handleOpenSavePromptModal}
+                onNavigateVersion={handleNavigateVersion}
               />
             </div>
           )}
         </div>
 
         {/* Error Display */}
-        <ChatError error={error} onClearError={clearError} />
+        <ChatError
+          error={error}
+          onClearError={clearError}
+          onRegenerate={handleRegenerate}
+          canRegenerate={canRegenerate}
+        />
+
+        {/* Model Switch Prompt (shown after successful retry) */}
+        {showModelSwitchPrompt && (
+          <ModelSwitchPrompt
+            originalModelName={
+              OpenAIModels[originalModelId as OpenAIModelID]?.name ||
+              originalModelId ||
+              'Unknown'
+            }
+            fallbackModelName={OpenAIModels[fallbackModelID]?.name || 'GPT-4.1'}
+            onKeepOriginal={dismissModelSwitchPrompt}
+            onSwitchModel={() => acceptModelSwitch(false)}
+            onAlwaysSwitch={() => acceptModelSwitch(true)}
+          />
+        )}
 
         {/* Chat Input - Bottom position (hidden in empty state) */}
         {hasMessages && (

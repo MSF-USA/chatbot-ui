@@ -3,6 +3,8 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import { useEffect } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import './editor.css';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
@@ -25,6 +27,7 @@ const lowlight = createLowlight(common);
 export default function DocumentEditor({
   theme = 'light',
 }: DocumentEditorProps) {
+  const t = useTranslations();
   const { modifiedCode, setModifiedCode, fileName } = useArtifactStore();
 
   const editor = useEditor({
@@ -44,7 +47,7 @@ export default function DocumentEditor({
       TableCell,
       Underline,
     ],
-    content: modifiedCode || '<p>Start writing...</p>',
+    content: modifiedCode || `<p>${t('artifact.startWriting')}</p>`,
     editorProps: {
       attributes: {
         class: `prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none ${
@@ -67,7 +70,7 @@ export default function DocumentEditor({
         // Check if content is NOT HTML
         if (!trimmed.startsWith('<')) {
           const { autoConvertToHtml } = await import(
-            '@/lib/utils/document/formatConverter'
+            '@/lib/utils/shared/document/formatConverter'
           );
           const converted = await autoConvertToHtml(modifiedCode, fileName);
           setModifiedCode(converted);
@@ -105,7 +108,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Bold"
+          title={t('artifact.toolbar.bold')}
         >
           <strong>B</strong>
         </button>
@@ -116,7 +119,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Italic"
+          title={t('artifact.toolbar.italic')}
         >
           <em>I</em>
         </button>
@@ -127,7 +130,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Underline"
+          title={t('artifact.toolbar.underline')}
         >
           <u>U</u>
         </button>
@@ -138,7 +141,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Strikethrough"
+          title={t('artifact.toolbar.strikethrough')}
         >
           <s>S</s>
         </button>
@@ -155,7 +158,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Heading 1"
+          title={t('artifact.toolbar.heading1')}
         >
           H1
         </button>
@@ -168,7 +171,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Heading 2"
+          title={t('artifact.toolbar.heading2')}
         >
           H2
         </button>
@@ -181,7 +184,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Heading 3"
+          title={t('artifact.toolbar.heading3')}
         >
           H3
         </button>
@@ -196,7 +199,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Bullet List"
+          title={t('artifact.toolbar.bulletList')}
         >
           •
         </button>
@@ -207,7 +210,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Numbered List"
+          title={t('artifact.toolbar.numberedList')}
         >
           1.
         </button>
@@ -222,7 +225,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Code Block"
+          title={t('artifact.toolbar.codeBlock')}
         >
           {'</>'}
         </button>
@@ -233,7 +236,7 @@ export default function DocumentEditor({
               ? 'bg-blue-500 text-white'
               : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600'
           }`}
-          title="Quote"
+          title={t('artifact.toolbar.quote')}
         >
           "
         </button>
@@ -250,9 +253,9 @@ export default function DocumentEditor({
               .run()
           }
           className="px-3 py-1 text-sm rounded transition-colors bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600"
-          title="Insert Table"
+          title={t('artifact.toolbar.insertTable')}
         >
-          Table
+          {t('artifact.toolbar.table')}
         </button>
 
         <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
@@ -262,7 +265,7 @@ export default function DocumentEditor({
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
           className="px-3 py-1 text-sm rounded transition-colors bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Undo"
+          title={t('artifact.toolbar.undo')}
         >
           ↶
         </button>
@@ -270,7 +273,7 @@ export default function DocumentEditor({
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
           className="px-3 py-1 text-sm rounded transition-colors bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Redo"
+          title={t('artifact.toolbar.redo')}
         >
           ↷
         </button>

@@ -1,3 +1,9 @@
+import {
+  FILE_COUNT_LIMITS,
+  FILE_SIZE_LIMITS,
+  FILE_SIZE_LIMITS_MB,
+} from '@/lib/utils/app/const';
+
 /**
  * UI Constants
  * Centralized configuration for UI-related magic numbers and values
@@ -96,13 +102,13 @@ export const UI_CONSTANTS = {
   },
 
   /**
-   * File upload constraints
+   * File upload constraints (references centralized constants from const.ts)
    */
   FILE_UPLOAD: {
-    MAX_FILE_SIZE_MB: 10,
-    MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024,
-    MAX_FILES_AT_ONCE: 10,
-    CHUNK_SIZE_BYTES: 1024 * 1024, // 1MB chunks
+    MAX_FILE_SIZE_MB: FILE_SIZE_LIMITS_MB.DOCUMENT,
+    MAX_FILE_SIZE_BYTES: FILE_SIZE_LIMITS.DOCUMENT_MAX_BYTES,
+    MAX_FILES_AT_ONCE: FILE_COUNT_LIMITS.MAX_TOTAL_FILES,
+    CHUNK_SIZE_BYTES: FILE_SIZE_LIMITS.UPLOAD_CHUNK_BYTES,
   },
 
   /**

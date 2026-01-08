@@ -3,6 +3,7 @@ import {
   IconCirclePlus,
   IconFile,
   IconFileMusic,
+  IconFileText,
   IconLanguage,
   IconLink,
   IconPaperclip,
@@ -27,17 +28,29 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
+import {
+  AssistantMessageGroup,
+  FileMessageContent,
+  Message,
+} from '@/types/chat';
+import { DocumentTranslationReference } from '@/types/documentTranslation';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
+import ChatInputDocumentTranslate from '@/components/Chat/ChatInput/ChatInputDocumentTranslate';
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import { formatTranslationReference } from '@/components/Chat/DocumentTranslationViewer';
 import ImageIcon from '@/components/Icons/image';
 
 import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
 import { useChatInputStore } from '@/client/stores/chatInputStore';
+import {
+  DOCUMENT_TRANSLATION_ACCEPT_TYPES,
+  TRANSCRIPTION_ACCEPT_TYPES,
+} from '@/lib/constants/fileTypes';
 
 interface DropdownProps {
   onCameraClick: () => void;
@@ -78,11 +91,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     (state) => state.setSelectedToneId,
   );
   const filePreviews = useChatInputStore((state) => state.filePreviews);
-  const { selectedConversation } = useConversations();
+  const { selectedConversation, updateConversation } = useConversations();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
+  const [isDocumentTranslateOpen, setIsDocumentTranslateOpen] = useState(false);
+  const [documentToTranslate, setDocumentToTranslate] = useState<File | null>(
+    null,
+  );
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isToneOpen, setIsToneOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -132,12 +149,99 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const transcribeInputRef = useRef<HTMLInputElement>(null);
+  const documentTranslateInputRef = useRef<HTMLInputElement>(null);
 
   // Handler for file attach that doesn't access ref during render
   const handleAttachClick = useCallback(() => {
     closeDropdown();
     fileInputRef.current?.click();
   }, [closeDropdown]);
+
+  // Handler for transcribe audio/video file selection
+  const handleTranscribeClick = useCallback(() => {
+    closeDropdown();
+    transcribeInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handler for document translation file selection
+  const handleDocumentTranslateClick = useCallback(() => {
+    closeDropdown();
+    documentTranslateInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handle document translation completion - add user message with file + assistant message
+  const handleDocumentTranslationComplete = useCallback(
+    (reference: DocumentTranslationReference) => {
+      if (!selectedConversation) {
+        console.error('[DocumentTranslation] No conversation selected');
+        setIsDocumentTranslateOpen(false);
+        setDocumentToTranslate(null);
+        return;
+      }
+
+      // 1. Create user message showing the original uploaded file
+      const fileContent: FileMessageContent = {
+        type: 'file_url',
+        url: reference.originalFileUrl,
+        originalFilename: reference.originalFilename,
+      };
+
+      const userMessage: Message = {
+        role: 'user',
+        content: [fileContent],
+        messageType: 'FILE',
+      };
+
+      // 2. Create assistant message with the translation reference
+      const referenceText = formatTranslationReference(
+        reference.translatedFilename,
+        reference.targetLanguage,
+        reference.jobId,
+        reference.fileExtension,
+        reference.expiresAt,
+      );
+
+      const assistantMessage: AssistantMessageGroup = {
+        type: 'assistant_group',
+        versions: [
+          {
+            content: referenceText,
+            messageType: 'TEXT',
+            createdAt: new Date().toISOString(),
+          },
+        ],
+        activeIndex: 0,
+      };
+
+      // 3. Add both messages to the conversation
+      const updatedMessages = [
+        ...selectedConversation.messages,
+        userMessage,
+        assistantMessage,
+      ];
+
+      // 4. Build updates object - include title if conversation is untitled
+      const updates: { messages: typeof updatedMessages; name?: string } = {
+        messages: updatedMessages,
+      };
+
+      // Auto-title empty conversations
+      if (
+        !selectedConversation.name ||
+        selectedConversation.name === 'New Conversation'
+      ) {
+        updates.name = `Translation: ${reference.originalFilename}`;
+      }
+
+      updateConversation(selectedConversation.id, updates);
+
+      // Close modal
+      setIsDocumentTranslateOpen(false);
+      setDocumentToTranslate(null);
+    },
+    [selectedConversation, updateConversation],
+  );
 
   // Helper function to toggle search mode (always sets to ALWAYS when enabled)
   const toggleSearchMode = useCallback(() => {
@@ -160,8 +264,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           searchMode === SearchMode.ALWAYS
             ? `✓ ${t('webSearchDropdown')}`
             : t('webSearchDropdown'),
-        infoTooltip:
-          'Enable web search for every message.\n\nProvides up-to-date information using real-time Bing web access.',
+        infoTooltip: t('dropdown.searchTooltip'),
         onClick: () => {
           toggleSearchMode();
           closeDropdown();
@@ -177,7 +280,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           />
         ),
         label: selectedToneId
-          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || 'Selected'}`
+          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || t('dropdown.selected')}`
           : t('toneDropdown'),
         infoTooltip:
           tones.length === 0
@@ -199,9 +302,18 @@ const Dropdown: React.FC<DropdownProps> = ({
           />
         ),
         label: t('attachFilesDropdown'),
-        infoTooltip:
-          'Attach files, images, or audio/video.\n\nSupported formats:\n• Images: JPEG, PNG, GIF, WebP (5MB max, up to 10)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max, up to 3)\n• Data: CSV, JSON, XML, YAML (10MB max, up to 3)\n• Code: PY, JS, TS, JAVA, C, CPP, GO, etc. (10MB max, up to 3)\n• Audio/Video: MP3, WAV, MP4, WebM (25MB max, 1 file)\n\nTotal: 10 files, 50MB max',
+        infoTooltip: t('dropdown.attachTooltip'),
         onClick: handleAttachClick,
+        category: 'media',
+      },
+      {
+        id: 'transcribe',
+        icon: (
+          <IconFileMusic size={18} className="text-orange-500 flex-shrink-0" />
+        ),
+        label: t('transcribeAudioVideoDropdown'),
+        infoTooltip: t('dropdown.transcribeTooltip'),
+        onClick: handleTranscribeClick,
         category: 'media',
       },
       {
@@ -214,6 +326,16 @@ const Dropdown: React.FC<DropdownProps> = ({
           setIsTranslateOpen(true);
           closeDropdown();
         },
+        category: 'transform',
+      },
+      {
+        id: 'translateDocument',
+        icon: (
+          <IconFileText size={18} className="text-indigo-500 flex-shrink-0" />
+        ),
+        label: t('translateDocumentDropdown'),
+        infoTooltip: t('dropdown.translateDocumentTooltip'),
+        onClick: handleDocumentTranslateClick,
         category: 'transform',
       },
       ...(hasCameraSupport
@@ -244,6 +366,8 @@ const Dropdown: React.FC<DropdownProps> = ({
       setIsTranslateOpen,
       onCameraClick,
       handleAttachClick,
+      handleTranscribeClick,
+      handleDocumentTranslateClick,
       toggleSearchMode,
     ],
   );
@@ -257,6 +381,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     closeDropdown,
     onCloseModals: () => {
       setIsTranslateOpen(false);
+      setIsDocumentTranslateOpen(false);
       setIsImageOpen(false);
       setIsToneOpen(false);
     },
@@ -286,7 +411,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         >
           <IconCirclePlus className="w-7 h-7 md:w-6 md:h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-            Expand Actions
+            {t('dropdown.expandActions')}
           </div>
         </button>
       </div>
@@ -353,10 +478,10 @@ const Dropdown: React.FC<DropdownProps> = ({
             >
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Select Tone
+                  {t('dropdown.selectTone')}
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Choose a voice profile for your messages
+                  {t('dropdown.selectToneDescription')}
                 </p>
               </div>
 
@@ -373,10 +498,10 @@ const Dropdown: React.FC<DropdownProps> = ({
                   }`}
                 >
                   <div className="font-medium text-gray-900 dark:text-white">
-                    No Tone (Default)
+                    {t('dropdown.noToneDefault')}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Use default writing style
+                    {t('dropdown.useDefaultStyle')}
                   </div>
                 </button>
 
@@ -420,9 +545,9 @@ const Dropdown: React.FC<DropdownProps> = ({
                 {tones.length === 0 && (
                   <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                     <IconVolume size={48} className="mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">No tones created yet</p>
+                    <p className="text-sm">{t('dropdown.noTonesCreated')}</p>
                     <p className="text-xs mt-1">
-                      Create tones in Quick Actions
+                      {t('dropdown.createTonesHint')}
                     </p>
                   </div>
                 )}
@@ -458,6 +583,47 @@ const Dropdown: React.FC<DropdownProps> = ({
         }}
         className="hidden"
         multiple
+      />
+
+      {/* Hidden file input for audio/video files only (for transcription) */}
+      <input
+        ref={transcribeInputRef}
+        type="file"
+        accept={TRANSCRIPTION_ACCEPT_TYPES}
+        onChange={async (e) => {
+          if (e.target.files) {
+            await handleFileUpload(Array.from(e.target.files));
+          }
+        }}
+        className="hidden"
+      />
+
+      {/* Hidden file input for documents (for translation) */}
+      <input
+        ref={documentTranslateInputRef}
+        type="file"
+        accept={DOCUMENT_TRANSLATION_ACCEPT_TYPES}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setDocumentToTranslate(file);
+            setIsDocumentTranslateOpen(true);
+          }
+          // Reset input so the same file can be selected again
+          e.target.value = '';
+        }}
+        className="hidden"
+      />
+
+      {/* Document Translation Modal */}
+      <ChatInputDocumentTranslate
+        isOpen={isDocumentTranslateOpen}
+        onClose={() => {
+          setIsDocumentTranslateOpen(false);
+          setDocumentToTranslate(null);
+        }}
+        documentFile={documentToTranslate}
+        onTranslationComplete={handleDocumentTranslationComplete}
       />
     </div>
   );

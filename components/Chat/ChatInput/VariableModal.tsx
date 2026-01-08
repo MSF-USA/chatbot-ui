@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import {
   VariableDefinition,
   getVariableDefinitions,
-} from '@/lib/utils/chat/variables';
+} from '@/lib/utils/shared/chat/variables';
 
 import { Prompt } from '@/types/prompt';
 

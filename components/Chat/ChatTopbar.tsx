@@ -12,7 +12,7 @@ import { SearchMode } from '@/types/searchMode';
 
 import {
   AzureAIIcon,
-  ClaudeIcon,
+  ClaudeAIIcon,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -87,7 +87,7 @@ export const ChatTopbar = ({
       case 'meta':
         return <MetaIcon {...iconProps} />;
       case 'anthropic':
-        return <ClaudeIcon {...iconProps} />;
+        return <ClaudeAIIcon {...iconProps} />;
       default:
         return null;
     }

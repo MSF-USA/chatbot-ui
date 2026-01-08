@@ -2,7 +2,9 @@ import { Session } from 'next-auth';
 
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { VALIDATION_LIMITS } from '@/lib/utils/app/const';
+
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { describe, expect, it } from 'vitest';
 
@@ -63,9 +65,12 @@ describe('InputValidator', () => {
       }
     });
 
-    it('should use default 100MB limit when not specified', async () => {
+    it('should use default limit from VALIDATION_LIMITS when not specified', async () => {
       const validator = new InputValidator();
-      const mockGetFileSize = async () => 110 * 1024 * 1024; // 110MB
+      // File size exceeds the default limit (FILE_DOWNLOAD_MAX_BYTES = 1.5GB)
+      const fileOverLimit =
+        VALIDATION_LIMITS.FILE_DOWNLOAD_MAX_BYTES + 1024 * 1024; // 1MB over
+      const mockGetFileSize = async () => fileOverLimit;
 
       await expect(
         validator.validateFileSize(

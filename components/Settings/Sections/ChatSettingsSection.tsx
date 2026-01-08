@@ -1,12 +1,24 @@
-import { IconChevronDown, IconMessage } from '@tabler/icons-react';
+import {
+  IconAdjustments,
+  IconChevronDown,
+  IconInfoCircle,
+  IconMessage,
+  IconUser,
+  IconVolume,
+} from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
+import { useSettings } from '@/client/hooks/settings/useSettings';
+
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+
 import { Settings } from '@/types/settings';
 
 import { SystemPrompt } from '../SystemPrompt';
+import { TTSSettingsPanel } from '../TTS/TTSSettingsPanel';
 import { TemperatureSlider } from '../Temperature';
 
 interface ChatSettingsSectionProps {
@@ -30,7 +42,27 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
+  const [isModelResponseExpanded, setIsModelResponseExpanded] = useState(true);
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
+  const [isAboutYouExpanded, setIsAboutYouExpanded] = useState(false);
+  const [isTTSExpanded, setIsTTSExpanded] = useState(false);
+  const {
+    displayNamePreference,
+    customDisplayName,
+    ttsSettings,
+    setTTSSettings,
+    reasoningEffort,
+    setReasoningEffort,
+    verbosity,
+    setVerbosity,
+  } = useSettings();
+
+  // Compute derived name from General Settings for placeholder
+  const derivedDisplayName = getUserDisplayName(
+    user,
+    displayNamePreference,
+    customDisplayName,
+  );
 
   return (
     <div className="p-4">
@@ -43,29 +75,119 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
       </div>
 
       <div className="space-y-8">
-        {/* Model Response Settings Section */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {t('settings.Model Response Settings')}
-          </h3>
-
-          {/* Temperature Setting */}
-          <div className="mb-4">
-            <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-              {t('Default') + ' ' + t('Temperature') + '*'}
+        {/* Model Response Settings Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsModelResponseExpanded(!isModelResponseExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconAdjustments
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.Model Response Settings')}
+              </h3>
             </div>
-            <TemperatureSlider
-              temperature={state.temperature}
-              onChangeTemperature={(temperature) =>
-                dispatch({ field: 'temperature', value: temperature })
-              }
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isModelResponseExpanded ? 'rotate-180' : ''
+              }`}
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              {t(
-                'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
-              )}
-            </p>
-          </div>
+          </button>
+
+          {isModelResponseExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-6">
+              {/* Info box */}
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 text-xs">
+                <div className="flex items-start">
+                  <IconInfoCircle
+                    size={16}
+                    className="me-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  />
+                  <div className="text-blue-700 dark:text-blue-300">
+                    {t('settings.Model Response Settings Description')}
+                  </div>
+                </div>
+              </div>
+
+              {/* Temperature Setting */}
+              <div>
+                <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
+                  {t('Default') + ' ' + t('Temperature') + '*'}
+                </div>
+                <TemperatureSlider
+                  temperature={state.temperature}
+                  onChangeTemperature={(temperature) =>
+                    dispatch({ field: 'temperature', value: temperature })
+                  }
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t(
+                    'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
+                  )}
+                </p>
+              </div>
+
+              {/* Reasoning Effort Setting */}
+              <div>
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Default Reasoning Effort')}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['low', 'medium', 'high'] as const).map((level) => (
+                    <button
+                      key={level}
+                      onClick={() =>
+                        setReasoningEffort(
+                          reasoningEffort === level ? undefined : level,
+                        )
+                      }
+                      className={`px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+                        reasoningEffort === level
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {t(`modelSelect.advancedOptions.${level}`)}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t('settings.reasoningEffortDescription')}
+                </p>
+              </div>
+
+              {/* Verbosity Setting */}
+              <div>
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Default Verbosity')}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['low', 'medium', 'high'] as const).map((level) => (
+                    <button
+                      key={level}
+                      onClick={() =>
+                        setVerbosity(verbosity === level ? undefined : level)
+                      }
+                      className={`px-3 py-2 text-sm font-medium rounded-lg transition-all ${
+                        verbosity === level
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {t(`modelSelect.advancedOptions.${level}`)}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {t('settings.verbosityDescription')}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Advanced Settings Section - Collapsible */}
@@ -87,10 +209,10 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
 
           {isAdvancedExpanded && (
             <div className="px-4 pb-3 border-t border-gray-200 dark:border-gray-700">
-              {/* System Prompt */}
+              {/* Custom Instructions */}
               <div className="mt-3">
                 <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-                  {t('settings.Default System Prompt') + '*'}
+                  {t('settings.Custom Instructions') + '*'}
                 </div>
                 <SystemPrompt
                   prompts={homeState.prompts}
@@ -104,6 +226,206 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                   }
                 />
               </div>
+
+              {/* Streaming Speed Setting */}
+              <div className="mt-4">
+                <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                  {t('settings.Streaming Speed')}
+                </div>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={state.streamingSpeed?.delayMs === 12}
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 2, delayMs: 12 },
+                        })
+                      }
+                    />
+                    {t('settings.Slow')}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={
+                        state.streamingSpeed?.delayMs === 8 ||
+                        !state.streamingSpeed
+                      }
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 3, delayMs: 8 },
+                        })
+                      }
+                    />
+                    {t('settings.Normal')}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-black dark:text-neutral-200">
+                    <input
+                      type="radio"
+                      name="streamingSpeed"
+                      className="accent-neutral-600 dark:accent-neutral-400"
+                      checked={state.streamingSpeed?.delayMs === 4}
+                      onChange={() =>
+                        dispatch({
+                          field: 'streamingSpeed',
+                          value: { charsPerBatch: 5, delayMs: 4 },
+                        })
+                      }
+                    />
+                    {t('settings.Fast')}
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {t(
+                    'settings.Controls how smoothly text appears during AI responses',
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Text-to-Speech Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsTTSExpanded(!isTTSExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconVolume
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.tts.title')}
+              </h3>
+            </div>
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isTTSExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {isTTSExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <TTSSettingsPanel
+                settings={ttsSettings}
+                onChange={setTTSSettings}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* About You Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsAboutYouExpanded(!isAboutYouExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <IconUser
+                size={18}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <h3 className="text-sm font-bold text-black dark:text-white">
+                {t('settings.aboutYou.title')}
+              </h3>
+            </div>
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isAboutYouExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {isAboutYouExpanded && (
+            <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+              {/* Toggle: Include user info */}
+              <label className="flex items-center gap-3 mt-4 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-neutral-600 dark:accent-neutral-400"
+                  checked={state.includeUserInfoInPrompt || false}
+                  onChange={(e) =>
+                    dispatch({
+                      field: 'includeUserInfoInPrompt',
+                      value: e.target.checked,
+                    })
+                  }
+                />
+                <span className="text-sm text-black dark:text-neutral-200">
+                  {t('settings.aboutYou.shareBasicInfo')}
+                </span>
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-7">
+                {t('settings.aboutYou.shareBasicInfoDescription')}
+              </p>
+
+              {/* Conditional fields when enabled */}
+              {state.includeUserInfoInPrompt && (
+                <div className="mt-4 space-y-4 ml-7">
+                  {/* Preferred Name */}
+                  <div>
+                    <label className="text-sm font-medium text-black dark:text-neutral-200">
+                      {t('settings.aboutYou.preferredName')}
+                    </label>
+                    <input
+                      type="text"
+                      value={state.preferredName || ''}
+                      onChange={(e) =>
+                        dispatch({
+                          field: 'preferredName',
+                          value: e.target.value,
+                        })
+                      }
+                      placeholder={
+                        derivedDisplayName ||
+                        t('settings.aboutYou.preferredNamePlaceholder')
+                      }
+                      maxLength={100}
+                      className="mt-1 w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-2 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {t('settings.aboutYou.preferredNameDescriptionWithSync')}
+                    </p>
+                  </div>
+
+                  {/* Additional Context */}
+                  <div>
+                    <label className="text-sm font-medium text-black dark:text-neutral-200">
+                      {t('settings.aboutYou.additionalContext')}
+                    </label>
+                    <textarea
+                      value={state.userContext || ''}
+                      onChange={(e) =>
+                        dispatch({
+                          field: 'userContext',
+                          value: e.target.value,
+                        })
+                      }
+                      placeholder={t(
+                        'settings.aboutYou.additionalContextPlaceholder',
+                      )}
+                      maxLength={2000}
+                      rows={4}
+                      className="mt-1 w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-2 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100 resize-none"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {t('settings.aboutYou.additionalContextDescription')}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -3,28 +3,27 @@ import {
   IconChevronRight,
   IconExternalLink,
   IconHelp,
+  IconInfoCircle,
   IconMail,
   IconQuestionMark,
 } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
 import { FC, useEffect, useState } from 'react';
 
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { useOrganizationSupport } from '@/client/hooks/settings/useOrganizationSupport';
+
+import { OrganizationSelector } from '@/components/Support/OrganizationSelector';
 
 export const HelpSupportSection: FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const { data: session } = useSession();
+  const { contactConfig } = useOrganizationSupport();
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [topFaqs, setTopFaqs] = useState<
     Array<{ question: string; answer: string }>
   >([]);
-
-  const supportEmail =
-    session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL;
 
   // Load FAQs based on current locale
   useEffect(() => {
@@ -114,27 +113,56 @@ export const HelpSupportSection: FC = () => {
           </Link>
 
           {/* Contact Support Card */}
-          <a
-            href={`mailto:${supportEmail}`}
-            className="group border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-500 dark:hover:border-blue-400 transition-all hover:shadow-md"
-          >
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
-                <IconMail
-                  size={20}
-                  className="text-green-600 dark:text-green-400"
-                />
+          {contactConfig.hasEmailSupport ? (
+            <a
+              href={`mailto:${contactConfig.email}`}
+              className="group border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-500 dark:hover:border-blue-400 transition-all hover:shadow-md"
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
+                  <IconMail
+                    size={20}
+                    className="text-green-600 dark:text-green-400"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                    {t('settings.Contact Support')}
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                    {contactConfig.email}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                  {t('settings.Contact Support')}
-                </h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  {supportEmail}
-                </p>
+            </a>
+          ) : (
+            <div className="border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/10 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                  <IconInfoCircle
+                    size={20}
+                    className="text-amber-600 dark:text-amber-400"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                    {t('support.escalationTitle')}
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    {t('support.escalationShort')}
+                  </p>
+                </div>
               </div>
             </div>
-          </a>
+          )}
+        </div>
+
+        {/* Organization Selector */}
+        <div className="flex flex-row justify-between items-center px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-gray-200 dark:border-gray-700">
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            {t('support.selectOrganization')}
+          </div>
+          <OrganizationSelector />
         </div>
 
         {/* Popular Questions */}

@@ -24,18 +24,19 @@ import { useMessageSender } from '@/client/hooks/chat/useMessageSender';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useTones } from '@/client/hooks/settings/useTones';
+import { useTranscriptionPolling } from '@/client/hooks/transcription/useTranscriptionPolling';
 import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import { isMobileDevice } from '@/lib/utils/client/device/detection';
 import {
   shouldPreventSubmission,
   validateMessageSubmission,
-} from '@/lib/utils/chat/validation';
+} from '@/lib/utils/shared/chat/validation';
 import {
   parseVariables,
   replaceVariablesWithMap,
-} from '@/lib/utils/chat/variables';
-import { isMobileDevice } from '@/lib/utils/device/detection';
+} from '@/lib/utils/shared/chat/variables';
 
 import { AgentType } from '@/types/agent';
 import {
@@ -65,9 +66,11 @@ import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
+import { TranscriptionProgressIndicator } from './TranscriptionProgressIndicator';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import { useChatInputStore } from '@/client/stores/chatInputStore';
+import { useChatStore } from '@/client/stores/chatStore';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
@@ -93,6 +96,9 @@ export const ChatInput = ({
 }: Props) => {
   const t = useTranslations();
 
+  // Enable transcription status polling for batch jobs (>25MB files)
+  useTranscriptionPolling();
+
   // Zustand hooks
   const { selectedConversation, folders } = useConversations();
   const { isStreaming, requestStop } = useChat();
@@ -100,6 +106,12 @@ export const ChatInput = ({
   const { tones } = useTones();
   const { isArtifactOpen, fileName, language, closeArtifact } =
     useArtifactStore();
+
+  // Pending conversation transcription (for large files >25MB)
+  const pendingConversationTranscription = useChatStore(
+    (state) => state.pendingConversationTranscription,
+  );
+  const isTranscriptionLocked = pendingConversationTranscription !== null;
 
   // Chat input store
   const textFieldValue = useChatInputStore((state) => state.textFieldValue);
@@ -393,7 +405,7 @@ export const ChatInput = ({
 
   useEffect(() => {
     setTimeout(() => {
-      setPlaceholderText('Ask Anything');
+      setPlaceholderText(t('Ask Anything'));
     }, 0);
   }, [t, setPlaceholderText]);
 
@@ -449,6 +461,7 @@ export const ChatInput = ({
   });
 
   const preventSubmission = (): boolean =>
+    isTranscriptionLocked ||
     shouldPreventSubmission(
       isTranscribing,
       isStreaming,
@@ -499,6 +512,17 @@ export const ChatInput = ({
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
               uploadProgress={uploadProgress}
+            />
+          </div>
+        )}
+
+        {/* Transcription Progress Indicator - Shows when large file transcription is pending */}
+        {pendingConversationTranscription && (
+          <div className="px-4 py-2">
+            <TranscriptionProgressIndicator
+              startedAt={pendingConversationTranscription.startedAt}
+              filename={pendingConversationTranscription.filename}
+              progress={pendingConversationTranscription.progress}
             />
           </div>
         )}

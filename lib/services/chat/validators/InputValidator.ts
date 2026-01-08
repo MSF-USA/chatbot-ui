@@ -1,12 +1,40 @@
 import { Session } from 'next-auth';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { VALIDATION_LIMITS } from '@/lib/utils/app/const';
+
 import { ChatBody, Message } from '@/types/chat';
+import { ErrorCode, PipelineError } from '@/types/errors';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
 import { z } from 'zod';
+
+/**
+ * Custom URL validator that accepts both HTTP(S) URLs and data: URLs.
+ * This is needed because:
+ * - Blob storage URLs are HTTP(S) and should be validated normally
+ * - Base64 data URLs (data:image/...) are valid for images in conversation history
+ *
+ * @param errorMessage - The error message to display on validation failure
+ */
+const urlOrDataUrl = (errorMessage: string) =>
+  z.string().refine(
+    (val) => {
+      // Accept data: URLs (base64 encoded images/files)
+      if (val.startsWith('data:')) return true;
+      // Accept relative API URLs (internal file references like /api/file/*)
+      if (val.startsWith('/api/')) return true;
+      // Otherwise, validate as standard URL
+      try {
+        new URL(val);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    { message: errorMessage },
+  );
 
 /**
  * Zod schema for message content blocks.
@@ -23,13 +51,13 @@ const MessageContentSchema = z.union([
       z.object({
         type: z.literal('image_url'),
         image_url: z.object({
-          url: z.string().url('Invalid image URL'),
+          url: urlOrDataUrl('Invalid image URL'),
           detail: z.enum(['auto', 'low', 'high']).optional(),
         }),
       }),
       z.object({
         type: z.literal('file_url'),
-        url: z.string().url('Invalid file URL'),
+        url: urlOrDataUrl('Invalid file URL'),
       }),
       z.object({
         type: z.literal('thinking'),
@@ -105,6 +133,14 @@ const ToneSchema = z.object({
 });
 
 /**
+ * Zod schema for streaming speed configuration.
+ */
+const StreamingSpeedSchema = z.object({
+  charsPerBatch: z.number().int().min(1).max(20),
+  delayMs: z.number().int().min(1).max(100),
+});
+
+/**
  * Zod schema for the main chat request body.
  */
 const ChatBodySchema = z
@@ -131,6 +167,23 @@ const ChatBodySchema = z
     threadId: z.string().max(100, 'Thread ID too long').optional(),
     forcedAgentType: z.string().max(50, 'Agent type too long').optional(),
     tone: ToneSchema.optional(), // Full tone object from client
+    streamingSpeed: StreamingSpeedSchema.optional(), // Smooth streaming speed configuration
+    includeUserInfoInPrompt: z.boolean().optional(), // Include user info in system prompt
+    preferredName: z
+      .string()
+      .max(100, 'Preferred name too long (max 100 chars)')
+      .optional(),
+    userContext: z
+      .string()
+      .max(2000, 'User context too long (max 2,000 chars)')
+      .optional(),
+    displayNamePreference: z
+      .enum(['firstName', 'lastName', 'fullName', 'custom', 'none'])
+      .optional(),
+    customDisplayName: z
+      .string()
+      .max(100, 'Custom display name too long (max 100 chars)')
+      .optional(),
   })
   .strict(); // Reject unknown properties
 
@@ -255,16 +308,16 @@ export class InputValidator {
    * Prevents memory exhaustion attacks.
    *
    * Note: This limit is for the JSON request body only (messages + metadata).
-   * Actual file/image/audio data is uploaded separately via /api/file/upload
-   * which has its own 50MB limit. The chat endpoint only receives URLs.
+   * Actual file/image/audio data is uploaded separately via /api/file/upload.
+   * The chat endpoint only receives URLs.
    *
    * @param body - The request body
-   * @param maxSize - Maximum allowed size in bytes (default: 10MB)
+   * @param maxSize - Maximum allowed size in bytes (defaults to VALIDATION_LIMITS.REQUEST_BODY_MAX_BYTES)
    * @returns true if size is acceptable
    */
   public validateRequestSize(
     body: unknown,
-    maxSize: number = 10 * 1024 * 1024,
+    maxSize: number = VALIDATION_LIMITS.REQUEST_BODY_MAX_BYTES,
   ): boolean {
     try {
       const size = JSON.stringify(body).length;
@@ -292,14 +345,14 @@ export class InputValidator {
    * @param fileUrl - The blob storage URL
    * @param user - User session for authentication
    * @param getFileSizeFn - Function to get file size (dependency injection for testing)
-   * @param maxSize - Maximum allowed file size in bytes (default: 100MB)
+   * @param maxSize - Maximum allowed file size in bytes (defaults to VALIDATION_LIMITS.FILE_DOWNLOAD_MAX_BYTES)
    * @throws PipelineError.critical if file exceeds size limit
    */
   public async validateFileSize(
     fileUrl: string,
     user: Session['user'],
     getFileSizeFn: (url: string, user: Session['user']) => Promise<number>,
-    maxSize: number = 100 * 1024 * 1024, // 100MB default
+    maxSize: number = VALIDATION_LIMITS.FILE_DOWNLOAD_MAX_BYTES,
   ): Promise<void> {
     try {
       const fileSize = await getFileSizeFn(fileUrl, user);

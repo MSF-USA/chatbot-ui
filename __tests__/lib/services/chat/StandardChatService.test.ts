@@ -14,7 +14,7 @@ import OpenAI, { AzureOpenAI } from 'openai';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
-vi.mock('@/lib/utils/server/chat', () => ({
+vi.mock('@/lib/utils/server/chat/chat', () => ({
   getMessagesToSend: vi.fn(),
 }));
 
@@ -100,10 +100,14 @@ describe('StandardChatService', () => {
       getClient: vi.fn(),
     } as any;
 
-    // Create service instance
+    // Mock HandlerFactory.isAnthropicModel to return false for all tests (non-Anthropic models)
+    vi.mocked(HandlerFactory.isAnthropicModel).mockReturnValue(false);
+
+    // Create service instance (with undefined for anthropicFoundryClient)
     service = new StandardChatService(
       mockAzureClient,
       mockOpenAIClient,
+      undefined, // anthropicFoundryClient - not used in tests
       mockModelSelector,
       mockToneService,
       mockStreamingService,
@@ -134,7 +138,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler factory
@@ -239,7 +245,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler factory
@@ -304,6 +312,8 @@ describe('StandardChatService', () => {
         undefined, // stopConversationRef
         undefined, // transcript (not provided in this test)
         undefined, // citations (not provided in this test)
+        undefined, // pendingTranscriptions (not provided in this test)
+        undefined, // streamingSpeed (not provided in this test)
       );
     });
 
@@ -343,7 +353,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler
@@ -409,7 +421,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler
@@ -477,7 +491,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler to throw error
@@ -529,7 +545,9 @@ describe('StandardChatService', () => {
       });
 
       // Mock getMessagesToSend
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       // Mock handler
@@ -594,7 +612,9 @@ describe('StandardChatService', () => {
         temperature: 0.7,
       });
 
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       vi.mocked(HandlerFactory.getHandler).mockReturnValue(mockHandler);
@@ -645,7 +665,9 @@ describe('StandardChatService', () => {
         temperature: 0.7,
       });
 
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       vi.mocked(HandlerFactory.getHandler).mockReturnValue(mockHandler);
@@ -706,7 +728,9 @@ describe('StandardChatService', () => {
         temperature: 0.7,
       });
 
-      const { getMessagesToSend } = await import('@/lib/utils/server/chat');
+      const { getMessagesToSend } = await import(
+        '@/lib/utils/server/chat/chat'
+      );
       vi.mocked(getMessagesToSend).mockResolvedValue(messages);
 
       vi.mocked(HandlerFactory.getHandler).mockReturnValue(mockHandler);

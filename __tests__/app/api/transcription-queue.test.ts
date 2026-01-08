@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import { AzureBlobStorage } from '@/lib/utils/server/blob';
+import { AzureBlobStorage } from '@/lib/utils/server/blob/blob';
 
 import { parseJsonResponse } from './helpers';
 
@@ -21,7 +21,7 @@ vi.mock('@/auth', () => ({
   auth: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/blob', () => ({
+vi.mock('@/lib/utils/server/blob/blob', () => ({
   AzureBlobStorage: vi.fn(),
 }));
 

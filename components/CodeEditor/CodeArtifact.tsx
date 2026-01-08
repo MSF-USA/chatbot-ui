@@ -6,8 +6,10 @@ import {
   IconFileText,
   IconX,
 } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+
+import { useTranslations } from 'next-intl';
 
 import { useTheme } from '@/client/hooks/ui/useTheme';
 
@@ -31,6 +33,7 @@ export default function CodeArtifact({
   onClose,
   onSwitchToDocument,
 }: CodeArtifactProps) {
+  const t = useTranslations();
   const theme = useTheme();
   const {
     fileName,
@@ -52,9 +55,9 @@ export default function CodeArtifact({
   const handleDownload = () => {
     try {
       downloadFile();
-      toast.success('File downloaded');
+      toast.success(t('artifact.fileDownloaded'));
     } catch (error) {
-      toast.error('Failed to download');
+      toast.error(t('artifact.failedToDownload'));
     }
   };
 
@@ -93,7 +96,7 @@ export default function CodeArtifact({
             <button
               onClick={onSwitchToDocument}
               className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              title="Switch to Document Editor"
+              title={t('artifact.switchToDocumentEditor')}
             >
               <IconFileText size={18} />
             </button>
@@ -103,7 +106,7 @@ export default function CodeArtifact({
             onClick={handleDownload}
             disabled={!modifiedCode}
             className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            title="Download"
+            title={t('artifact.download')}
           >
             <IconDownload size={18} />
           </button>
@@ -113,7 +116,7 @@ export default function CodeArtifact({
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            title="Close"
+            title={t('artifact.close')}
           >
             <IconX size={18} />
           </button>
@@ -128,7 +131,7 @@ export default function CodeArtifact({
       {/* Disclaimer Footer */}
       <div className="px-4 py-2 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex-shrink-0">
         <p className="text-xs text-center text-neutral-500 dark:text-neutral-400">
-          Edits are not saved. Send via message or download to save any edits.
+          {t('artifact.editsNotSaved')}
         </p>
       </div>
     </div>

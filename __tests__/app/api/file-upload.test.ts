@@ -6,8 +6,9 @@ import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import {
   getContentType,
+  validateBufferSignature,
   validateFileNotExecutable,
-} from '@/lib/utils/server/mimeTypes';
+} from '@/lib/utils/server/file/mimeTypes';
 
 import { parseJsonResponse } from './helpers';
 
@@ -28,8 +29,9 @@ vi.mock('@/lib/utils/app/user/session', () => ({
   getUserIdFromSession: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/mimeTypes', () => ({
+vi.mock('@/lib/utils/server/file/mimeTypes', () => ({
   validateFileNotExecutable: vi.fn(),
+  validateBufferSignature: vi.fn(),
   getContentType: vi.fn(),
 }));
 
@@ -61,6 +63,7 @@ describe('/api/file/upload', () => {
     vi.mocked(getUserIdFromSession).mockReturnValue('test-user-id');
     vi.mocked(createBlobStorageClient).mockReturnValue(mockBlobClient as any);
     vi.mocked(validateFileNotExecutable).mockReturnValue({ isValid: true });
+    vi.mocked(validateBufferSignature).mockReturnValue({ isValid: true });
     vi.mocked(getContentType).mockReturnValue('text/plain');
     vi.mocked(Hasher.sha256).mockReturnValue('a'.repeat(300)); // Long hash for slicing
     mockBlobClient.upload.mockResolvedValue(
@@ -131,19 +134,62 @@ describe('/api/file/upload', () => {
       );
     });
 
-    it('returns 413 when file size exceeds limit', async () => {
-      // Create a large file (> 50MB)
-      const largeContent = 'x'.repeat(51 * 1024 * 1024);
-      const request = createRequest({
-        filename: 'large.txt',
-        body: largeContent,
+    it('accepts large video files up to 1.5GB', async () => {
+      // Category-based limits:
+      // - Documents: 50MB
+      // - Audio: 1GB
+      // - Video: 1.5GB
+      // Testing with a 51MB video file to verify it's accepted (under 1.5GB limit)
+      const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
+      const file = new File([largeContent], 'large.mp4', {
+        type: 'video/mp4',
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const params = new URLSearchParams();
+      params.set('filename', 'large.mp4');
+      params.set('filetype', 'video');
+      params.set('mime', 'video/mp4');
+
+      const url = `http://localhost:3000/api/file/upload?${params.toString()}`;
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: formData,
       });
 
       const response = await POST(request);
-      const data = await parseJsonResponse(response);
 
+      // 51MB video files should be accepted (limit is 1.5GB)
+      expect(response.status).toBe(200);
+    });
+
+    it('rejects documents exceeding 50MB limit', async () => {
+      // Documents have a 50MB limit
+      const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
+      const file = new File([largeContent], 'large.txt', {
+        type: 'text/plain',
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const params = new URLSearchParams();
+      params.set('filename', 'large.txt');
+      params.set('filetype', 'file');
+      params.set('mime', 'text/plain');
+
+      const url = `http://localhost:3000/api/file/upload?${params.toString()}`;
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const response = await POST(request);
+
+      // 51MB document files should be rejected (limit is 50MB)
       expect(response.status).toBe(413);
-      expect(data.error).toContain('50MB');
     });
   });
 
@@ -314,8 +360,8 @@ describe('/api/file/upload', () => {
 
       const response = await POST(request);
 
-      // Should fail when getting session
-      expect(response.status).toBe(500);
+      // Should return 401 Unauthorized when no session
+      expect(response.status).toBe(401);
     });
 
     it('uses authenticated user ID for upload path', async () => {
@@ -370,7 +416,7 @@ describe('/api/file/upload', () => {
       expect(data.details).toBe('Upload failed');
     });
 
-    it('returns 500 when session retrieval fails', async () => {
+    it('returns 401 when session retrieval fails', async () => {
       (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest({
@@ -379,7 +425,8 @@ describe('/api/file/upload', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      // Changed from 500 to 401 - unauthorized is the correct response for no session
+      expect(response.status).toBe(401);
     });
 
     it('logs error details', async () => {

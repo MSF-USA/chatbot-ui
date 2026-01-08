@@ -128,7 +128,7 @@
   "Description": "Beschrijving",
   "A description for your prompt_": "Een beschrijving voor je prompt.",
   "Prompt": "Prompt",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt inhoud. Gebruik {{}} om een variabele aan te duiden. Bijv: {{naam}} is een {{bijvoeglijk naamwoord}} {{zelfstandig naamwoord}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt inhoud. Gebruik '{{}}' om een variabele aan te duiden. Bijv: {{naam}} is een {{bijvoeglijk naamwoord}} {{zelfstandig naamwoord}}",
   "Save": "Opslaan",
   "A name for your prompt_": "Een naam voor je prompt.",
   "Settings": "Instellingen",
@@ -174,7 +174,6 @@
   "Data Management": "Gegevensbeheer",
   "Account": "Account",
   "Mobile App": "Mobiele app",
-  "Mobile App": "Mobiele app",
   "Help & Support": "Hulp & Ondersteuning",
   "App Settings": "App-instellingen",
   "Default Temperature": "Standaard temperatuur",
@@ -217,7 +216,7 @@
   "Options": "Opties",
   "Are you sure you want to delete this folder?": "Weet je zeker dat je deze map wilt verwijderen?",
   "New Prompt": "Nieuwe prompt",
-  "Edit Prompt": "Prompt bewerken",
+  "Edit Prompt": "Prompt Bewerken",
   "Prompt name": "Promptnaam",
   "Prompt content": "Promptinhoud",
   "Are you sure you want to delete this prompt?": "Weet je zeker dat je deze prompt wilt verwijderen?",
@@ -296,13 +295,25 @@
   "Tones": "Tonen",
   "Create Your First Tone": "Maak je eerste toon",
   "Search tones": "Zoek tonen...",
-  "Voice Guidelines": "Spraakrichtlijnen",
+  "Voice Guidelines": "Stem Richtlijnen",
   "Examples": "Voorbeelden",
   "Select a tone to view details": "Selecteer een toon om details te bekijken",
   "Team Templates": "Teamsjablonen",
   "selected": "geselecteerd",
   "folders": "mappen",
-  "agents": "agenten",
+  "agents": {
+    "exportAgent": "Agent exporteren",
+    "editAgent": "Agent bewerken",
+    "agentName": "Naam agent",
+    "myResearchAssistant": "Mijn onderzoeksassistent",
+    "agentId": "Agent-ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Beschrijving (optioneel)",
+    "descriptionPlaceholder": "Agent gespecialiseerd in onderzoekstaken...",
+    "baseModel": "Basismodel",
+    "formatDescription": "Formaat: asst_xxxxx (van MSF AI Assistant Foundry)",
+    "importantInfo": "Deze agent heeft toegang tot de gesprekscontext en kan dezelfde tools gebruiken als standaardmodellen. Zorg ervoor dat de agent-ID correct is, aangezien deze later niet kan worden gewijzigd."
+  },
   "Quick Actions": "Snelle acties",
   "Type / in chat to access your prompts": "Typ / in chat om toegang te krijgen tot je prompts",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Typ / in chat, selecteer je prompt en vul de variabelen in wanneer daarom wordt gevraagd",
@@ -349,7 +360,6 @@
   "Custom Agents": "Aangepaste Agents",
   "Delete template and all its items": "Sjabloon en alle items verwijderen",
   "Description (Optional)": "Beschrijving (Optioneel)",
-  "Edit Prompt": "Prompt Bewerken",
   "Edit Tone": "Toon Bewerken",
   "Email Response Template": "E-mail Reactie Sjabloon",
   "Example Prompt": "Voorbeeld Prompt",
@@ -409,7 +419,6 @@
   "msf_logo_alt": "MSF Logo",
   "collapse_sidebar": "Zijbalk inklappen",
   "expand_sidebar": "Zijbalk uitklappen",
-  "Voice Guidelines": "Stem Richtlijnen",
   "Please upload some content or describe the tone you want": "Upload wat inhoud of beschrijf de gewenste toon",
   "Untitled Tone": "Naamloze Toon",
   "Failed to analyze tone": "Toon analyseren mislukt",
@@ -437,15 +446,43 @@
   "enterTagsPlaceholder": "Voeg tags toe (druk op Enter)",
   "enterPromptNamePlaceholder": "bijv. E-mailreactie",
   "enterPromptDescriptionPlaceholder": "Waarvoor is deze prompt?",
-  "enterPromptContentPlaceholder": "Schrijf hier uw prompt. Gebruik {{variable}} voor dynamische inhoud.",
+  "enterPromptContentPlaceholder": "Schrijf hier uw prompt. Gebruik '{{variable}}' voor dynamische inhoud.",
   "common": {
-    "contact": "Contact"
+    "close": "Sluiten",
+    "remove": "Verwijderen",
+    "tryAgain": "Opnieuw proberen",
+    "menu": "Menu",
+    "copyToClipboard": "Kopiëren naar klembord",
+    "toggleDropdownMenu": "Vervolgkeuzemenu wisselen",
+    "toggleMenu": "Menu wisselen",
+    "closeModal": "Modal sluiten",
+    "dismissBanner": "Banner sluiten",
+    "searchEllipsis": "Zoeken...",
+    "addTagEllipsis": "Tag toevoegen...",
+    "msfLogo": "MSF Logo",
+    "importantInformation": "Belangrijke informatie",
+    "contact": "Contact",
+    "noResults": "Geen resultaten gevonden",
+    "confirm": "Bevestigen",
+    "cancel": "Annuleren",
+    "discard": "Verwerpen",
+    "keepEditing": "Doorgaan met bewerken",
+    "yes": "Ja",
+    "no": "Nee"
   },
   "errors": {
+    "somethingWentWrong": "Er is iets misgegaan",
+    "anErrorOccurred": "Er is een fout opgetreden",
+    "copyErrorMessage": "Foutmelding kopiëren",
+    "contactSupport": "Als dit probleem aanhoudt, neem contact op met ondersteuning op",
+    "dismissError": "Fout sluiten",
+    "applicationError": "Applicatiefout",
+    "chatLoadError": "Er is een fout opgetreden bij het laden van de chat",
+    "anErrorOccurredTryAgain": "Er is een fout opgetreden. Probeer het opnieuw.",
     "unexpectedErrorOccurred": "Er is een onverwachte fout opgetreden",
-    "criticalErrorReload": "Er is een kritieke fout opgetreden. Laad de pagina opnieuw.",
-    "reloadPage": "Pagina opnieuw laden",
-    "persistContactSupport": "Als dit probleem aanhoudt, neem dan contact op met ondersteuning"
+    "criticalErrorReload": "Er is een kritieke fout opgetreden. Herlaad de pagina.",
+    "reloadPage": "Pagina herladen",
+    "persistContactSupport": "Als dit probleem aanhoudt, neem contact op met ondersteuning"
   },
   "auth": {
     "authenticationError": "Authenticatiefout",
@@ -482,39 +519,85 @@
     "microsoft": "Microsoft"
   },
   "chat": {
+    "discardChanges": "Wijzigingen verwerpen",
+    "discardChangesMessage": "Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je deze wilt verwerpen?",
     "downloadAudio": "Audio downloaden",
     "closeAudioPlayer": "Audiospeler sluiten",
-    "downloadTranscript": "Transcriptie downloaden",
-    "translateTranscript": "Transcriptie vertalen",
+    "downloadTranscript": "Transcript downloaden",
+    "translateTranscript": "Transcript vertalen",
     "changePlaybackSpeed": "Afspeelsnelheid wijzigen",
     "clearConversationConfirm": "Weet u zeker dat u dit gesprek wilt wissen?",
     "azureAIAgent": "Azure AI Agent",
     "clearConversation": "Gesprek wissen",
     "selectModel": "Model selecteren",
     "clickToStopRecording": "Klik om opname te stoppen",
-    "startVoiceRecording": "Start spraakopname",
+    "startVoiceRecording": "Spraakopname starten",
     "swapLanguages": "Talen wisselen",
     "typeLanguagePlaceholder": "Typ een taal",
     "enterTextToTranslate": "Voer tekst in om te vertalen",
-    "privacyFocusedSearch": "Privacygericht zoeken",
+    "privacyFocusedSearch": "Privacy-gerichte zoekopdracht",
     "azureAIAgentMode": "Azure AI Agent-modus",
     "customAgent": "Aangepaste agent",
-    "searchFeatures": "Zoekfuncties",
+    "searchFeatures": "Functies zoeken",
     "clearSearch": "Zoekopdracht wissen",
     "stopGeneration": "Generatie stoppen",
     "sendMessage": "Bericht verzenden",
     "removeTone": "Toon verwijderen",
-    "disableWebSearch": "Webzoekopdracht uitschakelen",
+    "disableWebSearch": "Webzoeken uitschakelen",
     "scrollToBottom": "Naar beneden scrollen",
-    "regenerateResponse": "Antwoord opnieuw genereren",
+    "regenerateResponse": "Reactie opnieuw genereren",
     "retryMessage": "Bericht opnieuw proberen",
     "editMessage": "Bericht bewerken",
     "deleteMessage": "Bericht verwijderen",
     "imageContent": "Afbeeldingsinhoud",
-    "fullSizePreview": "Volledig formaat voorbeeld",
+    "fullSizePreview": "Volledige grootte voorbeeld",
     "enterSearchQueryPlaceholder": "Voer uw zoekopdracht of vraag in...",
     "errorFetchingUrl": "Er is een fout opgetreden bij het ophalen van de URL-inhoud",
-    "errorInitiatingSearch": "Er is een fout opgetreden bij het starten van het webzoeken"
+    "errorInitiatingSearch": "Er is een fout opgetreden bij het starten van webzoeken",
+    "regenerate": "Opnieuw genereren",
+    "modelSwitchPrompt": "{original} is mislukt maar {fallback} is geslaagd. Wilt u van model wisselen?",
+    "keepOriginalModel": "Behoud {model}",
+    "switchToModel": "Overschakelen naar {model}",
+    "alwaysSwitchToModel": "Altijd automatisch overschakelen",
+    "translateMessage": "Bericht vertalen",
+    "translating": "Vertalen...",
+    "translationError": "Vertaling mislukt",
+    "showOriginal": "Origineel tonen",
+    "translatedTo": "Vertaald naar {language}",
+    "searchLanguages": "Talen zoeken...",
+    "selectLanguage": "Taal selecteren",
+    "audioFromOriginal": "Audio is van originele tekst",
+    "audioFromTranslation": "Audio is van {language} vertaling",
+    "thinking": "Nadenken...",
+    "viewReasoningProcess": "Redeneerproces bekijken",
+    "collapseThinking": "Denken inklappen",
+    "expandThinking": "Denken uitklappen",
+    "actionsDisabledForEmbed": "Gebruik de bedieningselementen in de ingesloten inhoud hierboven",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcriberen en verwerken...",
+      "transcribingAudio": "Audio transcriberen...",
+      "analyzingFiles": "Bestanden analyseren...",
+      "analyzingDocuments": "Documenten analyseren...",
+      "analyzingDocument": "Document analyseren...",
+      "analyzingImages": "Afbeeldingen analyseren...",
+      "analyzingImage": "Afbeelding analyseren..."
+    },
+    "contentDescription": {
+      "text": "tekst",
+      "imagesCount": "{count} afbeelding(en)",
+      "filesCount": "{count} bestand(en)",
+      "audioVideo": "audio/video",
+      "empty": "leeg"
+    },
+    "voiceInputStarting": "Starten...",
+    "voiceInputRecording": "Opnemen...",
+    "voiceInputTapToStop": "Tik om te stoppen",
+    "stopRecording": "Opname stoppen",
+    "voiceInput": "Spraakinvoer",
+    "microphoneAccessDenied": "Microfoontoegang is geweigerd. Schakel deze in via uw browserinstellingen.",
+    "microphoneAccessError": "Microfoontoegangsprobleem: {message}",
+    "voiceInputTranscribing": "Transcriberen...",
+    "ttsRightClickHint": "Klik met de rechtermuisknop voor stemopties"
   },
   "sidebar": {
     "collapseSidebar": "Zijbalk inklappen",
@@ -522,29 +605,135 @@
     "quickActionsTitle": "Snelle acties",
     "quickActions": "Snelle acties"
   },
-  "agents": {
-    "exportAgent": "Agent exporteren",
-    "editAgent": "Agent bewerken",
-    "agentName": "Naam agent",
-    "myResearchAssistant": "Mijn onderzoeksassistent",
-    "agentId": "Agent-ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Beschrijving (optioneel)",
-    "descriptionPlaceholder": "Agent gespecialiseerd in onderzoekstaken...",
-    "baseModel": "Basismodel",
-    "formatDescription": "Formaat: asst_xxxxx (van MSF AI Assistant Foundry)",
-    "importantInfo": "Deze agent heeft toegang tot de gesprekscontext en kan dezelfde tools gebruiken als standaardmodellen. Zorg ervoor dat de agent-ID correct is, aangezien deze later niet kan worden gewijzigd."
-  },
   "prompts": {
-    "buildReusablePrompts": "Bouw herbruikbare prompts met AI-assistentie"
+    "buildReusablePrompts": "Bouw herbruikbare prompts met AI-assistentie",
+    "noToneDefault": "Geen toon (gebruik standaard)",
+    "tagHelp": "Tag help",
+    "tagHelpContent": "Gebruik tags om uw prompts te categoriseren en snel te vinden. Voorbeelden:",
+    "tagExamples": {
+      "email": "e-mail",
+      "marketing": "marketing",
+      "technical": "technisch",
+      "customerSupport": "klantenservice"
+    },
+    "variableHelp": "Variabele help",
+    "variableHelpIntro": "Gebruik variabelen om uw prompts dynamisch te maken:",
+    "requiredVariables": "Vereiste variabelen (geen standaard):",
+    "optionalVariables": "Optionele variabelen (met standaard):",
+    "userMustProvide": "Gebruiker moet een waarde opgeven",
+    "userCanProvide": "Gebruiker kan een waarde opgeven, of standaard wordt gebruikt",
+    "example": "Voorbeeld:",
+    "variableExampleText": "Schrijf een '{{tone:professionele}}' e-mail naar '{{recipient}}' over '{{topic}}' in '{{language:Nederlands}}'",
+    "detectedVariables": "Gedetecteerde variabelen",
+    "required": "Vereist",
+    "aiAssistant": "AI-assistent",
+    "whatToImprove": "Wat wilt u verbeteren?",
+    "whatShouldPromptDo": "Wat moet deze prompt doen?",
+    "improvePlaceholder": "bijv. Maak het professioneler, voeg voorbeelden toe, verbeter duidelijkheid...",
+    "generatePlaceholder": "bijv. Genereer een professionele e-mailsjabloon met variabelen voor ontvanger en onderwerp...",
+    "addContextOptional": "Context toevoegen (optioneel)",
+    "revising": "Reviseren...",
+    "generating": "Genereren...",
+    "reviseWithAI": "Reviseren met AI",
+    "generatePrompt": "Prompt genereren",
+    "revisionComplete": "Revisie voltooid",
+    "generationComplete": "Generatie voltooid",
+    "revisedPrompt": "Gereviseerde prompt:",
+    "generatedPrompt": "Gegenereerde prompt:",
+    "applyRevision": "Deze revisie toepassen",
+    "useThisPrompt": "Deze prompt gebruiken",
+    "improvementsMade": "Aangebrachte verbeteringen:",
+    "tips": "Tips:",
+    "howAICanHelp": "Hoe AI kan helpen",
+    "helpItems": {
+      "improveClarity": "Duidelijkheid en structuur verbeteren",
+      "suggestVariables": "Nuttige variabelen voorstellen",
+      "addContext": "Context en voorbeelden toevoegen",
+      "optimize": "Optimaliseren voor betere resultaten"
+    },
+    "savePrompt": "Prompt opslaan",
+    "add": "Toevoegen"
   },
   "tones": {
     "createCustomVoiceProfile": "Maak een aangepast stemprofiel met AI-assistentie",
-    "examplePlaceholder": "bijv. Maak een professionele maar vriendelijke klantenservice toon..."
+    "examplePlaceholder": "bijv. Maak een professionele maar vriendelijke klantenservice toon...",
+    "tagHelp": "Tag help",
+    "tagHelpContent": "Gebruik tags om uw tonen te categoriseren en snel te vinden. Voorbeelden:",
+    "tagExamples": {
+      "professional": "professioneel",
+      "casual": "informeel",
+      "technical": "technisch",
+      "marketing": "marketing"
+    },
+    "add": "Toevoegen",
+    "aiToneAnalyzer": "AI-toonanalyse",
+    "describeToneToCreate": "Beschrijf de toon die u wilt maken",
+    "uploadContentSamples": "Upload inhoudsvoorbeelden",
+    "analyzing": "Analyseren...",
+    "analyzeToneWithAI": "Toon analyseren met AI",
+    "analysisComplete": "Analyse voltooid",
+    "generatedVoiceGuidelines": "Gegenereerde stemrichtlijnen:",
+    "examplePhrases": "Voorbeeldzinnen:",
+    "suggestedTags": "Voorgestelde tags:",
+    "applyThisAnalysis": "Deze analyse toepassen",
+    "detectedCharacteristics": "Gedetecteerde kenmerken:",
+    "howAICanHelp": "Hoe AI kan helpen",
+    "helpItems": {
+      "transcribe": "Audio/video-inhoud transcriberen",
+      "analyzeContent": "Uw inhoudsvoorbeelden analyseren",
+      "extractPatterns": "Toon- en stijlpatronen extraheren",
+      "generateGuidelines": "Stemrichtlijnen genereren",
+      "suggestTags": "Relevante tags voorstellen"
+    },
+    "saveTone": "Toon opslaan"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Bekijk technisch stroomdiagram"
+    "viewTechnicalFlowDiagram": "Technisch stroomdiagram bekijken",
+    "backToChat": "Terug naar chat",
+    "title": "Helpcentrum",
+    "subtitle": "Vind antwoorden, leer over privacy en krijg ondersteuning",
+    "faq": {
+      "title": "Veelgestelde vragen",
+      "description": "Vind antwoorden op veelgestelde vragen over het gebruik van de AI-assistent",
+      "articles": "artikelen",
+      "searchPlaceholder": "Zoek in FAQ...",
+      "noResults": "Geen FAQ's gevonden",
+      "noResultsHint": "Probeer een andere zoekterm"
+    },
+    "privacy": {
+      "title": "Privacy en gegevens",
+      "description": "Leer hoe uw gegevens worden opgeslagen en beschermd",
+      "topics": "onderwerpen",
+      "searchPlaceholder": "Zoek privacy-onderwerpen...",
+      "noResults": "Geen privacy-onderwerpen gevonden",
+      "noResultsHint": "Probeer een andere zoekterm",
+      "bannerTitle": "Uw privacy is belangrijk",
+      "bannerDescription": "Alle gesprekken worden lokaal op uw apparaat opgeslagen. Gegevensverwerking vindt plaats binnen MSF-systemen met Azure-infrastructuur.",
+      "localStorageOnly": "Alleen lokale opslag",
+      "msfControlled": "MSF-gecontroleerd",
+      "noPersonalData": "Geen persoonlijke gegevens",
+      "noSensitiveOps": "Geen gevoelige operaties"
+    },
+    "contact": {
+      "title": "Contact en bronnen",
+      "description": "Neem contact op met ons team en krijg toegang tot nuttige links",
+      "supportAvailable": "Ondersteuning beschikbaar",
+      "submitRequest": "Een ondersteuningsverzoek indienen",
+      "getHelp": "Krijg hulp van ons team",
+      "requestDescription": "Hulp nodig of feedback geven? Klik hieronder om ons ondersteuningsformulier te openen.",
+      "openSupportForm": "Ondersteuningsformulier openen",
+      "otherWays": "Andere manieren om ons te bereiken",
+      "emailSupport": "E-mailondersteuning",
+      "emailDescription": "Stuur ons een e-mail voor vragen, feedback of technische problemen"
+    },
+    "resources": {
+      "title": "Aanvullende bronnen",
+      "portalTitle": "AI Accelerator Portal",
+      "portalDescription": "Documentatie, projectupdates en trainingsmateriaal",
+      "githubTitle": "Open source repository",
+      "githubDescription": "Bekijk code, meld problemen en draag bij op GitHub"
+    }
   },
   "settings": {
     "Settings": "Instellingen",
@@ -612,9 +801,855 @@
     "FAQs, privacy policy, and guides": "Veelgestelde vragen, privacybeleid en handleidingen",
     "Contact Support": "Contact opnemen met ondersteuning",
     "Popular Questions": "Populaire vragen",
-    "View all FAQs": "Alle veelgestelde vragen bekijken"
+    "View all FAQs": "Alle veelgestelde vragen bekijken",
+    "Delete legacy data after migration": "Oude gegevens verwijderen na migratie",
+    "frees up storage space": "maakt opslagruimte vrij",
+    "Legacy data deleted": "Oude gegevens verwijderd",
+    "freed": "vrijgemaakt",
+    "Conversations": "Gesprekken",
+    "Legacy": "Oud",
+    "Other": "Overig",
+    "Loading": "Laden",
+    "Legacy Data Detected": "Oude gegevens gedetecteerd",
+    "legacyDataDescription": "U heeft {size} aan gegevens van een vorige versie. Deze kunnen worden gemigreerd, geëxporteerd of verwijderd om ruimte vrij te maken.",
+    "legacyDeleteSuccess": "Oude gegevens succesvol verwijderd en {size} vrijgemaakt.",
+    "legacyDeleteError": "Verwijderen van oude gegevens mislukt. Probeer het opnieuw.",
+    "Explore solutions": "Oplossingen verkennen",
+    "Migrate to Current Format": "Migreren naar huidige formaat",
+    "Export Legacy Data": "Oude gegevens exporteren",
+    "Delete Legacy Data": "Oude gegevens verwijderen",
+    "deleteLegacyConfirm": "Weet u zeker dat u alle oude gegevens wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
+    "Deleting": "Verwijderen",
+    "Confirm Delete": "Verwijderen bevestigen",
+    "Cancel": "Annuleren",
+    "Custom Instructions": "Aangepaste instructies",
+    "Personalization": "Personalisatie",
+    "Display Name": "Weergavenaam",
+    "Display Name Description": "Kies hoe uw naam wordt weergegeven in begroetingen en in de app",
+    "First Name": "Voornaam",
+    "Last Name": "Achternaam",
+    "Full Name": "Volledige naam",
+    "Custom": "Aangepast",
+    "None": "Geen",
+    "Custom Display Name": "Aangepaste weergavenaam",
+    "Custom Display Name Placeholder": "Voer uw gewenste naam in",
+    "howShouldWeAddressYou": "Hoe mogen wij u aanspreken?",
+    "displayNamePreview": "Voorbeeld: \"{greeting}\"",
+    "Streaming Speed": "Streamingssnelheid",
+    "Slow": "Traag",
+    "Normal": "Normaal",
+    "Fast": "Snel",
+    "Controls how smoothly text appears during AI responses": "Bepaalt hoe soepel tekst verschijnt tijdens AI-antwoorden",
+    "aboutYou": {
+      "title": "Over u",
+      "shareBasicInfo": "Deel basisinformatie met AI",
+      "shareBasicInfoDescription": "Indien ingeschakeld, weet de AI uw naam, functie en afdeling uit uw profiel",
+      "preferredName": "Voorkeursnaam",
+      "preferredNamePlaceholder": "Hoe wilt u worden genoemd?",
+      "preferredNameDescription": "Overschrijf uw weergavenaam. Laat leeg om uw profielnaam te gebruiken",
+      "additionalContext": "Aanvullende context",
+      "additionalContextPlaceholder": "Bijv. Ik werk bij veldoperaties, geef de voorkeur aan beknopte antwoorden, vraag vaak naar medische protocollen...",
+      "additionalContextDescription": "Andere informatie die u wilt dat de AI over u weet",
+      "preferredNameDescriptionWithSync": "Hoe de AI u aanspreekt. Laat leeg om uw weergavenaam uit de algemene instellingen te gebruiken."
+    },
+    "displayNameUIOnly": "Hiermee bepaalt u hoe uw naam in de app wordt weergegeven. De AI ziet dit niet, tenzij u delen inschakelt in Chatinstellingen.",
+    "tts": {
+      "title": "Tekst-naar-Spraak",
+      "language": "Taal",
+      "voice": "Stem",
+      "multilingualVoices": "Meertalige stemmen",
+      "voices": "Stemmen",
+      "rate": "Snelheid",
+      "pitch": "Toonhoogte",
+      "quality": "Audiokwaliteit",
+      "qualityDescription": "Hogere kwaliteit levert beter geluid op, maar gebruikt meer bandbreedte",
+      "preview": "Voorbeeld",
+      "previewing": "Bezig met afspelen...",
+      "previewFailed": "Voorbeeldaudio genereren mislukt",
+      "previewText": "Dit is een voorbeeld van de geselecteerde steminstellingen.",
+      "reset": "Resetten",
+      "default": "Standaard",
+      "slower": "Langzamer",
+      "faster": "Sneller",
+      "lower": "Lager",
+      "higher": "Hoger",
+      "selectedVoice": "Geselecteerd",
+      "noVoicesAvailable": "Geen stemmen beschikbaar voor deze taal",
+      "quickSettings": "Steministellingen",
+      "overrideForThisMessage": "Instellingen aanpassen voor dit bericht",
+      "speakWithSettings": "Afspelen"
+    },
+    "Model Response Settings Description": "Stel standaardparameters in voor AI-modelantwoorden. Verschillende modellen gebruiken verschillende instellingen.",
+    "Default Reasoning Effort": "Standaard redeneersinspanning",
+    "reasoningEffortDescription": "Bepaalt de diepgang van het denkproces voor redeneermodellen. Meer inspanning leidt tot een grondigere analyse.",
+    "Default Verbosity": "Standaard verhaallengte",
+    "verbosityDescription": "Bepaalt het detailniveau van antwoorden voor GPT-5-modellen."
   },
   "notFound": {
     "lostDog": "Verloren hond"
+  },
+  "searchMode": {
+    "backToChat": "Terug naar Chat",
+    "title": "Zoekmodus Uitgelegd",
+    "subtitle": "Begrijp uw zoekopties en waar uw gegevens worden opgeslagen",
+    "quickComparison": "Snelle Vergelijking",
+    "noSearch": "Geen Zoeken",
+    "privacyFocused": "Privacy-Gericht",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Responssnelheid",
+    "fastest": "Snelste",
+    "slowerMultiStep": "Langzamer (meerdere stappen)",
+    "fasterDirect": "Sneller (direct)",
+    "fullConversationStored": "Volledige Conversatie Opgeslagen in Cloud",
+    "whatsStoredInAzure": "Wat Wordt Opgeslagen in Azure",
+    "nothingStateless": "Niets (alleen stateless)",
+    "searchQueriesOnly": "Alleen zoekopdrachten",
+    "fullConversationHistory": "Volledige conversatiegeschiedenis",
+    "modelAvailability": "Beschikbaarheid van Modellen",
+    "allModels": "Alle modellen",
+    "gpt41Only": "Alleen GPT-4.1",
+    "searchTurnedOff": "Zoeken Uitgeschakeld",
+    "noSearchDescription": "Snelste reacties zonder webzoekmogelijkheid. Uw volledige conversatie blijft in uw browser - niets wordt opgeslagen in de cloud.",
+    "viewDetailsBelow": "Voor meer details, bekijk de technische workflow hieronder.",
+    "viewTechnicalFlowDiagram": "Bekijk Technisch Stroomdiagram",
+    "legend": "Legenda:",
+    "legendNoSearch": "Uw Browser (lokale opslag) | AI Assistant Server | Azure OpenAI (stateless)",
+    "privacyFocusedMode": "Privacy-Gerichte Modus",
+    "default": "Standaard",
+    "privacyDescription": "Gebruikt webzoeken wanneer nodig maar is langzamer omdat er meer stappen bij betrokken zijn. Alleen zoekopdrachten worden opgeslagen in Azure - uw volledige conversatie blijft in uw browser.",
+    "legendPrivacy": "Uw Browser (lokale opslag) | AI Assistant Server | Azure AI Foundry (alleen zoekopdrachten) | Azure OpenAI (stateless)",
+    "azureAIFoundryMode": "Azure AI Foundry Modus",
+    "foundryDescription": "Snellere reacties met ingebouwde webzoekmogelijkheid. Uw volledige conversatie wordt opgeslagen in de Azure AI Foundry database, niet alleen in uw browser.",
+    "legendFoundry": "Uw Browser (lokale opslag) | AI Assistant Server | Azure AI Foundry Agent (slaat volledige conversatie op)",
+    "whyTheseOptions": "Waarom Deze Opties?",
+    "whyTheseOptionsText1": "Dit zijn de beschikbare zoekimplementaties nadat Azure hun Bing Search API heeft beëindigd, waarvan de AI Assistant oorspronkelijk afhankelijk was.",
+    "whyTheseOptionsText2": "Het team onderzoekt actief meer privacy-gerichte zoekalternatieven. Beide huidige opties gebruiken de zoekmogelijkheden van Azure AI Foundry maar verschillen in hoeveel conversatiegegevens worden gedeeld.",
+    "azureDeprecatedBingApi": "Azure heeft hun Bing Search API beëindigd",
+    "footerNote": "Beide modi slaan uw conversatie lokaal op in uw browser. U kunt op elk moment van modus wisselen in de modelinstellingen.",
+    "note": "Opmerking:",
+    "loadingDiagram": "Diagram laden..."
+  },
+  "Are you sure?": "Weet u het zeker?",
+  "Chat Settings": "Chatinstellingen",
+  "Clear conversations": "Gesprekken wissen",
+  "Content": "Inhoud",
+  "Conversation exported successfully": "Gesprek succesvol geëxporteerd",
+  "Conversation imported successfully": "Gesprek succesvol geïmporteerd",
+  "Copied!": "Gekopieerd!",
+  "Copy code": "Code kopiëren",
+  "Default System Prompt": "Standaard systeemprompt",
+  "Edit": "Bewerken",
+  "Email": "E-mail",
+  "Enter file name": "Voer bestandsnaam in",
+  "Export data": "Gegevens exporteren",
+  "Failed to export conversation": "Exporteren gesprek mislukt",
+  "Failed to export folder": "Exporteren map mislukt",
+  "Failed to import conversation": "Importeren gesprek mislukt",
+  "Failed to import file": "Importeren bestand mislukt",
+  "Folder exported with {count} conversations": "Map geëxporteerd met {count} gesprekken",
+  "Folder imported with {count} conversations": "Map geïmporteerd met {count} gesprekken",
+  "Folder not found": "Map niet gevonden",
+  "Import data": "Gegevens importeren",
+  "Invalid conversation file": "Ongeldig gespreksbestand",
+  "Invalid folder file": "Ongeldig mapbestand",
+  "New conversation": "Nieuw gesprek",
+  "No conversations_": "Geen gesprekken",
+  "No prompts found": "Geen prompts gevonden",
+  "OpenAI API Key": "OpenAI API-sleutel",
+  "Plugin Keys": "Plugin-sleutels",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Promptlimiet is {{maxLength}} tekens. U hebt {{valueLength}} tekens ingevoerd.",
+  "Run Typewriter Intro": "Typemachine-intro uitvoeren",
+  "Saved Prompts": "Opgeslagen prompts",
+  "Select a prompt to view details": "Selecteer een prompt om details te bekijken",
+  "Unrecognized file format": "Niet-herkend bestandsformaat",
+  "importBackupParseError": "Fout bij het parseren van back-upbestand",
+  "transcriptionComplete": "Transcriptie voltooid",
+  "emptyState": {
+    "greeting": "Hoe kan ik u helpen?",
+    "greetingWithName": "Hoe kan ik u helpen, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Diagrammen Maken",
+        "prompt": "Laat me zien hoe u diagrammen en stroomschema's kunt maken. Welke soorten processen, workflows of systemen kunt u me helpen visualiseren? Geef me enkele voorbeelden."
+      },
+      "draftContent": {
+        "title": "Professionele Inhoud Opstellen",
+        "prompt": "Ik heb hulp nodig bij het schrijven van professionele documenten - e-mails, rapporten, samenvattingen. Kunt u me voorbeelden laten zien van hoe u kunt helpen met verschillende soorten zakelijk schrijven?"
+      },
+      "analyzeInformation": {
+        "title": "Informatie Analyseren",
+        "prompt": "Hoe kunt u me helpen bij het analyseren van gegevens of informatie? Laat me verschillende manieren zien waarop u cijfers kunt ontleden, patronen kunt vinden of inzichten kunt halen uit documenten of datasets."
+      },
+      "planOrganize": {
+        "title": "Plannen en Organiseren",
+        "prompt": "Kunt u me helpen projecten te plannen of werk te organiseren? Geef me voorbeelden van hoe u tijdlijnen, agenda's of projectplannen met verschillende structuren zou kunnen maken."
+      },
+      "brainstormIdeas": {
+        "title": "Brainstormen",
+        "prompt": "Ik wil brainstormen over een probleem. Laat me zien hoe u creatief denken en ideeën genereren benadert - wat voor vragen zou u stellen en hoe verkent u mogelijkheden?"
+      },
+      "buildPresentations": {
+        "title": "Presentaties Bouwen",
+        "prompt": "Help me met presentatiestructuur en -inhoud. Hoe zou u dia-outlines, verhaallijnen en belangrijke boodschappen kunnen suggereren?"
+      },
+      "summarizeSynthesize": {
+        "title": "Samenvatten en Synthetiseren",
+        "prompt": "Wat is uw aanpak voor het samenvatten van lange inhoud of het synthetiseren van informatie uit meerdere bronnen? Laat me zien hoe u met grote teksten of complexe onderwerpen zou werken."
+      },
+      "decisionSupport": {
+        "title": "Beslissingsondersteuning",
+        "prompt": "Ik moet verschillende opties voor een beslissing evalueren. Hoe zou u helpen met het wegen van voor- en nadelen, het vergelijken van alternatieven of het structureren van een beslissingskader?"
+      },
+      "explainTopics": {
+        "title": "Onderwerpen Uitleggen",
+        "prompt": "Leg me iets complexs uit op een duidelijke manier. Hoe past u uw uitleg aan de achtergrondkennis van iemand aan en breekt u moeilijke concepten af?"
+      },
+      "workWithCode": {
+        "title": "Werken met Code",
+        "prompt": "Laat me uw programmeermogelijkheden zien. Welke talen en frameworks kent u, en hoe zou u helpen met coderen, debuggen of architectuurbeslissingen?"
+      },
+      "createSchedules": {
+        "title": "Roosters Maken",
+        "prompt": "Help me een schema of agenda te maken. Hoe zou u taken prioriteren, tijd toewijzen en een realistisch plan opstellen?"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modellen",
+      "agents": "Agents"
+    },
+    "sections": {
+      "baseModels": "Basismodellen"
+    },
+    "agents": {
+      "description": "Aangepaste agents gebouwd op AI-modellen",
+      "noAgentsTitle": "Geen agents gevonden",
+      "noAgentsDescription": "U heeft nog geen aangepaste agents gemaakt",
+      "createNewAgent": "Nieuwe agent maken",
+      "advancedFeatureBadge": "Geavanceerd",
+      "advancedFeatureTitle": "Geavanceerde functie",
+      "advancedFeatureWarning": "Deze functie vereist technische kennis en configuratie"
+    },
+    "advancedOptions": {
+      "title": "Geavanceerde opties",
+      "temperature": "Temperatuur",
+      "reasoningEffort": "Redeneringsinspanning",
+      "verbosity": "Uitgebreidheid",
+      "low": "Laag",
+      "medium": "Gemiddeld",
+      "high": "Hoog",
+      "minimal": "Minimaal",
+      "fixedTemperatureNote": "Dit model gebruikt een vaste temperatuur"
+    },
+    "searchMode": {
+      "title": "Zoekmodus",
+      "subtitle": "Kies hoe webzoeken werkt",
+      "routingLabel": "Zoekroutering",
+      "privacyFocused": "Privacy-gericht",
+      "privacyFocusedDescription": "Alleen zoekopdrachten worden gedeeld",
+      "azureAgentMode": "Azure Agent-modus",
+      "azureAgentModeDescription": "Volledige gesprekcontext wordt gedeeld",
+      "privacyInfoTitle": "Privacy-informatie",
+      "privacyInfoDescription": "Leer hoe uw gegevens worden behandeld",
+      "learnMoreDataStorage": "Meer informatie over gegevensopslag",
+      "whatsDifference": "Wat is het verschil?",
+      "privacyEnabled": "Privacygerichte zoekopdracht ingeschakeld",
+      "learnPrivacy": "Lees hoe uw privacy wordt beschermd"
+    },
+    "customAgent": {
+      "label": "Aangepaste agent",
+      "description": "Selecteer een aangepaste agent",
+      "webSearch": "Webzoeken",
+      "codeInterpreter": "Code-interpreter"
+    },
+    "header": {
+      "backToModels": "Terug naar modellen",
+      "knowledgeCutoff": "Kennisgrens",
+      "knowledgeCutoffLabel": "Kennisgrens"
+    },
+    "modelTypes": {
+      "foundational": "Basis",
+      "reasoning": "Redenering",
+      "omni": "Omni",
+      "agent": "Agent"
+    },
+    "orderMode": {
+      "label": "Sorteren op",
+      "usage": "Meest gebruikt",
+      "name": "Naam (A-Z)",
+      "cutoff": "Nieuwste modellen",
+      "custom": "Aangepast",
+      "edit": "Bewerken",
+      "done": "Gereed",
+      "reset": "Resetten",
+      "resetTooltip": "Herstellen naar standaardvolgorde"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Real-time webzoekopdracht"
+    },
+    "modelTypeIcons": {
+      "foundational": "Snel en efficiënt algemeen model",
+      "reasoning": "Uitgebreid redeneren voor complexe vraagstukken",
+      "omni": "Multimodaal model met brede mogelijkheden",
+      "agent": "Agent met realtime tools en webtoegang"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "OpenAI's meest capabele model voor complexe taken en codering. Uitstekend voor diepgaande analyse, creatief schrijven en geavanceerde probleemoplossing.",
+      "knowledgeCutoff": "September 2025"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI's nieuwste vlaggenschipmodel met uitgebreide mogelijkheden. Verbeterd redeneren, codering en creatieve taken met up-to-date kennis.",
+      "knowledgeCutoff": "Oktober 2025"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Geoptimaliseerde GPT-5 variant voor conversatie-interacties. Dezelfde krachtige mogelijkheden met verbeterde dialoogstroom.",
+      "knowledgeCutoff": "Oktober 2025"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Kleinere, snellere versie van GPT-5. Uitstekende balans tussen prestaties en snelheid voor de meeste taken.",
+      "knowledgeCutoff": "Oktober 2025"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI's geavanceerde redeneermodel getraind met reinforcement learning. Blinkt uit in wiskunde, wetenschap en complexe probleemoplossing met diep denken.",
+      "knowledgeCutoff": "Maart 2025"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek R1",
+      "description": "DeepSeek's open-source redeneermodel. Concurrerend met OpenAI o1 in wiskunde, codering en wetenschappelijke taken.",
+      "knowledgeCutoff": "Juli 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek V3.1",
+      "description": "DeepSeek's meest geavanceerde model met Mixture-of-Experts architectuur. Uitstekend voor codering, wiskunde en meertalige taken.",
+      "knowledgeCutoff": "Juli 2025"
+    },
+    "grok_3": {
+      "name": "Grok-3",
+      "description": "xAI's meest geavanceerde AI-model. Hoogwaardige mogelijkheden voor complexe taken met realtime kennis via X-platform.",
+      "knowledgeCutoff": "November 2025"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta's multimodaal model met Mixture-of-Experts. Uitstekende afbeeldings- en tekstcapaciteiten met uitstekende meertalige ondersteuning.",
+      "knowledgeCutoff": "September 2025"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic's meest intelligente model geoptimaliseerd voor complexe analyse, nuance en creatieve taken. Beste keuze voor moeilijke problemen.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Gebalanceerd Claude-model dat intelligentie en snelheid combineert. Uitstekend voor de meeste zakelijke taken en programmeren.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Anthropic's hoogste capaciteitsmodel geoptimaliseerd voor codering, agentische taken en uitgebreide redenering.",
+      "knowledgeCutoff": "Maart 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Snel en kostenefficiënt Claude-model geoptimaliseerd voor snelle taken. Uitstekend voor eenvoudige vragen, samenvatting en hoog-volume toepassingen.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI’s meest geavanceerde model, uitmuntend in complex redeneren, codegeneratie en technische probleemoplossing. Het beste voor analytische taken, programmeeruitdagingen, onderzoek en gedetailleerde uitleg. Ondersteunt aanpasbare redeneerinspanning en responslengte.",
+      "knowledgeCutoff": "dec 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Gespecialiseerde variant van GPT-5.2, geoptimaliseerd voor conversaties en emotionele intelligentie. Uitstekend in empathische communicatie, mentale ondersteuning, creatief schrijven, brainstormen en natuurlijke dialogen. Ideaal voor informele gesprekken, begeleidingssituaties en taken die emotioneel bewustzijn vereisen.",
+      "knowledgeCutoff": "dec 2025"
+    }
+  },
+  "transcription": {
+    "addInstructions": "Instructies toevoegen",
+    "instructionsPlaceholder": "Voeg optionele instructies toe voor transcriptie...",
+    "transcribesOnSend": "Transcribeert bij verzenden",
+    "languages": {
+      "autoDetect": "Automatisch detecteren",
+      "afrikaans": "Afrikaans",
+      "arabic": "Arabisch",
+      "armenian": "Armeens",
+      "azerbaijani": "Azerbeidzjaans",
+      "belarusian": "Wit-Russisch",
+      "bosnian": "Bosnisch",
+      "bulgarian": "Bulgaars",
+      "burmese": "Birmaans",
+      "catalan": "Catalaans",
+      "chinese": "Chinees",
+      "croatian": "Kroatisch",
+      "czech": "Tsjechisch",
+      "danish": "Deens",
+      "dutch": "Nederlands",
+      "english": "Engels",
+      "estonian": "Ests",
+      "finnish": "Fins",
+      "french": "Frans",
+      "galician": "Galicisch",
+      "german": "Duits",
+      "greek": "Grieks",
+      "hebrew": "Hebreeuws",
+      "hindi": "Hindi",
+      "hungarian": "Hongaars",
+      "icelandic": "IJslands",
+      "indonesian": "Indonesisch",
+      "italian": "Italiaans",
+      "japanese": "Japans",
+      "kannada": "Kannada",
+      "kazakh": "Kazachs",
+      "korean": "Koreaans",
+      "latvian": "Lets",
+      "lithuanian": "Litouws",
+      "macedonian": "Macedonisch",
+      "malay": "Maleis",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepalees",
+      "norwegian": "Noors",
+      "persian": "Perzisch",
+      "polish": "Pools",
+      "portuguese": "Portugees",
+      "romanian": "Roemeens",
+      "russian": "Russisch",
+      "serbian": "Servisch",
+      "slovak": "Slowaaks",
+      "slovenian": "Sloveens",
+      "spanish": "Spaans",
+      "swahili": "Swahili",
+      "swedish": "Zweeds",
+      "tagalog": "Tagalog",
+      "tamil": "Tamil",
+      "thai": "Thais",
+      "turkish": "Turks",
+      "ukrainian": "Oekraïens",
+      "urdu": "Urdu",
+      "vietnamese": "Vietnamees",
+      "welsh": "Welsh"
+    },
+    "inProgress": "Transcriptie bezig",
+    "processingFile": "Bezig met verwerken: {filename}",
+    "timeRemaining": "Resterende tijd: {time}",
+    "maxDurationNote": "Grote bestanden kunnen tot {minutes} minuten duren",
+    "timedOut": "Transcriptie afgebroken na {minutes} minuten",
+    "timedOutToast": "Transcriptie afgebroken: {filename}",
+    "failed": "Transcriptie mislukt: {error}",
+    "failedToast": "Transcriptie mislukt: {filename}",
+    "unknownError": "Onbekende fout",
+    "completed": "Transcriptie voltooid",
+    "completedToast": "Transcriptie voltooid: {filename}",
+    "placeholder": "[Transcriptie bezig: {filename}]",
+    "loadingTranscript": "Transcript voor {filename} wordt geladen...",
+    "expiredOrDeleted": "Deze transcriptie is verlopen of verwijderd.",
+    "fetchError": "Transcriptie kon niet worden geladen. Probeer het alstublieft opnieuw.",
+    "transcriptExpired": "De transcriptie voor {filename} is verlopen. Transcripties worden om privacyredenen na {days} dagen automatisch verwijderd.",
+    "expirationWarning": "De transcriptie voor {filename} verloopt over {days} dag(en). Kopieer de inhoud als u deze wilt behouden."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Opslag controleren",
+      "analyzingData": "Gegevens analyseren...",
+      "updateAvailable": "Update beschikbaar",
+      "storageSpaceLimited": "Beperkte opslagruimte",
+      "migratingData": "Gegevens migreren",
+      "migrationComplete": "Migratie voltooid",
+      "partiallyComplete": "Gedeeltelijk voltooid",
+      "migrationFailed": "Migratie mislukt"
+    },
+    "descriptions": {
+      "foundLegacyData": "We hebben gegevens gevonden van een vorige versie. Wilt u deze migreren zodat ze met het verbeterde systeem werken?",
+      "storageSpaceWarning": "Uw gegevens vereisen meer ruimte dan momenteel beschikbaar is. We raden aan de incrementele migratiemodus te gebruiken.",
+      "pleaseWait": "Even geduld terwijl we uw gegevens bijwerken...",
+      "dataIsSafe": "Uw oorspronkelijke gegevens zijn veilig. U kunt het opnieuw proberen of nu overslaan.",
+      "itemsTooLarge": "Deze items zijn te groot voor de opslag. U kunt ze exporteren, ruimte vrijmaken, of doorgaan zonder deze items.",
+      "settingsUpdated": "Uw instellingen zijn bijgewerkt."
+    },
+    "benefits": {
+      "title": "Voordelen",
+      "fasterPerformance": "Snellere prestaties",
+      "betterReliability": "Betrouwbaardere werking",
+      "dataPreserved": "Uw gegevens blijven behouden"
+    },
+    "options": {
+      "advancedOptions": "Geavanceerde opties",
+      "useIncrementalMode": "Gebruik incrementele modus",
+      "slowerButSafer": "trager maar veiliger",
+      "recommended": "aanbevolen",
+      "deleteLegacyData": "Verwijder oude gegevens na migratie",
+      "freesUpSpace": "maakt opslagruimte vrij"
+    },
+    "actions": {
+      "skip": "Overslaan",
+      "migrateData": "Gegevens migreren",
+      "migrateAnyway": "Toch migreren",
+      "continue": "Doorgaan",
+      "retry": "Opnieuw proberen",
+      "exportBackupFirst": "Eerst back-up exporteren",
+      "exportSkippedItems": "Overgeslagen items exporteren"
+    },
+    "quota": {
+      "availableSpace": "Beschikbare ruimte",
+      "dataToMigrate": "Te migreren gegevens",
+      "additionalSpaceNeeded": "Extra ruimte nodig"
+    },
+    "progress": {
+      "migratingConversations": "Gesprekken migreren",
+      "migratingPrompts": "Prompts migreren",
+      "migratingAgents": "Agents migreren",
+      "finishingUp": "Afronden"
+    },
+    "results": {
+      "successfullyMigrated": "Succesvol gemigreerd",
+      "notes": "Notities",
+      "couldNotMigrate": "Kon niet migreren",
+      "legacyDataDeleted": "Oude gegevens verwijderd",
+      "freed": "vrijgemaakt"
+    },
+    "units": {
+      "conversation": "gesprek",
+      "conversations": "gesprekken",
+      "folder": "map",
+      "folders": "mappen",
+      "prompt": "prompt",
+      "prompts": "prompts",
+      "customAgent": "aangepaste agent",
+      "customAgents": "aangepaste agents",
+      "item": "item",
+      "items": "items"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Welkom bij AI Assistant V2",
+    "whatsNew": "Wat is nieuw",
+    "whatsNewQuestion": "Wat is nieuw?"
+  },
+  "welcomeV2": {
+    "backToChat": "Terug naar chat",
+    "title": "Welkom bij AI Assistant V2",
+    "subtitle": "Een compleet nieuw ontwerp met krachtige nieuwe functies",
+    "webSearch": {
+      "title": "Webzoekmodus",
+      "description": "Geef AI toegang tot realtime webzoekopdrachten met privacygerichte opties",
+      "quickAccess": "Snelle toegang:",
+      "quickAccessInstructions": "Klik op de + knop naast het chatscherm → Selecteer \"Webzoekopdracht\"",
+      "setAsDefault": "Als standaard instellen:",
+      "setAsDefaultInstructions": "Open modelinstellingen en schakel de Webzoekmodus in. Kies tussen:",
+      "privacyFocused": "Privacygericht (standaard)",
+      "privacyFocusedDescription": "Alleen zoekopdracht wordt extern verzonden",
+      "azureAIFoundry": "Azure AI Foundry-modus",
+      "azureAIFoundryDescription": "Sneller, maar het volledige gesprek wordt extern opgeslagen",
+      "learnMore": "Meer informatie over zoekmodi →"
+    },
+    "tones": {
+      "title": "Tonen (Stemprofielen)",
+      "description": "Beheer schrijfstijl, formaliteit en persoonlijkheid van de AI",
+      "createTones": "1. Tonen aanmaken:",
+      "createTonesInstructions": "Snelle acties in de zijbalk → Tabblad Tonen",
+      "useTones": "2. Tonen gebruiken:",
+      "useTonesInstructions": "Klik op de toon-dropdown naast het chatscherm",
+      "exampleProfessionalDesc": "Formele, zakelijke toon",
+      "exampleCasualDesc": "Vriendelijk, informeel"
+    },
+    "aiAssist": {
+      "title": "AI-assistent voor prompts & tonen",
+      "description": "Laat AI u helpen sneller betere prompts en tonen te maken",
+      "step1": "Open Snelle acties in de zijbalk",
+      "step2": "Navigeer naar het tabblad {prompts} of {tones}",
+      "step3": "Zoek het AI Assistant-paneel",
+      "getSuggestions": "Suggesties ophalen",
+      "getSuggestionsDesc": "AI analyseert uw concept en doet verbetervoorstellen",
+      "buildFromFiles": "Opbouwen uit bestanden",
+      "buildFromFilesDesc": "Upload documenten om prompts/tonen te genereren",
+      "testBeforeSaving": "Testen vóór opslaan",
+      "testBeforeSavingDesc": "Test prompts/tonen in een live chatvoorbeeld",
+      "step2Prefix": "Ga naar",
+      "step2Suffix": "tabblad"
+    },
+    "customAgents": {
+      "title": "Aangepaste agents",
+      "advancedBadge": "GEAVANCEERD",
+      "description": "Gespecialiseerde AI-agents met uitgebreide functies zoals webzoek en code-interpretatie",
+      "advancedFeature": "Geavanceerde functie",
+      "advancedFeatureDesc": "Aangepaste agents draaien op Azure AI Foundry met gespecialiseerde tools. Hiervoor is afstemming met het technische AI Assistant-team nodig om agent-ID's aan te maken.",
+      "howToAccess": "Zo krijgt u toegang:",
+      "howToAccessInstructions": "Instellingen → Modellen → Tabblad Agents",
+      "whatYouCanDo": "Wat u kunt doen:",
+      "configureAgents": "Agents configureren met gespecialiseerde mogelijkheden",
+      "importExport": "Importeren/exporteren van agentconfiguraties",
+      "selectFromDropdown": "Kies aangepaste agents uit de model-dropdown"
+    },
+    "audioTranslation": {
+      "title": "Audiotranscriptie met vertaling",
+      "description": "Vertaal audiotranscripties automatisch naar meer dan 13 talen",
+      "howToUse": "Gebruiksaanwijzing:",
+      "step1": "Upload een audio- of videobestand",
+      "step2": "Klik op de taalkeuzelijst in de transcriptie-interface",
+      "step3": "Selecteer uw doeltaal",
+      "availableLanguages": "Beschikbare talen:",
+      "moreLanguages": "+7 meer"
+    },
+    "pwa": {
+      "title": "Installeren als mobiele app",
+      "description": "Progressive Web App met een native ervaring",
+      "installTip": "Tip: Installeer na het inloggen om uw authenticatie te behouden en de beste ervaring te krijgen.",
+      "howToInstall": "Installatie-instructies:",
+      "step1": "Log in op uw account",
+      "step2": "Open Instellingen → Mobiele App voor gedetailleerde instructies",
+      "step3": "Op mobiel: Tik op het browsermenu (⋮ of ⚙️)",
+      "step4": "Zoek naar \"Toevoegen aan beginscherm\" of \"App installeren\"",
+      "step5": "Volg de aanwijzingen om te installeren",
+      "benefits": "Voordelen:",
+      "benefit1": "Start zoals een native app vanaf het beginscherm",
+      "benefit2": "Volledig scherm zonder browserinterface",
+      "benefit3": "Offline toegang tot opgeslagen gesprekken"
+    }
+  },
+  "Professional": "Professioneel",
+  "Casual": "Informeel",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Voer een prompt in of typ \"/\" om een prompt te selecteren..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Voeg uw persoonlijke instructies toe om het antwoordgedrag van de AI aan te passen. Deze worden gecombineerd met kernrichtlijnen om behulpzame, nauwkeurige en veilige antwoorden te garanderen."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tip: Typ \"/\" om te kiezen uit opgeslagen promptsjablonen."
+  },
+  "fileUpload": {
+    "uploading": "Uploaden...",
+    "transcribing": "Transcriberen...",
+    "complete": "Voltooid",
+    "failed": "Mislukt",
+    "uploadFiles": "Bestanden uploaden (audio, video of tekst)",
+    "autoDetect": "Automatisch detecteren",
+    "fileNotAvailable": "Bestand niet beschikbaar voor bewerken",
+    "failedToOpenInEditor": "Kan bestand niet openen in code-editor. Probeer het opnieuw.",
+    "extractingAudio": "Audio wordt geëxtraheerd...",
+    "queuedForTranscription": "In de wachtrij voor transcriptie",
+    "transcribed": "Getranscribeerd",
+    "transcriptionFailed": "Transcriptie mislukt",
+    "extractedFromSmaller": "Geëxtraheerd uit {percent}% kleiner",
+    "textExtraction": "Tekstextractie",
+    "opening": "Bezig met openen...",
+    "openInEditor": "Openen in editor",
+    "failedToUpload": "Uploaden mislukt",
+    "attachment": "bijlage",
+    "attachments": "bijlagen"
+  },
+  "transcript": {
+    "originalTranscript": "Origineel transcript",
+    "transcript": "Transcript",
+    "transcriptionOf": "Transcriptie van",
+    "translating": "Vertalen...",
+    "copied": "Gekopieerd!",
+    "copy": "Kopiëren",
+    "download": "Downloaden",
+    "translate": "Vertalen",
+    "collapse": "Samenvouwen",
+    "expand": "Uitvouwen",
+    "expandHint": "Klik op \"Uitvouwen\" om het origineel te bekijken",
+    "listen": "Transcript beluisteren",
+    "stopAudio": "Audio stoppen",
+    "openAsDocument": "Openen als document"
+  },
+  "userMessage": {
+    "open": "Openen",
+    "showFullMessage": "Toon volledige bericht",
+    "collapse": "Samenvouwen",
+    "customTone": "Aangepaste toon"
+  },
+  "codeBlock": {
+    "openInEditor": "Openen in editor"
+  },
+  "artifact": {
+    "noContentToExport": "Geen inhoud om te exporteren",
+    "exportedAsHtml": "Geëxporteerd als HTML",
+    "exportedAsMarkdown": "Geëxporteerd als Markdown",
+    "exportedAsText": "Geëxporteerd als Tekst",
+    "generatingPdf": "PDF wordt gegenereerd...",
+    "exportedAsPdf": "Geëxporteerd als PDF",
+    "generatingDocx": "DOCX wordt gegenereerd...",
+    "exportedAsDocx": "Geëxporteerd als DOCX",
+    "failedToExportAs": "Exporteren als {format} mislukt",
+    "document": "Document",
+    "switchToCodeEditor": "Overschakelen naar Code-editor",
+    "exportDocument": "Document exporteren",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Platte tekst (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Sluiten",
+    "editsNotSaved": "Wijzigingen zijn niet opgeslagen. Verstuur een bericht of download om wijzigingen te bewaren.",
+    "fileDownloaded": "Bestand gedownload",
+    "failedToDownload": "Downloaden mislukt",
+    "switchToDocumentEditor": "Overschakelen naar Document-editor",
+    "download": "Downloaden",
+    "fileIncludedWithMessage": "Bestand en wijzigingen bijgevoegd bij bericht",
+    "closeEditor": "Editor sluiten",
+    "closeCodeEditor": "Code-editor sluiten",
+    "startWriting": "Begin met schrijven...",
+    "toolbar": {
+      "bold": "Vet",
+      "italic": "Cursief",
+      "underline": "Onderstrepen",
+      "strikethrough": "Doorhalen",
+      "heading1": "Kop 1",
+      "heading2": "Kop 2",
+      "heading3": "Kop 3",
+      "bulletList": "Opsommingstekens",
+      "numberedList": "Genummerde lijst",
+      "codeBlock": "Codeblok",
+      "quote": "Citaat",
+      "insertTable": "Tabel invoegen",
+      "table": "Tabel",
+      "undo": "Ongedaan maken",
+      "redo": "Opnieuw"
+    },
+    "codeEditor": {
+      "startTyping": "Begin met typen of vraag AI om code te genereren",
+      "codeWillSync": "Code wordt automatisch gesynchroniseerd met chatberichten",
+      "startCoding": "// Begin met coderen..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Webzoekfunctie inschakelen voor elk bericht.\n\nBiedt actuele informatie via real-time Bing webtoegang.",
+    "attachTooltip": "Bestanden, afbeeldingen of audio/video bijvoegen.\n\nOndersteunde formaten:\n• Afbeeldingen: JPEG, PNG, GIF, WebP (max. 5MB, tot 10)\n• Documenten: PDF, DOCX, XLSX, PPTX, TXT, MD (max. 10MB, tot 3)\n• Data: CSV, JSON, XML, YAML (max. 10MB, tot 3)\n• Code: PY, JS, TS, JAVA, C, CPP, GO, enz. (max. 10MB, tot 3)\n• Audio/Video: MP3, WAV, MP4, WebM (max. 25MB, 1 bestand)\n\nTotaal: 10 bestanden, maximaal 50MB",
+    "transcribeTooltip": "Upload audio- of videobestanden voor transcriptie.\n\nOndersteunde formaten: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaximale grootte: 25MB\n\nTranscriptie gebeurt automatisch bij het verzenden van het bericht.",
+    "selected": "Geselecteerd",
+    "expandActions": "Acties uitklappen",
+    "selectTone": "Toon selecteren",
+    "selectToneDescription": "Kies een stemprofiel voor uw berichten",
+    "noToneDefault": "Geen toon (standaard)",
+    "useDefaultStyle": "Standaard schrijfstijl gebruiken",
+    "noTonesCreated": "Nog geen tonen aangemaakt",
+    "createTonesHint": "Maak tonen aan in Snelle acties",
+    "translateDocumentTooltip": "Vertaal documenten naar een andere taal.\n\nOndersteunde formaten: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaximale grootte: 40MB\n\nOndersteunt meer dan 80 talen met optionele woordenlijstbestanden."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Voeg uw persoonlijke instructies toe om aan te passen hoe de AI reageert. Deze worden gecombineerd met de basisrichtlijnen om behulpzame, nauwkeurige en veilige antwoorden te garanderen.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Typ \"/\" om te kiezen uit opgeslagen promptsjablonen.",
+  "storageWarning": {
+    "title": {
+      "warning": "Opslagruimte bijna vol",
+      "critical": "Opslagruimte bijna helemaal vol",
+      "emergency": "Opslagruimte vol"
+    },
+    "message": {
+      "warning": "De opslagruimte van uw browser is voor {percent}% gevuld.",
+      "critical": "De opslagruimte van uw browser is kritiek laag: {percent}% gevuld.",
+      "emergency": "De opslagruimte van uw browser is vrijwel volledig vol ({percent}%)!"
+    },
+    "consequence": "Als de opslagruimte vol is, kunt u mogelijk geen nieuwe gesprekken meer openen en werkt de app mogelijk niet meer correct.",
+    "storageUsage": "Opslaggebruik",
+    "optionsToFreeSpace": "Opties om ruimte vrij te maken",
+    "clearOption": {
+      "keepRecent": "Meest recente gesprekken behouden",
+      "olderThan": "Gesprekken wissen ouder dan",
+      "days": {
+        "7": "7 dagen",
+        "14": "14 dagen",
+        "30": "30 dagen",
+        "60": "60 dagen",
+        "90": "90 dagen"
+      }
+    },
+    "estimate": {
+      "willRemove": "Dit verwijdert {count} gesprekken",
+      "willFree": "Geschatte vrije ruimte: {size}"
+    },
+    "action": {
+      "exportFirst": "Eerst gegevens exporteren",
+      "clearNow": "Nu wissen",
+      "dismiss": "Negeren",
+      "cancel": "Annuleren"
+    },
+    "confirm": {
+      "title": "Wissen bevestigen",
+      "message": "Dit verwijdert {count} gesprekken permanent. Dit kan niet ongedaan worden gemaakt."
+    },
+    "clearing": {
+      "title": "Opslagruimte wordt geleegd",
+      "message": "Even geduld terwijl gesprekken worden verwijderd..."
+    },
+    "success": {
+      "title": "Opslagruimte geleegd",
+      "message": "Succesvol {count} gesprekken verwijderd, {size} vrijgemaakt."
+    },
+    "error": {
+      "title": "Wissen mislukt",
+      "message": "Er is een fout opgetreden bij het wissen van gesprekken. Probeer het opnieuw."
+    },
+    "close": "Sluiten"
+  },
+  "support": {
+    "selectOrganization": "Selecteer uw organisatie",
+    "organizationDescription": "Kies uw MSF-organisatie om het juiste contact voor ondersteuning te zien",
+    "autoDetect": "Automatisch detecteren",
+    "resetToAutoDetect": "Reset naar automatisch detecteren",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Genève)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Veld / Overig"
+    },
+    "emailSupport": "E-mailondersteuning",
+    "emailDescription": "Neem contact op met het ondersteuningsteam van {organization}",
+    "escalationTitle": "Veld & Overig MSF-personeel",
+    "escalationDescription": "Volg de IT-escalatieroute van uw organisatie voor ondersteuning",
+    "escalationShort": "Neem contact op met uw lokale IT-ondersteuning",
+    "escalationStep1": "Neem eerst contact op met uw lokale IT-ondersteuning",
+    "escalationStep2": "Als het niet is opgelost, escaleer naar de IT-afdeling van uw Operationeel Centrum (OC)",
+    "escalationStep3": "Als het nog steeds niet is opgelost, kan OC IT escaleren naar SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Vertaal document",
+  "documentTranslation": {
+    "title": "Documentvertaling",
+    "targetLanguage": "Doeltaal",
+    "sourceLanguage": "Brontaal",
+    "searchLanguage": "Zoek talen...",
+    "noLanguagesFound": "Geen talen gevonden",
+    "autoDetect": "Automatisch detecteren indien niet opgegeven",
+    "glossary": "Woordenlijstbestand",
+    "glossaryHelp": "Upload een CSV-, TSV- of XLIFF-woordenlijstbestand voor aangepaste terminologie",
+    "uploadGlossary": "Woordenlijst uploaden",
+    "glossaryTooLarge": "Woordenlijstbestand te groot. Maximale grootte is {maxSize}.",
+    "outputFilename": "Uitvoerbestandnaam",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Vertaal document",
+    "translating": "Vertalen...",
+    "noDocumentError": "Selecteer een document om te vertalen.",
+    "noTargetLanguageError": "Selecteer een doeltaal.",
+    "documentTooLarge": "Document te groot. Maximale grootte is {maxSize}.",
+    "translationSuccess": "Document succesvol vertaald",
+    "translationFailed": "Vertalen mislukt: {error}",
+    "invalidReference": "Ongeldige verwijzing voor documentvertaling",
+    "documentNotFound": "Vertaald document niet gevonden of verlopen",
+    "downloadFailed": "Downloaden van het vertaalde document mislukt",
+    "downloadSuccess": "Document succesvol gedownload",
+    "translatedTo": "Vertaald naar {language}",
+    "download": "Downloaden",
+    "downloading": "Bezig met downloaden...",
+    "expired": "Deze vertaling is verlopen en niet langer beschikbaar",
+    "expiresSoon": "Verloopt over {days} dag(en) - download snel",
+    "expires": "Beschikbaar gedurende {days} dagen",
+    "learnMore": "Meer informatie",
+    "advancedOptions": "Geavanceerde opties"
   }
 }

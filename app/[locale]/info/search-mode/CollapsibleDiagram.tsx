@@ -3,6 +3,8 @@
 import { IconChevronDown } from '@tabler/icons-react';
 import { Suspense, lazy, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 // Lazy load the MermaidDiagram component (which includes the 66MB mermaid library)
 const MermaidDiagram = lazy(() =>
   import('@/components/UI/MermaidDiagram').then((mod) => ({
@@ -21,6 +23,7 @@ export function CollapsibleDiagram({
   diagram,
   legend,
 }: CollapsibleDiagramProps) {
+  const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -43,14 +46,14 @@ export function CollapsibleDiagram({
       {isOpen && (
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4 overflow-x-auto">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            <strong>Legend:</strong> {legend}
+            <strong>{t('searchMode.legend')}</strong> {legend}
           </p>
           <Suspense
             fallback={
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
                 <span className="ml-3 text-sm text-gray-600 dark:text-gray-400">
-                  Loading diagram...
+                  {t('searchMode.loadingDiagram')}
                 </span>
               </div>
             }

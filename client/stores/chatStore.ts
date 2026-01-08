@@ -1,11 +1,26 @@
 'use client';
 
-import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
-import { StreamParser } from '@/lib/utils/chat/streamParser';
+import toast from 'react-hot-toast';
+
+import { generateConversationTitle } from '@/client/services/titleService';
+
+import { MessageContentAnalyzer } from '@/lib/utils/shared/chat/messageContentAnalyzer';
+import {
+  createMessageGroup,
+  entryToDisplayMessage,
+  flattenEntriesForAPI,
+  messageToVersion,
+} from '@/lib/utils/shared/chat/messageVersioning';
+import { StreamParser } from '@/lib/utils/shared/chat/streamParser';
 
 import { AgentType } from '@/types/agent';
 import { Conversation, Message, MessageType } from '@/types/chat';
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import {
+  OpenAIModel,
+  OpenAIModelID,
+  OpenAIModels,
+  fallbackModelID,
+} from '@/types/openai';
 import { Citation } from '@/types/rag';
 import { SearchMode } from '@/types/searchMode';
 
@@ -27,7 +42,20 @@ interface ChatStore {
   loadingMessage: string | null;
   abortController: AbortController | null;
 
+  // Retry-related state
+  isRetrying: boolean;
+  retryWithFallback: boolean;
+  originalModelId: string | null;
+  showModelSwitchPrompt: boolean;
+  failedConversation: Conversation | null;
+  failedSearchMode: SearchMode | undefined;
+  successfulRetryConversationId: string | null;
+
+  // Regeneration state for message versioning
+  regeneratingIndex: number | null;
+
   // Actions
+  setRegeneratingIndex: (index: number | null) => void;
   setCurrentMessage: (message: Message | undefined) => void;
   setIsStreaming: (isStreaming: boolean) => void;
   setStreamingContent: (content: string) => void;
@@ -59,15 +87,68 @@ interface ChatStore {
     stream: ReadableStream<Uint8Array>,
     streamParser: StreamParser,
     showLoadingTimeout: NodeJS.Timeout | null,
-  ) => Promise<{ finalContent: string; threadId?: string }>;
+  ) => Promise<{
+    finalContent: string;
+    threadId?: string;
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
+    }[];
+  }>;
   finalizeMessage: (
     assistantMessage: Message,
     conversation: Conversation,
     threadId?: string,
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
+    }[],
   ) => Promise<void>;
   generateConversationName: (firstUserMessage: Message) => string | null;
   clearStreamingState: () => void;
-  handleSendError: (error: unknown) => void;
+  handleSendError: (
+    error: unknown,
+    conversation?: Conversation,
+    searchMode?: SearchMode,
+  ) => void;
+
+  // Retry-related actions
+  retryWithFallbackModel: (
+    conversation: Conversation,
+    searchMode?: SearchMode,
+  ) => Promise<void>;
+  dismissModelSwitchPrompt: () => void;
+  acceptModelSwitch: (alwaysSwitch?: boolean) => void;
+
+  // Pending transcription state (for async chunked/batch transcription)
+  pendingConversationTranscription: {
+    conversationId: string;
+    jobId: string;
+    messageIndex: number;
+    filename: string;
+    blobPath?: string; // Only for batch jobs
+    startedAt: number;
+    progress?: {
+      completed: number;
+      total: number;
+    };
+  } | null;
+  setConversationTranscriptionPending: (
+    info: {
+      conversationId: string;
+      jobId: string;
+      messageIndex: number;
+      filename: string;
+      blobPath?: string;
+    } | null,
+  ) => void;
+  updateTranscriptionProgress: (completed: number, total: number) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -82,7 +163,24 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   loadingMessage: null,
   abortController: null,
 
+  // Retry-related initial state
+  isRetrying: false,
+  retryWithFallback: false,
+  originalModelId: null,
+  showModelSwitchPrompt: false,
+  failedConversation: null,
+  failedSearchMode: undefined,
+  successfulRetryConversationId: null,
+
+  // Regeneration initial state
+  regeneratingIndex: null,
+
+  // Pending transcription initial state
+  pendingConversationTranscription: null,
+
   // Actions
+  setRegeneratingIndex: (index) => set({ regeneratingIndex: index }),
+
   setCurrentMessage: (message) => set({ currentMessage: message }),
 
   setIsStreaming: (isStreaming) => set({ isStreaming }),
@@ -124,21 +222,52 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       stopRequested: false,
       loadingMessage: null,
       abortController: null,
+      // Reset retry state
+      isRetrying: false,
+      retryWithFallback: false,
+      originalModelId: null,
+      showModelSwitchPrompt: false,
+      failedConversation: null,
+      failedSearchMode: undefined,
+      successfulRetryConversationId: null,
+      // Reset regeneration state
+      regeneratingIndex: null,
+      // Reset pending transcription state
+      pendingConversationTranscription: null,
     }),
+
+  setConversationTranscriptionPending: (info) =>
+    set({
+      pendingConversationTranscription: info
+        ? { ...info, startedAt: Date.now() }
+        : null,
+    }),
+
+  updateTranscriptionProgress: (completed, total) =>
+    set((state) => ({
+      pendingConversationTranscription: state.pendingConversationTranscription
+        ? {
+            ...state.pendingConversationTranscription,
+            progress: { completed, total },
+          }
+        : null,
+    })),
 
   sendMessage: async (message, conversation, searchMode) => {
     console.log('[chatStore.sendMessage] Message toneId:', message.toneId);
+    // Log messages - convert entries to display messages for logging
+    const flatMessages = flattenEntriesForAPI(conversation.messages);
     console.log(
       '[chatStore.sendMessage] All messages:',
-      conversation.messages.map((m) => ({ role: m.role, toneId: m.toneId })),
+      flatMessages.map((m) => ({ role: m.role, toneId: m.toneId })),
     );
 
     let showLoadingTimeout: NodeJS.Timeout | null = null;
 
     try {
-      // Use analyzer to determine loading message
+      // Use analyzer to determine loading message key (for translation in UI)
       const analyzer = new MessageContentAnalyzer(message);
-      const loadingMessage = analyzer.getLoadingMessage();
+      const loadingMessage = analyzer.getLoadingMessageKey();
 
       // Initialize streaming state
       get().initializeStreamingState(conversation.id, loadingMessage);
@@ -151,17 +280,38 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       // Process the stream
       const streamParser = new StreamParser();
-      const { finalContent, threadId } = await get().processStream(
-        stream,
-        streamParser,
-        showLoadingTimeout,
-      );
+      const { finalContent, threadId, pendingTranscriptions } =
+        await get().processStream(stream, streamParser, showLoadingTimeout);
 
       // Create assistant message
       const assistantMessage = streamParser.toMessage(finalContent);
 
+      // Handle pending transcriptions (async batch jobs for large files)
+      if (pendingTranscriptions && pendingTranscriptions.length > 0) {
+        // Get the message index for the user message (will be at current length - 1)
+        // The assistant message will be added next, so the pending info should reference the user message
+        const messageIndex = conversation.messages.length;
+        const pending = pendingTranscriptions[0]; // Handle first pending transcription
+        get().setConversationTranscriptionPending({
+          conversationId: conversation.id,
+          jobId: pending.jobId,
+          messageIndex,
+          filename: pending.filename,
+          blobPath: pending.blobPath,
+        });
+      }
+
       // Finalize: update conversation, auto-name if needed
-      await get().finalizeMessage(assistantMessage, conversation, threadId);
+      await get().finalizeMessage(
+        assistantMessage,
+        conversation,
+        threadId,
+        pendingTranscriptions,
+      );
+
+      // Track successful model usage for ordering stability
+      const { recordSuccessfulModelUsage } = useSettingsStore.getState();
+      recordSuccessfulModelUsage(conversation.model.id);
 
       // Clear state
       get().clearStreamingState();
@@ -178,7 +328,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         clearTimeout(showLoadingTimeout);
       }
 
-      get().handleSendError(error);
+      get().handleSendError(error, conversation, searchMode);
     }
   },
 
@@ -227,8 +377,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       ? { ...conversation.model, ...latestModelConfig }
       : conversation.model;
 
+    // Flatten messages for API call
+    const messagesForAPI = flattenEntriesForAPI(conversation.messages);
+
     // Get the toneId from the latest user message and look up the full tone object
-    const latestUserMessage = conversation.messages
+    const latestUserMessage = messagesForAPI
       .filter((m) => m.role === 'user')
       .pop();
     const tone = latestUserMessage?.toneId
@@ -246,7 +399,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // Get abort signal from store
     const { abortController } = get();
 
-    return await chatService.chat(modelToSend, conversation.messages, {
+    return await chatService.chat(modelToSend, messagesForAPI, {
       prompt: settings.systemPrompt,
       temperature: settings.temperature,
       stream: modelSupportsStreaming,
@@ -258,6 +411,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       searchMode,
       tone, // Pass the full tone object
       signal: abortController?.signal, // Pass abort signal
+      streamingSpeed: settings.streamingSpeed, // Pass streaming speed configuration
+      includeUserInfoInPrompt: settings.includeUserInfoInPrompt,
+      preferredName: settings.preferredName,
+      userContext: settings.userContext,
+      displayNamePreference: settings.displayNamePreference,
+      customDisplayName: settings.customDisplayName,
     });
   },
 
@@ -265,7 +424,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     stream: ReadableStream<Uint8Array>,
     streamParser: StreamParser,
     showLoadingTimeout: NodeJS.Timeout | null,
-  ): Promise<{ finalContent: string; threadId?: string }> => {
+  ): Promise<{
+    finalContent: string;
+    threadId?: string;
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
+    }[];
+  }> => {
     const reader = stream.getReader();
 
     while (true) {
@@ -323,6 +492,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     return {
       finalContent,
       threadId: streamParser.getThreadId(),
+      pendingTranscriptions: streamParser.getPendingTranscriptions(),
     };
   },
 
@@ -330,25 +500,85 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     assistantMessage: Message,
     conversation: Conversation,
     threadId?: string,
+    pendingTranscriptions?: {
+      filename: string;
+      jobId: string;
+      blobPath?: string;
+      totalChunks?: number;
+      jobType?: 'chunked' | 'batch';
+    }[],
   ) => {
     const conversationStore = useConversationStore.getState();
-    const updates: Partial<Conversation> = {
-      messages: [...conversation.messages, assistantMessage],
-      ...(threadId ? { threadId } : {}),
-    };
+    const { regeneratingIndex } = get();
+    const hasPendingTranscription =
+      pendingTranscriptions && pendingTranscriptions.length > 0;
 
-    // Auto-name conversation if still "New Conversation"
-    if (
-      conversation.name === 'New Conversation' &&
-      conversation.messages.length > 0
-    ) {
-      const newName = get().generateConversationName(conversation.messages[0]);
-      if (newName) {
-        updates.name = newName;
+    if (regeneratingIndex !== null) {
+      // Adding a new version to an existing message group
+      const version = messageToVersion(assistantMessage);
+      conversationStore.addMessageVersion(
+        conversation.id,
+        regeneratingIndex,
+        version,
+      );
+      // Clear regenerating index
+      set({ regeneratingIndex: null });
+    } else {
+      // Creating a new assistant message group
+      const newGroup = createMessageGroup(assistantMessage);
+      const updates: Partial<Conversation> = {
+        messages: [...conversation.messages, newGroup],
+        ...(threadId ? { threadId } : {}),
+      };
+
+      // Auto-name conversation if still untitled (empty string or legacy "New Conversation")
+      if (
+        (conversation.name === '' ||
+          conversation.name === 'New Conversation') &&
+        conversation.messages.length > 0
+      ) {
+        // Set immediate fallback title (sync) for instant feedback
+        const firstMessage = entryToDisplayMessage(conversation.messages[0]);
+        const fallbackName = get().generateConversationName(firstMessage);
+        if (fallbackName) {
+          updates.name = fallbackName;
+        }
+
+        // Defer AI title generation if transcription is pending
+        // The polling hook will generate the title after transcription completes
+        if (hasPendingTranscription) {
+          console.log(
+            '[ChatStore] Deferring title generation until transcription completes',
+          );
+          // Use filename as temporary title if available
+          if (pendingTranscriptions[0]?.filename) {
+            updates.name = pendingTranscriptions[0].filename;
+          }
+        } else {
+          // Generate AI title async (fire and forget - updates when ready)
+          const conversationId = conversation.id;
+          const modelId = conversation.model.id;
+          const messageGroups = [
+            ...conversation.messages,
+            createMessageGroup(assistantMessage),
+          ];
+
+          generateConversationTitle(messageGroups, modelId)
+            .then((result) => {
+              if (result?.title) {
+                conversationStore.updateConversation(conversationId, {
+                  name: result.title,
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('[ChatStore] Failed to generate AI title:', error);
+            });
+        }
       }
-    }
 
-    conversationStore.updateConversation(conversation.id, updates);
+      conversationStore.updateConversation(conversation.id, updates);
+    }
   },
 
   generateConversationName: (firstUserMessage: Message): string | null => {
@@ -383,7 +613,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     });
   },
 
-  handleSendError: (error: unknown) => {
+  handleSendError: (
+    error: unknown,
+    conversation?: Conversation,
+    searchMode?: SearchMode,
+  ) => {
     // Check if this is an abort error (user clicked stop)
     if (error instanceof Error && error.name === 'AbortError') {
       console.log('[chatStore] Request was aborted by user');
@@ -395,10 +629,38 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         abortController: null,
         stopRequested: false,
         error: null, // Don't show error for user-initiated stops
+        isRetrying: false,
       });
       return;
     }
 
+    // Check if we should attempt auto-retry with fallback model
+    const { isRetrying } = get();
+    const isAuthError = error instanceof ApiError && error.isAuthError();
+    const isCustomAgent = conversation?.model?.id?.startsWith('custom-');
+    const isAlreadyOnFallback = conversation?.model?.id === fallbackModelID;
+    const canRetry =
+      !isAuthError &&
+      !isCustomAgent &&
+      !isAlreadyOnFallback &&
+      !isRetrying &&
+      conversation;
+
+    if (canRetry) {
+      console.log(
+        '[chatStore] Attempting auto-retry with fallback model:',
+        fallbackModelID,
+      );
+      // Store failed conversation for regenerate button
+      set({
+        failedConversation: conversation,
+        failedSearchMode: searchMode,
+      });
+      get().retryWithFallbackModel(conversation, searchMode);
+      return;
+    }
+
+    // Extract user-friendly error message
     let errorMessage = 'Failed to send message';
     if (error instanceof ApiError) {
       errorMessage = error.getUserMessage();
@@ -410,6 +672,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       errorMessage = error.message;
     }
 
+    // Show error and store conversation for regenerate
     set({
       error: errorMessage,
       isStreaming: false,
@@ -418,6 +681,197 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       loadingMessage: null,
       abortController: null,
       stopRequested: false,
+      isRetrying: false,
+      failedConversation: conversation || null,
+      failedSearchMode: searchMode,
+    });
+  },
+
+  retryWithFallbackModel: async (
+    conversation: Conversation,
+    searchMode?: SearchMode,
+  ) => {
+    const fallbackModel = OpenAIModels[fallbackModelID];
+    if (!fallbackModel) {
+      console.error('[chatStore] Fallback model not found:', fallbackModelID);
+      set({
+        error: 'Failed to send message. Please try again.',
+        isStreaming: false,
+        isRetrying: false,
+      });
+      return;
+    }
+
+    // Show toast notification
+    const toastId = toast.loading(`Retrying with ${fallbackModel.name}...`);
+
+    // Store original model for the switch prompt
+    const originalModelId = conversation.model.id;
+
+    // Create conversation with fallback model
+    const retryConversation: Conversation = {
+      ...conversation,
+      model: fallbackModel,
+    };
+
+    set({
+      isRetrying: true,
+      originalModelId,
+      error: null,
+    });
+
+    let showLoadingTimeout: NodeJS.Timeout | null = null;
+
+    try {
+      // Use analyzer to determine loading message key (for translation in UI)
+      // Flatten messages to find user messages
+      const flatMessages = flattenEntriesForAPI(conversation.messages);
+      const lastUserMessage = flatMessages
+        .filter((m) => m.role === 'user')
+        .pop();
+
+      if (!lastUserMessage) {
+        throw new Error('No user message found');
+      }
+
+      const analyzer = new MessageContentAnalyzer(lastUserMessage);
+      const loadingMessage = analyzer.getLoadingMessageKey();
+
+      // Initialize streaming state
+      get().initializeStreamingState(retryConversation.id, loadingMessage);
+
+      // Schedule loading message display
+      showLoadingTimeout = get().scheduleLoadingMessage(loadingMessage);
+
+      // Send request with fallback model
+      const stream = await get().sendChatRequest(retryConversation, searchMode);
+
+      // Process the stream
+      const streamParser = new StreamParser();
+      const { finalContent, threadId, pendingTranscriptions } =
+        await get().processStream(stream, streamParser, showLoadingTimeout);
+
+      // Create assistant message
+      const assistantMessage = streamParser.toMessage(finalContent);
+
+      // Handle pending transcriptions (async batch jobs for large files)
+      if (pendingTranscriptions && pendingTranscriptions.length > 0) {
+        const messageIndex = conversation.messages.length;
+        const pending = pendingTranscriptions[0];
+        get().setConversationTranscriptionPending({
+          conversationId: conversation.id,
+          jobId: pending.jobId,
+          messageIndex,
+          filename: pending.filename,
+          blobPath: pending.blobPath,
+        });
+      }
+
+      // Finalize: update conversation with original model (not fallback)
+      // The message was generated with fallback but we keep the conversation model unchanged
+      await get().finalizeMessage(
+        assistantMessage,
+        conversation,
+        threadId,
+        pendingTranscriptions,
+      );
+
+      // Clear streaming state and show success
+      get().clearStreamingState();
+
+      // Dismiss loading toast and show success
+      toast.success(`Request completed with ${fallbackModel.name}`, {
+        id: toastId,
+      });
+
+      // Show model switch prompt - store conversation ID for model switching
+      set({
+        isRetrying: false,
+        retryWithFallback: true,
+        showModelSwitchPrompt: true,
+        successfulRetryConversationId: conversation.id,
+        failedConversation: null,
+        failedSearchMode: undefined,
+      });
+
+      // Clean up timeout
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
+    } catch (retryError) {
+      console.error('[chatStore] Retry with fallback also failed:', retryError);
+
+      // Clean up timeout
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
+
+      // Dismiss loading toast
+      toast.error(`Retry with ${fallbackModel.name} also failed`, {
+        id: toastId,
+      });
+
+      // Extract error message
+      let errorMessage = 'Failed to send message';
+      if (retryError instanceof ApiError) {
+        errorMessage = retryError.getUserMessage();
+      } else if (retryError instanceof Error) {
+        errorMessage = retryError.message;
+      }
+
+      // Show error with regenerate option
+      set({
+        error: errorMessage,
+        isStreaming: false,
+        streamingContent: '',
+        streamingConversationId: null,
+        loadingMessage: null,
+        abortController: null,
+        stopRequested: false,
+        isRetrying: false,
+        retryWithFallback: false,
+        originalModelId: null,
+      });
+    }
+  },
+
+  dismissModelSwitchPrompt: () => {
+    set({
+      showModelSwitchPrompt: false,
+      originalModelId: null,
+      retryWithFallback: false,
+      successfulRetryConversationId: null,
+    });
+  },
+
+  acceptModelSwitch: (alwaysSwitch?: boolean) => {
+    const settings = useSettingsStore.getState();
+    const conversationStore = useConversationStore.getState();
+    const { successfulRetryConversationId } = get();
+
+    // Set fallback as default model for new conversations
+    settings.setDefaultModelId(fallbackModelID);
+
+    // If alwaysSwitch, persist auto-switch preference for future failures
+    if (alwaysSwitch) {
+      settings.setAutoSwitchOnFailure(true);
+    }
+
+    // Update current conversation model using the stored ID
+    if (successfulRetryConversationId) {
+      const fallbackModel = OpenAIModels[fallbackModelID];
+      if (fallbackModel) {
+        conversationStore.updateConversation(successfulRetryConversationId, {
+          model: fallbackModel,
+        });
+      }
+    }
+
+    set({
+      showModelSwitchPrompt: false,
+      originalModelId: null,
+      retryWithFallback: false,
+      successfulRetryConversationId: null,
     });
   },
 }));

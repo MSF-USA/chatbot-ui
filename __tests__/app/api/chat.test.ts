@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server';
 import { ServiceContainer } from '@/lib/services/ServiceContainer';
 import { RateLimiter } from '@/lib/services/shared/RateLimiter';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { MessageType } from '@/types/chat';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { POST } from '@/app/api/chat/route';
 import { auth } from '@/auth';
@@ -17,7 +17,7 @@ vi.mock('@/auth', () => ({
 }));
 
 // Mock tiktoken cache to avoid WASM loading in tests
-vi.mock('@/lib/utils/server/tiktokenCache', () => ({
+vi.mock('@/lib/utils/server/tiktoken/tiktokenCache', () => ({
   getGlobalTiktoken: vi.fn().mockResolvedValue({
     encode: vi.fn().mockReturnValue([1, 2, 3, 4, 5]),
   }),
@@ -29,6 +29,20 @@ vi.mock('@azure/identity', () => ({
   getBearerTokenProvider: vi
     .fn()
     .mockReturnValue(() => Promise.resolve('mock-token')),
+}));
+
+// Mock blob storage factory to prevent Azure blob storage initialization
+vi.mock('@/lib/services/blobStorageFactory', () => ({
+  createBlobStorageClient: vi.fn().mockReturnValue({
+    upload: vi.fn().mockResolvedValue('https://mock-blob-url'),
+    get: vi.fn().mockResolvedValue(Buffer.from('mock-content')),
+    blobExists: vi.fn().mockResolvedValue(false),
+    getBlockBlobClient: vi.fn().mockReturnValue({
+      delete: vi.fn().mockResolvedValue(undefined),
+    }),
+    getBlobSize: vi.fn().mockResolvedValue(1000),
+    generateSasUrl: vi.fn().mockResolvedValue('https://mock-sas-url'),
+  }),
 }));
 
 // Create shared mock create function that can be configured in tests
@@ -397,11 +411,14 @@ describe('/api/chat - Integration Tests', () => {
 
   describe('Request Timeout', () => {
     it('should timeout long-running requests', async () => {
-      // Mock a slow handler that takes longer than timeout
+      // Use fake timers to simulate timeout without waiting 5+ minutes
+      vi.useFakeTimers();
+
+      // Mock a slow handler that never resolves (simulating hung request)
       mockCreateFn.mockImplementationOnce(
         () =>
-          new Promise((resolve) => {
-            setTimeout(resolve, 65000); // 65 seconds (longer than 60s timeout)
+          new Promise(() => {
+            // Never resolves - simulates a hung request
           }),
       );
 
@@ -417,14 +434,24 @@ describe('/api/chat - Integration Tests', () => {
         stream: false,
       });
 
-      const response = await POST(request);
+      // Start the request (don't await yet)
+      const responsePromise = POST(request);
+
+      // Advance time past the 300s (5 minute) timeout
+      await vi.advanceTimersByTimeAsync(305000);
+
+      const response = await responsePromise;
+
+      // Restore real timers before assertions
+      vi.useRealTimers();
 
       expect(response.status).toBe(408);
       const data = await parseJsonResponse(response);
-      // Pipeline stage timeout returns PIPELINE_TIMEOUT code
+      // Pipeline stage timeout fires first when stages hang
+      // (stage timeouts are shorter than the overall request timeout)
       expect(data.code).toBe(ErrorCode.PIPELINE_TIMEOUT);
-      expect(data.message).toContain('timeout');
-    }, 70000); // Increase test timeout
+      expect(data.message.toLowerCase()).toContain('exceeded timeout');
+    });
   });
 
   describe('ServiceContainer Integration', () => {

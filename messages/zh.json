@@ -3,15 +3,38 @@
   "Please set your OpenAI API key in the bottom left of the sidebar_": "请在侧边栏左下角设置您的 OpenAI API 密钥。",
   "If you don't have an OpenAI API key, you can get one here: ": "如果你没有 OpenAI API 密钥，你可以在此获取：",
   "Stop Generating": "停止生成",
-  "Prompt limit is {{maxLength}} characters": "提示字数限制为 {{maxLength}} 个字符",
+  "Chat Settings": "聊天设置",
+  "Content": "内容",
+  "Default System Prompt": "默认系统提示",
+  "Edit": "编辑",
+  "Email": "电子邮件",
+  "Prompt limit is {{maxLength}} characters": "提示长度上限为 {{maxLength}} 个字符",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
+  "New conversation": "新对话",
   "New Conversation": "新的聊天",
+  "No prompts found": "未找到提示",
   "System Prompt": "系统提示",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "你是 ChatGPT，一个由 OpenAI 训练的大型语言模型。请仔细遵循用户的指示。使用 Markdown 格式进行回应。",
   "Enter a prompt": "输入一个提示",
   "Regenerate response": "重新生成回应",
+  "Run Typewriter Intro": "运行打字机介绍动画",
+  "Saved Prompts": "已保存的提示",
+  "Select a prompt to view details": "选择提示以查看详情",
   "Sorry, there was an error_": "抱歉，出现了错误。",
   "Model": "模型",
   "Conversation": "对话",
+  "Conversation exported successfully": "对话导出成功",
+  "Conversation imported successfully": "对话导入成功",
+  "Failed to export conversation": "导出对话失败",
+  "Failed to export folder": "导出文件夹失败",
+  "Failed to import conversation": "导入对话失败",
+  "Failed to import file": "导入文件失败",
+  "Folder exported with {count} conversations": "文件夹已导出，包含 {count} 个对话",
+  "Folder imported with {count} conversations": "文件夹已导入，包含 {count} 个对话",
+  "Folder not found": "未找到文件夹",
+  "importBackupParseError": "解析备份文件失败。请确保它是有效的 JSON。",
+  "Invalid conversation file": "无效的对话文件",
+  "Invalid folder file": "无效的文件夹文件",
   "OR": "或",
   "Loading_ellipsis": "加载中...",
   "Type a message or type \"/\" to select a prompt_ellipsis": "输入一条消息或键入 \"/\" 以选择提示...",
@@ -35,7 +58,9 @@
   "Creative": "随性",
   "chatUrlInputTitle": "网页提取器",
   "Search_ellipsis": "搜索...",
+  "transcriptionComplete": "转录完成！文本已添加到聊天输入。",
   "Type a message_ellipsis": "",
+  "Unrecognized file format": "无法识别的文件格式",
   "chatDisclaimer": "MSF AI助手可能会出错。请检查重要信息。",
   "chatInputPlaceholder": "在此给MSF AI助理发消息",
   "chatInputPlaceholderFull": "在此处向MSF AI助手发送消息或键入“/”以选择提示...",
@@ -129,7 +154,7 @@
   "Description": "描述",
   "A description for your prompt_": "提示词描述",
   "Prompt": "提示",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用 {{}} 表示一个变量。例如：{{name}} 是一个 {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用 '{{}}' 表示一个变量。例如：'{{name}}' 是一个 '{{adjective}}' '{{noun}}'",
   "Save": "保存",
   "New chat": "新建聊天",
   "No conversations_": "无对话",
@@ -311,7 +336,19 @@
   "Team Templates": "团队模板",
   "selected": "已选择",
   "folders": "文件夹",
-  "agents": "代理",
+  "agents": {
+    "exportAgent": "导出代理",
+    "editAgent": "编辑代理",
+    "agentName": "代理名称",
+    "myResearchAssistant": "我的研究助手",
+    "agentId": "代理 ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "描述（可选）",
+    "descriptionPlaceholder": "专门从事研究任务的代理...",
+    "baseModel": "基础模型",
+    "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
+    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
+  },
   "Quick Actions": "快速操作",
   "Type / in chat to access your prompts": "在聊天中输入 / 以访问您的提示",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "在聊天中输入 /，选择您的提示，并在提示时填写变量",
@@ -358,7 +395,6 @@
   "Custom Agents": "自定义代理",
   "Delete template and all its items": "删除模板及其所有项目",
   "Description (Optional)": "描述（可选）",
-  "Edit Prompt": "编辑提示",
   "Edit Tone": "编辑语气",
   "Email Response Template": "电子邮件回复模板",
   "Example Prompt": "示例提示",
@@ -418,7 +454,6 @@
   "msf_logo_alt": "MSF徽标",
   "collapse_sidebar": "折叠侧边栏",
   "expand_sidebar": "展开侧边栏",
-  "Voice Guidelines": "语音指南",
   "Please upload some content or describe the tone you want": "请上传一些内容或描述您想要的语气",
   "Untitled Tone": "无标题语气",
   "Failed to analyze tone": "分析语气失败",
@@ -446,15 +481,43 @@
   "enterTagsPlaceholder": "添加标签（按Enter）",
   "enterPromptNamePlaceholder": "例如，电子邮件回复",
   "enterPromptDescriptionPlaceholder": "此提示用于什么？",
-  "enterPromptContentPlaceholder": "在此处编写您的提示。使用 {{variable}} 表示动态内容。",
+  "enterPromptContentPlaceholder": "在此处编写您的提示。使用 '{{variable}}' 表示动态内容。",
   "common": {
-    "contact": "联系"
+    "contact": "联系",
+    "close": "关闭",
+    "remove": "删除",
+    "tryAgain": "重试",
+    "menu": "菜单",
+    "copyToClipboard": "复制到剪贴板",
+    "toggleDropdownMenu": "切换下拉菜单",
+    "toggleMenu": "切换菜单",
+    "closeModal": "关闭模态框",
+    "dismissBanner": "关闭横幅",
+    "searchEllipsis": "搜索...",
+    "addTagEllipsis": "添加标签...",
+    "msfLogo": "MSF 徽标",
+    "importantInformation": "重要信息",
+    "noResults": "未找到结果",
+    "confirm": "确认",
+    "cancel": "取消",
+    "discard": "放弃",
+    "keepEditing": "继续编辑",
+    "yes": "是",
+    "no": "否"
   },
   "errors": {
     "unexpectedErrorOccurred": "发生了意外错误",
     "criticalErrorReload": "发生严重错误。请重新加载页面。",
     "reloadPage": "重新加载页面",
-    "persistContactSupport": "如果此问题仍然存在，请联系支持"
+    "persistContactSupport": "如果此问题仍然存在，请联系支持",
+    "somethingWentWrong": "出了点问题",
+    "anErrorOccurred": "发生了错误",
+    "copyErrorMessage": "复制错误消息",
+    "contactSupport": "如果此问题仍然存在，请联系支持：",
+    "dismissError": "关闭错误",
+    "applicationError": "应用程序错误",
+    "chatLoadError": "加载聊天时出错",
+    "anErrorOccurredTryAgain": "发生了错误。请重试。"
   },
   "auth": {
     "authenticationError": "身份验证错误",
@@ -523,7 +586,53 @@
     "fullSizePreview": "全尺寸预览",
     "enterSearchQueryPlaceholder": "输入您的搜索查询或问题...",
     "errorFetchingUrl": "获取URL内容时出错",
-    "errorInitiatingSearch": "启动网页搜索时出错"
+    "errorInitiatingSearch": "启动网页搜索时出错",
+    "regenerate": "重新生成",
+    "modelSwitchPrompt": "{original} 失败但 {fallback} 成功。您要切换模型吗？",
+    "keepOriginalModel": "保留 {model}",
+    "switchToModel": "切换到 {model}",
+    "alwaysSwitchToModel": "始终自动切换",
+    "translateMessage": "翻译消息",
+    "translating": "正在翻译...",
+    "translationError": "翻译失败",
+    "showOriginal": "显示原文",
+    "translatedTo": "已翻译为 {language}",
+    "searchLanguages": "搜索语言...",
+    "selectLanguage": "选择语言",
+    "audioFromOriginal": "音频来自原文",
+    "audioFromTranslation": "音频来自 {language} 翻译",
+    "thinking": "思考中...",
+    "viewReasoningProcess": "查看推理过程",
+    "collapseThinking": "折叠思考",
+    "expandThinking": "展开思考",
+    "actionsDisabledForEmbed": "请使用上方嵌入内容中的控件",
+    "loadingMessages": {
+      "transcribingAndProcessing": "正在转录并处理...",
+      "transcribingAudio": "正在转录音频...",
+      "analyzingFiles": "正在分析文件...",
+      "analyzingDocuments": "正在分析文档...",
+      "analyzingDocument": "正在分析文档...",
+      "analyzingImages": "正在分析图片...",
+      "analyzingImage": "正在分析图片..."
+    },
+    "contentDescription": {
+      "text": "文本",
+      "imagesCount": "{count} 张图片",
+      "filesCount": "{count} 个文件",
+      "audioVideo": "音频/视频",
+      "empty": "空"
+    },
+    "discardChanges": "放弃更改",
+    "discardChangesMessage": "您有未保存的更改。确定要放弃吗？",
+    "voiceInputStarting": "正在开始...",
+    "voiceInputRecording": "正在录音...",
+    "voiceInputTapToStop": "点击停止",
+    "stopRecording": "停止录音",
+    "voiceInput": "语音输入",
+    "microphoneAccessDenied": "麦克风访问被拒绝，请在浏览器设置中启用。",
+    "microphoneAccessError": "麦克风访问错误：{message}",
+    "voiceInputTranscribing": "正在转录…",
+    "ttsRightClickHint": "右键点击以选择语音选项"
   },
   "sidebar": {
     "collapseSidebar": "折叠侧边栏",
@@ -531,29 +640,135 @@
     "quickActionsTitle": "快速操作",
     "quickActions": "快速操作"
   },
-  "agents": {
-    "exportAgent": "导出代理",
-    "editAgent": "编辑代理",
-    "agentName": "代理名称",
-    "myResearchAssistant": "我的研究助手",
-    "agentId": "代理 ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "描述（可选）",
-    "descriptionPlaceholder": "专门从事研究任务的代理...",
-    "baseModel": "基础模型",
-    "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
-    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
-  },
   "prompts": {
-    "buildReusablePrompts": "使用 AI 辅助构建可重复使用的提示"
+    "buildReusablePrompts": "使用 AI 辅助构建可重复使用的提示",
+    "noToneDefault": "无语气（使用默认）",
+    "tagHelp": "标签帮助",
+    "tagHelpContent": "使用标签来分类并快速找到您的提示。示例：",
+    "tagExamples": {
+      "email": "电子邮件",
+      "marketing": "营销",
+      "technical": "技术",
+      "customerSupport": "客户支持"
+    },
+    "variableHelp": "变量帮助",
+    "variableHelpIntro": "使用变量使您的提示动态化：",
+    "requiredVariables": "必需变量（无默认值）：",
+    "optionalVariables": "可选变量（有默认值）：",
+    "userMustProvide": "用户必须提供一个值",
+    "userCanProvide": "用户可以提供一个值，或使用默认值",
+    "example": "示例：",
+    "variableExampleText": "写一封 '{{tone:专业的}}' 电子邮件给 '{{recipient}}' 关于 '{{topic}}' 用 '{{language:中文}}'",
+    "detectedVariables": "检测到的变量",
+    "required": "必需",
+    "aiAssistant": "AI 助手",
+    "whatToImprove": "您想改进什么？",
+    "whatShouldPromptDo": "此提示应该做什么？",
+    "improvePlaceholder": "例如，使其更专业，添加示例，提高清晰度...",
+    "generatePlaceholder": "例如，生成专业电子邮件模板，带有收件人和主题变量...",
+    "addContextOptional": "添加上下文（可选）",
+    "revising": "正在修改...",
+    "generating": "正在生成...",
+    "reviseWithAI": "使用 AI 修改",
+    "generatePrompt": "生成提示",
+    "revisionComplete": "修改完成",
+    "generationComplete": "生成完成",
+    "revisedPrompt": "修改后的提示：",
+    "generatedPrompt": "生成的提示：",
+    "applyRevision": "应用此修改",
+    "useThisPrompt": "使用此提示",
+    "improvementsMade": "已做的改进：",
+    "tips": "提示：",
+    "howAICanHelp": "AI 如何帮助",
+    "helpItems": {
+      "improveClarity": "提高清晰度和结构",
+      "suggestVariables": "建议有用的变量",
+      "addContext": "添加上下文和示例",
+      "optimize": "优化以获得更好的结果"
+    },
+    "savePrompt": "保存提示",
+    "add": "添加"
   },
   "tones": {
     "createCustomVoiceProfile": "使用 AI 辅助创建自定义语音配置文件",
-    "examplePlaceholder": "例如，创建专业但友好的客户服务语气..."
+    "examplePlaceholder": "例如，创建专业但友好的客户服务语气...",
+    "tagHelp": "标签帮助",
+    "tagHelpContent": "使用标签来分类并快速找到您的语气。示例：",
+    "tagExamples": {
+      "professional": "专业",
+      "casual": "休闲",
+      "technical": "技术",
+      "marketing": "营销"
+    },
+    "add": "添加",
+    "aiToneAnalyzer": "AI 语气分析器",
+    "describeToneToCreate": "描述您要创建的语气",
+    "uploadContentSamples": "上传内容样本",
+    "analyzing": "正在分析...",
+    "analyzeToneWithAI": "使用 AI 分析语气",
+    "analysisComplete": "分析完成",
+    "generatedVoiceGuidelines": "生成的语音指南：",
+    "examplePhrases": "示例短语：",
+    "suggestedTags": "建议的标签：",
+    "applyThisAnalysis": "应用此分析",
+    "detectedCharacteristics": "检测到的特征：",
+    "howAICanHelp": "AI 如何帮助",
+    "helpItems": {
+      "transcribe": "转录音频/视频内容",
+      "analyzeContent": "分析您的内容样本",
+      "extractPatterns": "提取语气和风格模式",
+      "generateGuidelines": "生成语音指南",
+      "suggestTags": "建议相关标签"
+    },
+    "saveTone": "保存语气"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "查看技术流程图"
+    "viewTechnicalFlowDiagram": "查看技术流程图",
+    "backToChat": "返回聊天",
+    "title": "帮助中心",
+    "subtitle": "查找答案，了解隐私，获取支持",
+    "faq": {
+      "title": "常见问题",
+      "description": "查找有关使用 AI 助手的常见问题答案",
+      "articles": "文章",
+      "searchPlaceholder": "搜索常见问题...",
+      "noResults": "未找到匹配的常见问题",
+      "noResultsHint": "尝试其他搜索词"
+    },
+    "privacy": {
+      "title": "隐私与数据",
+      "description": "了解您的数据如何存储和保护",
+      "topics": "主题",
+      "searchPlaceholder": "搜索隐私主题...",
+      "noResults": "未找到匹配的隐私主题",
+      "noResultsHint": "尝试其他搜索词",
+      "bannerTitle": "您的隐私很重要",
+      "bannerDescription": "所有对话都存储在您的设备上。数据处理在使用 Azure 基础设施的 MSF 系统内进行。",
+      "localStorageOnly": "仅本地存储",
+      "msfControlled": "MSF 控制",
+      "noPersonalData": "无个人数据",
+      "noSensitiveOps": "无敏感操作"
+    },
+    "contact": {
+      "title": "联系与资源",
+      "description": "联系我们的团队并获取有用的链接",
+      "supportAvailable": "支持可用",
+      "submitRequest": "提交支持请求",
+      "getHelp": "从我们的团队获取帮助",
+      "requestDescription": "需要帮助或想提供反馈？点击下方打开我们的支持表单。",
+      "openSupportForm": "打开支持表单",
+      "otherWays": "其他联系方式",
+      "emailSupport": "电子邮件支持",
+      "emailDescription": "发送电子邮件给我们询问问题、反馈或技术问题"
+    },
+    "resources": {
+      "title": "其他资源",
+      "portalTitle": "AI 加速器门户",
+      "portalDescription": "文档、项目更新和培训材料",
+      "githubTitle": "开源仓库",
+      "githubDescription": "在 GitHub 上查看代码、报告问题和贡献"
+    }
   },
   "settings": {
     "Settings": "设置",
@@ -621,9 +836,820 @@
     "FAQs, privacy policy, and guides": "常见问题、隐私政策和指南",
     "Contact Support": "联系支持",
     "Popular Questions": "热门问题",
-    "View all FAQs": "查看所有常见问题"
+    "View all FAQs": "查看所有常见问题",
+    "Delete legacy data after migration": "迁移后删除旧数据",
+    "frees up storage space": "释放存储空间",
+    "Legacy data deleted": "旧数据已删除",
+    "freed": "已释放",
+    "Conversations": "对话",
+    "Legacy": "旧版",
+    "Other": "其他",
+    "Loading": "加载中",
+    "Legacy Data Detected": "检测到旧数据",
+    "legacyDataDescription": "您有 {size} 的旧版本数据。可以迁移、导出或删除以释放空间。",
+    "legacyDeleteSuccess": "成功删除旧数据并释放 {size}。",
+    "legacyDeleteError": "删除旧数据失败。请重试。",
+    "Explore solutions": "探索解决方案",
+    "Migrate to Current Format": "迁移到当前格式",
+    "Export Legacy Data": "导出旧数据",
+    "Delete Legacy Data": "删除旧数据",
+    "deleteLegacyConfirm": "您确定要删除所有旧数据吗？此操作无法撤消。",
+    "Deleting": "正在删除",
+    "Confirm Delete": "确认删除",
+    "Cancel": "取消",
+    "Custom Instructions": "自定义指令",
+    "Personalization": "个性化设置",
+    "Display Name": "显示名称",
+    "Display Name Description": "选择您的名字在问候和应用中的显示方式",
+    "First Name": "名",
+    "Last Name": "姓",
+    "Full Name": "全名",
+    "Custom": "自定义",
+    "None": "无",
+    "Custom Display Name": "自定义显示名称",
+    "Custom Display Name Placeholder": "请输入您偏好的名称",
+    "howShouldWeAddressYou": "我们该如何称呼您？",
+    "displayNamePreview": "预览：“{greeting}”",
+    "Streaming Speed": "流式速度",
+    "Slow": "慢速",
+    "Normal": "正常",
+    "Fast": "快速",
+    "Controls how smoothly text appears during AI responses": "控制 AI 回复时文本显示的流畅度",
+    "aboutYou": {
+      "title": "关于您",
+      "shareBasicInfo": "与 AI 共享基本信息",
+      "shareBasicInfoDescription": "启用后，AI 将从您的个人资料中获知您的姓名、头衔和部门",
+      "preferredName": "首选称呼",
+      "preferredNamePlaceholder": "您希望如何被称呼？",
+      "preferredNameDescription": "覆盖您的显示名称。若留空，则使用您的个人资料名称",
+      "additionalContext": "补充说明",
+      "additionalContextPlaceholder": "如：我在外勤工作，喜欢简明回复，经常咨询医疗规范...",
+      "additionalContextDescription": "您希望 AI 了解的其他信息",
+      "preferredNameDescriptionWithSync": "AI 称呼您的方式。若留空，将使用通用设置中的显示姓名。"
+    },
+    "displayNameUIOnly": "此项用于控制您的姓名在应用中的显示方式。除非您在聊天设置中启用共享，否则 AI 不会看到此信息。",
+    "tts": {
+      "title": "语音合成",
+      "language": "语言",
+      "voice": "语音",
+      "multilingualVoices": "多语言语音",
+      "voices": "语音列表",
+      "rate": "速度",
+      "pitch": "音调",
+      "quality": "音频质量",
+      "qualityDescription": "更高的音质会产生更好的音频，但会消耗更多带宽",
+      "preview": "预览",
+      "previewing": "正在播放...",
+      "previewFailed": "预览音频生成失败",
+      "previewText": "这是所选语音设置的预览音频。",
+      "reset": "重置",
+      "default": "默认",
+      "slower": "更慢",
+      "faster": "更快",
+      "lower": "降低",
+      "higher": "升高",
+      "selectedVoice": "已选择",
+      "noVoicesAvailable": "该语言暂无可用语音",
+      "quickSettings": "语音设置",
+      "overrideForThisMessage": "为此消息调整设置",
+      "speakWithSettings": "朗读"
+    },
+    "Model Response Settings Description": "配置AI模型响应的默认参数。不同模型使用不同的设置。",
+    "Default Reasoning Effort": "默认推理力度",
+    "reasoningEffortDescription": "控制推理模型的思考深度。更高力度可生成更全面的分析。",
+    "Default Verbosity": "默认详细程度",
+    "verbosityDescription": "控制GPT-5模型响应的详细程度。"
   },
   "notFound": {
     "lostDog": "迷路的狗"
+  },
+  "emptyState": {
+    "greeting": "我能为您做什么？",
+    "greetingWithName": "我能为您做什么，{name}？",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "创建图表",
+        "prompt": "向我展示您如何创建图表和流程图。您可以帮助我可视化哪些类型的流程、工作流或系统？给我一些例子。"
+      },
+      "draftContent": {
+        "title": "起草专业内容",
+        "prompt": "我需要帮助撰写专业文档 - 电子邮件、报告、摘要。您能向我展示如何帮助不同类型的商务写作吗？"
+      },
+      "analyzeInformation": {
+        "title": "分析信息",
+        "prompt": "您如何帮助我分析数据或信息？向我展示分解数字、发现模式或从文档或数据集中提取见解的不同方法。"
+      },
+      "planOrganize": {
+        "title": "计划和组织",
+        "prompt": "您能帮助我规划项目或组织工作吗？给我一些如何创建时间表、议程或具有不同结构的项目计划的例子。"
+      },
+      "brainstormIdeas": {
+        "title": "头脑风暴",
+        "prompt": "我想进行头脑风暴来解决问题。向我展示您如何进行创造性思维和想法生成 - 您会问什么问题以及如何探索可能性？"
+      },
+      "buildPresentations": {
+        "title": "创建演示文稿",
+        "prompt": "您如何帮助我创建演示文稿？向我展示不同演示文稿结构、视觉建议以及如何为不同受众组织信息的例子。"
+      },
+      "workWithCode": {
+        "title": "代码工作",
+        "prompt": "您能帮助编程或脚本吗？向我展示一些例子 - 无论是编写新代码、调试问题还是逐步解释某些东西是如何工作的。"
+      },
+      "decisionSupport": {
+        "title": "决策支持",
+        "prompt": "我需要做一个决定，但不确定如何评估我的选择。您能向我展示用于思考选择的不同框架或方法吗？"
+      },
+      "summarizeSynthesize": {
+        "title": "总结和综合",
+        "prompt": "您如何帮助总结长文档或综合来自多个来源的信息？向我展示不同摘要格式和详细程度的例子。"
+      },
+      "explainTopics": {
+        "title": "解释复杂话题",
+        "prompt": "您能用简单的术语解释复杂的概念吗？向我展示您如何分解复杂的想法、使用类比并为不同的知识水平调整解释。"
+      },
+      "createSchedules": {
+        "title": "创建日程表",
+        "prompt": "我需要帮助组织时间和创建日程表。向我展示如何构建议程、日历或基于时间的计划的不同方法，并附带示例。"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "模型",
+      "agents": "代理"
+    },
+    "sections": {
+      "baseModels": "基础模型"
+    },
+    "agents": {
+      "advancedFeatureBadge": "高级功能",
+      "description": "创建和管理具有专门功能的自定义 AI 代理。这些代理在 MSF AI Assistant Foundry 实例上运行。",
+      "advancedFeatureTitle": "高级功能 - 需要与 AI 助手技术团队协调",
+      "advancedFeatureWarning": "自定义代理仅与 MSF AI Assistant Foundry 实例一起工作。代理 ID 必须由 AI 助手技术团队在此特定实例上创建，并在使用前与您协调。",
+      "createNewAgent": "创建新的自定义代理",
+      "noAgentsTitle": "还没有自定义代理",
+      "noAgentsDescription": "创建您的第一个自定义代理，以使用专门的工具和行为扩展 AI 功能。"
+    },
+    "advancedOptions": {
+      "title": "高级选项",
+      "temperature": "温度",
+      "fixedTemperatureNote": "注意：此模型使用固定温度值以获得一致的性能。",
+      "reasoningEffort": "推理努力",
+      "minimal": "最小",
+      "low": "低",
+      "medium": "中等",
+      "high": "高",
+      "verbosity": "详细程度"
+    },
+    "searchMode": {
+      "title": "搜索模式",
+      "subtitle": "将在需要时使用网络搜索",
+      "routingLabel": "搜索路由：",
+      "whatsDifference": "有什么区别？",
+      "privacyFocused": "注重隐私（默认）",
+      "privacyFocusedDescription": "较慢但更私密",
+      "azureAgentMode": "Azure AI 代理模式",
+      "azureAgentModeDescription": "更快但在云中存储对话数据",
+      "privacyInfoTitle": "重要隐私信息",
+      "privacyInfoDescription": "您的整个对话将被发送到 Azure AI Foundry 代理。",
+      "learnMoreDataStorage": "了解有关数据存储的更多信息",
+      "privacyEnabled": "已启用隐私保护搜索",
+      "learnPrivacy": "了解您的隐私如何受到保护"
+    },
+    "customAgent": {
+      "label": "自定义代理：",
+      "description": "此代理在 MSF AI Assistant Foundry 实例上运行，工具始终启用。",
+      "webSearch": "实时网络搜索",
+      "codeInterpreter": "代码解释器和文件分析"
+    },
+    "header": {
+      "backToModels": "返回模型",
+      "knowledgeCutoff": "知识截止日期：{cutoff}",
+      "knowledgeCutoffLabel": "知识截止日期"
+    },
+    "modelTypes": {
+      "foundational": "基础型",
+      "omni": "全能型",
+      "reasoning": "推理型",
+      "agent": "代理型"
+    },
+    "orderMode": {
+      "label": "排序方式",
+      "usage": "最常用",
+      "name": "名称（A-Z）",
+      "cutoff": "最新模型",
+      "custom": "自定义",
+      "edit": "编辑",
+      "done": "完成",
+      "reset": "重置",
+      "resetTooltip": "恢复默认排序"
+    },
+    "knowledgeCutoff": {
+      "realtime": "实时网页搜索"
+    },
+    "modelTypeIcons": {
+      "foundational": "快速高效的通用模型",
+      "reasoning": "适用于复杂问题的扩展推理能力",
+      "omni": "多模态模型，功能广泛",
+      "agent": "具备实时工具和网页访问功能的智能体"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "由 GPT-4.1 驱动的 AI 模型，通过 Bing 提供实时网络搜索。提供最新信息、事实核查和当前事件知识。非常适合需要新鲜信息、新闻分析和事实核查的研究。",
+      "knowledgeCutoff": "实时网络搜索"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI 最先进的模型，擅长复杂推理、代码生成和技术问题解决。非常适合分析任务、编程挑战、研究和详细解释。支持可调节的推理努力和响应详细程度。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 的更快、更经济的变体，在保持高质量的同时优化了速度。非常适合日常任务、快速查询、工具路由和需要快速响应的应用程序。在性能和效率之间取得了极好的平衡。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "GPT-5 的专门变体，针对对话互动和情商进行了优化。擅长共情沟通、心理健康支持、创意写作、头脑风暴和自然对话。非常适合休闲对话、咨询场景和需要情感意识的任务。",
+      "knowledgeCutoff": "2025年10月1日 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI 最先进的推理模型，具有革命性的问题解决能力。擅长复杂数学、科学推理、编程挑战和多步骤逻辑任务。扩展了 200K 上下文窗口。支持推理努力控制。",
+      "knowledgeCutoff": "2025年4月8日 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta 的快速、经济型模型。擅长日常任务，如写作、摘要和基本代码帮助。在速度和质量之间取得了很好的平衡，适合常规工作。",
+      "knowledgeCutoff": "2025年5月7日 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "逐步展示工作的推理专家。擅长数学问题、逻辑谜题和理解复杂概念。实时观察它如何思考问题。",
+      "knowledgeCutoff": "2025年1月20日"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "特别擅长编程和技术写作的多功能模型。擅长调试代码、编写文档和解释技术概念。快速可靠，适合开发工作。",
+      "knowledgeCutoff": "2025年4月16日 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI 的多功能模型，以细致入微的回答著称。擅长开放式讨论、创意项目和解决复杂问题。",
+      "knowledgeCutoff": "2025年5月13日 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic 最强大的模型，具有卓越的推理、编程和创意能力。非常适合复杂分析、研究和需要深入理解的任务。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "平衡的 Claude 模型，在编程、分析和创意任务方面表现出色。非常适合日常使用，响应速度快。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "上一代 Claude Opus 模型。擅长复杂编程任务、详细分析和细致入微的理解。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "快速、经济的 Claude 模型，针对快速任务进行了优化。擅长简单查询、摘要和高容量应用。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI 最先进的模型，擅长复杂推理、代码生成和技术问题解决。非常适合分析任务、编程挑战、研究和详细解释。支持可调节的推理深度和回复详细程度。",
+      "knowledgeCutoff": "2025年12月"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "GPT-5.2 的专用变体，针对对话交互和情感智能进行了优化。擅长共情沟通、心理健康支持、创意写作、头脑风暴和自然对话。非常适合日常交流、咨询场景和需要情感洞察的任务。",
+      "knowledgeCutoff": "2025年12月"
+    }
+  },
+  "searchMode": {
+    "backToChat": "返回聊天",
+    "title": "搜索模式说明",
+    "subtitle": "了解您的搜索选项以及数据存储位置",
+    "quickComparison": "快速比较",
+    "noSearch": "无搜索",
+    "privacyFocused": "注重隐私",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "响应速度",
+    "fastest": "最快",
+    "slowerMultiStep": "较慢（多步骤）",
+    "fasterDirect": "较快（直接）",
+    "fullConversationStored": "完整对话存储在云端",
+    "whatsStoredInAzure": "Azure 中存储什么",
+    "nothingStateless": "无（仅无状态）",
+    "searchQueriesOnly": "仅搜索查询",
+    "fullConversationHistory": "完整对话历史",
+    "modelAvailability": "模型可用性",
+    "allModels": "所有模型",
+    "gpt41Only": "仅 GPT-4.1",
+    "searchTurnedOff": "搜索已关闭",
+    "noSearchDescription": "最快的响应，无网络搜索功能。您的完整对话保留在浏览器中 - 云端不存储任何内容。",
+    "viewDetailsBelow": "有关更多详细信息，请参阅下面的技术流程。",
+    "viewTechnicalFlowDiagram": "查看技术流程图",
+    "legend": "图例：",
+    "legendNoSearch": "您的浏览器（本地存储）| AI 助手服务器 | Azure OpenAI（无状态）",
+    "privacyFocusedMode": "注重隐私模式",
+    "default": "默认",
+    "privacyDescription": "需要时使用网络搜索，但速度较慢，因为涉及更多步骤。只有搜索查询存储在 Azure 中 - 您的完整对话保留在浏览器中。",
+    "legendPrivacy": "您的浏览器（本地存储）| AI 助手服务器 | Azure AI Foundry（仅搜索查询）| Azure OpenAI（无状态）",
+    "azureAIFoundryMode": "Azure AI Foundry 模式",
+    "foundryDescription": "更快的响应，内置网络搜索功能。您的完整对话存储在 Azure AI Foundry 数据库中，而不仅仅是在浏览器中。",
+    "legendFoundry": "您的浏览器（本地存储）| AI 助手服务器 | Azure AI Foundry 代理（存储完整对话）",
+    "whyTheseOptions": "为什么有这些选项？",
+    "whyTheseOptionsText1": "这些是 Azure 弃用其 Bing Search API 后可用的搜索实现，AI 助手最初依赖于该 API。",
+    "whyTheseOptionsText2": "团队正在积极探索更注重隐私的搜索替代方案。两个当前选项都使用 Azure AI Foundry 的搜索功能，但共享的对话数据量不同。",
+    "azureDeprecatedBingApi": "Azure 弃用了其 Bing Search API",
+    "footerNote": "两种模式都将您的对话本地存储在浏览器中。您可以随时在模型设置中切换模式。",
+    "note": "注意：",
+    "loadingDiagram": "加载图表中..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "正在检查存储空间",
+      "analyzingData": "正在分析您的数据...",
+      "updateAvailable": "有可用更新",
+      "storageSpaceLimited": "存储空间有限",
+      "migratingData": "正在迁移数据",
+      "migrationComplete": "迁移完成",
+      "partiallyComplete": "部分完成",
+      "migrationFailed": "迁移失败"
+    },
+    "descriptions": {
+      "foundLegacyData": "我们发现了来自旧版本的数据。您是否希望将其迁移以适配改进后的系统？",
+      "storageSpaceWarning": "您的数据所需空间超出当前可用空间。建议使用增量迁移模式。",
+      "pleaseWait": "请稍候，我们正在更新您的数据...",
+      "dataIsSafe": "您的原始数据是安全的。您可以重试或暂时跳过。",
+      "itemsTooLarge": "这些项目过大，无法存储。您可以导出它们、释放空间或跳过继续。",
+      "settingsUpdated": "您的设置已更新。"
+    },
+    "benefits": {
+      "title": "优势",
+      "fasterPerformance": "性能更快",
+      "betterReliability": "更高的可靠性",
+      "dataPreserved": "您的数据已保留"
+    },
+    "options": {
+      "advancedOptions": "高级选项",
+      "useIncrementalMode": "使用增量模式",
+      "slowerButSafer": "更慢但更安全",
+      "recommended": "推荐",
+      "deleteLegacyData": "迁移后删除旧数据",
+      "freesUpSpace": "释放存储空间"
+    },
+    "actions": {
+      "skip": "跳过",
+      "migrateData": "迁移数据",
+      "migrateAnyway": "仍然迁移",
+      "continue": "继续",
+      "retry": "重试",
+      "exportBackupFirst": "先导出备份",
+      "exportSkippedItems": "导出跳过的项目"
+    },
+    "quota": {
+      "availableSpace": "可用空间",
+      "dataToMigrate": "待迁移数据",
+      "additionalSpaceNeeded": "所需额外空间"
+    },
+    "progress": {
+      "migratingConversations": "正在迁移对话",
+      "migratingPrompts": "正在迁移提示",
+      "migratingAgents": "正在迁移代理",
+      "finishingUp": "正在完成"
+    },
+    "results": {
+      "successfullyMigrated": "迁移成功",
+      "notes": "备注",
+      "couldNotMigrate": "无法迁移",
+      "legacyDataDeleted": "旧数据已删除",
+      "freed": "已释放"
+    },
+    "units": {
+      "conversation": "对话",
+      "conversations": "对话",
+      "folder": "文件夹",
+      "folders": "文件夹",
+      "prompt": "提示",
+      "prompts": "提示",
+      "customAgent": "自定义代理",
+      "customAgents": "自定义代理",
+      "item": "项目",
+      "items": "项目"
+    }
+  },
+  "languageSwahili": "斯瓦希里语",
+  "welcomeBanner": {
+    "title": "欢迎使用 AI 助手 V2",
+    "whatsNew": "新功能",
+    "whatsNewQuestion": "有哪些新功能？"
+  },
+  "welcomeV2": {
+    "backToChat": "返回聊天",
+    "title": "欢迎使用 AI 助手 V2",
+    "subtitle": "全新设计，强大新功能",
+    "webSearch": {
+      "title": "网页搜索模式",
+      "description": "为 AI 提供实时网页搜索并注重隐私保护",
+      "quickAccess": "快速访问：",
+      "quickAccessInstructions": "点击聊天输入框旁的 + 按钮 → 选择“网页搜索”",
+      "setAsDefault": "设为默认：",
+      "setAsDefaultInstructions": "打开模型设置并启用网页搜索模式开关。可选择：",
+      "privacyFocused": "隐私优先（默认）",
+      "privacyFocusedDescription": "仅发送搜索查询至外部",
+      "azureAIFoundry": "Azure AI Foundry 模式",
+      "azureAIFoundryDescription": "速度更快，但完整对话会外部存储",
+      "learnMore": "了解更多搜索模式 →"
+    },
+    "tones": {
+      "title": "语调（语音风格）",
+      "description": "控制 AI 的写作风格、正式程度和个性",
+      "createTones": "1. 创建语调：",
+      "createTonesInstructions": "侧边栏快速操作 → 语调标签",
+      "useTones": "2. 使用语调：",
+      "useTonesInstructions": "点击聊天输入框旁的语调下拉菜单",
+      "exampleProfessionalDesc": "正式、商务语气",
+      "exampleCasualDesc": "友好、对话式"
+    },
+    "aiAssist": {
+      "title": "AI 协助优化提示与语调",
+      "description": "让 AI 帮助你更快优化提示和语调",
+      "step1": "在侧边栏打开快速操作",
+      "step2": "导航至 {prompts} 或 {tones} 标签",
+      "step3": "查找 AI 助手面板",
+      "getSuggestions": "获取建议",
+      "getSuggestionsDesc": "AI 分析你的草稿并提出优化建议",
+      "buildFromFiles": "通过文件生成",
+      "buildFromFilesDesc": "上传文档生成提示/语调",
+      "testBeforeSaving": "保存前测试",
+      "testBeforeSavingDesc": "在实时聊天预览中试用提示/语调",
+      "step2Prefix": "前往",
+      "step2Suffix": "选项卡"
+    },
+    "customAgents": {
+      "title": "自定义代理",
+      "advancedBadge": "高级",
+      "description": "具备网页搜索与代码解析等增强能力的 AI 专用代理",
+      "advancedFeature": "高级功能",
+      "advancedFeatureDesc": "自定义代理运行于 Azure AI Foundry，拥有专用工具。需要与 AI 助手技术团队协作创建代理 ID。",
+      "howToAccess": "访问方法：",
+      "howToAccessInstructions": "设置 → 模型 → 代理标签",
+      "whatYouCanDo": "可实现功能：",
+      "configureAgents": "配置具专用能力的代理",
+      "importExport": "导入/导出代理配置",
+      "selectFromDropdown": "在模型下拉菜单中选择自定义代理"
+    },
+    "audioTranslation": {
+      "title": "音频转录与翻译",
+      "description": "自动将音频转录翻译为 13 种以上语言",
+      "howToUse": "使用方法：",
+      "step1": "上传音频或视频文件",
+      "step2": "在转录界面点击语言下拉菜单",
+      "step3": "选择目标语言",
+      "availableLanguages": "可用语言：",
+      "moreLanguages": "+7 种更多语言"
+    },
+    "pwa": {
+      "title": "安装为移动应用",
+      "description": "带有原生体验的渐进式 Web 应用",
+      "installTip": "提示：登录后安装可保留您的身份验证，并获得最佳体验。",
+      "howToInstall": "安装方法：",
+      "step1": "登录您的账户",
+      "step2": "打开设置 → 移动应用，查看详细说明",
+      "step3": "在手机端：点击浏览器菜单（⋮ 或 ⚙️）",
+      "step4": "查找“添加到主屏幕”或“安装应用”",
+      "step5": "按照提示完成安装",
+      "benefits": "优势：",
+      "benefit1": "可像本地应用一样从主屏幕启动",
+      "benefit2": "全屏显示，无浏览器界面",
+      "benefit3": "离线访问已保存的对话"
+    }
+  },
+  "Professional": "专业",
+  "Casual": "休闲",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "请输入提示，或输入“/”以选择一个提示..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "添加您的个性化指令以定制AI的回应方式。这些指令将与核心行为指南结合，以确保回应有用、准确且安全。"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "提示：输入“/”可选择已保存的提示模板。"
+  },
+  "fileUpload": {
+    "uploading": "上传中...",
+    "transcribing": "正在转录...",
+    "complete": "已完成",
+    "failed": "上传失败",
+    "uploadFiles": "上传文件（音频、视频或文本）",
+    "autoDetect": "自动检测",
+    "fileNotAvailable": "文件无法编辑",
+    "failedToOpenInEditor": "无法在代码编辑器中打开文件，请重试。",
+    "extractingAudio": "正在提取音频...",
+    "queuedForTranscription": "已排队等待转录",
+    "transcribed": "已转录",
+    "transcriptionFailed": "转录失败",
+    "extractedFromSmaller": "已从小{percent}%的文件中提取",
+    "textExtraction": "文本提取",
+    "opening": "正在打开...",
+    "openInEditor": "在编辑器中打开",
+    "failedToUpload": "上传失败",
+    "attachment": "附件",
+    "attachments": "附件"
+  },
+  "transcript": {
+    "originalTranscript": "原始文本",
+    "transcript": "文本记录",
+    "transcriptionOf": "转录自",
+    "translating": "正在翻译...",
+    "copied": "已复制！",
+    "copy": "复制",
+    "download": "下载",
+    "translate": "翻译",
+    "collapse": "收起",
+    "expand": "展开",
+    "expandHint": "点击“展开”以查看原始文本",
+    "listen": "收听文本记录",
+    "stopAudio": "停止音频",
+    "openAsDocument": "作为文档打开"
+  },
+  "userMessage": {
+    "open": "打开",
+    "showFullMessage": "显示完整消息",
+    "collapse": "收起",
+    "customTone": "自定义语气"
+  },
+  "codeBlock": {
+    "openInEditor": "在编辑器中打开"
+  },
+  "artifact": {
+    "noContentToExport": "无可导出内容",
+    "exportedAsHtml": "已导出为 HTML",
+    "exportedAsMarkdown": "已导出为 Markdown",
+    "exportedAsText": "已导出为纯文本",
+    "generatingPdf": "正在生成 PDF...",
+    "exportedAsPdf": "已导出为 PDF",
+    "generatingDocx": "正在生成 DOCX...",
+    "exportedAsDocx": "已导出为 DOCX",
+    "failedToExportAs": "导出为 {format} 失败",
+    "document": "文档",
+    "switchToCodeEditor": "切换到代码编辑器",
+    "exportDocument": "导出文档",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "纯文本 (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "关闭",
+    "editsNotSaved": "编辑尚未保存。请通过消息发送或下载以保存编辑内容。",
+    "fileDownloaded": "文件已下载",
+    "failedToDownload": "下载失败",
+    "switchToDocumentEditor": "切换到文档编辑器",
+    "download": "下载",
+    "fileIncludedWithMessage": "消息中包含文件和修改内容",
+    "closeEditor": "关闭编辑器",
+    "closeCodeEditor": "关闭代码编辑器",
+    "startWriting": "开始撰写...",
+    "toolbar": {
+      "bold": "加粗",
+      "italic": "斜体",
+      "underline": "下划线",
+      "strikethrough": "删除线",
+      "heading1": "标题 1",
+      "heading2": "标题 2",
+      "heading3": "标题 3",
+      "bulletList": "项目符号列表",
+      "numberedList": "编号列表",
+      "codeBlock": "代码块",
+      "quote": "引用",
+      "insertTable": "插入表格",
+      "table": "表格",
+      "undo": "撤销",
+      "redo": "重做"
+    },
+    "codeEditor": {
+      "startTyping": "开始输入，或请求 AI 生成代码",
+      "codeWillSync": "代码将自动从聊天消息同步",
+      "startCoding": "// 开始编码..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "为每条消息启用网页搜索。\n\n通过实时 Bing 网页访问提供最新信息。",
+    "attachTooltip": "可附加文件、图片或音频/视频。\n\n支持格式：\n• 图片：JPEG、PNG、GIF、WebP（最大5MB，最多10个）\n• 文档：PDF、DOCX、XLSX、PPTX、TXT、MD（最大10MB，最多3个）\n• 数据：CSV、JSON、XML、YAML（最大10MB，最多3个）\n• 代码：PY、JS、TS、JAVA、C、CPP、GO 等（最大10MB，最多3个）\n• 音频/视频：MP3、WAV、MP4、WebM（最大25MB，1个文件）\n\n总计：最多10个文件，最大50MB",
+    "transcribeTooltip": "上传音频或视频文件进行转录。\n\n支持格式：MP3、MP4、WAV、WebM、M4A、MPEG、MPGA\n单文件最大：25MB\n\n发送消息后自动转录。",
+    "selected": "已选择",
+    "expandActions": "展开操作",
+    "selectTone": "选择语气",
+    "selectToneDescription": "为您的消息选择语音风格",
+    "noToneDefault": "无语气（默认）",
+    "useDefaultStyle": "使用默认写作风格",
+    "noTonesCreated": "尚未创建语气",
+    "createTonesHint": "可在快捷操作中创建语气",
+    "translateDocumentTooltip": "将文档翻译为其他语言。\n\n支持格式：Word、Excel、PowerPoint、PDF、HTML、TXT\n最大文件大小：40MB\n\n支持 80 多种语言，并可选用术语表文件。"
+  },
+  "transcription": {
+    "addInstructions": "添加说明",
+    "instructionsPlaceholder": "提高准确性的上下文（例如，名称、术语）",
+    "transcribesOnSend": "发送时转录",
+    "languages": {
+      "autoDetect": "自动识别",
+      "afrikaans": "南非语",
+      "arabic": "阿拉伯语",
+      "armenian": "亚美尼亚语",
+      "azerbaijani": "阿塞拜疆语",
+      "belarusian": "白俄罗斯语",
+      "bosnian": "波斯尼亚语",
+      "bulgarian": "保加利亚语",
+      "burmese": "缅甸语",
+      "catalan": "加泰罗尼亚语",
+      "chinese": "中文",
+      "croatian": "克罗地亚语",
+      "czech": "捷克语",
+      "danish": "丹麦语",
+      "dutch": "荷兰语",
+      "english": "英语",
+      "estonian": "爱沙尼亚语",
+      "finnish": "芬兰语",
+      "french": "法语",
+      "galician": "加利西亚语",
+      "german": "德语",
+      "greek": "希腊语",
+      "hebrew": "希伯来语",
+      "hindi": "印地语",
+      "hungarian": "匈牙利语",
+      "icelandic": "冰岛语",
+      "indonesian": "印尼语",
+      "italian": "意大利语",
+      "japanese": "日语",
+      "kannada": "卡纳达语",
+      "kazakh": "哈萨克语",
+      "korean": "韩语",
+      "latvian": "拉脱维亚语",
+      "lithuanian": "立陶宛语",
+      "macedonian": "马其顿语",
+      "malay": "马来语",
+      "maori": "毛利语",
+      "marathi": "马拉地语",
+      "nepali": "尼泊尔语",
+      "norwegian": "挪威语",
+      "persian": "波斯语",
+      "polish": "波兰语",
+      "portuguese": "葡萄牙语",
+      "romanian": "罗马尼亚语",
+      "russian": "俄语",
+      "serbian": "塞尔维亚语",
+      "slovak": "斯洛伐克语",
+      "slovenian": "斯洛文尼亚语",
+      "spanish": "西班牙语",
+      "swahili": "斯瓦希里语",
+      "swedish": "瑞典语",
+      "tagalog": "他加禄语",
+      "tamil": "泰米尔语",
+      "thai": "泰语",
+      "turkish": "土耳其语",
+      "ukrainian": "乌克兰语",
+      "urdu": "乌尔都语",
+      "vietnamese": "越南语",
+      "welsh": "威尔士语"
+    },
+    "inProgress": "转录处理中",
+    "processingFile": "处理中：{filename}",
+    "timeRemaining": "剩余时间：{time}",
+    "maxDurationNote": "大文件可能需要长达 {minutes} 分钟",
+    "timedOut": "转录在 {minutes} 分钟后超时",
+    "timedOutToast": "转录超时：{filename}",
+    "failed": "转录失败：{error}",
+    "failedToast": "转录失败：{filename}",
+    "unknownError": "未知错误",
+    "completed": "转录完成",
+    "completedToast": "转录完成：{filename}",
+    "placeholder": "[转录处理中：{filename}]",
+    "loadingTranscript": "正在加载 {filename} 的转录文本…",
+    "expiredOrDeleted": "该转录文本已过期或被删除。",
+    "fetchError": "加载转录文本失败。请重试。",
+    "transcriptExpired": "{filename} 的转录文本已过期。为保障隐私，转录文本会在 {days} 天后自动删除。",
+    "expirationWarning": "{filename} 的转录文本将在 {days} 天后过期。如需保存，请及时复制内容。"
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "添加您的个性化指令，以自定义 AI 的回应方式。这些将与核心行为准则结合，以确保回应的有用性、准确性和安全性。",
+  "Tip: Type \"/\" to select from saved prompt templates_": "提示：输入 “/” 以选择已保存的提示模板。",
+  "storageWarning": {
+    "title": {
+      "warning": "存储空间不足",
+      "critical": "存储空间几乎已满",
+      "emergency": "存储空间已满"
+    },
+    "message": {
+      "warning": "您的浏览器存储空间已使用{percent}%。",
+      "critical": "您的浏览器存储空间严重不足，仅剩{percent}%可用。",
+      "emergency": "您的浏览器存储空间几乎已满，剩余{percent}%！"
+    },
+    "consequence": "如果存储空间被占满，您可能无法访问新对话，应用也可能无法正常工作。",
+    "storageUsage": "存储使用情况",
+    "optionsToFreeSpace": "释放空间的选项",
+    "clearOption": {
+      "keepRecent": "保留最近的对话",
+      "olderThan": "清除早于此时间的对话",
+      "days": {
+        "7": "7天",
+        "14": "14天",
+        "30": "30天",
+        "60": "60天",
+        "90": "90天"
+      }
+    },
+    "estimate": {
+      "willRemove": "此操作将删除{count}个对话",
+      "willFree": "预计释放空间：{size}"
+    },
+    "action": {
+      "exportFirst": "先导出数据",
+      "clearNow": "立即清除",
+      "dismiss": "忽略",
+      "cancel": "取消"
+    },
+    "confirm": {
+      "title": "确认清除",
+      "message": "此操作将永久删除{count}个对话，无法恢复。"
+    },
+    "clearing": {
+      "title": "正在清理存储空间",
+      "message": "正在删除对话，请稍候..."
+    },
+    "success": {
+      "title": "存储空间已清理",
+      "message": "已成功删除{count}个对话，释放了{size}。"
+    },
+    "error": {
+      "title": "清除失败",
+      "message": "清除对话时发生错误，请重试。"
+    },
+    "close": "关闭"
+  },
+  "support": {
+    "selectOrganization": "请选择您的组织",
+    "organizationDescription": "选择您的 MSF 组织以查看相应的支持联系方式",
+    "autoDetect": "自动检测",
+    "resetToAutoDetect": "重置为自动检测",
+    "organizations": {
+      "USA": "MSF 美国",
+      "OCG": "OCG（日内瓦）",
+      "OCA": "OCA（阿姆斯特丹）",
+      "FIELD": "现场 / 其他"
+    },
+    "emailSupport": "邮件支持",
+    "emailDescription": "联系 {organization} 支持团队",
+    "escalationTitle": "现场及其他 MSF 人员",
+    "escalationDescription": "请按照您的组织 IT 升级流程寻求支持",
+    "escalationShort": "联系您本地的 IT 支持",
+    "escalationStep1": "请首先联系您本地的 IT 支持",
+    "escalationStep2": "如未解决，请升级到您的运营中心（OC）IT 部门",
+    "escalationStep3": "如仍未解决，OC IT 可升级到 SITS（共享 IT 服务）"
+  },
+  "translateDocumentDropdown": "翻译文档",
+  "documentTranslation": {
+    "title": "文档翻译",
+    "targetLanguage": "目标语言",
+    "sourceLanguage": "源语言",
+    "searchLanguage": "搜索语言…",
+    "noLanguagesFound": "未找到语言",
+    "autoDetect": "如未指定将自动检测",
+    "glossary": "术语表文件",
+    "glossaryHelp": "上传 CSV、TSV 或 XLIFF 格式的术语表以自定义术语",
+    "uploadGlossary": "上传术语表",
+    "glossaryTooLarge": "术语表文件过大。最大支持{maxSize}。",
+    "outputFilename": "输出文件名",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "翻译文档",
+    "translating": "正在翻译…",
+    "noDocumentError": "请选择要翻译的文档。",
+    "noTargetLanguageError": "请选择目标语言。",
+    "documentTooLarge": "文档过大。最大支持{maxSize}。",
+    "translationSuccess": "文档翻译成功",
+    "translationFailed": "翻译失败：{error}",
+    "invalidReference": "无效的文档翻译引用",
+    "documentNotFound": "已翻译的文档未找到或已过期",
+    "downloadFailed": "下载翻译文档失败",
+    "downloadSuccess": "文档下载成功",
+    "translatedTo": "已翻译为{language}",
+    "download": "下载",
+    "downloading": "正在下载…",
+    "expired": "此翻译已过期，无法访问",
+    "expiresSoon": "将在{days}天后过期，请尽快下载",
+    "expires": "可用{days}天",
+    "learnMore": "了解更多",
+    "advancedOptions": "高级选项"
   }
 }

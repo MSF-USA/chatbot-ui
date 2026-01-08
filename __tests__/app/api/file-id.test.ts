@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
-import { getBlobBase64String } from '@/lib/utils/server/blob';
+import { getBlobBase64String } from '@/lib/utils/server/blob/blob';
 
 import { parseJsonResponse } from './helpers';
 
@@ -24,7 +24,7 @@ vi.mock('@/lib/utils/app/user/session', () => ({
   getUserIdFromSession: vi.fn(),
 }));
 
-vi.mock('@/lib/utils/server/blob', () => ({
+vi.mock('@/lib/utils/server/blob/blob', () => ({
   BlobProperty: {
     BLOB: 'blob',
   },

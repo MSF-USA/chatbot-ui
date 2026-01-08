@@ -13,10 +13,10 @@ import {
   badRequestResponse,
   handleApiError,
   unauthorizedResponse,
-} from '@/lib/utils/server/apiResponse';
-import { loadDocument } from '@/lib/utils/server/file-handling';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
-import { getContentType } from '@/lib/utils/server/mimeTypes';
+} from '@/lib/utils/server/api/apiResponse';
+import { loadDocument } from '@/lib/utils/server/file/fileHandling';
+import { getContentType } from '@/lib/utils/server/file/mimeTypes';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { auth } from '@/auth';
 import {

@@ -1,5 +1,13 @@
-import { IconCode, IconInfoCircle, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconChevronDown,
+  IconCode,
+  IconInfoCircle,
+  IconLoader2,
+  IconX,
+} from '@tabler/icons-react';
 import React, {
+  ChangeEvent,
   Dispatch,
   FC,
   MouseEvent,
@@ -15,6 +23,7 @@ import { XIcon } from '@/components/Icons/cancel';
 import FileIcon from '@/components/Icons/file';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+import { TRANSCRIPTION_LANGUAGES } from '@/lib/constants/transcriptionLanguages';
 
 /**
  * Lightbox modal for full-screen image viewing
@@ -109,6 +118,117 @@ const isCodeFile = (extension: string): boolean => {
   return codeExtensions.includes(extension.toLowerCase());
 };
 
+/**
+ * Transcription options component for audio/video files.
+ * Allows users to specify language and provide context instructions.
+ */
+interface TranscriptionOptionsProps {
+  filePreview: FilePreview;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+}
+
+const TranscriptionOptions: FC<TranscriptionOptionsProps> = ({
+  filePreview,
+  setFilePreviews,
+}) => {
+  const t = useTranslations();
+  const [showPromptInput, setShowPromptInput] = useState(
+    !!filePreview.transcriptionPrompt,
+  );
+
+  const updateFilePreview = (updates: Partial<FilePreview>) => {
+    setFilePreviews((prevPreviews) =>
+      prevPreviews.map((fp) =>
+        fp.name === filePreview.name && fp.previewUrl === filePreview.previewUrl
+          ? { ...fp, ...updates }
+          : fp,
+      ),
+    );
+  };
+
+  const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    updateFilePreview({
+      transcriptionLanguage: value || undefined,
+    });
+  };
+
+  const handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    updateFilePreview({
+      transcriptionPrompt: value || undefined,
+    });
+  };
+
+  const selectedLanguage = TRANSCRIPTION_LANGUAGES.find(
+    (lang) => lang.code === filePreview.transcriptionLanguage,
+  );
+  const selectedLanguageLabel = selectedLanguage
+    ? t(selectedLanguage.labelKey)
+    : t('transcription.languages.autoDetect');
+
+  return (
+    <div className="space-y-1.5">
+      {/* Info text */}
+      <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+        <IconInfoCircle size={12} className="flex-shrink-0" />
+        <span>{t('transcription.transcribesOnSend')}</span>
+      </div>
+
+      {/* Language selector */}
+      <div className="relative">
+        <select
+          value={filePreview.transcriptionLanguage || ''}
+          onChange={handleLanguageChange}
+          className="w-full text-xs px-2 py-1 pr-6 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {TRANSCRIPTION_LANGUAGES.map((lang) => (
+            <option
+              key={lang.code}
+              value={lang.code}
+              className={
+                lang.officiallySupported
+                  ? 'text-gray-700 dark:text-gray-200'
+                  : 'text-gray-400 dark:text-gray-500'
+              }
+            >
+              {t(lang.labelKey)}
+            </option>
+          ))}
+        </select>
+        <IconChevronDown
+          size={12}
+          className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
+        />
+      </div>
+
+      {/* Prompt toggle/input */}
+      {!showPromptInput ? (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPromptInput(true);
+          }}
+          className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          + {t('transcription.addInstructions')}
+        </button>
+      ) : (
+        <input
+          type="text"
+          value={filePreview.transcriptionPrompt || ''}
+          onChange={handlePromptChange}
+          onClick={(e) => e.stopPropagation()}
+          placeholder={t('transcription.instructionsPlaceholder')}
+          className="w-full text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          maxLength={200}
+        />
+      )}
+    </div>
+  );
+};
+
 const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   filePreview,
   setFilePreviews,
@@ -161,7 +281,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
     event.stopPropagation();
 
     if (!filePreview.file) {
-      alert('File not available for editing');
+      alert(t('fileUpload.fileNotAvailable'));
       return;
     }
 
@@ -218,7 +338,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       openArtifact(text, language, filePreview.name);
     } catch (error) {
       console.error('Error opening file in code editor:', error);
-      alert('Failed to open file in code editor. Please try again.');
+      alert(t('fileUpload.failedToOpenInEditor'));
     } finally {
       setIsOpeningInEditor(false);
     }
@@ -431,31 +551,92 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
               </div>
             </div>
             <div className="mt-1.5">
+              {/* Extraction status for video files */}
+              {status === 'extracting' && (
+                <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>{t('fileUpload.extractingAudio')}</span>
+                </div>
+              )}
+              {/* Transcription status indicators */}
+              {filePreview.transcriptionStatus === 'pending' && (
+                <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>{t('fileUpload.queuedForTranscription')}</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'processing' && (
+                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>{t('fileUpload.transcribing')}</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'completed' && (
+                <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                  <IconCheck size={12} className="flex-shrink-0" />
+                  <span>{t('fileUpload.transcribed')}</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'failed' && (
+                <div className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                  <IconX size={12} className="flex-shrink-0" />
+                  <span>{t('fileUpload.transcriptionFailed')}</span>
+                </div>
+              )}
+              {/* Extracted from video indicator */}
+              {filePreview.extractedFromVideo && status === 'completed' && (
+                <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                  <IconCheck size={12} className="flex-shrink-0" />
+                  <span>
+                    {t('fileUpload.extractedFromSmaller', {
+                      percent: (
+                        (1 -
+                          filePreview.extractedFromVideo.extractedSize /
+                            filePreview.extractedFromVideo.originalSize) *
+                        100
+                      ).toFixed(0),
+                    })}
+                  </span>
+                </div>
+              )}
               {isPdf && status === 'completed' && (
                 <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                   <IconInfoCircle size={12} className="flex-shrink-0" />
-                  <span>Text extraction</span>
+                  <span>{t('fileUpload.textExtraction')}</span>
                 </div>
               )}
-              {(isAudio || isVideo) && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                  <IconInfoCircle size={12} className="flex-shrink-0" />
-                  <span>Transcribes on send</span>
-                </div>
-              )}
+              {(isAudio || isVideo) &&
+                status === 'completed' &&
+                !filePreview.transcriptionStatus && (
+                  <TranscriptionOptions
+                    filePreview={filePreview}
+                    setFilePreviews={setFilePreviews}
+                  />
+                )}
               {isCodeFile(extension) && filePreview.file && (
                 <button
                   onClick={openInCodeEditor}
                   disabled={isOpeningInEditor}
                   className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Open in Code Editor"
+                  title={t('fileUpload.openInEditor')}
                 >
                   <IconCode
                     size={12}
                     className={isOpeningInEditor ? 'animate-pulse' : ''}
                   />
                   <span>
-                    {isOpeningInEditor ? 'Opening...' : 'Open in Editor'}
+                    {isOpeningInEditor
+                      ? t('fileUpload.opening')
+                      : t('fileUpload.openInEditor')}
                   </span>
                 </button>
               )}
@@ -479,7 +660,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         {status === 'failed' && (
           <div className="absolute inset-0 bg-red-500/10 backdrop-blur-sm flex items-center justify-center pointer-events-none">
             <span className="text-red-600 dark:text-red-400 text-sm font-medium">
-              Failed to upload
+              {t('fileUpload.failedToUpload')}
             </span>
           </div>
         )}
@@ -494,16 +675,20 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
   setSubmitType,
   uploadProgress,
 }) => {
+  const t = useTranslations();
+
   if (filePreviews.length === 0) {
     return null;
   }
 
   return (
-    <div className="px-4 pt-2 bg-white dark:bg-[#212121]">
+    <div className="max-w-3xl mx-auto px-2 sm:px-4 pt-2 bg-white dark:bg-[#212121]">
       <div className="mb-1.5">
         <span className="text-xs text-gray-500 dark:text-gray-400">
           {filePreviews.length}{' '}
-          {filePreviews.length === 1 ? 'attachment' : 'attachments'}
+          {filePreviews.length === 1
+            ? t('fileUpload.attachment')
+            : t('fileUpload.attachments')}
         </span>
       </div>
       <div className="flex flex-wrap gap-2 mb-2">

@@ -1,14 +1,28 @@
-import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
-import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { FileProcessingService } from '@/lib/services/chat';
 
+import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
+import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
+import {
+  extractAudioFromVideo,
+  isFFmpegAvailable,
+} from '@/lib/utils/server/audio/audioExtractor';
+import { BlobStorage, getBlobBase64String } from '@/lib/utils/server/blob/blob';
+import { validateBufferSignature } from '@/lib/utils/server/file/fileValidation';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
+
+import { getChunkedTranscriptionService } from '../../transcription/chunkedTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';
-import { FileProcessingService } from '../FileProcessingService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 import { InputValidator } from '../validators/InputValidator';
 
 import { isAudioVideoFile } from '@/lib/constants/fileTypes';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
+import fs from 'fs';
+
+// Note: Synchronous polling was removed in favor of async client-side polling.
+// Batch transcription jobs are now submitted and returned immediately with pending state.
+// The frontend polls /api/transcription/status/[jobId] and updates the message when complete.
 
 /**
  * FileProcessor handles file content processing in the pipeline.
@@ -33,6 +47,7 @@ export class FileProcessor extends BasePipelineStage {
   constructor(
     private fileProcessingService: FileProcessingService,
     private inputValidator: InputValidator,
+    private blobStorageClient?: BlobStorage,
   ) {
     super();
   }
@@ -70,7 +85,12 @@ export class FileProcessor extends BasePipelineStage {
           }> = [];
 
           // Extract files and images from message
-          const files: Array<{ url: string; originalFilename?: string }> = [];
+          const files: Array<{
+            url: string;
+            originalFilename?: string;
+            transcriptionLanguage?: string;
+            transcriptionPrompt?: string;
+          }> = [];
           const images: Array<{
             url: string;
             detail: 'auto' | 'low' | 'high';
@@ -84,6 +104,8 @@ export class FileProcessor extends BasePipelineStage {
               files.push({
                 url: section.url,
                 originalFilename: section.originalFilename,
+                transcriptionLanguage: section.transcriptionLanguage,
+                transcriptionPrompt: section.transcriptionPrompt,
               });
             } else if (section.type === 'image_url') {
               images.push({
@@ -169,21 +191,196 @@ export class FileProcessor extends BasePipelineStage {
                   `[FileProcessor] Transcribing audio/video: ${sanitizeForLog(filename)}`,
                 );
 
-                const transcriptionService =
-                  TranscriptionServiceFactory.getTranscriptionService(
-                    'whisper',
-                  );
-                const transcript =
-                  await transcriptionService.transcribe(filePath);
-
-                transcripts.push({
+                // Determine if this is a video file that needs audio extraction
+                const validation = validateBufferSignature(
+                  fileBuffer,
+                  'any',
                   filename,
-                  transcript,
-                });
+                );
+                const isVideo = validation.detectedType === 'video';
+
+                // Get original file size for logging
+                const originalStats = await fs.promises.stat(filePath);
+                const originalSizeMB = (
+                  originalStats.size /
+                  (1024 * 1024)
+                ).toFixed(1);
 
                 console.log(
-                  `[FileProcessor] Transcription complete: ${transcript.length} chars`,
+                  `[FileProcessor] Original file size: ${originalSizeMB}MB, type: ${validation.detectedType || 'unknown'}`,
                 );
+
+                let fileToTranscribe = filePath;
+                let extractedAudioPath: string | null = null;
+
+                // Extract audio from video files before transcription
+                if (isVideo) {
+                  // Check FFmpeg availability before attempting extraction
+                  const ffmpegAvailable = await isFFmpegAvailable();
+                  if (!ffmpegAvailable) {
+                    throw new Error(
+                      `Cannot process video file "${filename}": FFmpeg is not available. ` +
+                        `Please configure the FFMPEG_BIN environment variable or install FFmpeg.`,
+                    );
+                  }
+
+                  console.log(
+                    `[FileProcessor] Detected video file, extracting audio: ${sanitizeForLog(filename)}`,
+                  );
+                  try {
+                    const extraction = await extractAudioFromVideo(filePath);
+                    fileToTranscribe = extraction.outputPath;
+                    extractedAudioPath = extraction.outputPath;
+
+                    // Log extracted audio size
+                    const extractedStats =
+                      await fs.promises.stat(extractedAudioPath);
+                    const extractedSizeMB = (
+                      extractedStats.size /
+                      (1024 * 1024)
+                    ).toFixed(1);
+
+                    console.log(
+                      `[FileProcessor] Audio extracted to: ${extractedAudioPath}`,
+                    );
+                    console.log(
+                      `[FileProcessor] Extracted audio size: ${extractedSizeMB}MB (video was ${originalSizeMB}MB)`,
+                    );
+                  } catch (extractionError) {
+                    // For video files, extraction is REQUIRED - can't send video to batch transcription
+                    // Azure Batch Transcription only accepts audio files, not video containers
+                    console.error(
+                      `[FileProcessor] Audio extraction FAILED for ${sanitizeForLog(filename)}:`,
+                      extractionError,
+                    );
+                    throw new Error(
+                      `Cannot transcribe video file "${filename}": Audio extraction failed. ` +
+                        `Please ensure FFmpeg is properly installed, or try uploading an audio file instead.`,
+                    );
+                  }
+                }
+
+                try {
+                  // Get file size to determine transcription service (extracted audio or original)
+                  const stats = await fs.promises.stat(fileToTranscribe);
+                  const audioSize = stats.size;
+                  const audioSizeMB = (audioSize / (1024 * 1024)).toFixed(1);
+
+                  console.log(
+                    `[FileProcessor] File to transcribe size: ${audioSizeMB}MB${extractedAudioPath ? ' (extracted audio)' : ' (original file)'}`,
+                  );
+
+                  let transcript: string;
+
+                  // Route based on file size: ≤25MB → Whisper, >25MB → Batch
+                  if (audioSize <= WHISPER_MAX_SIZE) {
+                    // Whisper transcription (synchronous, ≤25MB)
+                    console.log(
+                      `[FileProcessor] Using Whisper transcription (≤25MB)`,
+                    );
+
+                    const transcriptionService =
+                      TranscriptionServiceFactory.getTranscriptionService(
+                        'whisper',
+                      );
+
+                    // Pass transcription options (language and prompt) if specified
+                    const transcriptionOptions = {
+                      language: file.transcriptionLanguage,
+                      prompt: file.transcriptionPrompt,
+                    };
+
+                    transcript = await transcriptionService.transcribe(
+                      fileToTranscribe,
+                      transcriptionOptions,
+                    );
+
+                    // Whisper completed synchronously - add transcript immediately
+                    transcripts.push({
+                      filename,
+                      transcript,
+                    });
+
+                    console.log(
+                      `[FileProcessor] Transcription complete: ${transcript.length} chars`,
+                    );
+                  } else {
+                    // Chunked transcription (asynchronous with polling, >25MB)
+                    // Splits large files into smaller chunks and transcribes each
+                    console.log(
+                      `[FileProcessor] Using Chunked transcription (>25MB)`,
+                    );
+
+                    // Check if chunked transcription service is available
+                    const chunkedService = getChunkedTranscriptionService();
+                    if (!chunkedService.isAvailable()) {
+                      throw new Error(
+                        `Audio file (${audioSizeMB}MB) exceeds 25MB Whisper limit. ` +
+                          `Chunked transcription is not available - FFmpeg/FFprobe not found.`,
+                      );
+                    }
+
+                    console.log(
+                      `[FileProcessor] Starting chunked transcription job...`,
+                    );
+
+                    // Start chunked transcription job (returns immediately)
+                    const { jobId, totalChunks } =
+                      await chunkedService.startJob(
+                        fileToTranscribe,
+                        filename,
+                        {
+                          language: file.transcriptionLanguage,
+                          prompt: file.transcriptionPrompt,
+                        },
+                      );
+
+                    console.log(
+                      `[FileProcessor] Chunked job submitted: ${jobId} (${totalChunks} chunks)`,
+                    );
+
+                    // Store pending transcription info (async - client will poll)
+                    if (!context.processedContent) {
+                      context.processedContent = {};
+                    }
+                    if (!context.processedContent.pendingTranscriptions) {
+                      context.processedContent.pendingTranscriptions = [];
+                    }
+                    context.processedContent.pendingTranscriptions.push({
+                      filename,
+                      jobId,
+                      totalChunks,
+                      jobType: 'chunked',
+                    });
+
+                    // Add placeholder transcript for UI display
+                    transcripts.push({
+                      filename,
+                      transcript: `[Transcription in progress: ${filename}]`,
+                    });
+
+                    console.log(
+                      `[FileProcessor] Chunked transcription job queued for async processing: ${jobId}`,
+                    );
+                  }
+                } finally {
+                  // Clean up extracted audio file if created
+                  if (extractedAudioPath) {
+                    try {
+                      await this.fileProcessingService.cleanupFile(
+                        extractedAudioPath,
+                      );
+                      console.log(
+                        `[FileProcessor] Cleaned up extracted audio: ${extractedAudioPath}`,
+                      );
+                    } catch (cleanupError) {
+                      console.warn(
+                        `[FileProcessor] Failed to clean up extracted audio:`,
+                        cleanupError,
+                      );
+                    }
+                  }
+                }
               } else {
                 // Regular document processing
                 console.log(
@@ -248,11 +445,41 @@ export class FileProcessor extends BasePipelineStage {
             ),
           );
 
+          // STEP 5: Convert images to base64 for LLM consumption
+          // Uses getBlobBase64String which handles both data URL strings and binary content
+          let convertedImages = images;
+          if (images.length > 0) {
+            console.log(
+              `[FileProcessor] Converting ${images.length} image(s) to base64...`,
+            );
+            convertedImages = await Promise.all(
+              images.map(async (image) => {
+                // Skip if already a base64 data URL
+                if (image.url.startsWith('data:')) {
+                  return image;
+                }
+
+                // Extract filename from URL (works for both /api/file/{id} and blob URLs)
+                const filename = image.url.split('/').pop() || image.url;
+                const base64Url = await getBlobBase64String(
+                  context.user.id ?? 'anonymous',
+                  filename,
+                  'images',
+                  context.user,
+                );
+                return { url: base64Url, detail: image.detail };
+              }),
+            );
+            console.log(
+              `[FileProcessor] Converted ${convertedImages.length} image(s) to base64`,
+            );
+          }
+
           // Add span attributes
           span.setAttribute('file.count', files.length);
           span.setAttribute('file.summaries_count', fileSummaries.length);
           span.setAttribute('file.transcripts_count', transcripts.length);
-          span.setAttribute('file.images_count', images.length);
+          span.setAttribute('file.images_count', convertedImages.length);
           span.setStatus({ code: SpanStatusCode.OK });
 
           // Return context with processed content
@@ -263,7 +490,7 @@ export class FileProcessor extends BasePipelineStage {
               fileSummaries:
                 fileSummaries.length > 0 ? fileSummaries : undefined,
               transcripts: transcripts.length > 0 ? transcripts : undefined,
-              images: images.length > 0 ? images : undefined,
+              images: convertedImages.length > 0 ? convertedImages : undefined,
             },
           };
         } catch (error) {

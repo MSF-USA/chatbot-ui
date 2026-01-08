@@ -76,7 +76,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   className="text-neutral-600 dark:text-neutral-400 shrink-0"
                 />
                 <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
-                  {conversation.name}
+                  {conversation.name || t('New Conversation')}
                 </span>
               </button>
             ))}

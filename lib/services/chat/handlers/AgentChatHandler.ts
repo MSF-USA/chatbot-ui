@@ -48,6 +48,7 @@ export class AgentChatHandler extends BasePipelineStage {
       context.user,
       context.botId,
       context.threadId,
+      context.streamingSpeed,
     );
 
     console.log('[AgentChatHandler] Agent chat execution completed');

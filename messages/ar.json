@@ -2,17 +2,42 @@
   "OpenAI API Key Required": " (أوبن أيه أي) OpenAI API Key (مطلوب (مفتاح واجهة برمجة تطبيقات  ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "يرجى تعيين مفتاح واجهة برمجة تطبيقات أوبن أيه أي الخاص بك في الجزء السفلي الأيسر من الشريط الجانبي",
   "Stop Generating": "إيقاف التوليد",
-  "Prompt limit is {{maxLength}} characters": "حرفًا {{maxLength}} حد المطالبة هو",
+  "Chat Settings": "إعدادات الدردشة",
+  "Content": "المحتوى",
+  "Conversation exported successfully": "تم تصدير المحادثة بنجاح",
+  "Conversation imported successfully": "تم استيراد المحادثة بنجاح",
+  "Default System Prompt": "موجه النظام الافتراضي",
+  "Edit": "تعديل",
+  "Email": "البريد الإلكتروني",
+  "Failed to export conversation": "فشل تصدير المحادثة",
+  "Failed to export folder": "فشل تصدير المجلد",
+  "Failed to import conversation": "فشل استيراد المحادثة",
+  "Failed to import file": "فشل استيراد الملف",
+  "Folder exported with {count} conversations": "تم تصدير المجلد مع {count} محادثات",
+  "Folder imported with {count} conversations": "تم استيراد المجلد مع {count} محادثات",
+  "Folder not found": "المجلد غير موجود",
+  "importBackupParseError": "فشل تحليل ملف النسخ الاحتياطي. يرجى التأكد من أنه JSON صالح.",
+  "Invalid conversation file": "ملف محادثة غير صالح",
+  "Invalid folder file": "ملف مجلد غير صالح",
+  "New conversation": "محادثة جديدة",
+  "No prompts found": "لم يتم العثور على موجهات",
+  "Prompt limit is {{maxLength}} characters": "الحد الأقصى للطَلب هو {{maxLength}} حرفاً",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "حد الموجه {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا.",
   "System Prompt": "مطالبة النظام",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "أنت شات جبت نموذج لغة كبير تم تدريبه بواسطة أوبن أيه أي. اتبع تعليمات المستخدم بعناية. الرد باستخدام الماركداون",
   "Enter a prompt": "أدخل المطالبة",
   "Regenerate response": "إعادة توليد الرد",
+  "Run Typewriter Intro": "تشغيل مقدمة الآلة الكاتبة",
+  "Saved Prompts": "الموجهات المحفوظة",
+  "Select a prompt to view details": "حدد موجهًا لعرض التفاصيل",
   "Sorry, there was an error_": "عذرًا، حدث خطأ",
   "Model": "النموذج",
   "Conversation": "المحادثة",
   "OR": "أو",
   "Loading_ellipsis": "...جاري التحميل",
+  "transcriptionComplete": "اكتمل النسخ! تمت إضافة النص إلى حقل إدخال الدردشة.",
   "Type a message_ellipsis": "...اكتب رسالة",
+  "Unrecognized file format": "تنسيق ملف غير معروف",
   "Error fetching models_": "خطأ في جلب النماذج",
   "AI": "الذكاء الاصطناعي",
   "You": "أنت",
@@ -128,7 +153,7 @@
   "Description": "الوصف",
   "A description for your prompt_": "وصف لمطلبك",
   "Prompt": "موجه",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطلب. استخدم {{}} للإشارة إلى متغير. مثال: {{الاسم}} هي {{صفة}} {{اسم}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطلب. استخدم '{{}}' للإشارة إلى متغير. مثال: {{الاسم}} هي {{صفة}} {{اسم}}",
   "Save": "حفظ",
   "A name for your prompt_": "اسم للموجه الخاص بك.",
   "New chat": "محادثة جديدة",
@@ -226,7 +251,7 @@
   "Options": "خيارات",
   "Are you sure you want to delete this folder?": "هل أنت متأكد أنك تريد حذف هذا المجلد؟",
   "New Prompt": "مطالبة جديدة",
-  "Edit Prompt": "تعديل المطالبة",
+  "Edit Prompt": "تحرير الموجه",
   "Prompt name": "اسم المطالبة",
   "Prompt content": "محتوى المطالبة",
   "Are you sure you want to delete this prompt?": "هل أنت متأكد أنك تريد حذف هذه المطالبة؟",
@@ -311,7 +336,19 @@
   "Team Templates": "قوالب الفريق",
   "selected": "محدد",
   "folders": "مجلدات",
-  "agents": "وكلاء",
+  "agents": {
+    "exportAgent": "تصدير الوكيل",
+    "editAgent": "تحرير الوكيل",
+    "agentName": "اسم الوكيل",
+    "myResearchAssistant": "مساعد البحث الخاص بي",
+    "agentId": "معرّف الوكيل",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "الوصف (اختياري)",
+    "descriptionPlaceholder": "وكيل متخصص لمهام البحث...",
+    "baseModel": "النموذج الأساسي",
+    "formatDescription": "التنسيق: asst_xxxxx (من MSF AI Assistant Foundry)",
+    "importantInfo": "سيحصل هذا الوكيل على إمكانية الوصول إلى سياق المحادثة ويمكنه استخدام نفس الأدوات كنماذج قياسية. تأكد من أن معرّف الوكيل صحيح حيث لا يمكن تغييره لاحقاً."
+  },
   "Quick Actions": "إجراءات سريعة",
   "Type / in chat to access your prompts": "اكتب / في الدردشة للوصول إلى مطالباتك",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "اكتب / في الدردشة، اختر مطالبتك، واملأ المتغيرات عندما يُطلب منك",
@@ -358,7 +395,6 @@
   "Custom Agents": "وكلاء مخصصون",
   "Delete template and all its items": "حذف القالب وجميع عناصره",
   "Description (Optional)": "الوصف (اختياري)",
-  "Edit Prompt": "تحرير الموجه",
   "Edit Tone": "تحرير النبرة",
   "Email Response Template": "قالب الرد على البريد الإلكتروني",
   "Example Prompt": "مثال على الموجه",
@@ -418,7 +454,6 @@
   "msf_logo_alt": "شعار MSF",
   "collapse_sidebar": "طي الشريط الجانبي",
   "expand_sidebar": "توسيع الشريط الجانبي",
-  "Voice Guidelines": "إرشادات الصوت",
   "Please upload some content or describe the tone you want": "الرجاء تحميل بعض المحتوى أو وصف النبرة التي تريدها",
   "Untitled Tone": "نبرة بدون عنوان",
   "Failed to analyze tone": "فشل في تحليل النبرة",
@@ -446,7 +481,7 @@
   "enterTagsPlaceholder": "أضف علامات (اضغط Enter)",
   "enterPromptNamePlaceholder": "على سبيل المثال، الرد على البريد الإلكتروني",
   "enterPromptDescriptionPlaceholder": "ما الغرض من هذا الموجه؟",
-  "enterPromptContentPlaceholder": "اكتب موجهك هنا. استخدم {{variable}} للمحتوى الديناميكي.",
+  "enterPromptContentPlaceholder": "اكتب موجهك هنا. استخدم '{{variable}}' للمحتوى الديناميكي.",
   "common": {
     "close": "إغلاق",
     "remove": "إزالة",
@@ -461,7 +496,14 @@
     "addTagEllipsis": "إضافة علامة...",
     "msfLogo": "شعار MSF",
     "importantInformation": "معلومات مهمة",
-    "contact": "اتصل"
+    "contact": "اتصل",
+    "noResults": "لم يتم العثور على نتائج",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "discard": "تجاهل",
+    "keepEditing": "متابعة التحرير",
+    "yes": "نعم",
+    "no": "لا"
   },
   "chat": {
     "downloadAudio": "تنزيل الصوت",
@@ -496,7 +538,53 @@
     "fullSizePreview": "معاينة بالحجم الكامل",
     "enterSearchQueryPlaceholder": "أدخل استعلام البحث أو سؤالك...",
     "errorFetchingUrl": "حدث خطأ أثناء جلب محتوى عنوان URL",
-    "errorInitiatingSearch": "حدث خطأ أثناء بدء بحث الويب"
+    "errorInitiatingSearch": "حدث خطأ أثناء بدء بحث الويب",
+    "regenerate": "إعادة التوليد",
+    "modelSwitchPrompt": "فشل {original} لكن نجح {fallback}. هل ترغب في تغيير النموذج؟",
+    "keepOriginalModel": "الاحتفاظ بـ {model}",
+    "switchToModel": "التبديل إلى {model}",
+    "alwaysSwitchToModel": "التبديل التلقائي دائمًا",
+    "translateMessage": "ترجمة الرسالة",
+    "translating": "جارٍ الترجمة...",
+    "translationError": "فشلت الترجمة",
+    "showOriginal": "عرض الأصلي",
+    "translatedTo": "مترجم إلى {language}",
+    "searchLanguages": "البحث عن لغات...",
+    "selectLanguage": "اختيار اللغة",
+    "audioFromOriginal": "الصوت من النص الأصلي",
+    "audioFromTranslation": "الصوت من ترجمة {language}",
+    "thinking": "جارٍ التفكير...",
+    "viewReasoningProcess": "عرض عملية التفكير",
+    "collapseThinking": "طي التفكير",
+    "expandThinking": "توسيع التفكير",
+    "actionsDisabledForEmbed": "استخدم أدوات التحكم في المحتوى المضمّن أعلاه",
+    "loadingMessages": {
+      "transcribingAndProcessing": "جارٍ النسخ والمعالجة...",
+      "transcribingAudio": "جارٍ نسخ الصوت...",
+      "analyzingFiles": "جارٍ تحليل الملفات...",
+      "analyzingDocuments": "جارٍ تحليل المستندات...",
+      "analyzingDocument": "جارٍ تحليل المستند...",
+      "analyzingImages": "جارٍ تحليل الصور...",
+      "analyzingImage": "جارٍ تحليل الصورة..."
+    },
+    "contentDescription": {
+      "text": "نص",
+      "imagesCount": "{count} صورة",
+      "filesCount": "{count} ملف",
+      "audioVideo": "صوت/فيديو",
+      "empty": "فارغ"
+    },
+    "discardChanges": "تجاهل التعديلات",
+    "discardChangesMessage": "لديك تعديلات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟",
+    "voiceInputStarting": "جارٍ البدء...",
+    "voiceInputRecording": "جارٍ التسجيل...",
+    "voiceInputTapToStop": "اضغط لإيقاف",
+    "stopRecording": "إيقاف التسجيل",
+    "voiceInput": "إدخال صوتي",
+    "microphoneAccessDenied": "تم رفض الوصول إلى الميكروفون. يرجى تفعيله في إعدادات المتصفح.",
+    "microphoneAccessError": "خطأ في الوصول إلى الميكروفون: {message}",
+    "voiceInputTranscribing": "جارٍ التحويل إلى نص...",
+    "ttsRightClickHint": "انقر بزر الماوس الأيمن لاختيار خيارات الصوت"
   },
   "sidebar": {
     "collapseSidebar": "طي الشريط الجانبي",
@@ -504,29 +592,135 @@
     "quickActionsTitle": "الإجراءات السريعة",
     "quickActions": "الإجراءات السريعة"
   },
-  "agents": {
-    "exportAgent": "تصدير الوكيل",
-    "editAgent": "تحرير الوكيل",
-    "agentName": "اسم الوكيل",
-    "myResearchAssistant": "مساعد البحث الخاص بي",
-    "agentId": "معرّف الوكيل",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "الوصف (اختياري)",
-    "descriptionPlaceholder": "وكيل متخصص لمهام البحث...",
-    "baseModel": "النموذج الأساسي",
-    "formatDescription": "التنسيق: asst_xxxxx (من MSF AI Assistant Foundry)",
-    "importantInfo": "سيحصل هذا الوكيل على إمكانية الوصول إلى سياق المحادثة ويمكنه استخدام نفس الأدوات كنماذج قياسية. تأكد من أن معرّف الوكيل صحيح حيث لا يمكن تغييره لاحقاً."
-  },
   "prompts": {
-    "buildReusablePrompts": "بناء موجهات قابلة لإعادة الاستخدام بمساعدة الذكاء الاصطناعي"
+    "buildReusablePrompts": "بناء موجهات قابلة لإعادة الاستخدام بمساعدة الذكاء الاصطناعي",
+    "noToneDefault": "بدون نبرة (استخدام الافتراضي)",
+    "tagHelp": "مساعدة العلامات",
+    "tagHelpContent": "استخدم العلامات لتصنيف موجهاتك والعثور عليها بسرعة. أمثلة:",
+    "tagExamples": {
+      "email": "بريد إلكتروني",
+      "marketing": "تسويق",
+      "technical": "تقني",
+      "customerSupport": "دعم العملاء"
+    },
+    "variableHelp": "مساعدة المتغيرات",
+    "variableHelpIntro": "استخدم المتغيرات لجعل موجهاتك ديناميكية:",
+    "requiredVariables": "المتغيرات المطلوبة (بدون قيمة افتراضية):",
+    "optionalVariables": "المتغيرات الاختيارية (مع قيمة افتراضية):",
+    "userMustProvide": "يجب على المستخدم تقديم قيمة",
+    "userCanProvide": "يمكن للمستخدم تقديم قيمة، أو يتم استخدام القيمة الافتراضية",
+    "example": "مثال:",
+    "variableExampleText": "اكتب بريدًا إلكترونيًا '{{tone:احترافي}}' إلى '{{recipient}}' حول '{{topic}}' بـ '{{language:العربية}}'",
+    "detectedVariables": "المتغيرات المكتشفة",
+    "required": "مطلوب",
+    "aiAssistant": "مساعد الذكاء الاصطناعي",
+    "whatToImprove": "ماذا تريد تحسينه؟",
+    "whatShouldPromptDo": "ماذا يجب أن يفعل هذا الموجه؟",
+    "improvePlaceholder": "مثال، جعله أكثر احترافية، إضافة أمثلة، تحسين الوضوح...",
+    "generatePlaceholder": "مثال، إنشاء قالب بريد إلكتروني احترافي مع متغيرات للمستلم والموضوع...",
+    "addContextOptional": "إضافة سياق (اختياري)",
+    "revising": "جارٍ المراجعة...",
+    "generating": "جارٍ التوليد...",
+    "reviseWithAI": "مراجعة مع الذكاء الاصطناعي",
+    "generatePrompt": "توليد موجه",
+    "revisionComplete": "اكتملت المراجعة",
+    "generationComplete": "اكتمل التوليد",
+    "revisedPrompt": "الموجه المراجع:",
+    "generatedPrompt": "الموجه المولد:",
+    "applyRevision": "تطبيق هذه المراجعة",
+    "useThisPrompt": "استخدم هذا الموجه",
+    "improvementsMade": "التحسينات المنجزة:",
+    "tips": "نصائح:",
+    "howAICanHelp": "كيف يمكن للذكاء الاصطناعي المساعدة",
+    "helpItems": {
+      "improveClarity": "تحسين الوضوح والبنية",
+      "suggestVariables": "اقتراح متغيرات مفيدة",
+      "addContext": "إضافة سياق وأمثلة",
+      "optimize": "تحسين للحصول على نتائج أفضل"
+    },
+    "savePrompt": "حفظ الموجه",
+    "add": "إضافة"
   },
   "tones": {
     "createCustomVoiceProfile": "إنشاء ملف صوتي مخصص بمساعدة الذكاء الاصطناعي",
-    "examplePlaceholder": "على سبيل المثال، إنشاء نبرة دعم عملاء احترافية لكن ودية..."
+    "examplePlaceholder": "على سبيل المثال، إنشاء نبرة دعم عملاء احترافية لكن ودية...",
+    "tagHelp": "مساعدة العلامات",
+    "tagHelpContent": "استخدم العلامات لتصنيف نبراتك والعثور عليها بسرعة. أمثلة:",
+    "tagExamples": {
+      "professional": "احترافي",
+      "casual": "غير رسمي",
+      "technical": "تقني",
+      "marketing": "تسويقي"
+    },
+    "add": "إضافة",
+    "aiToneAnalyzer": "محلل النبرة بالذكاء الاصطناعي",
+    "describeToneToCreate": "صف النبرة التي تريد إنشاءها",
+    "uploadContentSamples": "تحميل عينات المحتوى",
+    "analyzing": "جارٍ التحليل...",
+    "analyzeToneWithAI": "تحليل النبرة بالذكاء الاصطناعي",
+    "analysisComplete": "اكتمل التحليل",
+    "generatedVoiceGuidelines": "إرشادات الصوت المولدة:",
+    "examplePhrases": "عبارات مثالية:",
+    "suggestedTags": "العلامات المقترحة:",
+    "applyThisAnalysis": "تطبيق هذا التحليل",
+    "detectedCharacteristics": "الخصائص المكتشفة:",
+    "howAICanHelp": "كيف يمكن للذكاء الاصطناعي المساعدة",
+    "helpItems": {
+      "transcribe": "نسخ محتوى الصوت/الفيديو",
+      "analyzeContent": "تحليل عينات المحتوى الخاصة بك",
+      "extractPatterns": "استخراج أنماط النبرة والأسلوب",
+      "generateGuidelines": "توليد إرشادات الصوت",
+      "suggestTags": "اقتراح علامات ذات صلة"
+    },
+    "saveTone": "حفظ النبرة"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "عرض مخطط التدفق الفني"
+    "viewTechnicalFlowDiagram": "عرض مخطط التدفق الفني",
+    "backToChat": "العودة إلى المحادثة",
+    "title": "مركز المساعدة",
+    "subtitle": "ابحث عن إجابات، تعرف على الخصوصية، واحصل على الدعم",
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "description": "ابحث عن إجابات للأسئلة الشائعة حول استخدام مساعد الذكاء الاصطناعي",
+      "articles": "مقالات",
+      "searchPlaceholder": "البحث في الأسئلة الشائعة...",
+      "noResults": "لا توجد أسئلة شائعة مطابقة",
+      "noResultsHint": "جرب مصطلح بحث مختلف"
+    },
+    "privacy": {
+      "title": "الخصوصية والبيانات",
+      "description": "تعرف على كيفية تخزين بياناتك وحمايتها",
+      "topics": "المواضيع",
+      "searchPlaceholder": "البحث في مواضيع الخصوصية...",
+      "noResults": "لا توجد مواضيع خصوصية مطابقة",
+      "noResultsHint": "جرب مصطلح بحث مختلف",
+      "bannerTitle": "خصوصيتك مهمة",
+      "bannerDescription": "يتم تخزين جميع المحادثات محليًا على جهازك. تتم معالجة البيانات داخل أنظمة MSF باستخدام بنية Azure التحتية.",
+      "localStorageOnly": "تخزين محلي فقط",
+      "msfControlled": "تحكم MSF",
+      "noPersonalData": "لا بيانات شخصية",
+      "noSensitiveOps": "لا عمليات حساسة"
+    },
+    "contact": {
+      "title": "التواصل والموارد",
+      "description": "تواصل مع فريقنا واحصل على روابط مفيدة",
+      "supportAvailable": "الدعم متاح",
+      "submitRequest": "إرسال طلب دعم",
+      "getHelp": "احصل على المساعدة من فريقنا",
+      "requestDescription": "هل تحتاج إلى مساعدة أو تريد تقديم ملاحظات؟ انقر أدناه لفتح نموذج الدعم.",
+      "openSupportForm": "فتح نموذج الدعم",
+      "otherWays": "طرق أخرى للتواصل معنا",
+      "emailSupport": "الدعم عبر البريد الإلكتروني",
+      "emailDescription": "أرسل لنا بريدًا إلكترونيًا للأسئلة أو الملاحظات أو المشكلات التقنية"
+    },
+    "resources": {
+      "title": "موارد إضافية",
+      "portalTitle": "بوابة تسريع الذكاء الاصطناعي",
+      "portalDescription": "التوثيق وتحديثات المشروع ومواد التدريب",
+      "githubTitle": "مستودع المصدر المفتوح",
+      "githubDescription": "عرض الكود والإبلاغ عن المشكلات والمساهمة على GitHub"
+    }
   },
   "settings": {
     "Settings": "الإعدادات",
@@ -594,7 +788,89 @@
     "FAQs, privacy policy, and guides": "الأسئلة الشائعة وسياسة الخصوصية والأدلة",
     "Contact Support": "اتصل بالدعم",
     "Popular Questions": "الأسئلة الشائعة",
-    "View all FAQs": "عرض جميع الأسئلة الشائعة"
+    "View all FAQs": "عرض جميع الأسئلة الشائعة",
+    "Delete legacy data after migration": "حذف البيانات القديمة بعد الترحيل",
+    "frees up storage space": "يحرر مساحة التخزين",
+    "Legacy data deleted": "تم حذف البيانات القديمة",
+    "freed": "محرر",
+    "Conversations": "المحادثات",
+    "Legacy": "قديم",
+    "Other": "أخرى",
+    "Loading": "جارٍ التحميل",
+    "Legacy Data Detected": "تم اكتشاف بيانات قديمة",
+    "legacyDataDescription": "لديك {size} من البيانات من إصدار سابق. يمكن ترحيلها أو تصديرها أو حذفها لتحرير المساحة.",
+    "legacyDeleteSuccess": "تم حذف البيانات القديمة بنجاح وتحرير {size}.",
+    "legacyDeleteError": "فشل حذف البيانات القديمة. يرجى المحاولة مرة أخرى.",
+    "Explore solutions": "استكشاف الحلول",
+    "Migrate to Current Format": "الترحيل إلى التنسيق الحالي",
+    "Export Legacy Data": "تصدير البيانات القديمة",
+    "Delete Legacy Data": "حذف البيانات القديمة",
+    "deleteLegacyConfirm": "هل أنت متأكد من حذف جميع البيانات القديمة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "Deleting": "جارٍ الحذف",
+    "Confirm Delete": "تأكيد الحذف",
+    "Cancel": "إلغاء",
+    "Custom Instructions": "تعليمات مخصصة",
+    "Personalization": "التخصيص",
+    "Display Name": "اسم العرض",
+    "Display Name Description": "اختر كيف يظهر اسمك في التحيات وفي جميع أنحاء التطبيق",
+    "First Name": "الاسم الأول",
+    "Last Name": "اسم العائلة",
+    "Full Name": "الاسم الكامل",
+    "Custom": "مخصص",
+    "None": "بدون",
+    "Custom Display Name": "اسم عرض مخصص",
+    "Custom Display Name Placeholder": "أدخل الاسم الذي تفضله",
+    "howShouldWeAddressYou": "كيف نُناديك؟",
+    "displayNamePreview": "معاينة: \"{greeting}\"",
+    "Streaming Speed": "سرعة البث",
+    "Slow": "بطيء",
+    "Normal": "عادي",
+    "Fast": "سريع",
+    "Controls how smoothly text appears during AI responses": "يتحكم في سلاسة ظهور النص أثناء ردود الذكاء الاصطناعي",
+    "aboutYou": {
+      "title": "معلومات عنك",
+      "shareBasicInfo": "مشاركة المعلومات الأساسية مع الذكاء الاصطناعي",
+      "shareBasicInfoDescription": "عند التفعيل، سيتمكن الذكاء الاصطناعي من معرفة اسمك، وظيفتك، وقسمك من ملفك الشخصي",
+      "preferredName": "الاسم المفضل",
+      "preferredNamePlaceholder": "كيف تود أن يتم مناداتك؟",
+      "preferredNameDescription": "تجاوز اسم العرض الخاص بك. اترك الحقل فارغاً لاستخدام اسم ملفك الشخصي",
+      "additionalContext": "سياق إضافي",
+      "additionalContextPlaceholder": "مثلاً: أعمل في العمليات الميدانية، أفضل الردود المختصرة، غالباً أسأل عن البروتوكولات الطبية...",
+      "additionalContextDescription": "أي معلومات أخرى تود أن يعرفها الذكاء الاصطناعي عنك",
+      "preferredNameDescriptionWithSync": "كيف سيخاطبك الذكاء الاصطناعي. اتركه فارغًا لاستخدام اسم العرض من الإعدادات العامة."
+    },
+    "displayNameUIOnly": "يحدد هذا كيف يظهر اسمك في التطبيق. الذكاء الاصطناعي لا يراه إلا إذا فعّلت المشاركة في إعدادات الدردشة.",
+    "tts": {
+      "title": "تحويل النص إلى كلام",
+      "language": "اللغة",
+      "voice": "الصوت",
+      "multilingualVoices": "الأصوات متعددة اللغات",
+      "voices": "الأصوات",
+      "rate": "السرعة",
+      "pitch": "حدة الصوت",
+      "quality": "جودة الصوت",
+      "qualityDescription": "جودة أعلى تنتج صوتًا أفضل ولكن تستهلك نطاقًا تردديًا أكبر",
+      "preview": "معاينة",
+      "previewing": "يتم التشغيل...",
+      "previewFailed": "تعذر إنشاء معاينة الصوت",
+      "previewText": "هذه معاينة لإعدادات الصوت المحددة.",
+      "reset": "إعادة تعيين",
+      "default": "افتراضي",
+      "slower": "أبطأ",
+      "faster": "أسرع",
+      "lower": "أخفض",
+      "higher": "أعلى",
+      "selectedVoice": "تم الاختيار",
+      "noVoicesAvailable": "لا توجد أصوات متاحة لهذه اللغة",
+      "quickSettings": "إعدادات الصوت",
+      "overrideForThisMessage": "تعديل الإعدادات لهذه الرسالة",
+      "speakWithSettings": "تشغيل الصوت"
+    },
+    "Model Response Settings Description": "قم بتكوين معايير الاستجابة الافتراضية لنموذج الذكاء الاصطناعي. تختلف الإعدادات حسب كل نموذج.",
+    "Default Reasoning Effort": "جهد الاستدلال الافتراضي",
+    "reasoningEffortDescription": "يتحكم في عمق التفكير لنماذج الاستدلال. الجهد الأعلى ينتج تحليلاً أكثر شمولاً.",
+    "Default Verbosity": "الإسهاب الافتراضي",
+    "verbosityDescription": "يتحكم في مستوى تفاصيل الاستجابة لنماذج GPT-5."
   },
   "notFound": {
     "lostDog": "كلب ضائع"
@@ -646,5 +922,734 @@
     "errorSessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى للمتابعة.",
     "errorFallback": "تعذر الاتصال بخدمة المصادقة. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمرت المشكلة.",
     "tryAgain": "حاول مرة أخرى"
+  },
+  "emptyState": {
+    "greeting": "كيف يمكنني مساعدتك؟",
+    "greetingWithName": "كيف يمكنني مساعدتك، {name}؟",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "إنشاء مخططات",
+        "prompt": "أرني كيف يمكنك إنشاء المخططات والرسوم البيانية. ما أنواع العمليات أو سير العمل أو الأنظمة التي يمكنك مساعدتي في تصورها؟ أعطني بعض الأمثلة."
+      },
+      "draftContent": {
+        "title": "صياغة محتوى احترافي",
+        "prompt": "أحتاج مساعدة في كتابة المستندات المهنية - رسائل البريد الإلكتروني والتقارير والملخصات. هل يمكنك أن تريني أمثلة على كيفية المساعدة في أنواع مختلفة من الكتابة التجارية؟"
+      },
+      "analyzeInformation": {
+        "title": "تحليل المعلومات",
+        "prompt": "كيف يمكنك مساعدتي في تحليل البيانات أو المعلومات؟ أرني طرقًا مختلفة لتفكيك الأرقام وإيجاد الأنماط أو استخراج الرؤى من المستندات أو مجموعات البيانات."
+      },
+      "planOrganize": {
+        "title": "التخطيط والتنظيم",
+        "prompt": "هل يمكنك مساعدتي في تخطيط المشاريع أو تنظيم العمل؟ أعطني أمثلة على كيفية إنشاء جداول زمنية أو أجندات أو خطط مشاريع بهياكل مختلفة."
+      },
+      "brainstormIdeas": {
+        "title": "العصف الذهني",
+        "prompt": "أريد أن أقوم بعصف ذهني لحل مشكلة. أرني كيف تتعامل مع التفكير الإبداعي وتوليد الأفكار - ما الأسئلة التي ستطرحها وكيف تستكشف الاحتمالات؟"
+      },
+      "buildPresentations": {
+        "title": "إنشاء العروض التقديمية",
+        "prompt": "كيف يمكنك مساعدتي في إنشاء العروض التقديمية؟ أرني أمثلة على هياكل عروض تقديمية مختلفة واقتراحات مرئية وكيف تنظم المعلومات لجماهير مختلفة."
+      },
+      "workWithCode": {
+        "title": "العمل مع الكود",
+        "prompt": "هل يمكنك المساعدة في البرمجة أو النصوص البرمجية؟ أرني أمثلة - سواء كانت كتابة كود جديد أو تصحيح الأخطاء أو شرح كيفية عمل شيء ما خطوة بخطوة."
+      },
+      "decisionSupport": {
+        "title": "دعم اتخاذ القرار",
+        "prompt": "أحتاج إلى اتخاذ قرار لكنني غير متأكد من كيفية تقييم خياراتي. هل يمكنك أن تريني أطرًا أو مناهج مختلفة تستخدمها للتفكير في الخيارات؟"
+      },
+      "summarizeSynthesize": {
+        "title": "التلخيص والتوليف",
+        "prompt": "كيف تساعد في تلخيص المستندات الطويلة أو توليف المعلومات من مصادر متعددة؟ أرني أمثلة على تنسيقات ملخصات مختلفة ومستويات التفاصيل."
+      },
+      "explainTopics": {
+        "title": "شرح المواضيع المعقدة",
+        "prompt": "هل يمكنك شرح المفاهيم المعقدة بعبارات بسيطة؟ أرني كيف تقسم الأفكار المعقدة وتستخدم التشبيهات وتكيف الشروحات لمستويات معرفية مختلفة."
+      },
+      "createSchedules": {
+        "title": "إنشاء الجداول",
+        "prompt": "أحتاج مساعدة في تنظيم الوقت وإنشاء الجداول. أرني طرقًا مختلفة لهيكلة الأجندات أو التقويمات أو الخطط المبنية على الوقت مع أمثلة."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "النماذج",
+      "agents": "الوكلاء"
+    },
+    "sections": {
+      "baseModels": "النماذج الأساسية"
+    },
+    "agents": {
+      "advancedFeatureBadge": "ميزة متقدمة",
+      "description": "أنشئ وأدر وكلاء ذكاء اصطناعي مخصصين بقدرات متخصصة. يعمل هؤلاء الوكلاء على مثيل MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "ميزة متقدمة - تتطلب التنسيق مع الفريق التقني لمساعد الذكاء الاصطناعي",
+      "advancedFeatureWarning": "الوكلاء المخصصون يعملون فقط مع مثيل MSF AI Assistant Foundry. يجب إنشاء معرفات الوكلاء بواسطة الفريق التقني لمساعد الذكاء الاصطناعي على هذا المثيل المحدد والتنسيق معك قبل الاستخدام.",
+      "createNewAgent": "إنشاء وكيل مخصص جديد",
+      "noAgentsTitle": "لا يوجد وكلاء مخصصون بعد",
+      "noAgentsDescription": "أنشئ وكيلك المخصص الأول لتوسيع قدرات الذكاء الاصطناعي بأدوات وسلوكيات متخصصة."
+    },
+    "advancedOptions": {
+      "title": "الخيارات المتقدمة",
+      "temperature": "درجة الحرارة",
+      "fixedTemperatureNote": "ملاحظة: يستخدم هذا النموذج قيم درجة حرارة ثابتة للأداء المتسق.",
+      "reasoningEffort": "جهد الاستدلال",
+      "minimal": "الحد الأدنى",
+      "low": "منخفض",
+      "medium": "متوسط",
+      "high": "عالي",
+      "verbosity": "مستوى التفصيل"
+    },
+    "searchMode": {
+      "title": "وضع البحث",
+      "subtitle": "سيستخدم البحث على الويب عند الحاجة",
+      "routingLabel": "توجيه البحث:",
+      "whatsDifference": "ما الفرق؟",
+      "privacyFocused": "يركز على الخصوصية (افتراضي)",
+      "privacyFocusedDescription": "أبطأ ولكن أكثر خصوصية",
+      "azureAgentMode": "وضع وكيل Azure AI",
+      "azureAgentModeDescription": "أسرع ولكن يخزن بيانات المحادثة في السحابة",
+      "privacyInfoTitle": "معلومات خصوصية مهمة",
+      "privacyInfoDescription": "سيتم إرسال محادثتك بالكامل إلى وكيل Azure AI Foundry.",
+      "learnMoreDataStorage": "تعرف على المزيد حول تخزين البيانات",
+      "privacyEnabled": "تم تفعيل البحث مع التركيز على الخصوصية",
+      "learnPrivacy": "اعرف كيف يتم حماية خصوصيتك"
+    },
+    "customAgent": {
+      "label": "وكيل مخصص:",
+      "description": "يعمل هذا الوكيل على مثيل MSF AI Assistant Foundry مع تمكين الأدوات دائمًا.",
+      "webSearch": "بحث الويب في الوقت الفعلي",
+      "codeInterpreter": "مترجم الكود وتحليل الملفات"
+    },
+    "header": {
+      "backToModels": "العودة إلى النماذج",
+      "knowledgeCutoff": "تاريخ قطع المعرفة: {cutoff}",
+      "knowledgeCutoffLabel": "حدود المعرفة"
+    },
+    "modelTypes": {
+      "foundational": "أساسي",
+      "omni": "شامل",
+      "reasoning": "استدلالي",
+      "agent": "وكيل"
+    },
+    "orderMode": {
+      "label": "الترتيب حسب",
+      "usage": "الأكثر استخداماً",
+      "name": "الاسم (أ-ي)",
+      "cutoff": "أحدث النماذج",
+      "custom": "مخصص",
+      "edit": "تعديل",
+      "done": "تم",
+      "reset": "إعادة ضبط",
+      "resetTooltip": "إعادة الترتيب للوضع الافتراضي"
+    },
+    "knowledgeCutoff": {
+      "realtime": "بحث ويب في الوقت الفعلي"
+    },
+    "modelTypeIcons": {
+      "foundational": "نموذج عام سريع وفعّال",
+      "reasoning": "قدرات استدلال موسعة للمشكلات المعقدة",
+      "omni": "نموذج متعدد الوسائط بقدرات شاملة",
+      "agent": "وكيل بأدوات فورية وإمكانية الوصول إلى الويب"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "نموذج ذكاء اصطناعي مدعوم بـ GPT-4.1 مع بحث الويب في الوقت الفعلي عبر Bing. يوفر معلومات محدثة والتحقق من الحقائق ومعرفة الأحداث الجارية. مثالي للبحث الذي يتطلب معلومات حديثة وتحليل الأخبار والتحقق من الحقائق.",
+      "knowledgeCutoff": "بحث الويب في الوقت الفعلي"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "نموذج OpenAI الأكثر تقدمًا، يتفوق في الاستدلال المعقد وتوليد الكود وحل المشكلات التقنية. مثالي للمهام التحليلية وتحديات البرمجة والبحث والتفسيرات المفصلة. يدعم جهد الاستدلال القابل للتعديل ومستوى تفصيل الاستجابة.",
+      "knowledgeCutoff": "6 أغسطس 2025، 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "نسخة أسرع وأكثر فعالية من حيث التكلفة من GPT-5، محسنة للسرعة مع الحفاظ على جودة عالية. مثالية للمهام اليومية والاستعلامات السريعة وتوجيه الأدوات والتطبيقات التي تتطلب أوقات استجابة سريعة. توازن ممتاز بين الأداء والكفاءة.",
+      "knowledgeCutoff": "6 أغسطس 2025، 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "نسخة متخصصة من GPT-5 محسنة للتفاعلات المحادثية والذكاء العاطفي. يتفوق في التواصل التعاطفي ودعم الصحة النفسية والكتابة الإبداعية والعصف الذهني والحوار الطبيعي. مثالي للمحادثات غير الرسمية وسيناريوهات الاستشارة والمهام التي تتطلب الوعي العاطفي.",
+      "knowledgeCutoff": "1 أكتوبر 2025، 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "نموذج الاستدلال الأكثر تقدمًا من OpenAI مع قدرات ثورية في حل المشكلات. يتفوق في الرياضيات المعقدة والاستدلال العلمي وتحديات البرمجة والمهام المنطقية متعددة الخطوات. نافذة سياق موسعة 200K. يدعم التحكم في جهد الاستدلال.",
+      "knowledgeCutoff": "8 أبريل 2025، 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "نموذج سريع وفعال من حيث التكلفة من Meta. ممتاز للمهام اليومية مثل الكتابة والتلخيص ومساعدة الكود الأساسية. توازن جيد بين السرعة والجودة للعمل الروتيني.",
+      "knowledgeCutoff": "7 مايو 2025، 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "متخصص في الاستدلال يظهر عمله خطوة بخطوة. ممتاز لمسائل الرياضيات والألغاز المنطقية وفهم المفاهيم المعقدة. شاهد كيف يفكر في المشكلات في الوقت الفعلي.",
+      "knowledgeCutoff": "20 يناير 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "نموذج متعدد الاستخدامات جيد بشكل خاص في البرمجة والكتابة التقنية. ممتاز لتصحيح الكود وكتابة التوثيق وشرح المفاهيم التقنية. سريع وموثوق لأعمال التطوير.",
+      "knowledgeCutoff": "16 أبريل 2025، 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "نموذج متعدد الاستخدامات من xAI معروف بالردود الدقيقة. ممتاز للمناقشات المفتوحة والمشاريع الإبداعية ومعالجة المشكلات المعقدة.",
+      "knowledgeCutoff": "13 مايو 2025، 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "النموذج الأكثر قدرة من Anthropic مع استدلال استثنائي وبرمجة وقدرات إبداعية. مثالي للتحليلات المعقدة والبحث والمهام التي تتطلب فهمًا عميقًا.",
+      "knowledgeCutoff": "يناير 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "نموذج Claude متوازن يقدم أداءً ممتازًا في البرمجة والتحليل والمهام الإبداعية. ممتاز للاستخدام اليومي مع أوقات استجابة سريعة.",
+      "knowledgeCutoff": "يناير 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "نموذج Claude Opus من الجيل السابق. ممتاز لمهام البرمجة المعقدة والتحليل المفصل والفهم الدقيق.",
+      "knowledgeCutoff": "يناير 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "نموذج Claude سريع وفعال من حيث التكلفة محسن للمهام السريعة. ممتاز للاستعلامات البسيطة والتلخيص والتطبيقات عالية الحجم.",
+      "knowledgeCutoff": "يناير 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "أكثر نموذج تقدماً من OpenAI، يتفوق في التفكير المعقد، وتوليد الأكواد، وحل المشكلات التقنية. الأنسب للمهام التحليلية، وتحديات البرمجة، والبحث، وشرح التفاصيل الدقيقة. يدعم ضبط مستوى التعقيد ووضوح الردود.",
+      "knowledgeCutoff": "ديسمبر 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "إصدار متخصص من GPT-5.2 مُحسَّن للمحادثات والتفاعل العاطفي. يتفوق في التواصل المتعاطف، ودعم الصحة النفسية، والكتابة الإبداعية، وتوليد الأفكار، والحوار الطبيعي. الأنسب للمحادثات غير الرسمية، وسيناريوهات الإرشاد، والمهام التي تتطلب وعيًا عاطفيًا.",
+      "knowledgeCutoff": "ديسمبر 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "العودة إلى المحادثة",
+    "title": "شرح وضع البحث",
+    "subtitle": "فهم خيارات البحث الخاصة بك ومكان تخزين بياناتك",
+    "quickComparison": "مقارنة سريعة",
+    "noSearch": "بدون بحث",
+    "privacyFocused": "مركز على الخصوصية",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "سرعة الاستجابة",
+    "fastest": "الأسرع",
+    "slowerMultiStep": "أبطأ (خطوات متعددة)",
+    "fasterDirect": "أسرع (مباشر)",
+    "fullConversationStored": "المحادثة الكاملة مخزنة في السحابة",
+    "whatsStoredInAzure": "ما يتم تخزينه في Azure",
+    "nothingStateless": "لا شيء (بدون حالة فقط)",
+    "searchQueriesOnly": "استعلامات البحث فقط",
+    "fullConversationHistory": "سجل المحادثة الكامل",
+    "modelAvailability": "توفر النماذج",
+    "allModels": "جميع النماذج",
+    "gpt41Only": "GPT-4.1 فقط",
+    "searchTurnedOff": "البحث معطل",
+    "noSearchDescription": "أسرع الاستجابات بدون إمكانية البحث على الويب. محادثتك الكاملة تبقى في متصفحك - لا يتم تخزين أي شيء في السحابة.",
+    "viewDetailsBelow": "لمزيد من التفاصيل، راجع سير العمل التقني أدناه.",
+    "viewTechnicalFlowDiagram": "عرض مخطط سير العمل التقني",
+    "legend": "وسيلة الإيضاح:",
+    "legendNoSearch": "متصفحك (التخزين المحلي) | خادم AI Assistant | Azure OpenAI (بدون حالة)",
+    "privacyFocusedMode": "الوضع المركز على الخصوصية",
+    "default": "افتراضي",
+    "privacyDescription": "يستخدم البحث على الويب عند الحاجة لكنه أبطأ لأنه يتضمن خطوات أكثر. يتم تخزين استعلامات البحث فقط في Azure - محادثتك الكاملة تبقى في متصفحك.",
+    "legendPrivacy": "متصفحك (التخزين المحلي) | خادم AI Assistant | Azure AI Foundry (استعلامات البحث فقط) | Azure OpenAI (بدون حالة)",
+    "azureAIFoundryMode": "وضع Azure AI Foundry",
+    "foundryDescription": "استجابات أسرع مع إمكانية البحث على الويب المدمجة. محادثتك الكاملة مخزنة في قاعدة بيانات Azure AI Foundry، وليس فقط في متصفحك.",
+    "legendFoundry": "متصفحك (التخزين المحلي) | خادم AI Assistant | وكيل Azure AI Foundry (يخزن المحادثة الكاملة)",
+    "whyTheseOptions": "لماذا هذه الخيارات؟",
+    "whyTheseOptionsText1": "هذه هي تطبيقات البحث المتاحة بعد أن أوقفت Azure واجهة برمجة تطبيقات Bing Search التي اعتمد عليها AI Assistant في الأصل.",
+    "whyTheseOptionsText2": "يستكشف الفريق بنشاط بدائل بحث أكثر تركيزًا على الخصوصية. كلا الخيارين الحاليين يستخدمان إمكانيات البحث في Azure AI Foundry لكنهما يختلفان في كمية بيانات المحادثة المشتركة.",
+    "azureDeprecatedBingApi": "أوقفت Azure واجهة برمجة تطبيقات Bing Search",
+    "footerNote": "كلا الوضعين يخزنان محادثتك محليًا في متصفحك. يمكنك تبديل الأوضاع في أي وقت في إعدادات النموذج.",
+    "note": "ملاحظة:",
+    "loadingDiagram": "جارٍ تحميل المخطط..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "جارٍ فحص التخزين",
+      "analyzingData": "جارٍ تحليل بياناتك...",
+      "updateAvailable": "تحديث متوفر",
+      "storageSpaceLimited": "المساحة التخزينية محدودة",
+      "migratingData": "جارٍ ترحيل البيانات",
+      "migrationComplete": "اكتمل الترحيل",
+      "partiallyComplete": "اكتمل جزئيًا",
+      "migrationFailed": "فشل الترحيل"
+    },
+    "descriptions": {
+      "foundLegacyData": "عثرنا على بيانات من إصدار سابق. هل ترغب في ترحيلها للعمل مع النظام المحسن؟",
+      "storageSpaceWarning": "بياناتك تحتاج إلى مساحة أكبر من المتوفرة حاليًا. نوصي باستخدام وضع الترحيل التدريجي.",
+      "pleaseWait": "يرجى الانتظار أثناء تحديث بياناتك...",
+      "dataIsSafe": "بياناتك الأصلية محفوظة. يمكنك المحاولة مرة أخرى أو التخطي الآن.",
+      "itemsTooLarge": "هذه العناصر كبيرة جدًا ولا تتسع في التخزين. يمكنك تصديرها أو تحرير مساحة أو المتابعة بدونها.",
+      "settingsUpdated": "تم تحديث إعداداتك."
+    },
+    "benefits": {
+      "title": "الفوائد",
+      "fasterPerformance": "أداء أسرع",
+      "betterReliability": "موثوقية أعلى",
+      "dataPreserved": "تم الحفاظ على بياناتك"
+    },
+    "options": {
+      "advancedOptions": "خيارات متقدمة",
+      "useIncrementalMode": "استخدام الوضع التدريجي",
+      "slowerButSafer": "أبطأ ولكن أكثر أمانًا",
+      "recommended": "موصى به",
+      "deleteLegacyData": "حذف البيانات القديمة بعد الترحيل",
+      "freesUpSpace": "يحرر مساحة تخزينية"
+    },
+    "actions": {
+      "skip": "تخطي",
+      "migrateData": "ترحيل البيانات",
+      "migrateAnyway": "الترحيل رغم ذلك",
+      "continue": "متابعة",
+      "retry": "إعادة المحاولة",
+      "exportBackupFirst": "تصدير نسخة احتياطية أولاً",
+      "exportSkippedItems": "تصدير العناصر المتخطاة"
+    },
+    "quota": {
+      "availableSpace": "المساحة المتوفرة",
+      "dataToMigrate": "البيانات المراد ترحيلها",
+      "additionalSpaceNeeded": "المساحة الإضافية المطلوبة"
+    },
+    "progress": {
+      "migratingConversations": "جارٍ ترحيل المحادثات",
+      "migratingPrompts": "جارٍ ترحيل الرسائل التوضيحية",
+      "migratingAgents": "جارٍ ترحيل الوكلاء",
+      "finishingUp": "جارٍ إنهاء العملية"
+    },
+    "results": {
+      "successfullyMigrated": "تم الترحيل بنجاح",
+      "notes": "ملاحظات",
+      "couldNotMigrate": "تعذر الترحيل",
+      "legacyDataDeleted": "تم حذف البيانات القديمة",
+      "freed": "تم تحرير"
+    },
+    "units": {
+      "conversation": "محادثة",
+      "conversations": "محادثات",
+      "folder": "مجلد",
+      "folders": "مجلدات",
+      "prompt": "رسالة توضيحية",
+      "prompts": "رسائل توضيحية",
+      "customAgent": "وكيل مخصص",
+      "customAgents": "وكلاء مخصصون",
+      "item": "عنصر",
+      "items": "عناصر"
+    }
+  },
+  "languageSwahili": "السواحيلية",
+  "welcomeBanner": {
+    "title": "مرحباً بك في مساعد الذكاء الاصطناعي V2",
+    "whatsNew": "ما الجديد",
+    "whatsNewQuestion": "ما الجديد؟"
+  },
+  "welcomeV2": {
+    "backToChat": "العودة إلى الدردشة",
+    "title": "مرحباً بك في مساعد الذكاء الاصطناعي V2",
+    "subtitle": "إعادة تصميم كاملة بميزات جديدة قوية",
+    "webSearch": {
+      "title": "وضع البحث على الإنترنت",
+      "description": "امنح الذكاء الاصطناعي إمكانية البحث الفوري على الإنترنت مع خيارات تركيز على الخصوصية",
+      "quickAccess": "وصول سريع:",
+      "quickAccessInstructions": "انقر على زر + بجانب إدخال الدردشة → اختر \"البحث على الإنترنت\"",
+      "setAsDefault": "تعيين كافتراضي:",
+      "setAsDefaultInstructions": "افتح إعدادات النموذج وفعّل تبديل وضع البحث على الإنترنت. اختر بين:",
+      "privacyFocused": "تركيز على الخصوصية (افتراضي)",
+      "privacyFocusedDescription": "يتم إرسال استعلام البحث فقط خارجياً",
+      "azureAIFoundry": "وضع Azure AI Foundry",
+      "azureAIFoundryDescription": "أسرع، ولكن يتم تخزين المحادثة كاملة خارجياً",
+      "learnMore": "تعرف على المزيد حول أوضاع البحث →"
+    },
+    "tones": {
+      "title": "النغمات (ملفات تعريف الصوت)",
+      "description": "تحكم في أسلوب كتابة الذكاء الاصطناعي، والرسمية، والشخصية",
+      "createTones": "1. إنشاء نغمات:",
+      "createTonesInstructions": "إجراءات سريعة في الشريط الجانبي → علامة تبويب النغمات",
+      "useTones": "2. استخدام النغمات:",
+      "useTonesInstructions": "انقر على قائمة النغمات المنسدلة بجانب إدخال الدردشة",
+      "exampleProfessionalDesc": "نغمة رسمية، عمل",
+      "exampleCasualDesc": "ودّي، أسلوب محادثة"
+    },
+    "aiAssist": {
+      "title": "مساعدة الذكاء الاصطناعي للمحفزات والنغمات",
+      "description": "دع الذكاء الاصطناعي يساعدك على إنشاء محفزات ونغمات أفضل بسرعة أكبر",
+      "step1": "افتح الإجراءات السريعة في الشريط الجانبي",
+      "step2": "انتقل إلى علامة التبويب {prompts} أو {tones}",
+      "step3": "ابحث عن لوحة مساعد الذكاء الاصطناعي",
+      "getSuggestions": "احصل على اقتراحات",
+      "getSuggestionsDesc": "يقوم الذكاء الاصطناعي بتحليل المسودة ويقترح تحسينات",
+      "buildFromFiles": "إنشاء من ملفات",
+      "buildFromFilesDesc": "ارفع مستندات لتوليد محفزات/نغمات",
+      "testBeforeSaving": "جرّب قبل الحفظ",
+      "testBeforeSavingDesc": "جرّب المحفزات/النغمات في معاينة دردشة مباشرة",
+      "step2Prefix": "انتقل إلى",
+      "step2Suffix": "علامة التبويب"
+    },
+    "customAgents": {
+      "title": "عملاء مخصصون",
+      "advancedBadge": "متقدم",
+      "description": "عملاء ذكاء اصطناعي متخصصون بقدرات متقدمة مثل البحث على الإنترنت وتفسير الشيفرة",
+      "advancedFeature": "ميزة متقدمة",
+      "advancedFeatureDesc": "يعمل العملاء المخصصون على Azure AI Foundry بأدوات متخصصة. يتطلب التنسيق مع فريق الذكاء الاصطناعي التقني لإنشاء معرفات العملاء.",
+      "howToAccess": "كيفية الوصول:",
+      "howToAccessInstructions": "الإعدادات → النماذج → علامة تبويب العملاء",
+      "whatYouCanDo": "ما يمكنك فعله:",
+      "configureAgents": "تهيئة العملاء بقدرات متخصصة",
+      "importExport": "استيراد/تصدير إعدادات العملاء",
+      "selectFromDropdown": "اختر العملاء المخصصين من قائمة النموذج المنسدلة"
+    },
+    "audioTranslation": {
+      "title": "نسخ الصوت مع الترجمة",
+      "description": "ترجمة نصوص الصوت تلقائيًا إلى أكثر من 13 لغة",
+      "howToUse": "كيفية الاستخدام:",
+      "step1": "قم برفع ملف صوتي أو فيديو",
+      "step2": "انقر على قائمة اختيار اللغة في واجهة النسخ",
+      "step3": "اختر اللغة المستهدفة",
+      "availableLanguages": "اللغات المتوفرة:",
+      "moreLanguages": "+7 لغات أخرى"
+    },
+    "pwa": {
+      "title": "تثبيت كتطبيق على الجوال",
+      "description": "تطبيق ويب متقدم بتجربة أصلية",
+      "installTip": "نصيحة: ثبّت التطبيق بعد تسجيل الدخول للحفاظ على المصادقة والحصول على أفضل تجربة.",
+      "howToInstall": "كيفية التثبيت:",
+      "step1": "سجّل الدخول إلى حسابك",
+      "step2": "افتح الإعدادات → تطبيق الجوال للاطلاع على التعليمات المفصلة",
+      "step3": "على الجوال: اضغط على قائمة المتصفح (⋮ أو ⚙️)",
+      "step4": "ابحث عن \"إضافة إلى الشاشة الرئيسية\" أو \"تثبيت التطبيق\"",
+      "step5": "اتبع التعليمات للتثبيت",
+      "benefits": "الفوائد:",
+      "benefit1": "إمكانية التشغيل كتطبيق أصلي من الشاشة الرئيسية",
+      "benefit2": "شاشة كاملة بدون واجهة المتصفح",
+      "benefit3": "إمكانية الوصول دون اتصال للمحادثات المحفوظة"
+    }
+  },
+  "Professional": "رسمي",
+  "Casual": "غير رسمي",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "أدخل طلبًا أو اكتب \"/\" لاختيار طلب..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "نصيحة: اكتب \"/\" لاختيار من قوالب الطلبات المحفوظة."
+  },
+  "fileUpload": {
+    "uploading": "جارٍ التحميل...",
+    "transcribing": "جارٍ النسخ...",
+    "complete": "اكتمل",
+    "failed": "فشل",
+    "uploadFiles": "ارفع ملفات (صوت، فيديو أو نص)",
+    "autoDetect": "اكتشاف تلقائي",
+    "fileNotAvailable": "الملف غير متاح للتحرير",
+    "failedToOpenInEditor": "تعذر فتح الملف في محرر الشيفرة. يرجى المحاولة مرة أخرى.",
+    "extractingAudio": "جاري استخراج الصوت...",
+    "queuedForTranscription": "قيد الانتظار للتحويل إلى نص",
+    "transcribed": "تم التحويل إلى نص",
+    "transcriptionFailed": "فشل في التحويل إلى نص",
+    "extractedFromSmaller": "تم الاستخراج من {percent}% أصغر",
+    "textExtraction": "استخراج النص",
+    "opening": "جارٍ الفتح...",
+    "openInEditor": "افتح في المحرر",
+    "failedToUpload": "فشل في الرفع",
+    "attachment": "مرفق",
+    "attachments": "مرفقات"
+  },
+  "transcript": {
+    "originalTranscript": "النص الأصلي",
+    "transcript": "النص",
+    "transcriptionOf": "نسخة من",
+    "translating": "جارٍ الترجمة...",
+    "copied": "تم النسخ!",
+    "copy": "نسخ",
+    "download": "تنزيل",
+    "translate": "ترجمة",
+    "collapse": "طي",
+    "expand": "توسيع",
+    "expandHint": "انقر على \"توسيع\" لعرض النص الأصلي",
+    "listen": "استمع إلى النص",
+    "stopAudio": "إيقاف الصوت",
+    "openAsDocument": "فتح كمستند"
+  },
+  "userMessage": {
+    "open": "فتح",
+    "showFullMessage": "عرض الرسالة كاملة",
+    "collapse": "طي",
+    "customTone": "نغمة مخصصة"
+  },
+  "codeBlock": {
+    "openInEditor": "افتح في المحرر"
+  },
+  "artifact": {
+    "noContentToExport": "لا يوجد محتوى للتصدير",
+    "exportedAsHtml": "تم التصدير كـ HTML",
+    "exportedAsMarkdown": "تم التصدير كـ Markdown",
+    "exportedAsText": "تم التصدير كنص",
+    "generatingPdf": "جارٍ إنشاء PDF...",
+    "exportedAsPdf": "تم التصدير كـ PDF",
+    "generatingDocx": "جارٍ إنشاء DOCX...",
+    "exportedAsDocx": "تم التصدير كـ DOCX",
+    "failedToExportAs": "فشل في التصدير كـ {format}",
+    "document": "مستند",
+    "switchToCodeEditor": "التحويل إلى محرر الشيفرة",
+    "exportDocument": "تصدير المستند",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "نص عادي (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "إغلاق",
+    "editsNotSaved": "لم يتم حفظ التعديلات. أرسلها عبر الرسائل أو حملها لحفظ أي تعديلات.",
+    "fileDownloaded": "تم تنزيل الملف",
+    "failedToDownload": "فشل في التنزيل",
+    "switchToDocumentEditor": "التحويل إلى محرر المستندات",
+    "download": "تنزيل",
+    "fileIncludedWithMessage": "تم إرفاق الملف والتعديلات مع الرسالة",
+    "closeEditor": "إغلاق المحرر",
+    "closeCodeEditor": "إغلاق محرر الشيفرة",
+    "startWriting": "ابدأ الكتابة...",
+    "toolbar": {
+      "bold": "عريض",
+      "italic": "مائل",
+      "underline": "تحته خط",
+      "strikethrough": "يتوسطه خط",
+      "heading1": "العنوان 1",
+      "heading2": "العنوان 2",
+      "heading3": "العنوان 3",
+      "bulletList": "قائمة نقطية",
+      "numberedList": "قائمة مرقمة",
+      "codeBlock": "كتلة شيفرة",
+      "quote": "اقتباس",
+      "insertTable": "إدراج جدول",
+      "table": "جدول",
+      "undo": "تراجع",
+      "redo": "إعادة"
+    },
+    "codeEditor": {
+      "startTyping": "ابدأ الكتابة أو اطلب من الذكاء الاصطناعي توليد الشيفرة",
+      "codeWillSync": "سيتم مزامنة الشيفرة تلقائياً من رسائل الدردشة",
+      "startCoding": "// ابدأ البرمجة..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "فعّل البحث عبر الإنترنت لكل رسالة.\n\nيقدّم معلومات محدثة باستخدام الوصول الفوري إلى Bing.",
+    "attachTooltip": "إرفاق الملفات أو الصور أو الصوت/الفيديو.\n\nالصيغ المدعومة:\n• الصور: JPEG، PNG، GIF، WebP (بحد أقصى 5MB، حتى 10 ملفات)\n• المستندات: PDF، DOCX، XLSX، PPTX، TXT، MD (بحد أقصى 10MB، حتى 3 ملفات)\n• البيانات: CSV، JSON، XML، YAML (بحد أقصى 10MB، حتى 3 ملفات)\n• الأكواد: PY، JS، TS، JAVA، C، CPP، GO، إلخ. (بحد أقصى 10MB، حتى 3 ملفات)\n• الصوت/الفيديو: MP3، WAV، MP4، WebM (بحد أقصى 25MB، ملف واحد)\n\nالإجمالي: 10 ملفات، حتى 50MB",
+    "transcribeTooltip": "تحميل ملفات صوتية أو فيديو لتحويلها إلى نص.\n\nالصيغ المدعومة: MP3، MP4، WAV، WebM، M4A، MPEG، MPGA\nالحجم الأقصى: 25MB\n\nيتم التحويل إلى نص تلقائياً عند إرسال الرسالة.",
+    "selected": "محدد",
+    "expandActions": "توسيع الإجراءات",
+    "selectTone": "اختر النبرة",
+    "selectToneDescription": "اختر نمط الصوت لرسائلك",
+    "noToneDefault": "بدون نبرة (افتراضي)",
+    "useDefaultStyle": "استخدم أسلوب الكتابة الافتراضي",
+    "noTonesCreated": "لم يتم إنشاء أي نبرة بعد",
+    "createTonesHint": "أنشئ النبرات من الإجراءات السريعة",
+    "translateDocumentTooltip": "ترجم المستندات إلى لغة أخرى.\n\nالصيغ المدعومة: Word، Excel، PowerPoint، PDF، HTML، TXT\nالحجم الأقصى: 40 ميغابايت\n\nيدعم أكثر من 80 لغة مع ملفات المصطلحات الاختيارية."
+  },
+  "transcription": {
+    "addInstructions": "إضافة تعليمات",
+    "instructionsPlaceholder": "سياق لتحسين الدقة (مثل الأسماء والمصطلحات)",
+    "transcribesOnSend": "النسخ عند الإرسال",
+    "languages": {
+      "autoDetect": "كشف تلقائي",
+      "afrikaans": "الأفريكانية",
+      "arabic": "العربية",
+      "armenian": "الأرمنية",
+      "azerbaijani": "الأذربيجانية",
+      "belarusian": "البيلاروسية",
+      "bosnian": "البوسنية",
+      "bulgarian": "البلغارية",
+      "burmese": "البورمية",
+      "catalan": "الكاتالانية",
+      "chinese": "الصينية",
+      "croatian": "الكرواتية",
+      "czech": "التشيكية",
+      "danish": "الدنماركية",
+      "dutch": "الهولندية",
+      "english": "الإنجليزية",
+      "estonian": "الإستونية",
+      "finnish": "الفنلندية",
+      "french": "الفرنسية",
+      "galician": "الجاليكية",
+      "german": "الألمانية",
+      "greek": "اليونانية",
+      "hebrew": "العبرية",
+      "hindi": "الهندية",
+      "hungarian": "الهنغارية",
+      "icelandic": "الأيسلندية",
+      "indonesian": "الإندونيسية",
+      "italian": "الإيطالية",
+      "japanese": "اليابانية",
+      "kannada": "الكانادا",
+      "kazakh": "الكازاخية",
+      "korean": "الكورية",
+      "latvian": "اللاتفية",
+      "lithuanian": "الليتوانية",
+      "macedonian": "المقدونية",
+      "malay": "الملايوية",
+      "maori": "الماورية",
+      "marathi": "الماراثية",
+      "nepali": "النيبالية",
+      "norwegian": "النرويجية",
+      "persian": "الفارسية",
+      "polish": "البولندية",
+      "portuguese": "البرتغالية",
+      "romanian": "الرومانية",
+      "russian": "الروسية",
+      "serbian": "الصربية",
+      "slovak": "السلوفاكية",
+      "slovenian": "السلوفينية",
+      "spanish": "الإسبانية",
+      "swahili": "السواحيلية",
+      "swedish": "السويدية",
+      "tagalog": "التاغالوغ",
+      "tamil": "التاميلية",
+      "thai": "التايلاندية",
+      "turkish": "التركية",
+      "ukrainian": "الأوكرانية",
+      "urdu": "الأوردو",
+      "vietnamese": "الفيتنامية",
+      "welsh": "الويلزية"
+    },
+    "inProgress": "جاري تحويل النص",
+    "processingFile": "جارٍ المعالجة: {filename}",
+    "timeRemaining": "الوقت المتبقي: {time}",
+    "maxDurationNote": "قد تستغرق الملفات الكبيرة حتى {minutes} دقيقة",
+    "timedOut": "انتهت مهلة التحويل بعد {minutes} دقيقة",
+    "timedOutToast": "انتهت مهلة التحويل: {filename}",
+    "failed": "فشل في تحويل النص: {error}",
+    "failedToast": "فشل في تحويل النص: {filename}",
+    "unknownError": "خطأ غير معروف",
+    "completed": "تم تحويل النص",
+    "completedToast": "تم تحويل النص: {filename}",
+    "placeholder": "[جاري تحويل النص: {filename}]",
+    "loadingTranscript": "جاري تحميل النص لـ {filename}...",
+    "expiredOrDeleted": "انتهت صلاحية هذا النص أو تم حذفه.",
+    "fetchError": "فشل في تحميل النص. يرجى المحاولة مرة أخرى.",
+    "transcriptExpired": "انتهت صلاحية النص لـ {filename}. يتم حذف النصوص تلقائيًا بعد {days} يومًا حفاظًا على الخصوصية.",
+    "expirationWarning": "ستنتهي صلاحية النص لـ {filename} خلال {days} يوم/أيام. يُرجى نسخ المحتوى إذا كنت بحاجة للاحتفاظ به."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "أضف تعليماتك الشخصية لتخصيص كيفية استجابة الذكاء الاصطناعي. يتم دمج هذه التعليمات مع إرشادات السلوك الأساسية لضمان استجابات مفيدة ودقيقة وآمنة.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "نصيحة: اكتب \"/\" لاختيار قالب طلب محفوظ.",
+  "storageWarning": {
+    "title": {
+      "warning": "سعة التخزين منخفضة",
+      "critical": "التخزين شبه ممتلئ",
+      "emergency": "التخزين ممتلئ"
+    },
+    "message": {
+      "warning": "مساحة التخزين في متصفحك مستخدمة بنسبة {percent}%.",
+      "critical": "مساحة التخزين في متصفحك منخفضة بشكل حرج بنسبة {percent}%.",
+      "emergency": "مساحة التخزين في متصفحك شبه ممتلئة تمامًا بنسبة {percent}%!"
+    },
+    "consequence": "إذا امتلأت مساحة التخزين، قد تفقد إمكانية الوصول إلى المحادثات الجديدة وقد يتوقف التطبيق عن العمل بشكل صحيح.",
+    "storageUsage": "استهلاك التخزين",
+    "optionsToFreeSpace": "خيارات لتوفير مساحة",
+    "clearOption": {
+      "keepRecent": "الاحتفاظ بأحدث المحادثات",
+      "olderThan": "حذف المحادثات الأقدم من",
+      "days": {
+        "7": "٧ أيام",
+        "14": "١٤ يومًا",
+        "30": "٣٠ يومًا",
+        "60": "٦٠ يومًا",
+        "90": "٩٠ يومًا"
+      }
+    },
+    "estimate": {
+      "willRemove": "سيتم حذف {count} من المحادثات",
+      "willFree": "المساحة المقدرة التي سيتم توفيرها: {size}"
+    },
+    "action": {
+      "exportFirst": "تصدير البيانات أولاً",
+      "clearNow": "احذف الآن",
+      "dismiss": "تجاهل",
+      "cancel": "إلغاء"
+    },
+    "confirm": {
+      "title": "تأكيد الحذف",
+      "message": "سيتم حذف {count} من المحادثات بشكل دائم. لا يمكن التراجع عن هذا الإجراء."
+    },
+    "clearing": {
+      "title": "جاري حذف التخزين",
+      "message": "يرجى الانتظار ريثما يتم حذف المحادثات..."
+    },
+    "success": {
+      "title": "تم حذف التخزين",
+      "message": "تم حذف {count} من المحادثات بنجاح، وتوفير مساحة قدرها {size}."
+    },
+    "error": {
+      "title": "فشل الحذف",
+      "message": "حدث خطأ أثناء حذف المحادثات. يرجى المحاولة مرة أخرى."
+    },
+    "close": "إغلاق"
+  },
+  "support": {
+    "selectOrganization": "اختر منظمتك",
+    "organizationDescription": "اختر منظمة أطباء بلا حدود الخاصة بك لعرض جهة الاتصال المناسبة للدعم",
+    "autoDetect": "اكتشاف تلقائي",
+    "resetToAutoDetect": "إعادة الضبط للاكتشاف التلقائي",
+    "organizations": {
+      "USA": "MSF الولايات المتحدة",
+      "OCG": "OCG (جنيف)",
+      "OCA": "OCA (أمستردام)",
+      "FIELD": "الميدان / أخرى"
+    },
+    "emailSupport": "دعم عبر البريد الإلكتروني",
+    "emailDescription": "التواصل مع فريق دعم {organization}",
+    "escalationTitle": "الميدانيون وموظفو أطباء بلا حدود الآخرون",
+    "escalationDescription": "اتبع مسار تصعيد تكنولوجيا المعلومات الخاص بمنظمتك للحصول على الدعم",
+    "escalationShort": "تواصل مع دعم تكنولوجيا المعلومات المحلي",
+    "escalationStep1": "تواصل أولاً مع دعم تكنولوجيا المعلومات المحلي",
+    "escalationStep2": "إذا لم يتم الحل، صعّد الأمر إلى قسم تكنولوجيا المعلومات في مركز العمليات (OC)",
+    "escalationStep3": "إذا لم يُحل، يمكن لمركز العمليات (OC) تصعيد الأمر إلى SITS (الخدمات المشتركة لتكنولوجيا المعلومات)"
+  },
+  "translateDocumentDropdown": "ترجمة المستند",
+  "documentTranslation": {
+    "title": "ترجمة المستند",
+    "targetLanguage": "اللغة المستهدفة",
+    "sourceLanguage": "اللغة المصدر",
+    "searchLanguage": "بحث عن لغات...",
+    "noLanguagesFound": "لم يتم العثور على لغات",
+    "autoDetect": "اكتشاف تلقائي إذا لم يتم التحديد",
+    "glossary": "ملف المصطلحات",
+    "glossaryHelp": "قم بتحميل ملف مصطلحات بصيغة CSV أو TSV أو XLIFF للمصطلحات المخصصة",
+    "uploadGlossary": "تحميل ملف المصطلحات",
+    "glossaryTooLarge": "ملف المصطلحات كبير جداً. الحد الأقصى للحجم هو {maxSize}.",
+    "outputFilename": "اسم ملف النتيجة",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ترجمة المستند",
+    "translating": "جارٍ الترجمة...",
+    "noDocumentError": "يرجى اختيار مستند للترجمة.",
+    "noTargetLanguageError": "يرجى اختيار اللغة المستهدفة.",
+    "documentTooLarge": "المستند كبير جداً. الحد الأقصى للحجم هو {maxSize}.",
+    "translationSuccess": "تمت ترجمة المستند بنجاح",
+    "translationFailed": "فشلت الترجمة: {error}",
+    "invalidReference": "مرجع ترجمة مستند غير صحيح",
+    "documentNotFound": "المستند المترجم غير موجود أو انتهت صلاحيته",
+    "downloadFailed": "فشل تنزيل المستند المترجم",
+    "downloadSuccess": "تم تنزيل المستند بنجاح",
+    "translatedTo": "تمت الترجمة إلى {language}",
+    "download": "تنزيل",
+    "downloading": "جارٍ التنزيل...",
+    "expired": "انتهت صلاحية هذه الترجمة ولم تعد متاحة",
+    "expiresSoon": "تنتهي في غضون {days} يوم(أيام) - يرجى التنزيل قريباً",
+    "expires": "متوفر لمدة {days} يوم",
+    "learnMore": "اعرف المزيد",
+    "advancedOptions": "خيارات متقدمة"
   }
 }

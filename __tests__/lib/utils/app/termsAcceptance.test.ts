@@ -77,8 +77,10 @@ describe('termsAcceptance utility', () => {
       json: async () => mockTermsData,
     } as Response);
 
-    // Setup localStorage mock
+    // Setup localStorage mock - set both window.localStorage and global.localStorage
+    // since implementation may use either form
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+    (global as any).localStorage = localStorageMock;
     localStorageMock.clear();
 
     // Setup fetch mock
@@ -90,6 +92,7 @@ describe('termsAcceptance utility', () => {
 
   afterEach(() => {
     delete (global as any).window;
+    delete (global as any).localStorage;
     vi.clearAllMocks();
   });
 
@@ -137,12 +140,15 @@ describe('termsAcceptance utility', () => {
     });
 
     it('should handle JSON parse errors', () => {
-      console.error = vi.fn(); // Mock console.error
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
       localStorageMock.getItem.mockReturnValueOnce('invalid-json');
 
       const result = getUserAcceptance(mockUserId);
       expect(result).toBeNull();
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -210,12 +216,15 @@ describe('termsAcceptance utility', () => {
     // });
 
     it('should handle JSON parse errors', () => {
-      console.error = vi.fn(); // Mock console.error
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
       localStorageMock.getItem.mockReturnValueOnce('invalid-json');
 
       saveUserAcceptance(mockUserId, 'platformTerms', '1.0.0', 'abc123');
 
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 

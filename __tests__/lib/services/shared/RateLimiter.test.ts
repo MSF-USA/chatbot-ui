@@ -1,6 +1,6 @@
 import { RateLimiter } from '@/lib/services/shared/RateLimiter';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

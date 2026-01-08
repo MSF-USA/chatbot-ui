@@ -1,4 +1,78 @@
 {
+  "A description for your prompt_": "Popis vaší výzvy.",
+  "A name for your prompt_": "Název vaší výzvy.",
+  "AI": "AI",
+  "Are you sure?": "Jste si jisti?",
+  "Are you sure you want to clear all messages?": "Opravdu chcete vymazat všechny zprávy?",
+  "Cancel": "Zrušit",
+  "Chat Settings": "Nastavení chatu",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI je pokročilá sada nástrojů pro chatboty pro modely OpenAI, která se snaží napodobit rozhraní a funkčnost ChatGPT.",
+  "Clear conversations": "Vymazat konverzace",
+  "Content": "Obsah",
+  "Conversation": "Konverzace",
+  "Conversation exported successfully": "Konverzace byla úspěšně exportována",
+  "Conversation imported successfully": "Konverzace byla úspěšně importována",
+  "Copied!": "Zkopírováno!",
+  "Copy code": "Kopírovat kód",
+  "Default System Prompt": "Výchozí systémová výzva",
+  "Description": "Popis",
+  "Edit": "Upravit",
+  "Email": "E-mail",
+  "Enter a prompt": "Zadejte výzvu",
+  "Enter file name": "Zadejte název souboru",
+  "Error fetching models_": "Chyba při načítání modelů.",
+  "Export data": "Exportovat data",
+  "Failed to export conversation": "Export konverzace se nezdařil",
+  "Failed to export folder": "Export složky se nezdařil",
+  "Failed to import conversation": "Import konverzace se nezdařil",
+  "Failed to import file": "Import souboru se nezdařil",
+  "Folder exported with {count} conversations": "Složka exportována s {count} konverzacemi",
+  "Folder imported with {count} conversations": "Složka importována s {count} konverzacemi",
+  "Folder not found": "Složka nenalezena",
+  "Higher values like 0_8 will make the output more random, while lower values like 0_2 will make it more focused and deterministic_": "Vyšší hodnoty jako 0,8 způsobí, že výstup bude náhodnější, zatímco nižší hodnoty jako 0,2 ho učiní více zaměřeným a deterministickým.",
+  "If you completed this step, OpenAI may be experiencing issues_": "Pokud jste tento krok dokončili, OpenAI může mít problémy.",
+  "If you don't have an OpenAI API key, you can get one here: ": "Pokud nemáte klíč API OpenAI, můžete ho získat zde: ",
+  "Import data": "Importovat data",
+  "Invalid conversation file": "Neplatný soubor konverzace",
+  "Invalid folder file": "Neplatný soubor složky",
+  "Loading_ellipsis": "Načítání...",
+  "Make sure your OpenAI API key is set in the bottom left of the sidebar_": "Ujistěte se, že váš klíč API OpenAI je nastaven v levém dolním rohu postranního panelu.",
+  "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit zprávy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
+  "Model": "Model",
+  "Name": "Název",
+  "New conversation": "Nová konverzace",
+  "New folder": "Nová složka",
+  "No conversations_": "Žádné konverzace.",
+  "No prompts found": "Nenalezeny žádné výzvy",
+  "No prompts_": "Žádné výzvy.",
+  "OR": "NEBO",
+  "OpenAI API Key": "Klíč API OpenAI",
+  "OpenAI API Key Required": "Vyžadován klíč API OpenAI",
+  "Please enter a message": "Zadejte prosím zprávu",
+  "Please set your OpenAI API key in the bottom left of the sidebar_": "Nastavte prosím svůj klíč API OpenAI v levém dolním rohu postranního panelu.",
+  "Plugin Keys": "Klíče pluginů",
+  "Prompt": "Výzva",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte '{{}}' k označení proměnné. Např.: '{{name}}' je '{{adjective}}' '{{noun}}'",
+  "Prompt limit is {{maxLength}} characters": "Limit pro zadání je {{maxLength}} znaků.",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit výzvy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
+  "Regenerate response": "Regenerovat odpověď",
+  "Save & Submit": "Uložit a odeslat",
+  "Saved Prompts": "Uložené výzvy",
+  "Search prompts_ellipsis": "Hledat výzvy",
+  "Select a prompt to view details": "Vyberte výzvu pro zobrazení podrobností",
+  "Sorry, there was an error_": "Omlouváme se, došlo k chybě.",
+  "Stop Generating": "Zastavit generování",
+  "System Prompt": "Systémová výzva",
+  "Temperature": "Teplota",
+  "Type a message or type \"/\" to select a prompt_ellipsis": "Napište zprávu nebo napište \"/\" pro výběr výzvy...",
+  "Type a message_ellipsis": "Napište zprávu...",
+  "Unrecognized file format": "Nerozpoznaný formát souboru",
+  "View Account Usage": "Zobrazit využití účtu",
+  "You": "Vy",
+  "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Jste ChatGPT, velký jazykový model trénovaný OpenAI. Pečlivě dodržujte pokyny uživatele. Odpovídejte pomocí markdown.",
+  "click if using a _env_local file": "klikněte, pokud používáte soubor .env.local",
+  "importBackupParseError": "Nepodařilo se analyzovat záložní soubor. Ujistěte se, že je platný JSON.",
+  "transcriptionComplete": "Přepis dokončen! Text byl přidán do vstupu chatu.",
   "welcomeMessage": "Vítejte v asistentu MSF AI",
   "transcribingChatPlaceholder": "Přepisování...",
   "temperatureDescription": "Vyšší hodnoty jako 0,8 způsobí, že výsledek bude kreativnější, zatímco nižší hodnoty jako 0,2 ho učiní více zaměřeným a deterministickým.",
@@ -188,6 +262,7 @@
   "Model Response Settings": "Nastavení odezvy modelu",
   "Higher values produce more creative and varied responses, lower values are more focused and deterministic_": "Vyšší hodnoty produkují kreativnější a rozmanitější odpovědi, nižší hodnoty jsou více zaměřené a deterministické.",
   "Text Streaming Settings": "Nastavení streamování textu",
+  "Run Typewriter Intro": "Spustit úvodní efekt psacího stroje",
   "Smooth streaming": "Plynulé streamování",
   "Enable for a more natural reading experience": "Povolit pro přirozenější čtecí zážitek",
   "Speed (characters per frame)": "Rychlost (znaky na snímek)",
@@ -261,7 +336,19 @@
   "Team Templates": "Týmové šablony",
   "selected": "vybráno",
   "folders": "složky",
-  "agents": "agenti",
+  "agents": {
+    "exportAgent": "Exportovat agenta",
+    "editAgent": "Upravit agenta",
+    "agentName": "Název agenta",
+    "myResearchAssistant": "Můj výzkumný asistent",
+    "agentId": "ID agenta",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Popis (volitelné)",
+    "descriptionPlaceholder": "Specializovaný agent pro výzkumné úkoly...",
+    "baseModel": "Základní model",
+    "formatDescription": "Formát: asst_xxxxx (z MSF AI Assistant Foundry)",
+    "importantInfo": "Tento agent bude mít přístup ke kontextu konverzace a může používat stejné nástroje jako standardní modely. Ujistěte se, že ID agenta je správné, protože jej nelze později změnit."
+  },
   "Quick Actions": "Rychlé akce",
   "Type / in chat to access your prompts": "Napište / v chatu pro přístup k vašim výzvám",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Napište / v chatu, vyberte svou výzvu a vyplňte proměnné, když budete vyzváni",
@@ -308,7 +395,6 @@
   "Custom Agents": "Vlastní agenti",
   "Delete template and all its items": "Smazat šablonu a všechny její položky",
   "Description (Optional)": "Popis (volitelné)",
-  "Edit Prompt": "Upravit výzvu",
   "Edit Tone": "Upravit tón",
   "Email Response Template": "Šablona odpovědi e-mailu",
   "Example Prompt": "Příklad výzvy",
@@ -368,7 +454,6 @@
   "msf_logo_alt": "Logo MSF",
   "collapse_sidebar": "Sbalit postranní panel",
   "expand_sidebar": "Rozbalit postranní panel",
-  "Voice Guidelines": "Pokyny pro hlasový tón",
   "Please upload some content or describe the tone you want": "Nahrajte prosím nějaký obsah nebo popište tón, který chcete",
   "Untitled Tone": "Nepojmenovaný tón",
   "Failed to analyze tone": "Analýza tónu se nezdařila",
@@ -396,15 +481,43 @@
   "enterTagsPlaceholder": "Přidat štítky (stiskněte Enter)",
   "enterPromptNamePlaceholder": "např. Odpověď na e-mail",
   "enterPromptDescriptionPlaceholder": "K čemu je tato výzva?",
-  "enterPromptContentPlaceholder": "Zde napište svou výzvu. Pro dynamický obsah použijte {{variable}}.",
+  "enterPromptContentPlaceholder": "Zde napište svou výzvu. Pro dynamický obsah použijte '{{variable}}'.",
   "common": {
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "close": "Zavřít",
+    "remove": "Odebrat",
+    "tryAgain": "Zkusit znovu",
+    "menu": "Menu",
+    "copyToClipboard": "Kopírovat do schránky",
+    "toggleDropdownMenu": "Přepnout rozbalovací menu",
+    "toggleMenu": "Přepnout menu",
+    "closeModal": "Zavřít modální okno",
+    "dismissBanner": "Zavřít banner",
+    "searchEllipsis": "Hledat...",
+    "addTagEllipsis": "Přidat štítek...",
+    "msfLogo": "Logo MSF",
+    "importantInformation": "Důležité informace",
+    "noResults": "Žádné výsledky nenalezeny",
+    "confirm": "Potvrdit",
+    "cancel": "Zrušit",
+    "discard": "Zahodit",
+    "keepEditing": "Pokračovat v úpravách",
+    "yes": "Ano",
+    "no": "Ne"
   },
   "errors": {
     "unexpectedErrorOccurred": "Došlo k neočekávané chybě",
     "criticalErrorReload": "Došlo ke kritické chybě. Znovu načtěte stránku.",
     "reloadPage": "Znovu načíst stránku",
-    "persistContactSupport": "Pokud tento problém přetrvává, kontaktujte podporu"
+    "persistContactSupport": "Pokud tento problém přetrvává, kontaktujte podporu",
+    "somethingWentWrong": "Něco se pokazilo",
+    "anErrorOccurred": "Došlo k chybě",
+    "copyErrorMessage": "Kopírovat chybovou zprávu",
+    "contactSupport": "Pokud tento problém přetrvává, kontaktujte podporu na",
+    "dismissError": "Zavřít chybu",
+    "applicationError": "Chyba aplikace",
+    "chatLoadError": "Při načítání chatu došlo k chybě",
+    "anErrorOccurredTryAgain": "Došlo k chybě. Zkuste to prosím znovu."
   },
   "auth": {
     "authenticationError": "Chyba ověření",
@@ -473,7 +586,53 @@
     "fullSizePreview": "Náhled v plné velikosti",
     "enterSearchQueryPlaceholder": "Zadejte vyhledávací dotaz nebo otázku...",
     "errorFetchingUrl": "Při načítání obsahu URL došlo k chybě",
-    "errorInitiatingSearch": "Při zahájení webového vyhledávání došlo k chybě"
+    "errorInitiatingSearch": "Při zahájení webového vyhledávání došlo k chybě",
+    "regenerate": "Regenerovat",
+    "modelSwitchPrompt": "{original} selhal, ale {fallback} uspěl. Chcete přepnout modely?",
+    "keepOriginalModel": "Ponechat {model}",
+    "switchToModel": "Přepnout na {model}",
+    "alwaysSwitchToModel": "Vždy automaticky přepnout",
+    "translateMessage": "Přeložit zprávu",
+    "translating": "Překládání...",
+    "translationError": "Překlad se nezdařil",
+    "showOriginal": "Zobrazit originál",
+    "translatedTo": "Přeloženo do {language}",
+    "searchLanguages": "Hledat jazyky...",
+    "selectLanguage": "Vybrat jazyk",
+    "audioFromOriginal": "Zvuk je z původního textu",
+    "audioFromTranslation": "Zvuk je z překladu do {language}",
+    "thinking": "Přemýšlení...",
+    "viewReasoningProcess": "Zobrazit proces uvažování",
+    "collapseThinking": "Sbalit přemýšlení",
+    "expandThinking": "Rozbalit přemýšlení",
+    "actionsDisabledForEmbed": "Použijte ovládací prvky ve vloženém obsahu výše",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Přepis a zpracování...",
+      "transcribingAudio": "Probíhá přepis audia...",
+      "analyzingFiles": "Analýza souborů...",
+      "analyzingDocuments": "Analýza dokumentů...",
+      "analyzingDocument": "Analýza dokumentu...",
+      "analyzingImages": "Analýza obrázků...",
+      "analyzingImage": "Analýza obrázku..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} obrázek/ů",
+      "filesCount": "{count} soubor(ů)",
+      "audioVideo": "audio/video",
+      "empty": "prázdné"
+    },
+    "discardChanges": "Zrušit změny",
+    "discardChangesMessage": "Máte neuložené změny. Opravdu je chcete zrušit?",
+    "voiceInputStarting": "Spouštím...",
+    "voiceInputRecording": "Nahrávám...",
+    "voiceInputTapToStop": "Klepněte pro zastavení",
+    "stopRecording": "Zastavit nahrávání",
+    "voiceInput": "Hlasový vstup",
+    "microphoneAccessDenied": "Přístup k mikrofonu byl odepřen. Povolit jej můžete v nastavení vašeho prohlížeče.",
+    "microphoneAccessError": "Chyba přístupu k mikrofonu: {message}",
+    "voiceInputTranscribing": "Přepisování...",
+    "ttsRightClickHint": "Klikněte pravým tlačítkem pro možnosti hlasu"
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",
@@ -481,29 +640,135 @@
     "quickActionsTitle": "Rychlé akce",
     "quickActions": "Rychlé akce"
   },
-  "agents": {
-    "exportAgent": "Exportovat agenta",
-    "editAgent": "Upravit agenta",
-    "agentName": "Název agenta",
-    "myResearchAssistant": "Můj výzkumný asistent",
-    "agentId": "ID agenta",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Popis (volitelné)",
-    "descriptionPlaceholder": "Specializovaný agent pro výzkumné úkoly...",
-    "baseModel": "Základní model",
-    "formatDescription": "Formát: asst_xxxxx (z MSF AI Assistant Foundry)",
-    "importantInfo": "Tento agent bude mít přístup ke kontextu konverzace a může používat stejné nástroje jako standardní modely. Ujistěte se, že ID agenta je správné, protože jej nelze později změnit."
-  },
   "prompts": {
-    "buildReusablePrompts": "Vytvářejte opakovaně použitelné výzvy s pomocí AI"
+    "buildReusablePrompts": "Vytvářejte opakovaně použitelné výzvy s pomocí AI",
+    "noToneDefault": "Bez tónu (použít výchozí)",
+    "tagHelp": "Nápověda ke štítkům",
+    "tagHelpContent": "Použijte štítky k kategorizaci a rychlému nalezení výzev. Příklady:",
+    "tagExamples": {
+      "email": "e-mail",
+      "marketing": "marketing",
+      "technical": "technický",
+      "customerSupport": "zákaznická-podpora"
+    },
+    "variableHelp": "Nápověda k proměnným",
+    "variableHelpIntro": "Použijte proměnné, aby byly vaše výzvy dynamické:",
+    "requiredVariables": "Povinné proměnné (bez výchozí hodnoty):",
+    "optionalVariables": "Volitelné proměnné (s výchozí hodnotou):",
+    "userMustProvide": "Uživatel musí zadat hodnotu",
+    "userCanProvide": "Uživatel může zadat hodnotu, nebo se použije výchozí",
+    "example": "Příklad:",
+    "variableExampleText": "Napište '{{tone:profesionální}}' e-mail '{{recipient}}' o '{{topic}}' v '{{language:češtině}}'",
+    "detectedVariables": "Detekované proměnné",
+    "required": "Povinné",
+    "aiAssistant": "AI asistent",
+    "whatToImprove": "Co byste chtěli vylepšit?",
+    "whatShouldPromptDo": "Co má tato výzva dělat?",
+    "improvePlaceholder": "např. Udělat profesionálnější, přidat příklady, zlepšit srozumitelnost...",
+    "generatePlaceholder": "např. Vygenerovat profesionální šablonu e-mailu s proměnnými pro příjemce a téma...",
+    "addContextOptional": "Přidat kontext (volitelné)",
+    "revising": "Revidování...",
+    "generating": "Generování...",
+    "reviseWithAI": "Revidovat s AI",
+    "generatePrompt": "Vygenerovat výzvu",
+    "revisionComplete": "Revize dokončena",
+    "generationComplete": "Generování dokončeno",
+    "revisedPrompt": "Revidovaná výzva:",
+    "generatedPrompt": "Vygenerovaná výzva:",
+    "applyRevision": "Použít tuto revizi",
+    "useThisPrompt": "Použít tuto výzvu",
+    "improvementsMade": "Provedená vylepšení:",
+    "tips": "Tipy:",
+    "howAICanHelp": "Jak může AI pomoci",
+    "helpItems": {
+      "improveClarity": "Zlepšit srozumitelnost a strukturu",
+      "suggestVariables": "Navrhnout užitečné proměnné",
+      "addContext": "Přidat kontext a příklady",
+      "optimize": "Optimalizovat pro lepší výsledky"
+    },
+    "savePrompt": "Uložit výzvu",
+    "add": "Přidat"
   },
   "tones": {
     "createCustomVoiceProfile": "Vytvořte vlastní hlasový profil s pomocí AI",
-    "examplePlaceholder": "např. Vytvořte profesionální, ale přátelský tón zákaznické podpory..."
+    "examplePlaceholder": "např. Vytvořte profesionální, ale přátelský tón zákaznické podpory...",
+    "tagHelp": "Nápověda ke štítkům",
+    "tagHelpContent": "Použijte štítky k kategorizaci a rychlému nalezení tónů. Příklady:",
+    "tagExamples": {
+      "professional": "profesionální",
+      "casual": "neformální",
+      "technical": "technický",
+      "marketing": "marketingový"
+    },
+    "add": "Přidat",
+    "aiToneAnalyzer": "AI analyzátor tónu",
+    "describeToneToCreate": "Popište tón, který chcete vytvořit",
+    "uploadContentSamples": "Nahrát vzorky obsahu",
+    "analyzing": "Analyzování...",
+    "analyzeToneWithAI": "Analyzovat tón s AI",
+    "analysisComplete": "Analýza dokončena",
+    "generatedVoiceGuidelines": "Vygenerované hlasové pokyny:",
+    "examplePhrases": "Příklady frází:",
+    "suggestedTags": "Navrhované štítky:",
+    "applyThisAnalysis": "Použít tuto analýzu",
+    "detectedCharacteristics": "Detekované charakteristiky:",
+    "howAICanHelp": "Jak může AI pomoci",
+    "helpItems": {
+      "transcribe": "Přepsat audio/video obsah",
+      "analyzeContent": "Analyzovat vaše vzorky obsahu",
+      "extractPatterns": "Extrahovat vzory tónu a stylu",
+      "generateGuidelines": "Vygenerovat hlasové pokyny",
+      "suggestTags": "Navrhnout relevantní štítky"
+    },
+    "saveTone": "Uložit tón"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Zobrazit technický diagram toku"
+    "viewTechnicalFlowDiagram": "Zobrazit technický diagram toku",
+    "backToChat": "Zpět na chat",
+    "title": "Centrum nápovědy",
+    "subtitle": "Najděte odpovědi, zjistěte více o soukromí a získejte podporu",
+    "faq": {
+      "title": "Často kladené otázky",
+      "description": "Najděte odpovědi na běžné otázky o používání AI asistenta",
+      "articles": "články",
+      "searchPlaceholder": "Hledat v FAQ...",
+      "noResults": "Žádné FAQ neodpovídají vašemu hledání",
+      "noResultsHint": "Zkuste jiný hledaný výraz"
+    },
+    "privacy": {
+      "title": "Soukromí a data",
+      "description": "Zjistěte, jak jsou vaše data ukládána a chráněna",
+      "topics": "témata",
+      "searchPlaceholder": "Hledat témata o soukromí...",
+      "noResults": "Žádná témata o soukromí neodpovídají",
+      "noResultsHint": "Zkuste jiný hledaný výraz",
+      "bannerTitle": "Na vašem soukromí záleží",
+      "bannerDescription": "Všechny konverzace jsou ukládány lokálně na vašem zařízení. Zpracování dat probíhá v systémech MSF s využitím infrastruktury Azure.",
+      "localStorageOnly": "Pouze místní úložiště",
+      "msfControlled": "Kontrolováno MSF",
+      "noPersonalData": "Žádná osobní data",
+      "noSensitiveOps": "Žádné citlivé operace"
+    },
+    "contact": {
+      "title": "Kontakt a zdroje",
+      "description": "Spojte se s naším týmem a získejte přístup k užitečným odkazům",
+      "supportAvailable": "Podpora k dispozici",
+      "submitRequest": "Odeslat žádost o podporu",
+      "getHelp": "Získejte pomoc od našeho týmu",
+      "requestDescription": "Potřebujete pomoc nebo chcete poskytnout zpětnou vazbu? Klikněte níže pro otevření formuláře podpory.",
+      "openSupportForm": "Otevřít formulář podpory",
+      "otherWays": "Další způsoby, jak nás kontaktovat",
+      "emailSupport": "E-mailová podpora",
+      "emailDescription": "Napište nám e-mail s dotazy, zpětnou vazbou nebo technickými problémy"
+    },
+    "resources": {
+      "title": "Další zdroje",
+      "portalTitle": "Portál AI akcelerátoru",
+      "portalDescription": "Dokumentace, aktualizace projektu a školicí materiály",
+      "githubTitle": "Open source repozitář",
+      "githubDescription": "Zobrazit kód, nahlásit problémy a přispět na GitHubu"
+    }
   },
   "settings": {
     "Settings": "Nastavení",
@@ -571,9 +836,820 @@
     "FAQs, privacy policy, and guides": "Časté otázky, zásady ochrany osobních údajů a průvodci",
     "Contact Support": "Kontaktovat podporu",
     "Popular Questions": "Oblíbené otázky",
-    "View all FAQs": "Zobrazit všechny časté otázky"
+    "View all FAQs": "Zobrazit všechny časté otázky",
+    "Delete legacy data after migration": "Smazat starší data po migraci",
+    "frees up storage space": "uvolní místo v úložišti",
+    "Legacy data deleted": "Starší data smazána",
+    "freed": "uvolněno",
+    "Conversations": "Konverzace",
+    "Legacy": "Starší",
+    "Other": "Ostatní",
+    "Loading": "Načítání",
+    "Legacy Data Detected": "Zjištěna starší data",
+    "legacyDataDescription": "Máte {size} dat z předchozí verze. Lze je migrovat, exportovat nebo smazat pro uvolnění místa.",
+    "legacyDeleteSuccess": "Úspěšně smazána starší data a uvolněno {size}.",
+    "legacyDeleteError": "Nepodařilo se smazat starší data. Zkuste to znovu.",
+    "Explore solutions": "Prozkoumat řešení",
+    "Migrate to Current Format": "Migrovat na aktuální formát",
+    "Export Legacy Data": "Exportovat starší data",
+    "Delete Legacy Data": "Smazat starší data",
+    "deleteLegacyConfirm": "Opravdu chcete smazat všechna starší data? Tuto akci nelze vrátit zpět.",
+    "Deleting": "Mazání",
+    "Confirm Delete": "Potvrdit smazání",
+    "Cancel": "Zrušit",
+    "Custom Instructions": "Vlastní pokyny",
+    "Personalization": "Personalizace",
+    "Display Name": "Zobrazované jméno",
+    "Display Name Description": "Zvolte, jak se bude vaše jméno zobrazovat v pozdravech a v celé aplikaci",
+    "First Name": "Křestní",
+    "Last Name": "Příjmení",
+    "Full Name": "Celé",
+    "Custom": "Vlastní",
+    "None": "Žádné",
+    "Custom Display Name": "Vlastní zobrazované jméno",
+    "Custom Display Name Placeholder": "Zadejte preferované jméno",
+    "howShouldWeAddressYou": "Jak Vás máme oslovovat?",
+    "displayNamePreview": "Náhled: „{greeting}“",
+    "Streaming Speed": "Rychlost streamování",
+    "Slow": "Pomalá",
+    "Normal": "Normální",
+    "Fast": "Rychlá",
+    "Controls how smoothly text appears during AI responses": "Určuje, jak plynule se text zobrazuje během odpovědí AI",
+    "aboutYou": {
+      "title": "O vás",
+      "shareBasicInfo": "Sdílet základní informace s AI",
+      "shareBasicInfoDescription": "Když je tato možnost zapnuta, AI bude znát vaše jméno, titul a oddělení z vašeho profilu",
+      "preferredName": "Preferované jméno",
+      "preferredNamePlaceholder": "Jak si přejete, abychom vás oslovovali?",
+      "preferredNameDescription": "Přepište své zobrazované jméno. Nechte prázdné, pokud chcete použít jméno z profilu",
+      "additionalContext": "Další kontext",
+      "additionalContextPlaceholder": "Např. pracuji v terénních operacích, preferuji stručné odpovědi, často se ptám na lékařské protokoly...",
+      "additionalContextDescription": "Jakékoli další informace, které chcete, aby AI o vás věděla",
+      "preferredNameDescriptionWithSync": "Jak vás bude AI oslovovat. Pokud necháte prázdné, použije se vaše zobrazované jméno z obecných nastavení."
+    },
+    "displayNameUIOnly": "Toto určuje, jak se vaše jméno zobrazuje v aplikaci. AI ho neuvidí, pokud v nastavení chatu nepovolíte sdílení.",
+    "tts": {
+      "title": "Převod textu na řeč",
+      "language": "Jazyk",
+      "voice": "Hlas",
+      "multilingualVoices": "Vícejazyčné hlasy",
+      "voices": "Hlasy",
+      "rate": "Rychlost",
+      "pitch": "Tón",
+      "quality": "Kvalita zvuku",
+      "qualityDescription": "Vyšší kvalita vytváří lepší zvuk, ale využívá více dat",
+      "preview": "Náhled",
+      "previewing": "Přehrávání...",
+      "previewFailed": "Nepodařilo se vytvořit zvukový náhled",
+      "previewText": "Toto je náhled vybraných nastavení hlasu.",
+      "reset": "Obnovit",
+      "default": "Výchozí",
+      "slower": "Pomaleji",
+      "faster": "Rychleji",
+      "lower": "Nižší",
+      "higher": "Vyšší",
+      "selectedVoice": "Vybráno",
+      "noVoicesAvailable": "Pro tento jazyk nejsou dostupné žádné hlasy",
+      "quickSettings": "Nastavení hlasu",
+      "overrideForThisMessage": "Upravit nastavení pro tuto zprávu",
+      "speakWithSettings": "Přečíst"
+    },
+    "Model Response Settings Description": "Nastavte výchozí parametry pro odpovědi AI modelu. Různé modely používají různá nastavení.",
+    "Default Reasoning Effort": "Výchozí úroveň úsilí při uvažování",
+    "reasoningEffortDescription": "Určuje hloubku uvažování pro modely zaměřené na logické myšlení. Vyšší úsilí vede k důkladnější analýze.",
+    "Default Verbosity": "Výchozí úroveň podrobnosti",
+    "verbosityDescription": "Určuje úroveň detailu odpovědí u modelů GPT-5."
   },
   "notFound": {
     "lostDog": "Ztracený pes"
+  },
+  "emptyState": {
+    "greeting": "Jak vám mohu pomoci?",
+    "greetingWithName": "Jak vám mohu pomoci, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Vytvořit diagramy",
+        "prompt": "Ukažte mi, jak můžete vytvářet diagramy a vývojové diagramy. Jaké typy procesů, pracovních postupů nebo systémů mi můžete pomoci vizualizovat? Uveďte mi příklady."
+      },
+      "draftContent": {
+        "title": "Navrhnout profesionální obsah",
+        "prompt": "Potřebuji pomoc s psaním profesionálních dokumentů - e-mailů, zpráv, shrnutí. Můžete mi ukázat příklady, jak můžete pomoci s různými typy obchodního psaní?"
+      },
+      "analyzeInformation": {
+        "title": "Analyzovat informace",
+        "prompt": "Jak mi můžete pomoci analyzovat data nebo informace? Ukažte mi různé způsoby, jak byste mohli rozebrat čísla, najít vzorce nebo získat poznatky z dokumentů či datových sad."
+      },
+      "planOrganize": {
+        "title": "Plánovat a organizovat",
+        "prompt": "Můžete mi pomoci plánovat projekty nebo organizovat práci? Uveďte mi příklady, jak byste mohli vytvořit časové harmonogramy, agendy nebo projektové plány s různými strukturami."
+      },
+      "brainstormIdeas": {
+        "title": "Brainstorming nápadů",
+        "prompt": "Chci udělat brainstorming k vyřešení problému. Ukažte mi, jak přistupujete ke kreativnímu myšlení a generování nápadů – jaké otázky byste položili a jak zkoumáte možnosti?"
+      },
+      "buildPresentations": {
+        "title": "Vytvořit prezentace",
+        "prompt": "Jak mi můžete pomoci vytvořit prezentace? Ukažte mi příklady různých struktur prezentací, vizuálních návrhů a jak organizujete informace pro různé publikum."
+      },
+      "workWithCode": {
+        "title": "Práce s kódem",
+        "prompt": "Můžete pomoci s programováním nebo skripty? Ukažte mi příklady – ať už jde o psaní nového kódu, ladění problémů nebo vysvětlení, jak něco funguje krok za krokem."
+      },
+      "decisionSupport": {
+        "title": "Podpora rozhodování",
+        "prompt": "Potřebuji udělat rozhodnutí, ale nejsem si jistý, jak vyhodnotit své možnosti. Můžete mi ukázat různé rámce nebo přístupy, které používáte k přemýšlení o volbách?"
+      },
+      "summarizeSynthesize": {
+        "title": "Shrnout a syntetizovat",
+        "prompt": "Jak pomáháte shrnout dlouhé dokumenty nebo syntetizovat informace z více zdrojů? Ukažte mi příklady různých formátů shrnutí a úrovní detailů."
+      },
+      "explainTopics": {
+        "title": "Vysvětlit složitá témata",
+        "prompt": "Můžete vysvětlit složité koncepty jednoduchými slovy? Ukažte mi, jak rozkládáte složité myšlenky, používáte analogie a přizpůsobujete vysvětlení různým úrovním znalostí."
+      },
+      "createSchedules": {
+        "title": "Vytvořit rozvrhy",
+        "prompt": "Potřebuji pomoc s organizací času a vytvářením rozvrhů. Ukažte mi různé způsoby, jak můžete strukturovat agendy, kalendáře nebo časové plány s příklady."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modely",
+      "agents": "Agenti"
+    },
+    "sections": {
+      "baseModels": "Základní modely"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Pokročilá funkce",
+      "description": "Vytvářejte a spravujte vlastní AI agenty se specializovanými schopnostmi. Tito agenti běží na instanci MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Pokročilá funkce - Vyžaduje koordinaci s technickým týmem AI asistenta",
+      "advancedFeatureWarning": "Vlastní agenti fungují pouze s instancí MSF AI Assistant Foundry. ID agentů musí být vytvořena technickým týmem AI asistenta na této konkrétní instanci a koordinována s vámi před použitím.",
+      "createNewAgent": "Vytvořit nového vlastního agenta",
+      "noAgentsTitle": "Zatím žádní vlastní agenti",
+      "noAgentsDescription": "Vytvořte svého prvního vlastního agenta pro rozšíření schopností AI o specializované nástroje a chování."
+    },
+    "advancedOptions": {
+      "title": "Pokročilé možnosti",
+      "temperature": "Teplota",
+      "fixedTemperatureNote": "Poznámka: Tento model používá pevné hodnoty teploty pro konzistentní výkon.",
+      "reasoningEffort": "Úsilí při uvažování",
+      "minimal": "Minimální",
+      "low": "Nízké",
+      "medium": "Střední",
+      "high": "Vysoké",
+      "verbosity": "Mnohomluvnost"
+    },
+    "searchMode": {
+      "title": "Režim vyhledávání",
+      "subtitle": "Bude používat webové vyhledávání, když je to potřeba",
+      "routingLabel": "Směrování vyhledávání:",
+      "whatsDifference": "Jaký je rozdíl?",
+      "privacyFocused": "Zaměřeno na soukromí (výchozí)",
+      "privacyFocusedDescription": "Pomalejší, ale soukromější",
+      "azureAgentMode": "Režim agenta Azure AI",
+      "azureAgentModeDescription": "Rychlejší, ale ukládá data konverzace v cloudu",
+      "privacyInfoTitle": "Důležité informace o soukromí",
+      "privacyInfoDescription": "Celá vaše konverzace bude odeslána agentovi Azure AI Foundry.",
+      "learnMoreDataStorage": "Více informací o ukládání dat",
+      "privacyEnabled": "Vyhledávání se zaměřením na soukromí je zapnuto",
+      "learnPrivacy": "Zjistěte, jak je vaše soukromí chráněno"
+    },
+    "customAgent": {
+      "label": "Vlastní agent:",
+      "description": "Tento agent běží na instanci MSF AI Assistant Foundry s vždy povolenými nástroji.",
+      "webSearch": "Webové vyhledávání v reálném čase",
+      "codeInterpreter": "Interpret kódu a analýza souborů"
+    },
+    "header": {
+      "backToModels": "Zpět na modely",
+      "knowledgeCutoff": "Uzávěrka znalostí: {cutoff}",
+      "knowledgeCutoffLabel": "Datum omezení znalostí"
+    },
+    "modelTypes": {
+      "foundational": "základní",
+      "omni": "omni",
+      "reasoning": "uvažování",
+      "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Řadit podle",
+      "usage": "Nejpoužívanější",
+      "name": "Název (A–Z)",
+      "cutoff": "Nejnovější modely",
+      "custom": "Vlastní",
+      "edit": "Upravit",
+      "done": "Hotovo",
+      "reset": "Obnovit",
+      "resetTooltip": "Obnovit výchozí pořadí"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Vyhledávání na webu v reálném čase"
+    },
+    "modelTypeIcons": {
+      "foundational": "Rychlý a efektivní model pro obecné účely",
+      "reasoning": "Rozšířené uvažování pro složité problémy",
+      "omni": "Multimodální model se širokými schopnostmi",
+      "agent": "Agent s nástroji v reálném čase a přístupem na web"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "AI model poháněný GPT-4.1 s webovým vyhledáváním v reálném čase prostřednictvím Bingu. Poskytuje aktuální informace, ověřování faktů a znalosti aktuálních událostí. Ideální pro výzkum vyžadující čerstvé informace, analýzu zpráv a ověřování faktů.",
+      "knowledgeCutoff": "Webové vyhledávání v reálném čase"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Nejpokročilejší model OpenAI, vyniká ve složitém uvažování, generování kódu a řešení technických problémů. Ideální pro analytické úkoly, programátorské výzvy, výzkum a podrobná vysvětlení. Podporuje nastavitelné úsilí při uvažování a mnohomluvnost odpovědí.",
+      "knowledgeCutoff": "6. srpna 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Rychlejší a nákladově efektivnější varianta GPT-5, optimalizovaná pro rychlost při zachování vysoké kvality. Perfektní pro každodenní úkoly, rychlé dotazy, směrování nástrojů a aplikace vyžadující rychlé odezvy. Vynikající rovnováha mezi výkonem a efektivitou.",
+      "knowledgeCutoff": "6. srpna 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Specializovaná varianta GPT-5 optimalizovaná pro konverzační interakce a emocionální inteligenci. Vyniká v empatické komunikaci, podpoře duševního zdraví, kreativním psaní, brainstormingu a přirozeném dialogu. Ideální pro neformální konverzace, poradenské scénáře a úkoly vyžadující emocionální uvědomění.",
+      "knowledgeCutoff": "1. října 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Nejpokročilejší model uvažování OpenAI s revolučními schopnostmi řešení problémů. Vyniká ve složité matematice, vědeckém uvažování, programátorských výzvách a víceúrovňových logických úkolech. Rozšířené kontextové okno 200K. Podporuje řízení úsilí při uvažování.",
+      "knowledgeCutoff": "8. dubna 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Rychlý a nákladově efektivní model od Meta. Skvělý pro každodenní úkoly jako psaní, shrnutí a základní pomoc s kódem. Dobrá rovnováha mezi rychlostí a kvalitou pro rutinní práci.",
+      "knowledgeCutoff": "7. května 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Specialista na uvažování, který ukazuje svou práci krok za krokem. Skvělý pro matematické problémy, logické hádanky a pochopení složitých konceptů. Sledujte, jak přemýšlí nad problémy v reálném čase.",
+      "knowledgeCutoff": "20. ledna 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Všestranný model obzvláště dobrý v programování a technickém psaní. Skvělý pro ladění kódu, psaní dokumentace a vysvětlování technických konceptů. Rychlý a spolehlivý pro vývojovou práci.",
+      "knowledgeCutoff": "16. dubna 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Všestranný model od xAI známý pro nuancované odpovědi. Skvělý pro otevřené diskuze, kreativní projekty a řešení složitých problémů.",
+      "knowledgeCutoff": "13. května 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Nejschopnější model Anthropic s výjimečným uvažováním, programováním a kreativními schopnostmi. Ideální pro složité analýzy, výzkum a úkoly vyžadující hluboké porozumění.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Vyvážený model Claude nabízející vynikající výkon v programování, analýze a kreativních úkolech. Skvělý pro každodenní použití s rychlými odezvami.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Model Claude Opus předchozí generace. Skvělý pro složité programátorské úkoly, podrobnou analýzu a nuancované porozumění.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Rychlý a nákladově efektivní model Claude optimalizovaný pro rychlé úkoly. Skvělý pro jednoduché dotazy, shrnutí a aplikace s vysokým objemem.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Nejvyspělejší model OpenAI, vynikající v komplexním uvažování, generování kódu a řešení technických problémů. Nejlepší pro analytické úkoly, programátorské výzvy, výzkum a podrobné vysvětlení. Podporuje nastavitelnou úroveň uvažování a délku odpovědí.",
+      "knowledgeCutoff": "Prosinec 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Speciální varianta GPT-5.2 optimalizovaná pro konverzační interakce a emoční inteligenci. Vyniká v empatické komunikaci, podpoře duševního zdraví, kreativním psaní, brainstormingu a přirozeném dialogu. Nejvhodnější pro neformální konverzace, poradenské situace a úkoly vyžadující emoční vnímavost.",
+      "knowledgeCutoff": "Prosinec 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Zpět na Chat",
+    "title": "Vysvětlení Režimu Vyhledávání",
+    "subtitle": "Pochopení vašich možností vyhledávání a kde jsou uložena vaše data",
+    "quickComparison": "Rychlé Porovnání",
+    "noSearch": "Bez Vyhledávání",
+    "privacyFocused": "Zaměřeno na Soukromí",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Rychlost Odpovědi",
+    "fastest": "Nejrychlejší",
+    "slowerMultiStep": "Pomalejší (více kroků)",
+    "fasterDirect": "Rychlejší (přímé)",
+    "fullConversationStored": "Celá Konverzace Uložena v Cloudu",
+    "whatsStoredInAzure": "Co je Uloženo v Azure",
+    "nothingStateless": "Nic (pouze bezstavové)",
+    "searchQueriesOnly": "Pouze vyhledávací dotazy",
+    "fullConversationHistory": "Kompletní historie konverzace",
+    "modelAvailability": "Dostupnost Modelů",
+    "allModels": "Všechny modely",
+    "gpt41Only": "Pouze GPT-4.1",
+    "searchTurnedOff": "Vyhledávání Vypnuto",
+    "noSearchDescription": "Nejrychlejší odpovědi bez možnosti webového vyhledávání. Celá vaše konverzace zůstává ve vašem prohlížeči - nic není uloženo v cloudu.",
+    "viewDetailsBelow": "Pro více podrobností si prohlédněte technický postup níže.",
+    "viewTechnicalFlowDiagram": "Zobrazit Diagram Technického Postupu",
+    "legend": "Legenda:",
+    "legendNoSearch": "Váš Prohlížeč (místní úložiště) | Server AI Assistant | Azure OpenAI (bezstavové)",
+    "privacyFocusedMode": "Režim Zaměřený na Soukromí",
+    "default": "Výchozí",
+    "privacyDescription": "Používá webové vyhledávání v případě potřeby, ale je pomalejší, protože zahrnuje více kroků. V Azure jsou uloženy pouze vyhledávací dotazy - celá vaše konverzace zůstává ve vašem prohlížeči.",
+    "legendPrivacy": "Váš Prohlížeč (místní úložiště) | Server AI Assistant | Azure AI Foundry (pouze vyhledávací dotazy) | Azure OpenAI (bezstavové)",
+    "azureAIFoundryMode": "Režim Azure AI Foundry",
+    "foundryDescription": "Rychlejší odpovědi s vestavěnou schopností webového vyhledávání. Celá vaše konverzace je uložena v databázi Azure AI Foundry, nejen ve vašem prohlížeči.",
+    "legendFoundry": "Váš Prohlížeč (místní úložiště) | Server AI Assistant | Agent Azure AI Foundry (ukládá celou konverzaci)",
+    "whyTheseOptions": "Proč Tyto Možnosti?",
+    "whyTheseOptionsText1": "Toto jsou dostupné implementace vyhledávání poté, co Azure ukončil podporu svého Bing Search API, na kterém AI Assistant původně závisel.",
+    "whyTheseOptionsText2": "Tým aktivně zkoumá alternativy vyhledávání více zaměřené na soukromí. Obě současné možnosti využívají vyhledávací schopnosti Azure AI Foundry, ale liší se v tom, kolik dat konverzace je sdíleno.",
+    "azureDeprecatedBingApi": "Azure ukončil podporu svého Bing Search API",
+    "footerNote": "Oba režimy ukládají vaši konverzaci lokálně ve vašem prohlížeči. Režimy můžete kdykoli přepnout v nastavení modelu.",
+    "note": "Poznámka:",
+    "loadingDiagram": "Načítání diagramu..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Kontrola úložiště",
+      "analyzingData": "Analyzujeme vaše data...",
+      "updateAvailable": "Dostupná aktualizace",
+      "storageSpaceLimited": "Nedostatek místa v úložišti",
+      "migratingData": "Probíhá migrace dat",
+      "migrationComplete": "Migrace dokončena",
+      "partiallyComplete": "Částečně dokončeno",
+      "migrationFailed": "Migrace selhala"
+    },
+    "descriptions": {
+      "foundLegacyData": "Našli jsme data z předchozí verze. Chcete je migrovat do vylepšeného systému?",
+      "storageSpaceWarning": "Vaše data potřebují více místa, než je aktuálně k dispozici. Doporučujeme použít režim postupné migrace.",
+      "pleaseWait": "Počkejte prosím, než aktualizujeme vaše data...",
+      "dataIsSafe": "Vaše původní data jsou v bezpečí. Můžete to zkusit znovu nebo zatím přeskočit.",
+      "itemsTooLarge": "Tyto položky jsou příliš velké pro úložiště. Můžete je exportovat, uvolnit místo nebo pokračovat bez nich.",
+      "settingsUpdated": "Vaše nastavení bylo aktualizováno."
+    },
+    "benefits": {
+      "title": "Přínosy",
+      "fasterPerformance": "Rychlejší výkon",
+      "betterReliability": "Lepší spolehlivost",
+      "dataPreserved": "Vaše data jsou zachována"
+    },
+    "options": {
+      "advancedOptions": "Pokročilé možnosti",
+      "useIncrementalMode": "Použít postupný režim",
+      "slowerButSafer": "pomalejší, ale bezpečnější",
+      "recommended": "doporučeno",
+      "deleteLegacyData": "Po migraci smazat stará data",
+      "freesUpSpace": "uvolní místo v úložišti"
+    },
+    "actions": {
+      "skip": "Přeskočit",
+      "migrateData": "Migrovat data",
+      "migrateAnyway": "Migrovat i tak",
+      "continue": "Pokračovat",
+      "retry": "Zkusit znovu",
+      "exportBackupFirst": "Nejprve exportovat zálohu",
+      "exportSkippedItems": "Exportovat přeskočené položky"
+    },
+    "quota": {
+      "availableSpace": "Dostupné místo",
+      "dataToMigrate": "Data k migraci",
+      "additionalSpaceNeeded": "Potřebné další místo"
+    },
+    "progress": {
+      "migratingConversations": "Migrují se konverzace",
+      "migratingPrompts": "Migrují se promptní dotazy",
+      "migratingAgents": "Migrují se agenti",
+      "finishingUp": "Dokončujeme"
+    },
+    "results": {
+      "successfullyMigrated": "Úspěšně migrováno",
+      "notes": "Poznámky",
+      "couldNotMigrate": "Nelze migrovat",
+      "legacyDataDeleted": "Stará data smazána",
+      "freed": "uvolněno"
+    },
+    "units": {
+      "conversation": "konverzace",
+      "conversations": "konverzace",
+      "folder": "složka",
+      "folders": "složky",
+      "prompt": "prompt",
+      "prompts": "prompty",
+      "customAgent": "vlastní agent",
+      "customAgents": "vlastní agenti",
+      "item": "položka",
+      "items": "položky"
+    }
+  },
+  "languageSwahili": "Svahilština",
+  "welcomeBanner": {
+    "title": "Vítejte v AI Assistant V2",
+    "whatsNew": "Co je nového",
+    "whatsNewQuestion": "Co je nového?"
+  },
+  "welcomeV2": {
+    "backToChat": "Zpět do chatu",
+    "title": "Vítejte v AI Assistant V2",
+    "subtitle": "Kompletně přepracované s výkonnými novými funkcemi",
+    "webSearch": {
+      "title": "Režim webového vyhledávání",
+      "description": "Umožněte AI přístup k vyhledávání na webu v reálném čase s ochranou soukromí",
+      "quickAccess": "Rychlý přístup:",
+      "quickAccessInstructions": "Klikněte na tlačítko + vedle vstupu do chatu → Vyberte \"Web Search\"",
+      "setAsDefault": "Nastavit jako výchozí:",
+      "setAsDefaultInstructions": "Otevřete nastavení modelu a zapněte přepínač Režim webového vyhledávání. Vyberte mezi:",
+      "privacyFocused": "Ochrana soukromí (výchozí)",
+      "privacyFocusedDescription": "Externě odesílán pouze vyhledávací dotaz",
+      "azureAIFoundry": "Režim Azure AI Foundry",
+      "azureAIFoundryDescription": "Rychlejší, ale celá konverzace je ukládána externě",
+      "learnMore": "Více o režimech vyhledávání →"
+    },
+    "tones": {
+      "title": "Tóny (hlasové profily)",
+      "description": "Ovládejte styl psaní, formálnost a osobnost AI",
+      "createTones": "1. Vytvoření tónů:",
+      "createTonesInstructions": "Rychlé akce v postranním panelu → záložka Tóny",
+      "useTones": "2. Použití tónů:",
+      "useTonesInstructions": "Klikněte na rozbalovací nabídku tónů vedle vstupu do chatu",
+      "exampleProfessionalDesc": "Formální, byznys tón",
+      "exampleCasualDesc": "Přátelský, konverzační"
+    },
+    "aiAssist": {
+      "title": "AI asistence pro prompty a tóny",
+      "description": "Nechte AI pomoci s rychlejší tvorbou lepších promptů a tónů",
+      "step1": "Otevřete Rychlé akce v postranním panelu",
+      "step2": "Přejděte na kartu {prompts} nebo {tones}",
+      "step3": "Vyhledejte panel AI Assistenta",
+      "getSuggestions": "Získat návrhy",
+      "getSuggestionsDesc": "AI analyzuje váš návrh a nabídne zlepšení",
+      "buildFromFiles": "Vytvořit ze souborů",
+      "buildFromFilesDesc": "Nahrajte dokumenty pro generování promptů/tónů",
+      "testBeforeSaving": "Otestovat před uložením",
+      "testBeforeSavingDesc": "Vyzkoušejte prompty/tóny v živém chatu",
+      "step2Prefix": "Přejděte na",
+      "step2Suffix": "záložku"
+    },
+    "customAgents": {
+      "title": "Vlastní agenti",
+      "advancedBadge": "POKROČILÉ",
+      "description": "Specializovaní AI agenti s pokročilými funkcemi, jako je webové vyhledávání a interpretace kódu",
+      "advancedFeature": "Pokročilá funkce",
+      "advancedFeatureDesc": "Vlastní agenti běží na Azure AI Foundry se specializovanými nástroji. Vyžaduje spolupráci s technickým týmem AI Assistant pro vytvoření ID agenta.",
+      "howToAccess": "Jak získat přístup:",
+      "howToAccessInstructions": "Nastavení → Modely → záložka Agentů",
+      "whatYouCanDo": "Co můžete dělat:",
+      "configureAgents": "Konfigurovat agenty se specializovanými schopnostmi",
+      "importExport": "Import/export konfigurací agentů",
+      "selectFromDropdown": "Vyberte vlastní agenty z rozbalovací nabídky modelu"
+    },
+    "audioTranslation": {
+      "title": "Přepis audia s překladem",
+      "description": "Automatický překlad přepisů audia do více než 13 jazyků",
+      "howToUse": "Jak používat:",
+      "step1": "Nahrajte audio nebo video soubor",
+      "step2": "Klikněte na rozbalovací nabídku jazyků v rozhraní přepisu",
+      "step3": "Vyberte cílový jazyk",
+      "availableLanguages": "Dostupné jazyky:",
+      "moreLanguages": "+7 dalších"
+    },
+    "pwa": {
+      "title": "Instalace jako mobilní aplikace",
+      "description": "Progresivní webová aplikace s nativním zážitkem",
+      "installTip": "Tip: Nainstalujte po přihlášení, abyste zachovali své ověření a měli nejlepší zážitek.",
+      "howToInstall": "Jak nainstalovat:",
+      "step1": "Přihlaste se ke svému účtu",
+      "step2": "Otevřete Nastavení → Mobilní aplikace pro podrobné pokyny",
+      "step3": "Na mobilu: Klepněte na menu prohlížeče (⋮ nebo ⚙️)",
+      "step4": "Hledejte „Přidat na plochu“ nebo „Nainstalovat aplikaci“",
+      "step5": "Postupujte podle pokynů k instalaci",
+      "benefits": "Výhody:",
+      "benefit1": "Spouštění jako nativní aplikace z plochy",
+      "benefit2": "Celá obrazovka bez rozhraní prohlížeče",
+      "benefit3": "Offline přístup k uloženým konverzacím"
+    }
+  },
+  "Professional": "Profesionální",
+  "Casual": "Neformální",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Zadejte prompt nebo napište \"/\" pro výběr promptu..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními pravidly chování, která zajišťují užitečné, přesné a bezpečné odpovědi."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Tip: Napište \"/\" pro výběr z uložených šablon promptů."
+  },
+  "fileUpload": {
+    "uploading": "Nahrávám...",
+    "transcribing": "Přepisuji...",
+    "complete": "Hotovo",
+    "failed": "Chyba",
+    "uploadFiles": "Nahrát soubory (audio, video nebo text)",
+    "autoDetect": "Automatická detekce",
+    "fileNotAvailable": "Soubor není k dispozici pro úpravy",
+    "failedToOpenInEditor": "Nepodařilo se otevřít soubor v editoru kódu. Zkuste to prosím znovu.",
+    "extractingAudio": "Extrahuji audio…",
+    "queuedForTranscription": "Zařazeno do fronty na přepis",
+    "transcribed": "Přepsáno",
+    "transcriptionFailed": "Přepis selhal",
+    "extractedFromSmaller": "Extrahováno z {percent}% menšího",
+    "textExtraction": "Extrakce textu",
+    "opening": "Otevírání…",
+    "openInEditor": "Otevřít v editoru",
+    "failedToUpload": "Nahrání selhalo",
+    "attachment": "příloha",
+    "attachments": "přílohy"
+  },
+  "transcript": {
+    "originalTranscript": "Původní přepis",
+    "transcript": "Přepis",
+    "transcriptionOf": "Přepis:",
+    "translating": "Překládání...",
+    "copied": "Zkopírováno!",
+    "copy": "Kopírovat",
+    "download": "Stáhnout",
+    "translate": "Přeložit",
+    "collapse": "Sbalit",
+    "expand": "Rozbalit",
+    "expandHint": "Klikněte na \"Rozbalit\" pro zobrazení původního přepisu",
+    "listen": "Poslechnout přepis",
+    "stopAudio": "Zastavit audio",
+    "openAsDocument": "Otevřít jako dokument"
+  },
+  "userMessage": {
+    "open": "Otevřít",
+    "showFullMessage": "Zobrazit celou zprávu",
+    "collapse": "Sbalit",
+    "customTone": "Vlastní tón"
+  },
+  "codeBlock": {
+    "openInEditor": "Otevřít v editoru"
+  },
+  "artifact": {
+    "noContentToExport": "Není žádný obsah k exportu",
+    "exportedAsHtml": "Exportováno jako HTML",
+    "exportedAsMarkdown": "Exportováno jako Markdown",
+    "exportedAsText": "Exportováno jako text",
+    "generatingPdf": "Vytváří se PDF...",
+    "exportedAsPdf": "Exportováno jako PDF",
+    "generatingDocx": "Vytváří se DOCX...",
+    "exportedAsDocx": "Exportováno jako DOCX",
+    "failedToExportAs": "Nepodařilo se exportovat jako {format}",
+    "document": "Dokument",
+    "switchToCodeEditor": "Přepnout do editoru kódu",
+    "exportDocument": "Exportovat dokument",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Prostý text (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Zavřít",
+    "editsNotSaved": "Úpravy nejsou uloženy. Zašlete je zprávou nebo si je stáhněte pro uložení.",
+    "fileDownloaded": "Soubor stažen",
+    "failedToDownload": "Stažení se nezdařilo",
+    "switchToDocumentEditor": "Přepnout do editoru dokumentů",
+    "download": "Stáhnout",
+    "fileIncludedWithMessage": "Soubor a úpravy jsou přiloženy ke zprávě",
+    "closeEditor": "Zavřít editor",
+    "closeCodeEditor": "Zavřít editor kódu",
+    "startWriting": "Začněte psát...",
+    "toolbar": {
+      "bold": "Tučné",
+      "italic": "Kurzíva",
+      "underline": "Podtržení",
+      "strikethrough": "Přeškrtnuté",
+      "heading1": "Nadpis 1",
+      "heading2": "Nadpis 2",
+      "heading3": "Nadpis 3",
+      "bulletList": "Seznam s odrážkami",
+      "numberedList": "Číslovaný seznam",
+      "codeBlock": "Blok kódu",
+      "quote": "Citace",
+      "insertTable": "Vložit tabulku",
+      "table": "Tabulka",
+      "undo": "Zpět",
+      "redo": "Znovu"
+    },
+    "codeEditor": {
+      "startTyping": "Začněte psát nebo požádejte AI o vygenerování kódu",
+      "codeWillSync": "Kód se bude automaticky synchronizovat ze zpráv v chatu",
+      "startCoding": "// Začněte programovat..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Povolit webové vyhledávání pro každou zprávu.\n\nPoskytuje aktuální informace pomocí přístupu na web Bing v reálném čase.",
+    "attachTooltip": "Připojte soubory, obrázky nebo audio/video.\n\nPodporované formáty:\n• Obrázky: JPEG, PNG, GIF, WebP (max. 5 MB, až 10)\n• Dokumenty: PDF, DOCX, XLSX, PPTX, TXT, MD (max. 10 MB, až 3)\n• Data: CSV, JSON, XML, YAML (max. 10 MB, až 3)\n• Kód: PY, JS, TS, JAVA, C, CPP, GO, atd. (max. 10 MB, až 3)\n• Audio/Video: MP3, WAV, MP4, WebM (max. 25 MB, 1 soubor)\n\nCelkem: 10 souborů, maximálně 50 MB",
+    "transcribeTooltip": "Nahrajte audio nebo video soubory k přepisu.\n\nPodporované formáty: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMaximální velikost: 25 MB\n\nPřepis proběhne automaticky po odeslání zprávy.",
+    "selected": "Vybráno",
+    "expandActions": "Rozbalit akce",
+    "selectTone": "Vyberte tón",
+    "selectToneDescription": "Vyberte hlasový profil pro vaše zprávy",
+    "noToneDefault": "Žádný tón (výchozí)",
+    "useDefaultStyle": "Použít výchozí styl psaní",
+    "noTonesCreated": "Zatím nebyly vytvořeny žádné tóny",
+    "createTonesHint": "Vytvořte tóny v Rychlých akcích",
+    "translateDocumentTooltip": "Překládejte dokumenty do jiného jazyka.\n\nPodporované formáty: Word, Excel, PowerPoint, PDF, HTML, TXT\nMaximální velikost: 40 MB\n\nPodporuje více než 80 jazyků s volitelnými soubory glosáře."
+  },
+  "transcription": {
+    "addInstructions": "Přidat pokyny",
+    "instructionsPlaceholder": "Kontext pro zlepšení přesnosti (např. jména, termíny)",
+    "transcribesOnSend": "Přepisuje při odeslání",
+    "languages": {
+      "autoDetect": "Automatická detekce",
+      "afrikaans": "afrikánština",
+      "arabic": "arabština",
+      "armenian": "arménština",
+      "azerbaijani": "ázerbájdžánština",
+      "belarusian": "běloruština",
+      "bosnian": "bosenština",
+      "bulgarian": "bulharština",
+      "burmese": "barmština",
+      "catalan": "katalánština",
+      "chinese": "čínština",
+      "croatian": "chorvatština",
+      "czech": "čeština",
+      "danish": "dánština",
+      "dutch": "nizozemština",
+      "english": "angličtina",
+      "estonian": "estonština",
+      "finnish": "finština",
+      "french": "francouzština",
+      "galician": "galicijština",
+      "german": "němčina",
+      "greek": "řečtina",
+      "hebrew": "hebrejština",
+      "hindi": "hindština",
+      "hungarian": "maďarština",
+      "icelandic": "islandština",
+      "indonesian": "indonéština",
+      "italian": "italština",
+      "japanese": "japonština",
+      "kannada": "kannadština",
+      "kazakh": "kazaština",
+      "korean": "korejština",
+      "latvian": "lotyština",
+      "lithuanian": "litevština",
+      "macedonian": "makedonština",
+      "malay": "malajština",
+      "maori": "maorština",
+      "marathi": "maráthština",
+      "nepali": "nepálština",
+      "norwegian": "norština",
+      "persian": "perština",
+      "polish": "polština",
+      "portuguese": "portugalština",
+      "romanian": "rumunština",
+      "russian": "ruština",
+      "serbian": "srbština",
+      "slovak": "slovenština",
+      "slovenian": "slovinština",
+      "spanish": "španělština",
+      "swahili": "svahilština",
+      "swedish": "švédština",
+      "tagalog": "tagalogština",
+      "tamil": "tamilština",
+      "thai": "thajština",
+      "turkish": "turečtina",
+      "ukrainian": "ukrajinština",
+      "urdu": "urdština",
+      "vietnamese": "vietnamština",
+      "welsh": "velština"
+    },
+    "inProgress": "Přepis probíhá",
+    "processingFile": "Zpracovává se: {filename}",
+    "timeRemaining": "Zbývající čas: {time}",
+    "maxDurationNote": "Velké soubory mohou trvat až {minutes} minut",
+    "timedOut": "Přepis vypršel po {minutes} minutách",
+    "timedOutToast": "Přepis vypršel: {filename}",
+    "failed": "Přepis selhal: {error}",
+    "failedToast": "Přepis selhal: {filename}",
+    "unknownError": "Neznámá chyba",
+    "completed": "Přepis dokončen",
+    "completedToast": "Přepis dokončen: {filename}",
+    "placeholder": "[Přepis probíhá: {filename}]",
+    "loadingTranscript": "Načítání přepisu pro {filename}...",
+    "expiredOrDeleted": "Tento přepis expiroval nebo byl smazán.",
+    "fetchError": "Nepodařilo se načíst přepis. Zkuste to prosím znovu.",
+    "transcriptExpired": "Přepis pro {filename} expiroval. Přepisy jsou automaticky smazány po {days} dnech kvůli ochraně soukromí.",
+    "expirationWarning": "Přepis pro {filename} vyprší za {days} den/dny. Zkopírujte obsah, pokud jej potřebujete zachovat."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Přidejte své vlastní pokyny pro přizpůsobení odpovědí AI. Tyto pokyny se kombinují se základními zásadami chování, které zajišťují užitečné, přesné a bezpečné odpovědi.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Tip: Napište „/“ pro výběr z uložených šablon zadání.",
+  "storageWarning": {
+    "title": {
+      "warning": "Dochází místo v úložišti",
+      "critical": "Úložiště téměř plné",
+      "emergency": "Úložiště je plné"
+    },
+    "message": {
+      "warning": "Úložiště vašeho prohlížeče je zaplněno na {percent}%.",
+      "critical": "Úložiště vašeho prohlížeče je kriticky nízké: {percent}% kapacity.",
+      "emergency": "Úložiště vašeho prohlížeče je téměř zcela plné: {percent}%!"
+    },
+    "consequence": "Pokud se úložiště zaplní, můžete ztratit přístup k novým konverzacím a aplikace nemusí fungovat správně.",
+    "storageUsage": "Využití úložiště",
+    "optionsToFreeSpace": "Možnosti uvolnění místa",
+    "clearOption": {
+      "keepRecent": "Ponechat nejnovější konverzace",
+      "olderThan": "Smazat konverzace starší než",
+      "days": {
+        "7": "7 dní",
+        "14": "14 dní",
+        "30": "30 dní",
+        "60": "60 dní",
+        "90": "90 dní"
+      }
+    },
+    "estimate": {
+      "willRemove": "Tímto odstraníte {count} konverzací",
+      "willFree": "Odhadované uvolněné místo: {size}"
+    },
+    "action": {
+      "exportFirst": "Nejprve exportovat data",
+      "clearNow": "Vymazat nyní",
+      "dismiss": "Zavřít",
+      "cancel": "Zrušit"
+    },
+    "confirm": {
+      "title": "Potvrdit vymazání",
+      "message": "Tímto trvale smažete {count} konverzací. Nelze vrátit zpět."
+    },
+    "clearing": {
+      "title": "Mazání úložiště",
+      "message": "Čekejte prosím, odstraňují se konverzace..."
+    },
+    "success": {
+      "title": "Úložiště vymazáno",
+      "message": "Úspěšně odstraněno {count} konverzací, uvolněno {size}."
+    },
+    "error": {
+      "title": "Vymazání se nezdařilo",
+      "message": "Při mazání konverzací došlo k chybě. Zkuste to prosím znovu."
+    },
+    "close": "Zavřít"
+  },
+  "support": {
+    "selectOrganization": "Vyberte svou organizaci",
+    "organizationDescription": "Zvolte svou organizaci MSF pro zobrazení příslušného kontaktu na podporu",
+    "autoDetect": "Automatické rozpoznání",
+    "resetToAutoDetect": "Obnovit automatické rozpoznání",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Ženeva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Terén / Jiná"
+    },
+    "emailSupport": "Podpora e-mailem",
+    "emailDescription": "Kontaktujte podporu týmu {organization}",
+    "escalationTitle": "Terénní a ostatní zaměstnanci MSF",
+    "escalationDescription": "Řiďte se eskalačním postupem IT vaší organizace pro podporu",
+    "escalationShort": "Kontaktujte místní IT podporu",
+    "escalationStep1": "Nejprve kontaktujte místní IT podporu",
+    "escalationStep2": "Pokud není problém vyřešen, obraťte se na IT oddělení vašeho operačního centra (OC)",
+    "escalationStep3": "Pokud není problém stále vyřešen, OC IT může eskalovat na SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Přeložit dokument",
+  "documentTranslation": {
+    "title": "Překlad dokumentu",
+    "targetLanguage": "Cílový jazyk",
+    "sourceLanguage": "Zdrojový jazyk",
+    "searchLanguage": "Vyhledat jazyky...",
+    "noLanguagesFound": "Nenalezeny žádné jazyky",
+    "autoDetect": "Automaticky rozpoznat, pokud není uvedeno",
+    "glossary": "Soubor glosáře",
+    "glossaryHelp": "Nahrajte glosář ve formátu CSV, TSV nebo XLIFF pro vlastní terminologii",
+    "uploadGlossary": "Nahrát glosář",
+    "glossaryTooLarge": "Soubor glosáře je příliš velký. Maximální velikost je {maxSize}.",
+    "outputFilename": "Výstupní název souboru",
+    "outputFilenamePlaceholder": "document_cs.docx",
+    "translateButton": "Přeložit dokument",
+    "translating": "Překládá se...",
+    "noDocumentError": "Vyberte prosím dokument k překladu.",
+    "noTargetLanguageError": "Vyberte prosím cílový jazyk.",
+    "documentTooLarge": "Dokument je příliš velký. Maximální velikost je {maxSize}.",
+    "translationSuccess": "Dokument byl úspěšně přeložen",
+    "translationFailed": "Překlad selhal: {error}",
+    "invalidReference": "Neplatný odkaz pro překlad dokumentu",
+    "documentNotFound": "Přeložený dokument nebyl nalezen nebo jeho platnost vypršela",
+    "downloadFailed": "Stažení přeloženého dokumentu se nezdařilo",
+    "downloadSuccess": "Dokument byl úspěšně stažen",
+    "translatedTo": "Přeloženo do {language}",
+    "download": "Stáhnout",
+    "downloading": "Stahuje se...",
+    "expired": "Tento překlad vypršel a již není k dispozici",
+    "expiresSoon": "Vyprší za {days} den/dnů – stáhněte brzy",
+    "expires": "K dispozici {days} dní",
+    "learnMore": "Zjistit více",
+    "advancedOptions": "Pokročilé možnosti"
   }
 }

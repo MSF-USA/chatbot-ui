@@ -236,7 +236,7 @@ export const UserMessage: FC<UserMessageProps> = ({
                       <polyline points="16 18 22 12 16 6"></polyline>
                       <polyline points="8 6 2 12 8 18"></polyline>
                     </svg>
-                    <span>Open</span>
+                    <span>{t('userMessage.open')}</span>
                   </button>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export const UserMessage: FC<UserMessageProps> = ({
                       onClick={() => setIsPromptExpanded(true)}
                       className="text-xs text-white/50 hover:text-white/80 underline"
                     >
-                      Show full message
+                      {t('userMessage.showFullMessage')}
                     </button>
                   </div>
                 ) : (
@@ -295,7 +295,7 @@ export const UserMessage: FC<UserMessageProps> = ({
                       onClick={() => setIsPromptExpanded(false)}
                       className="text-xs text-white/50 hover:text-white/80 underline"
                     >
-                      Collapse
+                      {t('userMessage.collapse')}
                     </button>
                   </div>
                 )}
@@ -308,8 +308,8 @@ export const UserMessage: FC<UserMessageProps> = ({
                       className="text-purple-400 flex-shrink-0"
                     />
                     <span className="text-xs text-white/70">
-                      {tones.find((t) => t.id === toneId)?.name ||
-                        'Custom Tone'}
+                      {tones.find((tone) => tone.id === toneId)?.name ||
+                        t('userMessage.customTone')}
                     </span>
                   </div>
                 )}
@@ -333,8 +333,8 @@ export const UserMessage: FC<UserMessageProps> = ({
                       className="text-purple-400 flex-shrink-0"
                     />
                     <span className="text-xs text-gray-800/70 dark:text-white/70">
-                      {tones.find((t) => t.id === toneId)?.name ||
-                        'Custom Tone'}
+                      {tones.find((tone) => tone.id === toneId)?.name ||
+                        t('userMessage.customTone')}
                     </span>
                   </div>
                 )}

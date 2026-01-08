@@ -215,22 +215,22 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
     const items: string[] = [];
     if (stats.conversations > 0) {
       items.push(
-        `${stats.conversations} ${stats.conversations === 1 ? t('conversation') : t('conversations')}`,
+        `${stats.conversations} ${stats.conversations === 1 ? t('migration.units.conversation') : t('migration.units.conversations')}`,
       );
     }
     if (stats.folders > 0) {
       items.push(
-        `${stats.folders} ${stats.folders === 1 ? t('folder') : t('folders')}`,
+        `${stats.folders} ${stats.folders === 1 ? t('migration.units.folder') : t('migration.units.folders')}`,
       );
     }
     if (stats.prompts > 0) {
       items.push(
-        `${stats.prompts} ${stats.prompts === 1 ? t('prompt') : t('prompts')}`,
+        `${stats.prompts} ${stats.prompts === 1 ? t('migration.units.prompt') : t('migration.units.prompts')}`,
       );
     }
     if (stats.customAgents > 0) {
       items.push(
-        `${stats.customAgents} ${stats.customAgents === 1 ? t('custom agent') : t('custom agents')}`,
+        `${stats.customAgents} ${stats.customAgents === 1 ? t('migration.units.customAgent') : t('migration.units.customAgents')}`,
       );
     }
     return items;
@@ -247,10 +247,10 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               </div>
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                {t('Checking Storage')}
+                {t('migration.status.checkingStorage')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                {t('Analyzing your data...')}
+                {t('migration.status.analyzingData')}
               </p>
             </div>
           </div>
@@ -277,19 +277,17 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t('Update Available')}
+                  {t('migration.status.updateAvailable')}
                 </h2>
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                {t(
-                  'We found data from a previous version. Would you like to migrate it to work with the improved system?',
-                )}
+                {t('migration.descriptions.foundLegacyData')}
               </p>
 
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 mb-4">
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">
-                  {t('Benefits')}:
+                  {t('migration.benefits.title')}:
                 </p>
                 <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
                   <li className="flex items-center gap-2">
@@ -304,7 +302,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                         clipRule="evenodd"
                       />
                     </svg>
-                    {t('Faster performance')}
+                    {t('migration.benefits.fasterPerformance')}
                   </li>
                   <li className="flex items-center gap-2">
                     <svg
@@ -318,7 +316,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                         clipRule="evenodd"
                       />
                     </svg>
-                    {t('Better reliability')}
+                    {t('migration.benefits.betterReliability')}
                   </li>
                   <li className="flex items-center gap-2">
                     <svg
@@ -332,7 +330,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                         clipRule="evenodd"
                       />
                     </svg>
-                    {t('Your data is preserved')}
+                    {t('migration.benefits.dataPreserved')}
                   </li>
                 </ul>
               </div>
@@ -353,7 +351,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                     clipRule="evenodd"
                   />
                 </svg>
-                {t('Advanced options')}
+                {t('migration.options.advancedOptions')}
               </button>
 
               {showAdvanced && (
@@ -365,9 +363,9 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                       onChange={(e) => setUseIncrementalMode(e.target.checked)}
                       className="rounded border-gray-300 dark:border-gray-600"
                     />
-                    {t('Use incremental mode')}
+                    {t('migration.options.useIncrementalMode')}
                     <span className="text-gray-400 dark:text-gray-500">
-                      ({t('slower but safer')})
+                      ({t('migration.options.slowerButSafer')})
                     </span>
                   </label>
                   <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
@@ -379,9 +377,9 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                       }
                       className="rounded border-gray-300 dark:border-gray-600"
                     />
-                    {t('Delete legacy data after migration')}
+                    {t('migration.options.deleteLegacyData')}
                     <span className="text-gray-400 dark:text-gray-500">
-                      ({t('frees up storage space')})
+                      ({t('migration.options.freesUpSpace')})
                     </span>
                   </label>
                 </div>
@@ -393,13 +391,13 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 onClick={handleSkip}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
               >
-                {t('Skip')}
+                {t('migration.actions.skip')}
               </button>
               <button
                 onClick={handleMigrate}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Migrate Data')}
+                {t('migration.actions.migrateData')}
               </button>
             </div>
           </>
@@ -426,32 +424,30 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t('Storage Space Limited')}
+                  {t('migration.status.storageSpaceLimited')}
                 </h2>
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                {t(
-                  'Your data requires more space than is currently available. We recommend using incremental migration mode.',
-                )}
+                {t('migration.descriptions.storageSpaceWarning')}
               </p>
 
               <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 mb-4 border border-yellow-200 dark:border-yellow-800">
                 <div className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1">
                   <div className="flex justify-between">
-                    <span>{t('Available space')}:</span>
+                    <span>{t('migration.quota.availableSpace')}:</span>
                     <span className="font-medium">
                       {formatBytes(quotaAnalysis.availableSpace)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>{t('Data to migrate')}:</span>
+                    <span>{t('migration.quota.dataToMigrate')}:</span>
                     <span className="font-medium">
                       {formatBytes(quotaAnalysis.legacySize)}
                     </span>
                   </div>
                   <div className="flex justify-between text-yellow-800 dark:text-yellow-200">
-                    <span>{t('Additional space needed')}:</span>
+                    <span>{t('migration.quota.additionalSpaceNeeded')}:</span>
                     <span className="font-medium">
                       {formatBytes(quotaAnalysis.deficit)}
                     </span>
@@ -476,7 +472,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                {t('Export Backup First')}
+                {t('migration.actions.exportBackupFirst')}
               </button>
 
               <div className="space-y-2">
@@ -487,9 +483,9 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                     onChange={(e) => setUseIncrementalMode(e.target.checked)}
                     className="rounded border-gray-300 dark:border-gray-600"
                   />
-                  {t('Use incremental mode')}
+                  {t('migration.options.useIncrementalMode')}
                   <span className="text-green-600 dark:text-green-400 font-medium">
-                    ({t('recommended')})
+                    ({t('migration.options.recommended')})
                   </span>
                 </label>
                 <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
@@ -499,9 +495,9 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                     onChange={(e) => setDeleteAfterMigration(e.target.checked)}
                     className="rounded border-gray-300 dark:border-gray-600"
                   />
-                  {t('Delete legacy data after migration')}
+                  {t('migration.options.deleteLegacyData')}
                   <span className="text-gray-400 dark:text-gray-500">
-                    ({t('frees up storage space')})
+                    ({t('migration.options.freesUpSpace')})
                   </span>
                 </label>
               </div>
@@ -512,13 +508,13 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 onClick={handleSkip}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
               >
-                {t('Skip')}
+                {t('migration.actions.skip')}
               </button>
               <button
                 onClick={handleMigrate}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Migrate Anyway')}
+                {t('migration.actions.migrateAnyway')}
               </button>
             </div>
           </>
@@ -532,12 +528,12 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               </div>
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                {t('Migrating Data')}
+                {t('migration.status.migratingData')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 {progress
-                  ? `${t(progress.phase === 'conversations' ? 'Migrating conversations' : progress.phase === 'prompts' ? 'Migrating prompts' : progress.phase === 'agents' ? 'Migrating agents' : 'Finishing up')}... ${progress.current}/${progress.total}`
-                  : t('Please wait while we update your data...')}
+                  ? `${t(progress.phase === 'conversations' ? 'migration.progress.migratingConversations' : progress.phase === 'prompts' ? 'migration.progress.migratingPrompts' : progress.phase === 'agents' ? 'migration.progress.migratingAgents' : 'migration.progress.finishingUp')}... ${progress.current}/${progress.total}`
+                  : t('migration.descriptions.pleaseWait')}
               </p>
 
               {/* Progress bar */}
@@ -578,14 +574,14 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t('Migration Complete')}
+                  {t('migration.status.migrationComplete')}
                 </h2>
               </div>
 
               {getStatsSummary().length > 0 ? (
                 <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                    {t('Successfully migrated')}:
+                    {t('migration.results.successfullyMigrated')}:
                   </p>
                   <ul className="text-sm text-gray-700 dark:text-gray-200 space-y-1">
                     {getStatsSummary().map((item, index) => (
@@ -608,7 +604,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 </div>
               ) : (
                 <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
-                  {t('Your settings have been updated.')}
+                  {t('migration.descriptions.settingsUpdated')}
                 </p>
               )}
 
@@ -616,7 +612,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
               {warnings.length > 0 && (
                 <div className="mt-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 border border-yellow-200 dark:border-yellow-800">
                   <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium mb-1">
-                    {t('Notes')}:
+                    {t('migration.results.notes')}:
                   </p>
                   <ul className="text-xs text-yellow-600 dark:text-yellow-300 space-y-1">
                     {warnings.slice(0, 3).map((warning, index) => (
@@ -637,8 +633,8 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
               {/* Legacy data deleted message */}
               {freedBytes > 0 && (
                 <div className="mt-3 text-xs text-green-600 dark:text-green-400 text-center">
-                  {t('Legacy data deleted')} - {formatBytes(freedBytes)}{' '}
-                  {t('freed')}
+                  {t('migration.results.legacyDataDeleted')} -{' '}
+                  {formatBytes(freedBytes)} {t('migration.results.freed')}
                 </div>
               )}
             </div>
@@ -648,7 +644,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 onClick={handleContinue}
                 className="w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Continue')}
+                {t('migration.actions.continue')}
               </button>
             </div>
           </>
@@ -675,14 +671,14 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t('Partially Complete')}
+                  {t('migration.status.partiallyComplete')}
                 </h2>
               </div>
 
               {getStatsSummary().length > 0 && (
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 mb-3 border border-green-200 dark:border-green-800">
                   <p className="text-xs text-green-700 dark:text-green-400 font-medium mb-1">
-                    {t('Successfully migrated')}:
+                    {t('migration.results.successfullyMigrated')}:
                   </p>
                   <ul className="text-xs text-green-600 dark:text-green-300">
                     {getStatsSummary().map((item, index) => (
@@ -694,8 +690,12 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
 
               <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 mb-4 border border-yellow-200 dark:border-yellow-800">
                 <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium mb-1">
-                  {t('Could not migrate')} ({skippedItems.length}{' '}
-                  {skippedItems.length === 1 ? t('item') : t('items')}):
+                  {t('migration.results.couldNotMigrate')} (
+                  {skippedItems.length}{' '}
+                  {skippedItems.length === 1
+                    ? t('migration.units.item')
+                    : t('migration.units.items')}
+                  ):
                 </p>
                 <ul className="text-xs text-yellow-600 dark:text-yellow-300 space-y-1">
                   {skippedItems.slice(0, 3).map((item, index) => (
@@ -715,9 +715,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
               </div>
 
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                {t(
-                  'These items are too large to fit in storage. You can export them, free up space, or continue without them.',
-                )}
+                {t('migration.descriptions.itemsTooLarge')}
               </p>
 
               <div className="space-y-2">
@@ -738,7 +736,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  {t('Export Skipped Items')}
+                  {t('migration.actions.exportSkippedItems')}
                 </button>
               </div>
             </div>
@@ -748,13 +746,13 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 onClick={handleRetry}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
               >
-                {t('Retry')}
+                {t('migration.actions.retry')}
               </button>
               <button
                 onClick={handleContinueWithoutSkipped}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Continue')}
+                {t('migration.actions.continue')}
               </button>
             </div>
           </>
@@ -781,7 +779,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </svg>
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {t('Migration Failed')}
+                  {t('migration.status.migrationFailed')}
                 </h2>
                 <p className="text-sm text-red-600 dark:text-red-400 mt-2">
                   {error}
@@ -789,9 +787,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
               </div>
 
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                {t(
-                  'Your original data is safe. You can try again or skip for now.',
-                )}
+                {t('migration.descriptions.dataIsSafe')}
               </p>
             </div>
 
@@ -800,13 +796,13 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 onClick={handleSkip}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
               >
-                {t('Skip')}
+                {t('migration.actions.skip')}
               </button>
               <button
                 onClick={handleRetry}
                 className="flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
               >
-                {t('Retry')}
+                {t('migration.actions.retry')}
               </button>
             </div>
           </>

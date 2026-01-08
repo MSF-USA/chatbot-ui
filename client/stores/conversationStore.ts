@@ -1,6 +1,15 @@
 'use client';
 
-import { Conversation } from '@/types/chat';
+import {
+  migrateLegacyMessages,
+  needsMigration,
+} from '@/lib/utils/shared/chat/messageVersioning';
+
+import {
+  AssistantMessageVersion,
+  Conversation,
+  isAssistantMessageGroup,
+} from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 
 import { create } from 'zustand';
@@ -33,6 +42,43 @@ interface ConversationStore {
 
   // Bulk operations
   clearAll: () => void;
+
+  // Version navigation actions
+  setActiveVersion: (
+    conversationId: string,
+    messageIndex: number,
+    versionIndex: number,
+  ) => void;
+  navigateVersion: (
+    conversationId: string,
+    messageIndex: number,
+    direction: 'prev' | 'next',
+  ) => void;
+  addMessageVersion: (
+    conversationId: string,
+    messageIndex: number,
+    version: AssistantMessageVersion,
+  ) => void;
+
+  /**
+   * Updates a message's content to replace a transcription placeholder with actual transcript.
+   * Used for async batch transcription when the job completes after the message is sent.
+   *
+   * Uses jobId-based matching for reliable updates (falls back to placeholder string matching).
+   *
+   * @param conversationId - The conversation ID
+   * @param messageIndex - The index of the assistant message with the placeholder
+   * @param transcript - The actual transcript content
+   * @param filename - The filename for the transcript header
+   * @param jobId - Optional job ID for reliable message matching
+   */
+  updateMessageWithTranscript: (
+    conversationId: string,
+    messageIndex: number,
+    transcript: string,
+    filename: string,
+    jobId?: string,
+  ) => void;
 }
 
 export const useConversationStore = create<ConversationStore>()(
@@ -110,16 +156,171 @@ export const useConversationStore = create<ConversationStore>()(
           folders: [],
           searchTerm: '',
         }),
+
+      // Version navigation actions
+      setActiveVersion: (conversationId, messageIndex, versionIndex) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              const clampedIndex = Math.max(
+                0,
+                Math.min(versionIndex, entry.versions.length - 1),
+              );
+              messages[messageIndex] = {
+                ...entry,
+                activeIndex: clampedIndex,
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      navigateVersion: (conversationId, messageIndex, direction) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              const newIndex =
+                direction === 'prev'
+                  ? entry.activeIndex - 1
+                  : entry.activeIndex + 1;
+
+              // Only update if within bounds
+              if (newIndex >= 0 && newIndex < entry.versions.length) {
+                messages[messageIndex] = { ...entry, activeIndex: newIndex };
+              }
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      addMessageVersion: (conversationId, messageIndex, version) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              // Add new version and set it as active
+              messages[messageIndex] = {
+                ...entry,
+                versions: [...entry.versions, version],
+                activeIndex: entry.versions.length, // Point to new version
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      updateMessageWithTranscript: (
+        conversationId,
+        messageIndex,
+        transcript,
+        filename,
+        jobId,
+      ) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            // Handle assistant message groups (most likely case)
+            if (isAssistantMessageGroup(entry)) {
+              const updatedVersions = entry.versions.map((v) => {
+                // Check if transcript is already formatted (e.g., from blob storage)
+                // Format: "[Transcript: filename | blob:jobId | expires:...]" or "[Transcript: filename]\n..."
+                const isPreformatted = transcript.startsWith('[Transcript:');
+                const formattedContent = isPreformatted
+                  ? transcript
+                  : `[Transcript: ${filename}]\n${transcript}`;
+
+                // Primary matching: by jobId in transcript metadata (most reliable)
+                if (jobId && v.transcript?.jobId === jobId) {
+                  console.log(
+                    `[ConversationStore] Matched message by jobId: ${jobId}`,
+                  );
+                  return {
+                    ...v,
+                    content: formattedContent,
+                    transcript: {
+                      ...v.transcript,
+                      transcript: transcript, // Update the stored transcript
+                    },
+                  };
+                }
+
+                // Fallback: Replace placeholder with actual transcript (string matching)
+                const placeholder = `[Transcription in progress: ${filename}]`;
+                if (
+                  typeof v.content === 'string' &&
+                  v.content.includes(placeholder)
+                ) {
+                  console.log(
+                    `[ConversationStore] Matched message by placeholder text`,
+                  );
+                  return {
+                    ...v,
+                    content: v.content.replace(placeholder, formattedContent),
+                  };
+                }
+
+                return v;
+              });
+
+              messages[messageIndex] = {
+                ...entry,
+                versions: updatedVersions,
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
     }),
     {
       name: 'conversation-storage',
-      version: 1, // Increment this when schema changes to trigger migrations
+      version: 2, // Incremented for message versioning migration
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         conversations: state.conversations,
         selectedConversationId: state.selectedConversationId,
         folders: state.folders,
       }),
+      migrate: (persistedState: unknown, version: number) => {
+        const state = persistedState as {
+          conversations: Conversation[];
+          selectedConversationId: string | null;
+          folders: FolderInterface[];
+        };
+
+        if (version < 2) {
+          // Migrate conversations to new format with message versioning
+          const migratedConversations = state.conversations.map((conv) => ({
+            ...conv,
+            messages: needsMigration(conv.messages)
+              ? migrateLegacyMessages(conv.messages as never[])
+              : conv.messages,
+          }));
+          return { ...state, conversations: migratedConversations };
+        }
+        return state;
+      },
       onRehydrateStorage: () => (state) => {
         // Mark as loaded after hydration
         if (state) {

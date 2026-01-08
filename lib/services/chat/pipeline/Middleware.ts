@@ -4,11 +4,15 @@ import { NextRequest } from 'next/server';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 import { ModelSelector, RateLimiter } from '@/lib/services/shared';
 
-import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
-import { getMessageContentTypes } from '@/lib/utils/server/chat';
+import {
+  SystemPromptOptions,
+  buildSystemPrompt,
+} from '@/lib/utils/app/systemPrompt';
+import { getUserDisplayName } from '@/lib/utils/app/user/displayName';
+import { getMessageContentTypes } from '@/lib/utils/server/chat/chat';
 
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody } from '@/types/chat';
+import { ErrorCode, PipelineError } from '@/types/errors';
 import { SearchMode } from '@/types/searchMode';
 
 import { ChatContext } from './ChatContext';
@@ -135,6 +139,12 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       threadId,
       forcedAgentType,
       tone,
+      streamingSpeed,
+      includeUserInfoInPrompt,
+      preferredName,
+      userContext,
+      displayNamePreference,
+      customDisplayName,
     } = body;
 
     if (tone) {
@@ -145,10 +155,17 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       });
     }
 
+    // Store raw user prompt - system prompt will be built in buildChatContext
+    // after auth middleware has provided user info
     return {
       model,
       messages,
-      systemPrompt: prompt || DEFAULT_SYSTEM_PROMPT,
+      rawUserPrompt: prompt,
+      includeUserInfoInPrompt,
+      preferredName,
+      userContext,
+      displayNamePreference,
+      customDisplayName,
       temperature,
       stream,
       reasoningEffort,
@@ -158,6 +175,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       threadId,
       forcedAgentType,
       tone,
+      streamingSpeed,
     };
   } catch (error) {
     if (error instanceof PipelineError) {
@@ -205,9 +223,49 @@ export const createContentAnalysisMiddleware = (
 
   return {
     contentTypes,
-    hasFiles: contentTypes.has('file'),
+    hasFiles: contentTypes.has('file') || contentTypes.has('audio'),
     hasImages: contentTypes.has('image'),
     hasAudio: contentTypes.has('audio'), // Audio files detected separately by analyzer
+  };
+};
+
+/**
+ * Factory for system prompt middleware that builds the final system prompt.
+ * Runs after auth so user info is available if needed.
+ */
+export const createSystemPromptMiddleware = (
+  context: Partial<ChatContext>,
+): Partial<ChatContext> => {
+  const options: SystemPromptOptions = {
+    userPrompt: context.rawUserPrompt,
+  };
+
+  // Add user info if enabled and user is available
+  if (context.includeUserInfoInPrompt && context.user) {
+    // Compute effective name with fallback chain:
+    // 1. Chat Settings preferredName (explicit override)
+    // 2. General Settings derived name (displayNamePreference + customDisplayName)
+    // 3. Profile displayName (fallback)
+    const effectiveName =
+      context.preferredName ||
+      getUserDisplayName(
+        context.user,
+        context.displayNamePreference,
+        context.customDisplayName,
+      ) ||
+      context.user.displayName;
+
+    options.userInfo = {
+      name: effectiveName,
+      title: context.user.jobTitle,
+      email: context.user.mail,
+      department: context.user.department,
+      additionalContext: context.userContext,
+    };
+  }
+
+  return {
+    systemPrompt: buildSystemPrompt(options),
   };
 };
 
@@ -258,6 +316,12 @@ export async function buildChatContext(req: NextRequest): Promise<ChatContext> {
   context = {
     ...context,
     ...createRateLimitMiddleware(context),
+  };
+
+  // Build system prompt after auth (so user info is available)
+  context = {
+    ...context,
+    ...createSystemPromptMiddleware(context),
   };
 
   context = {

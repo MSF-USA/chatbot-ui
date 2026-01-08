@@ -2,8 +2,11 @@ import { IconLogin } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 export const SignInSignOut = () => {
   const { data: session } = useSession();
+  const t = useTranslations();
 
   // If there's an error refreshing the token, sign out and redirect
   useEffect(() => {
@@ -26,7 +29,7 @@ export const SignInSignOut = () => {
       onClick={() => signOut()}
     >
       <IconLogin size={18} className="mr-2" />
-      Sign Out
+      {t('Sign Out')}
     </button>
   );
 };

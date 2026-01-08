@@ -1,9 +1,13 @@
+'use client';
+
 import {
   IconBrain,
   IconChevronDown,
   IconChevronRight,
 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
+
+import { useTranslations } from 'next-intl';
 
 import { Streamdown } from 'streamdown';
 
@@ -16,6 +20,7 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
   thinking,
   isStreaming,
 }) => {
+  const t = useTranslations();
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!thinking || thinking.trim() === '') {
@@ -28,7 +33,9 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100/50 dark:hover:bg-blue-900/30 transition-colors"
         aria-expanded={isExpanded}
-        aria-label={isExpanded ? 'Collapse thinking' : 'Expand thinking'}
+        aria-label={
+          isExpanded ? t('chat.collapseThinking') : t('chat.expandThinking')
+        }
       >
         <div className="flex items-center gap-2">
           <IconBrain size={18} className="flex-shrink-0" />
@@ -39,10 +46,10 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
                 backgroundSize: '200% 100%',
               }}
             >
-              Thinking...
+              {t('chat.thinking')}
             </span>
           ) : (
-            <span>View reasoning process</span>
+            <span>{t('chat.viewReasoningProcess')}</span>
           )}
         </div>
         {isExpanded ? (

@@ -1,6 +1,7 @@
 import { RAGService } from '@/lib/services/ragService';
 
 import {
+  PendingTranscriptionInfo,
   TranscriptMetadata,
   appendMetadataToStream,
   createStreamEncoder,
@@ -12,6 +13,12 @@ import { Citation } from '@/types/rag';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 import OpenAI from 'openai';
 
+/** Streaming speed configuration for smooth text output */
+interface StreamingSpeedConfig {
+  charsPerBatch: number;
+  delayMs: number;
+}
+
 /**
  * Creates a stream processor for Azure OpenAI completions that handles citation tracking.
  *
@@ -20,6 +27,8 @@ import OpenAI from 'openai';
  * @param {object} [stopConversationRef] - Reference to stop conversation flag.
  * @param {TranscriptMetadata} [transcript] - Optional transcript metadata for audio/video transcriptions.
  * @param {Citation[]} [webSearchCitations] - Optional citations from web search (intelligent search mode).
+ * @param {PendingTranscriptionInfo[]} [pendingTranscriptions] - Optional pending batch transcription jobs.
+ * @param {StreamingSpeedConfig} [streamingSpeed] - Optional smooth streaming speed configuration.
  * @returns {ReadableStream} A processed stream with citation data appended.
  */
 export function createAzureOpenAIStreamProcessor(
@@ -28,6 +37,8 @@ export function createAzureOpenAIStreamProcessor(
   stopConversationRef?: { current: boolean },
   transcript?: TranscriptMetadata,
   webSearchCitations?: Citation[],
+  pendingTranscriptions?: PendingTranscriptionInfo[],
+  streamingSpeed?: StreamingSpeedConfig,
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
@@ -36,18 +47,22 @@ export function createAzureOpenAIStreamProcessor(
       let controllerClosed = false;
       let buffer = '';
 
+      // Use configurable streaming speed or defaults
+      const charsPerBatch = streamingSpeed?.charsPerBatch ?? 3;
+      const delayMs = streamingSpeed?.delayMs ?? 8;
+
       // Background task to stream buffered content character by character
       const streamBuffer = async () => {
         while (!controllerClosed) {
           if (buffer.length > 0) {
-            // Send 3 characters at a time for smoother streaming
-            const charsToSend = Math.min(3, buffer.length);
+            // Send configured number of characters at a time for smooth streaming
+            const charsToSend = Math.min(charsPerBatch, buffer.length);
             const toSend = buffer.slice(0, charsToSend);
             buffer = buffer.slice(charsToSend);
             controller.enqueue(encoder.encode(toSend));
           }
-          // Wait 8ms between sends for smoother streaming
-          await new Promise((resolve) => setTimeout(resolve, 8));
+          // Wait configured delay between sends for smoother streaming
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
         }
       };
 
@@ -137,6 +152,7 @@ export function createAzureOpenAIStreamProcessor(
               citations,
               thinking,
               transcript: transcriptMetadata,
+              pendingTranscriptions,
             });
           }
 

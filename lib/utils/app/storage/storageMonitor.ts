@@ -293,6 +293,8 @@ export const isStorageNearingLimit = (): boolean => {
 
 /**
  * Check if a storage warning should be shown
+ * All threshold levels (WARNING, CRITICAL, EMERGENCY) can be dismissed by the user.
+ *
  * @returns Object with shouldShow flag and current threshold level
  */
 export const shouldShowStorageWarning = () => {
@@ -303,12 +305,7 @@ export const shouldShowStorageWarning = () => {
     return { shouldShow: false, currentThreshold: null };
   }
 
-  // For EMERGENCY level, always show warning regardless of dismissals
-  if (currentThreshold === 'EMERGENCY') {
-    return { shouldShow: true, currentThreshold };
-  }
-
-  // Check if this threshold has been dismissed
+  // Check if this threshold has been dismissed (all levels are dismissable)
   const dismissedThresholds = getDismissedThresholds();
   const isDismissed = dismissedThresholds.includes(currentThreshold);
 
@@ -485,6 +482,190 @@ export const clearOlderConversations = (keepCount: number): boolean => {
     return originalLength > keptConversations.length;
   } catch (error) {
     console.error('Error clearing older conversations:', error);
+    return false;
+  }
+};
+
+/**
+ * Get the date of a conversation based on updatedAt or createdAt.
+ * Returns null if no valid date is found.
+ */
+const getConversationDate = (conversation: Conversation): Date | null => {
+  // Prefer updatedAt if conversation has messages, otherwise use createdAt
+  const dateString =
+    conversation.messages.length > 0 && conversation.updatedAt
+      ? conversation.updatedAt
+      : conversation.createdAt;
+
+  if (!dateString) return null;
+
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? null : date;
+};
+
+/**
+ * Get conversations older than the specified number of days.
+ * Conversations without dates are considered "old" (included in results).
+ *
+ * @param days - Number of days threshold
+ * @returns Array of conversations older than the specified days
+ */
+export const getConversationsOlderThan = (days: number): Conversation[] => {
+  requireBrowser();
+
+  try {
+    const sortedConversations = getSortedConversations();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    cutoffDate.setHours(0, 0, 0, 0); // Start of day
+
+    return sortedConversations.filter((conversation) => {
+      const conversationDate = getConversationDate(conversation);
+      // Include conversations without dates (they're likely legacy/old)
+      if (!conversationDate) return true;
+      return conversationDate < cutoffDate;
+    });
+  } catch (error) {
+    console.error('Error getting conversations older than days:', error);
+    return [];
+  }
+};
+
+/**
+ * Get conversations newer than (or equal to) the specified number of days.
+ * Used internally to determine what would be kept.
+ *
+ * @param days - Number of days threshold
+ * @returns Array of conversations within the specified days
+ */
+export const getConversationsNewerThan = (days: number): Conversation[] => {
+  requireBrowser();
+
+  try {
+    const sortedConversations = getSortedConversations();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+    cutoffDate.setHours(0, 0, 0, 0); // Start of day
+
+    return sortedConversations.filter((conversation) => {
+      const conversationDate = getConversationDate(conversation);
+      // Exclude conversations without dates (they're likely legacy/old)
+      if (!conversationDate) return false;
+      return conversationDate >= cutoffDate;
+    });
+  } catch (error) {
+    console.error('Error getting conversations newer than days:', error);
+    return [];
+  }
+};
+
+/**
+ * Calculate space that would be freed by clearing conversations older than X days.
+ *
+ * @param days - Number of days threshold
+ * @returns Object with spaceFreed (bytes), conversationsRemoved (count), and percentFreed
+ */
+export const calculateSpaceFreedByDays = (
+  days: number,
+): {
+  spaceFreed: number;
+  conversationsRemoved: number;
+  percentFreed: number;
+} => {
+  requireBrowser();
+
+  try {
+    const conversationsToRemove = getConversationsOlderThan(days);
+    const conversationsToKeep = getConversationsNewerThan(days);
+
+    if (conversationsToRemove.length === 0) {
+      return { spaceFreed: 0, conversationsRemoved: 0, percentFreed: 0 };
+    }
+
+    // Get the current size of Zustand conversation storage
+    const currentSize = getItemSize('conversation-storage');
+
+    // Calculate what would be kept (need to account for Zustand persist wrapper)
+    const keptPersistStructure = {
+      state: { conversations: conversationsToKeep },
+      version: 1,
+    };
+    const keptSize = getStringSizeInBytes(JSON.stringify(keptPersistStructure));
+
+    // Calculate space freed
+    const spaceFreed = Math.max(0, currentSize - keptSize);
+    const conversationsRemoved = conversationsToRemove.length;
+
+    // Calculate percentage of total storage freed
+    const { currentUsage } = getStorageUsage();
+    const percentFreed =
+      currentUsage > 0 ? (spaceFreed / currentUsage) * 100 : 0;
+
+    return { spaceFreed, conversationsRemoved, percentFreed };
+  } catch (error) {
+    console.error('Error calculating space freed by days:', error);
+    return { spaceFreed: 0, conversationsRemoved: 0, percentFreed: 0 };
+  }
+};
+
+/**
+ * Clear conversations older than the specified number of days.
+ * Ensures at least MIN_RETAINED_CONVERSATIONS are kept regardless of age.
+ *
+ * @param days - Number of days threshold
+ * @returns True if conversations were cleared, false otherwise
+ */
+export const clearConversationsOlderThan = (days: number): boolean => {
+  requireBrowser();
+
+  try {
+    const sortedConversations = getSortedConversations();
+    let conversationsToKeep = getConversationsNewerThan(days);
+
+    // Ensure we keep at least MIN_RETAINED_CONVERSATIONS
+    if (conversationsToKeep.length < MIN_RETAINED_CONVERSATIONS) {
+      // Keep the most recent conversations up to MIN_RETAINED_CONVERSATIONS
+      conversationsToKeep = sortedConversations.slice(
+        0,
+        MIN_RETAINED_CONVERSATIONS,
+      );
+    }
+
+    // If nothing would be removed, return false
+    if (conversationsToKeep.length >= sortedConversations.length) {
+      return false;
+    }
+
+    // Get original length to verify if something was cleared
+    const originalLength = sortedConversations.length;
+
+    // Use Zustand store to update conversations
+    const conversationStore = useConversationStore.getState();
+    const { selectedConversationId, selectConversation, setConversations } =
+      conversationStore;
+
+    // Update conversations in the store (this will auto-persist via Zustand persist)
+    setConversations(conversationsToKeep);
+
+    // Reset dismissed thresholds since user has taken action
+    resetDismissedThresholds();
+
+    // If the selected conversation was removed, update it to the most recent one
+    if (selectedConversationId) {
+      const isSelectedKept = conversationsToKeep.some(
+        (c) => c.id === selectedConversationId,
+      );
+
+      if (!isSelectedKept && conversationsToKeep.length > 0) {
+        // Always use the first (most recent) conversation as the new selected one
+        selectConversation(conversationsToKeep[0].id);
+      }
+    }
+
+    // Verify that conversations were actually removed
+    return originalLength > conversationsToKeep.length;
+  } catch (error) {
+    console.error('Error clearing conversations older than days:', error);
     return false;
   }
 };

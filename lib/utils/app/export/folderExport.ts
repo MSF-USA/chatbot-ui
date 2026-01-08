@@ -1,4 +1,9 @@
-import { Conversation } from '@/types/chat';
+import {
+  migrateLegacyMessages,
+  needsMigration,
+} from '@/lib/utils/shared/chat/messageVersioning';
+
+import { Conversation, Message } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 
 /**
@@ -139,11 +144,18 @@ export function validateAndPrepareFolderImport(
       ? `conversation-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
       : conv.id;
 
+    // Migrate legacy messages if needed
+    // When importing from JSON, messages could be the old Message[] format
+    const migratedMessages = needsMigration(conv.messages)
+      ? migrateLegacyMessages(conv.messages as Message[])
+      : conv.messages;
+
     return {
       ...conv,
       id: newConvId,
       folderId: newFolderId, // Update to reference the new folder
       name: convIdExists ? `${conv.name} (imported)` : conv.name,
+      messages: migratedMessages,
       createdAt: conv.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

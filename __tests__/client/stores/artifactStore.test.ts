@@ -8,7 +8,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the format converter
-vi.mock('@/lib/utils/document/formatConverter', () => ({
+vi.mock('@/lib/utils/shared/document/formatConverter', () => ({
   convertToHtml: vi.fn((content: string, format: string) => {
     if (format === 'md' || format === 'markdown') {
       return `<p>${content}</p>`;
@@ -20,7 +20,7 @@ vi.mock('@/lib/utils/document/formatConverter', () => ({
   }),
 }));
 
-vi.mock('@/lib/utils/document/exportUtils', () => ({
+vi.mock('@/lib/utils/shared/document/exportUtils', () => ({
   htmlToMarkdown: vi.fn((html: string) => {
     // Use DOMPurify to safely strip HTML tags
     return DOMPurify.sanitize(html, {

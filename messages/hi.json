@@ -1,4 +1,31 @@
 {
+  "Chat Settings": "चैट सेटिंग्स",
+  "Content": "सामग्री",
+  "Conversation exported successfully": "वार्तालाप सफलतापूर्वक निर्यात किया गया",
+  "Conversation imported successfully": "वार्तालाप सफलतापूर्वक आयात किया गया",
+  "Default System Prompt": "डिफ़ॉल्ट सिस्टम प्रॉम्प्ट",
+  "Edit": "संपादित करें",
+  "Email": "ईमेल",
+  "Failed to export conversation": "वार्तालाप निर्यात करने में विफल",
+  "Failed to export folder": "फ़ोल्डर निर्यात करने में विफल",
+  "Failed to import conversation": "वार्तालाप आयात करने में विफल",
+  "Failed to import file": "फ़ाइल आयात करने में विफल",
+  "Folder exported with {count} conversations": "फ़ोल्डर {count} वार्तालापों के साथ निर्यात किया गया",
+  "Folder imported with {count} conversations": "फ़ोल्डर {count} वार्तालापों के साथ आयात किया गया",
+  "Folder not found": "फ़ोल्डर नहीं मिला",
+  "importBackupParseError": "बैकअप फ़ाइल को पार्स करने में विफल। कृपया सुनिश्चित करें कि यह वैध JSON है।",
+  "Invalid conversation file": "अमान्य वार्तालाप फ़ाइल",
+  "Invalid folder file": "अमान्य फ़ोल्डर फ़ाइल",
+  "New conversation": "नई बातचीत",
+  "No prompts found": "कोई प्रॉम्प्ट नहीं मिला",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "प्रॉम्प्ट सीमा {{maxLength}} वर्ण है। आपने {{valueLength}} वर्ण दर्ज किए हैं।",
+  "Saved Prompts": "सहेजे गए प्रॉम्प्ट",
+  "Select a prompt to view details": "विवरण देखने के लिए एक प्रॉम्प्ट चुनें",
+  "Unrecognized file format": "अपरिचित फ़ाइल प्रारूप",
+  "transcriptionComplete": "प्रतिलेखन पूर्ण! टेक्स्ट चैट इनपुट में जोड़ा गया।",
+  "webSearchInputDescription": "AI-संचालित विश्लेषण के साथ इंटरनेट खोजें",
+  "webUrlInputDescription": "AI के साथ विश्लेषण के लिए वेबसाइट URL दर्ज करें",
+  "webUrlQuestionDescription": "आप इस वेबपेज के बारे में क्या जानना चाहेंगे?",
   "safeSearchOptionModerate": "मध्यम",
   "Precise": "सटीक",
   "translatorTranslateButton": "अनुवाद करें",
@@ -91,7 +118,7 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट सीमा {{maxLength}} अक्षर है",
+  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट की सीमा {{maxLength}} अक्षर है।",
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -122,7 +149,7 @@
   "Description": "विवरण",
   "No prompts_": "कोई प्रॉम्प्ट नहीं।",
   "A description for your prompt_": "आपके प्रॉम्प्ट का विवरण।",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "प्रॉम्प्ट सामग्री। चर को दर्शाने के लिए {{}} का उपयोग करें। उदा: {{name}} एक {{adjective}} {{noun}} है",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "प्रॉम्प्ट सामग्री। चर को दर्शाने के लिए '{{}}' का उपयोग करें। उदा: '{{name}}' एक '{{adjective}}' '{{noun}}' है",
   "New prompt": "नया प्रॉम्प्ट",
   "Search prompts_ellipsis": "प्रॉम्प्ट खोजें...",
   "Prompt": "प्रॉम्प्ट",
@@ -309,7 +336,19 @@
   "Team Templates": "टीम टेम्पलेट",
   "selected": "चयनित",
   "folders": "फ़ोल्डर",
-  "agents": "एजेंट",
+  "agents": {
+    "exportAgent": "एजेंट निर्यात करें",
+    "editAgent": "एजेंट संपादित करें",
+    "agentName": "एजेंट नाम",
+    "myResearchAssistant": "मेरा शोध सहायक",
+    "agentId": "एजेंट ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "विवरण (वैकल्पिक)",
+    "descriptionPlaceholder": "शोध कार्यों में विशेषज्ञ एजेंट...",
+    "baseModel": "आधार मॉडल",
+    "formatDescription": "प्रारूप: asst_xxxxx (MSF AI Assistant Foundry से)",
+    "importantInfo": "इस एजेंट की वार्तालाप संदर्भ तक पहुंच होगी और यह मानक मॉडल के समान उपकरणों का उपयोग कर सकता है। सुनिश्चित करें कि एजेंट ID सही है क्योंकि इसे बाद में बदला नहीं जा सकता।"
+  },
   "Quick Actions": "त्वरित क्रियाएं",
   "Type / in chat to access your prompts": "अपने प्रॉम्प्ट एक्सेस करने के लिए चैट में / टाइप करें",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "चैट में / टाइप करें, अपना प्रॉम्प्ट चुनें और जब कहा जाए तो वेरिएबल भरें",
@@ -356,7 +395,6 @@
   "Custom Agents": "कस्टम एजेंट",
   "Delete template and all its items": "टेम्पलेट और इसके सभी आइटम हटाएं",
   "Description (Optional)": "विवरण (वैकल्पिक)",
-  "Edit Prompt": "प्रॉम्प्ट संपादित करें",
   "Edit Tone": "टोन संपादित करें",
   "Email Response Template": "ईमेल प्रतिक्रिया टेम्पलेट",
   "Example Prompt": "उदाहरण प्रॉम्प्ट",
@@ -416,7 +454,6 @@
   "msf_logo_alt": "MSF लोगो",
   "collapse_sidebar": "साइडबार संक्षिप्त करें",
   "expand_sidebar": "साइडबार विस्तृत करें",
-  "Voice Guidelines": "आवाज़ दिशानिर्देश",
   "Please upload some content or describe the tone you want": "कृपया कुछ सामग्री अपलोड करें या जिस टोन की आप चाहत रखते हैं उसका वर्णन करें",
   "Untitled Tone": "शीर्षकहीन टोन",
   "Failed to analyze tone": "टोन का विश्लेषण करने में विफल",
@@ -444,15 +481,43 @@
   "enterTagsPlaceholder": "टैग जोड़ें (Enter दबाएं)",
   "enterPromptNamePlaceholder": "उदा., ईमेल प्रतिक्रिया",
   "enterPromptDescriptionPlaceholder": "यह प्रॉम्प्ट किसके लिए है?",
-  "enterPromptContentPlaceholder": "यहां अपना प्रॉम्प्ट लिखें। डायनामिक कंटेंट के लिए {{variable}} का उपयोग करें।",
+  "enterPromptContentPlaceholder": "यहां अपना प्रॉम्प्ट लिखें। डायनामिक कंटेंट के लिए '{{variable}}' का उपयोग करें।",
   "common": {
-    "contact": "संपर्क करें"
+    "contact": "संपर्क करें",
+    "close": "बंद करें",
+    "remove": "हटाएं",
+    "tryAgain": "पुनः प्रयास करें",
+    "menu": "मेनू",
+    "copyToClipboard": "क्लिपबोर्ड पर कॉपी करें",
+    "toggleDropdownMenu": "ड्रॉपडाउन मेनू टॉगल करें",
+    "toggleMenu": "मेनू टॉगल करें",
+    "closeModal": "मोडल बंद करें",
+    "dismissBanner": "बैनर खारिज करें",
+    "searchEllipsis": "खोजें...",
+    "addTagEllipsis": "टैग जोड़ें...",
+    "msfLogo": "MSF लोगो",
+    "importantInformation": "महत्वपूर्ण जानकारी",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "confirm": "पुष्टि करें",
+    "cancel": "रद्द करें",
+    "discard": "छोड़ें",
+    "keepEditing": "संपादन जारी रखें",
+    "yes": "हां",
+    "no": "नहीं"
   },
   "errors": {
     "unexpectedErrorOccurred": "एक अप्रत्याशित त्रुटि हुई",
     "criticalErrorReload": "एक गंभीर त्रुटि हुई। कृपया पेज को पुनः लोड करें।",
     "reloadPage": "पेज पुनः लोड करें",
-    "persistContactSupport": "यदि यह समस्या बनी रहती है, तो कृपया सहायता से संपर्क करें"
+    "persistContactSupport": "यदि यह समस्या बनी रहती है, तो कृपया सहायता से संपर्क करें",
+    "somethingWentWrong": "कुछ गड़बड़ हुई",
+    "anErrorOccurred": "एक त्रुटि हुई",
+    "copyErrorMessage": "त्रुटि संदेश कॉपी करें",
+    "contactSupport": "यदि यह समस्या बनी रहती है, कृपया सहायता से संपर्क करें:",
+    "dismissError": "त्रुटि खारिज करें",
+    "applicationError": "एप्लिकेशन त्रुटि",
+    "chatLoadError": "चैट लोड करते समय एक त्रुटि हुई",
+    "anErrorOccurredTryAgain": "एक त्रुटि हुई। कृपया पुनः प्रयास करें।"
   },
   "auth": {
     "authenticationError": "प्रमाणीकरण त्रुटि",
@@ -521,7 +586,53 @@
     "fullSizePreview": "पूर्ण आकार पूर्वावलोकन",
     "enterSearchQueryPlaceholder": "अपनी खोज क्वेरी या प्रश्न दर्ज करें...",
     "errorFetchingUrl": "URL सामग्री प्राप्त करते समय एक त्रुटि हुई",
-    "errorInitiatingSearch": "वेब खोज शुरू करते समय एक त्रुटि हुई"
+    "errorInitiatingSearch": "वेब खोज शुरू करते समय एक त्रुटि हुई",
+    "regenerate": "पुनः उत्पन्न करें",
+    "modelSwitchPrompt": "{original} विफल रहा लेकिन {fallback} सफल रहा। क्या आप मॉडल बदलना चाहते हैं?",
+    "keepOriginalModel": "{model} रखें",
+    "switchToModel": "{model} पर स्विच करें",
+    "alwaysSwitchToModel": "हमेशा स्वचालित रूप से स्विच करें",
+    "translateMessage": "संदेश का अनुवाद करें",
+    "translating": "अनुवाद हो रहा है...",
+    "translationError": "अनुवाद विफल रहा",
+    "showOriginal": "मूल दिखाएं",
+    "translatedTo": "{language} में अनुवादित",
+    "searchLanguages": "भाषाएं खोजें...",
+    "selectLanguage": "भाषा चुनें",
+    "audioFromOriginal": "ऑडियो मूल पाठ से है",
+    "audioFromTranslation": "ऑडियो {language} अनुवाद से है",
+    "thinking": "सोच रहा है...",
+    "viewReasoningProcess": "तर्क प्रक्रिया देखें",
+    "collapseThinking": "सोच संक्षिप्त करें",
+    "expandThinking": "सोच विस्तृत करें",
+    "actionsDisabledForEmbed": "ऊपर एम्बेड किए गए कंटेंट में नियंत्रणों का उपयोग करें",
+    "loadingMessages": {
+      "transcribingAndProcessing": "प्रतिलेखन और प्रोसेसिंग जारी है...",
+      "transcribingAudio": "ऑडियो का प्रतिलेखन हो रहा है...",
+      "analyzingFiles": "फ़ाइलों का विश्लेषण जारी है...",
+      "analyzingDocuments": "दस्तावेज़ों का विश्लेषण जारी है...",
+      "analyzingDocument": "दस्तावेज़ का विश्लेषण जारी है...",
+      "analyzingImages": "छवियों का विश्लेषण जारी है...",
+      "analyzingImage": "छवि का विश्लेषण जारी है..."
+    },
+    "contentDescription": {
+      "text": "टेक्स्ट",
+      "imagesCount": "{count} छवि(यां)",
+      "filesCount": "{count} फ़ाइल(ें)",
+      "audioVideo": "ऑडियो/वीडियो",
+      "empty": "खाली"
+    },
+    "discardChanges": "परिवर्तनों को त्यागें",
+    "discardChangesMessage": "आपके कुछ परिवर्तन सहेजे नहीं गए हैं। क्या आप वाकई उन्हें त्यागना चाहते हैं?",
+    "voiceInputStarting": "शुरू हो रहा है...",
+    "voiceInputRecording": "रिकॉर्डिंग हो रही है...",
+    "voiceInputTapToStop": "रोकने के लिए टैप करें",
+    "stopRecording": "रिकॉर्डिंग रोकें",
+    "voiceInput": "वॉइस इनपुट",
+    "microphoneAccessDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत है। कृपया अपने ब्राउज़र सेटिंग्स में इसे सक्षम करें।",
+    "microphoneAccessError": "माइक्रोफ़ोन एक्सेस त्रुटि: {message}",
+    "voiceInputTranscribing": "प्रतिलेखन किया जा रहा है...",
+    "ttsRightClickHint": "वॉइस विकल्पों के लिए दायाँ क्लिक करें"
   },
   "sidebar": {
     "collapseSidebar": "साइडबार संक्षिप्त करें",
@@ -529,29 +640,135 @@
     "quickActionsTitle": "त्वरित क्रियाएं",
     "quickActions": "त्वरित क्रियाएं"
   },
-  "agents": {
-    "exportAgent": "एजेंट निर्यात करें",
-    "editAgent": "एजेंट संपादित करें",
-    "agentName": "एजेंट नाम",
-    "myResearchAssistant": "मेरा शोध सहायक",
-    "agentId": "एजेंट ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "विवरण (वैकल्पिक)",
-    "descriptionPlaceholder": "शोध कार्यों में विशेषज्ञ एजेंट...",
-    "baseModel": "आधार मॉडल",
-    "formatDescription": "प्रारूप: asst_xxxxx (MSF AI Assistant Foundry से)",
-    "importantInfo": "इस एजेंट की वार्तालाप संदर्भ तक पहुंच होगी और यह मानक मॉडल के समान उपकरणों का उपयोग कर सकता है। सुनिश्चित करें कि एजेंट ID सही है क्योंकि इसे बाद में बदला नहीं जा सकता।"
-  },
   "prompts": {
-    "buildReusablePrompts": "AI सहायता से पुन: प्रयोज्य प्रॉम्प्ट बनाएं"
+    "buildReusablePrompts": "AI सहायता से पुन: प्रयोज्य प्रॉम्प्ट बनाएं",
+    "noToneDefault": "कोई टोन नहीं (डिफ़ॉल्ट उपयोग करें)",
+    "tagHelp": "टैग सहायता",
+    "tagHelpContent": "अपने प्रॉम्प्ट को श्रेणीबद्ध करने और जल्दी खोजने के लिए टैग का उपयोग करें। उदाहरण:",
+    "tagExamples": {
+      "email": "ईमेल",
+      "marketing": "मार्केटिंग",
+      "technical": "तकनीकी",
+      "customerSupport": "ग्राहक-सहायता"
+    },
+    "variableHelp": "वेरिएबल सहायता",
+    "variableHelpIntro": "अपने प्रॉम्प्ट को गतिशील बनाने के लिए वेरिएबल का उपयोग करें:",
+    "requiredVariables": "आवश्यक वेरिएबल (कोई डिफ़ॉल्ट नहीं):",
+    "optionalVariables": "वैकल्पिक वेरिएबल (डिफ़ॉल्ट के साथ):",
+    "userMustProvide": "उपयोगकर्ता को एक मान प्रदान करना होगा",
+    "userCanProvide": "उपयोगकर्ता मान प्रदान कर सकता है, या डिफ़ॉल्ट का उपयोग किया जाता है",
+    "example": "उदाहरण:",
+    "variableExampleText": "'{{recipient}}' को '{{topic}}' के बारे में '{{tone:पेशेवर}}' ईमेल '{{language:हिंदी}}' में लिखें",
+    "detectedVariables": "पहचाने गए वेरिएबल",
+    "required": "आवश्यक",
+    "aiAssistant": "AI सहायक",
+    "whatToImprove": "आप क्या सुधारना चाहेंगे?",
+    "whatShouldPromptDo": "यह प्रॉम्प्ट क्या करना चाहिए?",
+    "improvePlaceholder": "उदा., इसे अधिक पेशेवर बनाएं, उदाहरण जोड़ें, स्पष्टता में सुधार करें...",
+    "generatePlaceholder": "उदा., प्राप्तकर्ता और विषय के लिए वेरिएबल के साथ पेशेवर ईमेल टेम्पलेट बनाएं...",
+    "addContextOptional": "संदर्भ जोड़ें (वैकल्पिक)",
+    "revising": "संशोधित हो रहा है...",
+    "generating": "उत्पन्न हो रहा है...",
+    "reviseWithAI": "AI से संशोधित करें",
+    "generatePrompt": "प्रॉम्प्ट उत्पन्न करें",
+    "revisionComplete": "संशोधन पूर्ण",
+    "generationComplete": "उत्पादन पूर्ण",
+    "revisedPrompt": "संशोधित प्रॉम्प्ट:",
+    "generatedPrompt": "उत्पन्न प्रॉम्प्ट:",
+    "applyRevision": "यह संशोधन लागू करें",
+    "useThisPrompt": "इस प्रॉम्प्ट का उपयोग करें",
+    "improvementsMade": "किए गए सुधार:",
+    "tips": "सुझाव:",
+    "howAICanHelp": "AI कैसे मदद कर सकता है",
+    "helpItems": {
+      "improveClarity": "स्पष्टता और संरचना में सुधार करें",
+      "suggestVariables": "उपयोगी वेरिएबल सुझाएं",
+      "addContext": "संदर्भ और उदाहरण जोड़ें",
+      "optimize": "बेहतर परिणामों के लिए अनुकूलित करें"
+    },
+    "savePrompt": "प्रॉम्प्ट सहेजें",
+    "add": "जोड़ें"
   },
   "tones": {
     "createCustomVoiceProfile": "AI सहायता से कस्टम वॉयस प्रोफ़ाइल बनाएं",
-    "examplePlaceholder": "उदा., पेशेवर लेकिन मैत्रीपूर्ण ग्राहक सेवा टोन बनाएं..."
+    "examplePlaceholder": "उदा., पेशेवर लेकिन मैत्रीपूर्ण ग्राहक सेवा टोन बनाएं...",
+    "tagHelp": "टैग सहायता",
+    "tagHelpContent": "अपने टोन को श्रेणीबद्ध करने और जल्दी खोजने के लिए टैग का उपयोग करें। उदाहरण:",
+    "tagExamples": {
+      "professional": "पेशेवर",
+      "casual": "अनौपचारिक",
+      "technical": "तकनीकी",
+      "marketing": "मार्केटिंग"
+    },
+    "add": "जोड़ें",
+    "aiToneAnalyzer": "AI टोन विश्लेषक",
+    "describeToneToCreate": "वह टोन वर्णन करें जो आप बनाना चाहते हैं",
+    "uploadContentSamples": "सामग्री के नमूने अपलोड करें",
+    "analyzing": "विश्लेषण हो रहा है...",
+    "analyzeToneWithAI": "AI के साथ टोन का विश्लेषण करें",
+    "analysisComplete": "विश्लेषण पूर्ण",
+    "generatedVoiceGuidelines": "उत्पन्न आवाज़ दिशानिर्देश:",
+    "examplePhrases": "उदाहरण वाक्यांश:",
+    "suggestedTags": "सुझाए गए टैग:",
+    "applyThisAnalysis": "यह विश्लेषण लागू करें",
+    "detectedCharacteristics": "पहचानी गई विशेषताएं:",
+    "howAICanHelp": "AI कैसे मदद कर सकता है",
+    "helpItems": {
+      "transcribe": "ऑडियो/वीडियो सामग्री का प्रतिलेखन करें",
+      "analyzeContent": "अपनी सामग्री के नमूनों का विश्लेषण करें",
+      "extractPatterns": "टोन और शैली पैटर्न निकालें",
+      "generateGuidelines": "आवाज़ दिशानिर्देश उत्पन्न करें",
+      "suggestTags": "प्रासंगिक टैग सुझाएं"
+    },
+    "saveTone": "टोन सहेजें"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें"
+    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें",
+    "backToChat": "चैट पर वापस जाएं",
+    "title": "सहायता केंद्र",
+    "subtitle": "उत्तर खोजें, गोपनीयता के बारे में जानें और सहायता प्राप्त करें",
+    "faq": {
+      "title": "अक्सर पूछे जाने वाले प्रश्न",
+      "description": "AI सहायक का उपयोग करने के बारे में सामान्य प्रश्नों के उत्तर पाएं",
+      "articles": "लेख",
+      "searchPlaceholder": "FAQ खोजें...",
+      "noResults": "आपकी खोज से कोई FAQ मेल नहीं खाता",
+      "noResultsHint": "कोई अलग खोज शब्द आज़माएं"
+    },
+    "privacy": {
+      "title": "गोपनीयता और डेटा",
+      "description": "जानें कि आपका डेटा कैसे संग्रहीत और सुरक्षित किया जाता है",
+      "topics": "विषय",
+      "searchPlaceholder": "गोपनीयता विषय खोजें...",
+      "noResults": "आपकी खोज से कोई गोपनीयता विषय मेल नहीं खाता",
+      "noResultsHint": "कोई अलग खोज शब्द आज़माएं",
+      "bannerTitle": "आपकी गोपनीयता मायने रखती है",
+      "bannerDescription": "सभी बातचीत आपके डिवाइस पर स्थानीय रूप से संग्रहीत होती हैं। डेटा प्रोसेसिंग Azure इन्फ्रास्ट्रक्चर का उपयोग करके MSF सिस्टम के भीतर होती है।",
+      "localStorageOnly": "केवल स्थानीय भंडारण",
+      "msfControlled": "MSF नियंत्रित",
+      "noPersonalData": "कोई व्यक्तिगत डेटा नहीं",
+      "noSensitiveOps": "कोई संवेदनशील संचालन नहीं"
+    },
+    "contact": {
+      "title": "संपर्क और संसाधन",
+      "description": "हमारी टीम से संपर्क करें और उपयोगी लिंक एक्सेस करें",
+      "supportAvailable": "सहायता उपलब्ध",
+      "submitRequest": "सहायता अनुरोध जमा करें",
+      "getHelp": "हमारी टीम से सहायता प्राप्त करें",
+      "requestDescription": "सहायता चाहिए या प्रतिक्रिया देना चाहते हैं? नीचे क्लिक करके हमारा सहायता फॉर्म खोलें।",
+      "openSupportForm": "सहायता फॉर्म खोलें",
+      "otherWays": "हमसे संपर्क करने के अन्य तरीके",
+      "emailSupport": "ईमेल सहायता",
+      "emailDescription": "प्रश्नों, प्रतिक्रिया या तकनीकी समस्याओं के लिए हमें ईमेल भेजें"
+    },
+    "resources": {
+      "title": "अतिरिक्त संसाधन",
+      "portalTitle": "AI एक्सेलेरेटर पोर्टल",
+      "portalDescription": "दस्तावेज़ीकरण, प्रोजेक्ट अपडेट और प्रशिक्षण सामग्री",
+      "githubTitle": "ओपन सोर्स रिपॉजिटरी",
+      "githubDescription": "GitHub पर कोड देखें, समस्याएं रिपोर्ट करें और योगदान करें"
+    }
   },
   "settings": {
     "Settings": "सेटिंग्स",
@@ -619,9 +836,820 @@
     "FAQs, privacy policy, and guides": "FAQ, गोपनीयता नीति और गाइड",
     "Contact Support": "सहायता से संपर्क करें",
     "Popular Questions": "लोकप्रिय प्रश्न",
-    "View all FAQs": "सभी FAQ देखें"
+    "View all FAQs": "सभी FAQ देखें",
+    "Delete legacy data after migration": "माइग्रेशन के बाद पुराना डेटा हटाएं",
+    "frees up storage space": "स्टोरेज स्पेस खाली करता है",
+    "Legacy data deleted": "पुराना डेटा हटाया गया",
+    "freed": "मुक्त",
+    "Conversations": "बातचीत",
+    "Legacy": "पुराना",
+    "Other": "अन्य",
+    "Loading": "लोड हो रहा है",
+    "Legacy Data Detected": "पुराना डेटा पता चला",
+    "legacyDataDescription": "आपके पास पिछले संस्करण का {size} डेटा है। इसे माइग्रेट किया जा सकता है, निर्यात किया जा सकता है, या स्थान खाली करने के लिए हटाया जा सकता है।",
+    "legacyDeleteSuccess": "पुराना डेटा सफलतापूर्वक हटाया गया और {size} मुक्त किया गया।",
+    "legacyDeleteError": "पुराना डेटा हटाने में विफल। कृपया पुनः प्रयास करें।",
+    "Explore solutions": "समाधान खोजें",
+    "Migrate to Current Format": "वर्तमान प्रारूप में माइग्रेट करें",
+    "Export Legacy Data": "पुराना डेटा निर्यात करें",
+    "Delete Legacy Data": "पुराना डेटा हटाएं",
+    "deleteLegacyConfirm": "क्या आप वाकई सभी पुराना डेटा हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+    "Deleting": "हटाया जा रहा है",
+    "Confirm Delete": "हटाने की पुष्टि करें",
+    "Cancel": "रद्द करें",
+    "Custom Instructions": "कस्टम निर्देश",
+    "Personalization": "व्यक्तिगतकरण",
+    "Display Name": "दर्शाया जाने वाला नाम",
+    "Display Name Description": "यह चुनें कि आपका नाम अभिवादन और ऐप में कैसे दिखाई दे",
+    "First Name": "पहला",
+    "Last Name": "अंतिम",
+    "Full Name": "पूरा नाम",
+    "Custom": "कस्टम",
+    "None": "कोई नहीं",
+    "Custom Display Name": "कस्टम दर्शाया जाने वाला नाम",
+    "Custom Display Name Placeholder": "अपना पसंदीदा नाम दर्ज करें",
+    "howShouldWeAddressYou": "हम आपको किस नाम से संबोधित करें?",
+    "displayNamePreview": "पूर्वावलोकन: \"{greeting}\"",
+    "Streaming Speed": "स्ट्रीमिंग गति",
+    "Slow": "धीमा",
+    "Normal": "सामान्य",
+    "Fast": "तेज़",
+    "Controls how smoothly text appears during AI responses": "AI प्रतिक्रियाओं के दौरान पाठ कितनी सहजता से दिखे, इसे नियंत्रित करता है",
+    "aboutYou": {
+      "title": "आपके बारे में",
+      "shareBasicInfo": "एआई के साथ बुनियादी जानकारी साझा करें",
+      "shareBasicInfoDescription": "सक्षम होने पर, एआई को आपके प्रोफ़ाइल से आपका नाम, पद, और विभाग पता चलेगा",
+      "preferredName": "पसंदीदा नाम",
+      "preferredNamePlaceholder": "आप किस नाम से पुकारे जाना पसंद करेंगे?",
+      "preferredNameDescription": "डिस्प्ले नाम बदलें। प्रोफ़ाइल नाम के लिए खाली छोड़ें",
+      "additionalContext": "अतिरिक्त संदर्भ",
+      "additionalContextPlaceholder": "उदा., मैं फील्ड ऑपरेशन्स में काम करता/करती हूँ, संक्षिप्त उत्तर पसंद करता/करती हूँ, अक्सर चिकित्सा प्रोटोकॉल के बारे में पूछता/पूछती हूँ...",
+      "additionalContextDescription": "कोई भी अन्य जानकारी जो आप एआई को अपने बारे में बताना चाहें",
+      "preferredNameDescriptionWithSync": "AI आपको किस नाम से संबोधित करेगा। खाली छोड़ें ताकि सामान्य सेटिंग्स से आपका डिस्प्ले नाम उपयोग हो सके।"
+    },
+    "displayNameUIOnly": "यह नियंत्रित करता है कि ऐप में आपका नाम कैसे दिखाई देगा। AI इसे नहीं देखता है जब तक आप चैट सेटिंग्स में शेयरिंग सक्षम नहीं करते।",
+    "tts": {
+      "title": "टेक्स्ट-टू-स्पीच",
+      "language": "भाषा",
+      "voice": "आवाज",
+      "multilingualVoices": "बहुभाषी आवाज़ें",
+      "voices": "आवाजें",
+      "rate": "गति",
+      "pitch": "पिच",
+      "quality": "ऑडियो गुणवत्ता",
+      "qualityDescription": "बेहतर गुणवत्ता से बेहतर ऑडियो मिलता है लेकिन अधिक बैंडविड्थ उपयोग होती है",
+      "preview": "पूर्वावलोकन",
+      "previewing": "चल रहा है...",
+      "previewFailed": "पूर्वावलोकन ऑडियो बनाने में विफल",
+      "previewText": "यह चयनित वॉइस सेटिंग्स का पूर्वावलोकन है।",
+      "reset": "रीसेट करें",
+      "default": "डिफ़ॉल्ट",
+      "slower": "धीमा",
+      "faster": "तेज़",
+      "lower": "निचला",
+      "higher": "ऊंचा",
+      "selectedVoice": "चयनित",
+      "noVoicesAvailable": "इस भाषा के लिए कोई आवाज़ उपलब्ध नहीं है",
+      "quickSettings": "वॉइस सेटिंग्स",
+      "overrideForThisMessage": "इस संदेश के लिए सेटिंग समायोजित करें",
+      "speakWithSettings": "बोलें"
+    },
+    "Model Response Settings Description": "AI मॉडल प्रतिक्रियाओं के लिए डिफ़ॉल्ट पैरामीटर कॉन्फ़िगर करें। अलग-अलग मॉडल के लिए अलग-अलग सेटिंग्स होती हैं।",
+    "Default Reasoning Effort": "डिफ़ॉल्ट तर्क प्रयास",
+    "reasoningEffortDescription": "तर्क मॉडल के लिए सोच की गहराई नियंत्रित करता है। अधिक प्रयास से अधिक गहराई से विश्लेषण होता है।",
+    "Default Verbosity": "डिफ़ॉल्ट विवरण स्तर",
+    "verbosityDescription": "GPT-5 मॉडलों के लिए प्रतिक्रिया का विस्तार स्तर नियंत्रित करता है।"
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"
+  },
+  "emptyState": {
+    "greeting": "मैं आपकी कैसे मदद कर सकता हूं?",
+    "greetingWithName": "मैं आपकी कैसे मदद कर सकता हूं, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "आरेख बनाएं",
+        "prompt": "मुझे दिखाएं कि आप आरेख और फ्लोचार्ट कैसे बना सकते हैं। आप मुझे किस प्रकार की प्रक्रियाओं, कार्यप्रवाह या सिस्टम को विज़ुअलाइज़ करने में मदद कर सकते हैं? मुझे कुछ उदाहरण दें।"
+      },
+      "draftContent": {
+        "title": "पेशेवर सामग्री का मसौदा तैयार करें",
+        "prompt": "मुझे पेशेवर दस्तावेज़ लिखने में मदद चाहिए - ईमेल, रिपोर्ट, सारांश। क्या आप मुझे विभिन्न प्रकार के व्यावसायिक लेखन में मदद करने के उदाहरण दिखा सकते हैं?"
+      },
+      "analyzeInformation": {
+        "title": "जानकारी का विश्लेषण करें",
+        "prompt": "आप डेटा या जानकारी का विश्लेषण करने में मेरी कैसे मदद कर सकते हैं? मुझे संख्याओं को विभाजित करने, पैटर्न खोजने या दस्तावेज़ों या डेटासेट से अंतर्दृष्टि निकालने के विभिन्न तरीके दिखाएं।"
+      },
+      "planOrganize": {
+        "title": "योजना बनाएं और व्यवस्थित करें",
+        "prompt": "क्या आप मुझे प्रोजेक्ट की योजना बनाने या काम को व्यवस्थित करने में मदद कर सकते हैं? मुझे उदाहरण दें कि आप विभिन्न संरचनाओं के साथ समयरेखा, एजेंडा या प्रोजेक्ट योजनाएं कैसे बना सकते हैं।"
+      },
+      "brainstormIdeas": {
+        "title": "विचार मंथन",
+        "prompt": "मैं किसी समस्या को हल करने के लिए विचार मंथन करना चाहता हूं। मुझे दिखाएं कि आप रचनात्मक सोच और विचार निर्माण कैसे करते हैं - आप कौन से प्रश्न पूछेंगे और आप संभावनाओं का पता कैसे लगाते हैं?"
+      },
+      "buildPresentations": {
+        "title": "प्रस्तुतियां बनाएं",
+        "prompt": "आप प्रस्तुतियां बनाने में मेरी कैसे मदद कर सकते हैं? मुझे विभिन्न प्रस्तुति संरचनाओं, दृश्य सुझावों और विभिन्न दर्शकों के लिए जानकारी कैसे व्यवस्थित करते हैं के उदाहरण दिखाएं।"
+      },
+      "workWithCode": {
+        "title": "कोड के साथ काम करें",
+        "prompt": "क्या आप प्रोग्रामिंग या स्क्रिप्ट में मदद कर सकते हैं? मुझे उदाहरण दिखाएं - चाहे नया कोड लिखना हो, समस्याओं को डीबग करना हो या कुछ कैसे काम करता है यह चरण दर चरण समझाना हो।"
+      },
+      "decisionSupport": {
+        "title": "निर्णय सहायता",
+        "prompt": "मुझे एक निर्णय लेना है लेकिन मुझे यकीन नहीं है कि अपने विकल्पों का मूल्यांकन कैसे करूं। क्या आप मुझे विभिन्न फ्रेमवर्क या दृष्टिकोण दिखा सकते हैं जो आप विकल्पों के बारे में सोचने के लिए उपयोग करते हैं?"
+      },
+      "summarizeSynthesize": {
+        "title": "सारांश और संश्लेषण",
+        "prompt": "आप लंबे दस्तावेज़ों को सारांशित करने या कई स्रोतों से जानकारी को संश्लेषित करने में कैसे मदद करते हैं? मुझे विभिन्न सारांश प्रारूपों और विवरण के स्तरों के उदाहरण दिखाएं।"
+      },
+      "explainTopics": {
+        "title": "जटिल विषयों की व्याख्या करें",
+        "prompt": "क्या आप जटिल अवधारणाओं को सरल शब्दों में समझा सकते हैं? मुझे दिखाएं कि आप जटिल विचारों को कैसे विभाजित करते हैं, उपमाओं का उपयोग करते हैं और विभिन्न ज्ञान स्तरों के लिए व्याख्याओं को कैसे अनुकूलित करते हैं।"
+      },
+      "createSchedules": {
+        "title": "अनुसूचियां बनाएं",
+        "prompt": "मुझे समय व्यवस्थित करने और अनुसूचियां बनाने में मदद चाहिए। मुझे एजेंडा, कैलेंडर या समय-आधारित योजनाओं को संरचित करने के विभिन्न तरीके उदाहरणों के साथ दिखाएं।"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "मॉडल",
+      "agents": "एजेंट"
+    },
+    "sections": {
+      "baseModels": "आधार मॉडल"
+    },
+    "agents": {
+      "advancedFeatureBadge": "उन्नत सुविधा",
+      "description": "विशेष क्षमताओं के साथ कस्टम AI एजेंट बनाएं और प्रबंधित करें। ये एजेंट MSF AI Assistant Foundry इंस्टेंस पर चलते हैं।",
+      "advancedFeatureTitle": "उन्नत सुविधा - AI सहायक तकनीकी टीम के साथ समन्वय आवश्यक",
+      "advancedFeatureWarning": "कस्टम एजेंट केवल MSF AI Assistant Foundry इंस्टेंस के साथ काम करते हैं। एजेंट ID इस विशिष्ट इंस्टेंस पर AI सहायक तकनीकी टीम द्वारा बनाए जाने चाहिए और उपयोग से पहले आपके साथ समन्वित होने चाहिए।",
+      "createNewAgent": "नया कस्टम एजेंट बनाएं",
+      "noAgentsTitle": "अभी तक कोई कस्टम एजेंट नहीं",
+      "noAgentsDescription": "विशेष उपकरणों और व्यवहारों के साथ AI क्षमताओं का विस्तार करने के लिए अपना पहला कस्टम एजेंट बनाएं।"
+    },
+    "advancedOptions": {
+      "title": "उन्नत विकल्प",
+      "temperature": "तापमान",
+      "fixedTemperatureNote": "नोट: यह मॉडल सुसंगत प्रदर्शन के लिए निश्चित तापमान मानों का उपयोग करता है।",
+      "reasoningEffort": "तर्क प्रयास",
+      "minimal": "न्यूनतम",
+      "low": "कम",
+      "medium": "मध्यम",
+      "high": "उच्च",
+      "verbosity": "वर्बोसिटी"
+    },
+    "searchMode": {
+      "title": "खोज मोड",
+      "subtitle": "आवश्यकता पड़ने पर वेब खोज का उपयोग करेगा",
+      "routingLabel": "खोज रूटिंग:",
+      "whatsDifference": "क्या अंतर है?",
+      "privacyFocused": "गोपनीयता केंद्रित (डिफ़ॉल्ट)",
+      "privacyFocusedDescription": "धीमा लेकिन अधिक निजी",
+      "azureAgentMode": "Azure AI एजेंट मोड",
+      "azureAgentModeDescription": "तेज़ लेकिन क्लाउड में बातचीत डेटा संग्रहीत करता है",
+      "privacyInfoTitle": "महत्वपूर्ण गोपनीयता जानकारी",
+      "privacyInfoDescription": "आपकी पूरी बातचीत Azure AI Foundry एजेंट को भेजी जाएगी।",
+      "learnMoreDataStorage": "डेटा संग्रहण के बारे में और जानें",
+      "privacyEnabled": "गोपनीयता-केंद्रित खोज सक्रिय की गई",
+      "learnPrivacy": "जानें आपकी गोपनीयता कैसे सुरक्षित है"
+    },
+    "customAgent": {
+      "label": "कस्टम एजेंट:",
+      "description": "यह एजेंट MSF AI Assistant Foundry इंस्टेंस पर हमेशा सक्षम उपकरणों के साथ चलता है।",
+      "webSearch": "रियल-टाइम वेब खोज",
+      "codeInterpreter": "कोड इंटरप्रेटर और फ़ाइल विश्लेषण"
+    },
+    "header": {
+      "backToModels": "मॉडलों पर वापस जाएं",
+      "knowledgeCutoff": "ज्ञान कटऑफ: {cutoff}",
+      "knowledgeCutoffLabel": "ज्ञान सीमा"
+    },
+    "modelTypes": {
+      "foundational": "मूलभूत",
+      "omni": "ओम्नी",
+      "reasoning": "तर्क",
+      "agent": "एजेंट"
+    },
+    "orderMode": {
+      "label": "क्रमबद्ध करें",
+      "usage": "सबसे अधिक इस्तेमाल",
+      "name": "नाम (A-Z)",
+      "cutoff": "नवीनतम मॉडल्स",
+      "custom": "कस्टम",
+      "edit": "संपादित करें",
+      "done": "संपन्न",
+      "reset": "रीसेट",
+      "resetTooltip": "डिफ़ॉल्ट क्रम में रीसेट करें"
+    },
+    "knowledgeCutoff": {
+      "realtime": "रीयल-टाइम वेब सर्च"
+    },
+    "modelTypeIcons": {
+      "foundational": "तेज़ और कुशल सामान्य-उद्देश्य मॉडल",
+      "reasoning": "जटिल समस्याओं के लिए विस्तृत तर्कशक्ति",
+      "omni": "बहु-मोडल मॉडल जिसकी व्यापक क्षमताएँ हैं",
+      "agent": "रियल-टाइम टूल्स और वेब एक्सेस वाला एजेंट"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Bing के माध्यम से रियल-टाइम वेब खोज के साथ GPT-4.1 द्वारा संचालित AI मॉडल। अप-टू-डेट जानकारी, तथ्य सत्यापन और वर्तमान घटनाओं का ज्ञान प्रदान करता है। ताज़ा जानकारी, समाचार विश्लेषण और तथ्य सत्यापन की आवश्यकता वाले शोध के लिए आदर्श।",
+      "knowledgeCutoff": "रियल-टाइम वेब खोज"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI का सबसे उन्नत मॉडल, जटिल तर्क, कोड जनरेशन और तकनीकी समस्या समाधान में उत्कृष्ट। विश्लेषणात्मक कार्यों, प्रोग्रामिंग चुनौतियों, शोध और विस्तृत व्याख्याओं के लिए आदर्श। समायोज्य तर्क प्रयास और प्रतिक्रिया वर्बोसिटी का समर्थन करता है।",
+      "knowledgeCutoff": "6 अगस्त 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 का तेज़, अधिक लागत प्रभावी संस्करण, उच्च गुणवत्ता बनाए रखते हुए गति के लिए अनुकूलित। दैनिक कार्यों, त्वरित प्रश्नों, टूल रूटिंग और तेज़ प्रतिक्रिया समय की आवश्यकता वाले अनुप्रयोगों के लिए उत्तम। प्रदर्शन और दक्षता के बीच उत्कृष्ट संतुलन।",
+      "knowledgeCutoff": "6 अगस्त 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "संवादात्मक इंटरैक्शन और भावनात्मक बुद्धिमत्ता के लिए अनुकूलित GPT-5 का विशेष संस्करण। सहानुभूतिपूर्ण संवाद, मानसिक स्वास्थ्य समर्थन, रचनात्मक लेखन, विचार मंथन और स्वाभाविक संवाद में उत्कृष्ट। आकस्मिक बातचीत, परामर्श परिदृश्यों और भावनात्मक जागरूकता की आवश्यकता वाले कार्यों के लिए आदर्श।",
+      "knowledgeCutoff": "1 अक्टूबर 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "क्रांतिकारी समस्या-समाधान क्षमताओं के साथ OpenAI का सबसे उन्नत तर्क मॉडल। जटिल गणित, वैज्ञानिक तर्क, प्रोग्रामिंग चुनौतियों और बहु-चरण तार्किक कार्यों में उत्कृष्ट। विस्तारित 200K संदर्भ विंडो। तर्क प्रयास नियंत्रण का समर्थन करता है।",
+      "knowledgeCutoff": "8 अप्रैल 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta का तेज़, लागत प्रभावी मॉडल। लेखन, सारांशीकरण और बुनियादी कोड सहायता जैसे दैनिक कार्यों के लिए उत्कृष्ट। नियमित काम के लिए गति और गुणवत्ता के बीच अच्छा संतुलन।",
+      "knowledgeCutoff": "7 मई 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "तर्क विशेषज्ञ जो अपना काम चरण दर चरण दिखाता है। गणित की समस्याओं, तार्किक पहेलियों और जटिल अवधारणाओं को समझने के लिए उत्कृष्ट। रियल-टाइम में देखें कि यह समस्याओं के बारे में कैसे सोचता है।",
+      "knowledgeCutoff": "20 जनवरी 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "बहुमुखी मॉडल जो विशेष रूप से प्रोग्रामिंग और तकनीकी लेखन में अच्छा है। कोड डीबग करने, दस्तावेज़ीकरण लिखने और तकनीकी अवधारणाओं को समझाने के लिए उत्कृष्ट। विकास कार्य के लिए तेज़ और विश्वसनीय।",
+      "knowledgeCutoff": "16 अप्रैल 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI का बहुमुखी मॉडल जो सूक्ष्म प्रतिक्रियाओं के लिए जाना जाता है। खुली चर्चाओं, रचनात्मक परियोजनाओं और जटिल समस्याओं से निपटने के लिए उत्कृष्ट।",
+      "knowledgeCutoff": "13 मई 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic का सबसे सक्षम मॉडल जिसमें असाधारण तर्क, प्रोग्रामिंग और रचनात्मक क्षमताएं हैं। जटिल विश्लेषण, शोध और गहरी समझ की आवश्यकता वाले कार्यों के लिए आदर्श।",
+      "knowledgeCutoff": "जनवरी 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "संतुलित Claude मॉडल जो प्रोग्रामिंग, विश्लेषण और रचनात्मक कार्यों में उत्कृष्ट प्रदर्शन प्रदान करता है। त्वरित प्रतिक्रिया समय के साथ दैनिक उपयोग के लिए उत्कृष्ट।",
+      "knowledgeCutoff": "जनवरी 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "पिछली पीढ़ी का Claude Opus मॉडल। जटिल प्रोग्रामिंग कार्यों, विस्तृत विश्लेषण और सूक्ष्म समझ के लिए उत्कृष्ट।",
+      "knowledgeCutoff": "जनवरी 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "त्वरित कार्यों के लिए अनुकूलित तेज़, लागत प्रभावी Claude मॉडल। सरल प्रश्नों, सारांशीकरण और उच्च-मात्रा अनुप्रयोगों के लिए उत्कृष्ट।",
+      "knowledgeCutoff": "जनवरी 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI का सबसे उन्नत मॉडल, जटिल तर्क, कोड जनरेशन और तकनीकी समस्या-समाधान में उत्कृष्ट। विश्लेषणात्मक कार्यों, प्रोग्रामिंग चुनौतियों, शोध और विस्तृत व्याख्यान के लिए सर्वोत्तम। समायोज्य तर्क क्षमता और उत्तर की विस्तारशीलता का समर्थन करता है।",
+      "knowledgeCutoff": "दिसंबर 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 चैट",
+      "description": "GPT-5.2 का विशेष संस्करण, संवादात्मक बातचीत और भावनात्मक बुद्धिमत्ता के लिए अनुकूलित। सहानुभूतिपूर्ण संवाद, मानसिक स्वास्थ्य सहायता, रचनात्मक लेखन, विचार-मंथन और प्राकृतिक संवाद में उत्कृष्ट। अनौपचारिक बातचीत, काउंसलिंग परिदृश्य और भावनात्मक जागरूकता वाले कार्यों के लिए सर्वोत्तम।",
+      "knowledgeCutoff": "दिसंबर 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "चैट पर वापस जाएं",
+    "title": "खोज मोड समझाया गया",
+    "subtitle": "अपने खोज विकल्पों और आपका डेटा कहां संग्रहीत होता है यह समझें",
+    "quickComparison": "त्वरित तुलना",
+    "noSearch": "कोई खोज नहीं",
+    "privacyFocused": "गोपनीयता केंद्रित",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "प्रतिक्रिया गति",
+    "fastest": "सबसे तेज़",
+    "slowerMultiStep": "धीमा (बहु-चरण)",
+    "fasterDirect": "तेज़ (सीधा)",
+    "fullConversationStored": "क्लाउड में पूर्ण बातचीत संग्रहीत",
+    "whatsStoredInAzure": "Azure में क्या संग्रहीत है",
+    "nothingStateless": "कुछ नहीं (केवल स्टेटलेस)",
+    "searchQueriesOnly": "केवल खोज क्वेरी",
+    "fullConversationHistory": "पूर्ण बातचीत इतिहास",
+    "modelAvailability": "मॉडल उपलब्धता",
+    "allModels": "सभी मॉडल",
+    "gpt41Only": "केवल GPT-4.1",
+    "searchTurnedOff": "खोज बंद",
+    "noSearchDescription": "बिना वेब खोज क्षमता के सबसे तेज़ प्रतिक्रियाएं। आपकी पूरी बातचीत आपके ब्राउज़र में रहती है - क्लाउड में कुछ भी संग्रहीत नहीं होता।",
+    "viewDetailsBelow": "अधिक जानकारी के लिए नीचे तकनीकी कार्यप्रवाह देखें।",
+    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें",
+    "legend": "लेजेंड:",
+    "legendNoSearch": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure OpenAI (स्टेटलेस)",
+    "privacyFocusedMode": "गोपनीयता केंद्रित मोड",
+    "default": "डिफ़ॉल्ट",
+    "privacyDescription": "आवश्यकता पड़ने पर वेब खोज का उपयोग करता है लेकिन धीमा है क्योंकि अधिक चरण शामिल हैं। केवल खोज क्वेरी Azure में संग्रहीत होती हैं - आपकी पूरी बातचीत आपके ब्राउज़र में रहती है।",
+    "legendPrivacy": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure AI Foundry (केवल खोज क्वेरी) | Azure OpenAI (स्टेटलेस)",
+    "azureAIFoundryMode": "Azure AI Foundry मोड",
+    "foundryDescription": "अंतर्निहित वेब खोज क्षमता के साथ तेज़ प्रतिक्रियाएं। आपकी पूरी बातचीत Azure AI Foundry के डेटाबेस में संग्रहीत होती है, न केवल आपके ब्राउज़र में।",
+    "legendFoundry": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure AI Foundry एजेंट (पूर्ण बातचीत संग्रहीत)",
+    "whyTheseOptions": "ये विकल्प क्यों?",
+    "whyTheseOptionsText1": "Azure द्वारा अपने Bing Search API को बंद करने के बाद ये उपलब्ध खोज कार्यान्वयन हैं, जिस पर AI सहायक मूल रूप से निर्भर था।",
+    "whyTheseOptionsText2": "टीम सक्रिय रूप से अधिक गोपनीयता-केंद्रित खोज विकल्पों की खोज कर रही है। दोनों वर्तमान विकल्प Azure AI Foundry की खोज क्षमताओं का उपयोग करते हैं लेकिन इस बात में भिन्न हैं कि कितना बातचीत डेटा साझा किया जाता है।",
+    "azureDeprecatedBingApi": "Azure ने अपने Bing Search API को बंद कर दिया",
+    "footerNote": "दोनों मोड आपकी बातचीत को आपके ब्राउज़र में स्थानीय रूप से संग्रहीत करते हैं। आप मॉडल सेटिंग्स में किसी भी समय मोड बदल सकते हैं।",
+    "note": "नोट:",
+    "loadingDiagram": "आरेख लोड हो रहा है..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "स्टोरेज की जाँच हो रही है",
+      "analyzingData": "आपके डेटा का विश्लेषण किया जा रहा है...",
+      "updateAvailable": "अपडेट उपलब्ध है",
+      "storageSpaceLimited": "स्टोरेज स्पेस सीमित है",
+      "migratingData": "डेटा माइग्रेट किया जा रहा है",
+      "migrationComplete": "माइग्रेशन पूर्ण हुआ",
+      "partiallyComplete": "आंशिक रूप से पूर्ण",
+      "migrationFailed": "माइग्रेशन विफल हुआ"
+    },
+    "descriptions": {
+      "foundLegacyData": "हमें पिछले वर्शन का डेटा मिला है। क्या आप इसे उन्नत सिस्टम में माइग्रेट करना चाहेंगे?",
+      "storageSpaceWarning": "आपके डेटा को मौजूदा स्पेस से अधिक जगह चाहिए। हम इनक्रिमेंटल माइग्रेशन मोड की सलाह देते हैं।",
+      "pleaseWait": "कृपया प्रतीक्षा करें, आपका डेटा अपडेट किया जा रहा है...",
+      "dataIsSafe": "आपका मूल डेटा सुरक्षित है। आप फिर से प्रयास कर सकते हैं या फिलहाल छोड़ सकते हैं।",
+      "itemsTooLarge": "ये आइटम स्टोरेज में फिट नहीं हो पा रहे हैं। आप इन्हें एक्सपोर्ट कर सकते हैं, स्पेस खाली कर सकते हैं या बिना इनके आगे बढ़ सकते हैं।",
+      "settingsUpdated": "आपकी सेटिंग्स अपडेट कर दी गई हैं।"
+    },
+    "benefits": {
+      "title": "लाभ",
+      "fasterPerformance": "तेज प्रदर्शन",
+      "betterReliability": "बेहतर विश्वसनीयता",
+      "dataPreserved": "आपका डेटा सुरक्षित है"
+    },
+    "options": {
+      "advancedOptions": "एडवांस्ड विकल्प",
+      "useIncrementalMode": "इनक्रिमेंटल मोड का उपयोग करें",
+      "slowerButSafer": "धीमा लेकिन सुरक्षित",
+      "recommended": "अनुशंसित",
+      "deleteLegacyData": "माइग्रेशन के बाद पुराना डेटा हटाएं",
+      "freesUpSpace": "स्टोरेज स्पेस खाली करता है"
+    },
+    "actions": {
+      "skip": "छोड़ें",
+      "migrateData": "डेटा माइग्रेट करें",
+      "migrateAnyway": "फिर भी माइग्रेट करें",
+      "continue": "जारी रखें",
+      "retry": "पुनः प्रयास करें",
+      "exportBackupFirst": "पहले बैकअप एक्सपोर्ट करें",
+      "exportSkippedItems": "छूटे हुए आइटम्स एक्सपोर्ट करें"
+    },
+    "quota": {
+      "availableSpace": "उपलब्ध जगह",
+      "dataToMigrate": "माइग्रेट करने हेतु डेटा",
+      "additionalSpaceNeeded": "अतिरिक्त जगह आवश्यक"
+    },
+    "progress": {
+      "migratingConversations": "संवाद माइग्रेट किए जा रहे हैं",
+      "migratingPrompts": "प्रॉम्प्ट्स माइग्रेट किए जा रहे हैं",
+      "migratingAgents": "एजेंट्स माइग्रेट किए जा रहे हैं",
+      "finishingUp": "कार्य पूर्ण हो रहा है"
+    },
+    "results": {
+      "successfullyMigrated": "सफलतापूर्वक माइग्रेट हुआ",
+      "notes": "नोट्स",
+      "couldNotMigrate": "माइग्रेट नहीं कर सके",
+      "legacyDataDeleted": "पुराना डेटा हटाया गया",
+      "freed": "खाली किया"
+    },
+    "units": {
+      "conversation": "संवाद",
+      "conversations": "संवाद",
+      "folder": "फोल्डर",
+      "folders": "फोल्डर्स",
+      "prompt": "प्रॉम्प्ट",
+      "prompts": "प्रॉम्प्ट्स",
+      "customAgent": "कस्टम एजेंट",
+      "customAgents": "कस्टम एजेंट्स",
+      "item": "आइटम",
+      "items": "आइटम्स"
+    }
+  },
+  "languageSwahili": "स्वाहिली",
+  "welcomeBanner": {
+    "title": "AI Assistant V2 में आपका स्वागत है",
+    "whatsNew": "नया क्या है",
+    "whatsNewQuestion": "नया क्या है?"
+  },
+  "welcomeV2": {
+    "backToChat": "चैट पर वापस जाएँ",
+    "title": "AI Assistant V2 में आपका स्वागत है",
+    "subtitle": "पूरी तरह नया डिज़ाइन और शक्तिशाली नए फ़ीचर्स",
+    "webSearch": {
+      "title": "वेब सर्च मोड",
+      "description": "AI को रियल-टाइम वेब सर्च की सुविधा दें, साथ ही privacy-focused विकल्पों के साथ",
+      "quickAccess": "त्वरित पहुँच:",
+      "quickAccessInstructions": "चैट इनपुट के बगल में + बटन क्लिक करें → \"Web Search\" चुनें",
+      "setAsDefault": "डिफ़ॉल्ट के रूप में सेट करें:",
+      "setAsDefaultInstructions": "मॉडल सेटिंग्स खोलें और Web Search Mode टॉगल सक्षम करें। इनमें से चुनें:",
+      "privacyFocused": "प्राइवेसी-फोकस्ड (डिफ़ॉल्ट)",
+      "privacyFocusedDescription": "केवल सर्च क्वेरी बाहरी तौर पर भेजी जाती है",
+      "azureAIFoundry": "Azure AI Foundry मोड",
+      "azureAIFoundryDescription": "तेज, लेकिन पूरी बातचीत बाहरी तौर पर संग्रहीत",
+      "learnMore": "सर्च मोड्स के बारे में अधिक जानें →"
+    },
+    "tones": {
+      "title": "टोन्स (वॉयस प्रोफाइल्स)",
+      "description": "AI स्टाइल, औपचारिकता और व्यक्तित्व नियंत्रित करें",
+      "createTones": "1. टोन बनाएं:",
+      "createTonesInstructions": "साइडबार में Quick Actions → Tones टैब",
+      "useTones": "2. टोन का उपयोग करें:",
+      "useTonesInstructions": "चैट इनपुट के पास टोन ड्रॉपडाउन क्लिक करें",
+      "exampleProfessionalDesc": "औपचारिक, व्यावसायिक टोन",
+      "exampleCasualDesc": "दोस्ताना, संवादात्मक"
+    },
+    "aiAssist": {
+      "title": "प्रॉम्प्ट और टोन के लिए AI सहायता",
+      "description": "AI को बेहतर प्रॉम्प्ट्स और टोन जल्दी बनाने में मदद करने दें",
+      "step1": "साइडबार में Quick Actions खोलें",
+      "step2": "{prompts} या {tones} टैब पर जाएँ",
+      "step3": "AI Assistant पैनल देखें",
+      "getSuggestions": "सुझाव प्राप्त करें",
+      "getSuggestionsDesc": "AI आपके ड्राफ्ट का विश्लेषण कर सुधार के सुझाव देता है",
+      "buildFromFiles": "फ़ाइलों से बनाएँ",
+      "buildFromFilesDesc": "प्रॉम्प्ट्स/टोन्स जनरेट करने हेतु दस्तावेज़ अपलोड करें",
+      "testBeforeSaving": "सेव करने से पहले टेस्ट करें",
+      "testBeforeSavingDesc": "लाइव चैट प्रीव्यू में प्रॉम्प्ट्स/टोन्स आज़माएँ",
+      "step2Prefix": "इस पर जाएं",
+      "step2Suffix": "टैब"
+    },
+    "customAgents": {
+      "title": "कस्टम एजेंट्स",
+      "advancedBadge": "ADVANCED",
+      "description": "विशेषीकृत AI एजेंट्स, जैसे वेब सर्च और कोड इंटरप्रिटेशन जैसी क्षमताओं के साथ",
+      "advancedFeature": "उन्नत फ़ीचर",
+      "advancedFeatureDesc": "Custom Agents Azure AI Foundry पर स्पेशल टूल्स के साथ चलते हैं। एजेंट ID बनाने के लिए AI Assistant तकनीकी टीम के साथ समन्वय आवश्यक है।",
+      "howToAccess": "कैसे पहुँचें:",
+      "howToAccessInstructions": "सेटिंग्स → मॉडल्स → एजेंट्स टैब",
+      "whatYouCanDo": "आप क्या कर सकते हैं:",
+      "configureAgents": "विशेषीकृत क्षमताओं के साथ एजेंट्स को कॉन्फ़िगर करें",
+      "importExport": "एजेंट कॉन्फ़िगरेशन इम्पोर्ट/एक्सपोर्ट करें",
+      "selectFromDropdown": "मॉडल ड्रॉपडाउन से कस्टम एजेंट्स चुनें"
+    },
+    "audioTranslation": {
+      "title": "ऑडियो ट्रांसक्रिप्शन और अनुवाद",
+      "description": "ऑडियो ट्रांस्क्रिप्ट को 13+ भाषाओं में अपने आप अनुवाद करें",
+      "howToUse": "कैसे उपयोग करें:",
+      "step1": "एक ऑडियो या वीडियो फ़ाइल अपलोड करें",
+      "step2": "ट्रांसक्रिप्शन इंटरफेस में भाषा ड्रॉपडाउन पर क्लिक करें",
+      "step3": "अपनी लक्षित भाषा चुनें",
+      "availableLanguages": "उपलब्ध भाषाएं:",
+      "moreLanguages": "+7 और"
+    },
+    "pwa": {
+      "title": "मोबाइल ऐप के रूप में इंस्टॉल करें",
+      "description": "स्वदेशी अनुभव के साथ प्रोग्रेसिव वेब ऐप",
+      "installTip": "टिप: सर्वश्रेष्ठ अनुभव के लिए साइन इन करने के बाद इंस्टॉल करें, ताकि आपकी प्रमाणिकता सुरक्षित रहे।",
+      "howToInstall": "इंस्टॉल करने का तरीका:",
+      "step1": "अपने खाते में साइन इन करें",
+      "step2": "विस्तृत निर्देशों के लिए सेटिंग्स → मोबाइल ऐप खोलें",
+      "step3": "मोबाइल पर: ब्राउज़र मेनू (⋮ या ⚙️) टैप करें",
+      "step4": "\"Add to Home Screen\" या \"Install App\" विकल्प देखें",
+      "step5": "इंस्टॉल करने के लिए निर्देशों का पालन करें",
+      "benefits": "फायदे:",
+      "benefit1": "होम स्क्रीन से मूल ऐप की तरह लॉन्च करें",
+      "benefit2": "ब्राउज़र UI के बिना पूर्ण स्क्रीन",
+      "benefit3": "सहेजी गई बातचीत तक ऑफलाइन पहुँच"
+    }
+  },
+  "Professional": "व्यावसायिक",
+  "Casual": "अनौपचारिक",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "कोई प्रॉम्प्ट दर्ज करें या प्रॉम्प्ट चुनने के लिए \"/\" टाइप करें..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "AI के उत्तरों को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। ये मुख्य व्यवहार दिशानिर्देशों के साथ मिलाकर उपयोगी, सटीक और सुरक्षित उत्तर सुनिश्चित करते हैं।"
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "सुझाव: सेव की गई प्रॉम्प्ट टेम्प्लेट्स में से चुनने के लिए \"/\" टाइप करें।"
+  },
+  "fileUpload": {
+    "uploading": "अपलोड हो रहा है...",
+    "transcribing": "लिप्यांतरित किया जा रहा है...",
+    "complete": "पूर्ण",
+    "failed": "विफल",
+    "uploadFiles": "फाइलें अपलोड करें (ऑडियो, वीडियो या टेक्स्ट)",
+    "autoDetect": "स्वतः पहचानें",
+    "fileNotAvailable": "संपादन के लिए फ़ाइल उपलब्ध नहीं है",
+    "failedToOpenInEditor": "कोड संपादक में फ़ाइल खोलने में विफल। कृपया पुनः प्रयास करें।",
+    "extractingAudio": "ऑडियो निकाला जा रहा है...",
+    "queuedForTranscription": "ट्रांस्क्रिप्शन के लिए कतारबद्ध",
+    "transcribed": "ट्रांस्क्राइब किया गया",
+    "transcriptionFailed": "ट्रांस्क्रिप्शन असफल रहा",
+    "extractedFromSmaller": "{percent}% छोटे से निकाला गया",
+    "textExtraction": "टेक्स्ट निकासी",
+    "opening": "खोला जा रहा है...",
+    "openInEditor": "संपादक में खोलें",
+    "failedToUpload": "अपलोड करने में विफल",
+    "attachment": "संलग्न",
+    "attachments": "संलग्न दस्तावेज़"
+  },
+  "transcript": {
+    "originalTranscript": "मूल ट्रांसक्रिप्ट",
+    "transcript": "ट्रांसक्रिप्ट",
+    "transcriptionOf": "का ट्रांसक्रिप्शन",
+    "translating": "अनुवाद हो रहा है...",
+    "copied": "कॉपी किया गया!",
+    "copy": "कॉपी करें",
+    "download": "डाउनलोड करें",
+    "translate": "अनुवाद करें",
+    "collapse": "छुपाएं",
+    "expand": "विस्तार करें",
+    "expandHint": "मूल ट्रांसक्रिप्ट देखने के लिए \"विस्तार करें\" क्लिक करें",
+    "listen": "ट्रांसक्रिप्ट सुनें",
+    "stopAudio": "ऑडियो बंद करें",
+    "openAsDocument": "दस्तावेज़ के रूप में खोलें"
+  },
+  "userMessage": {
+    "open": "खोलें",
+    "showFullMessage": "पूरा संदेश दिखाएँ",
+    "collapse": "संक्षिप्त करें",
+    "customTone": "कस्टम टोन"
+  },
+  "codeBlock": {
+    "openInEditor": "संपादक में खोलें"
+  },
+  "artifact": {
+    "noContentToExport": "निर्यात करने के लिए कोई सामग्री नहीं",
+    "exportedAsHtml": "HTML के रूप में निर्यात किया गया",
+    "exportedAsMarkdown": "Markdown के रूप में निर्यात किया गया",
+    "exportedAsText": "टेक्स्ट के रूप में निर्यात किया गया",
+    "generatingPdf": "PDF जनरेट किया जा रहा है...",
+    "exportedAsPdf": "PDF के रूप में निर्यात किया गया",
+    "generatingDocx": "DOCX जनरेट किया जा रहा है...",
+    "exportedAsDocx": "DOCX के रूप में निर्यात किया गया",
+    "failedToExportAs": "{format} के रूप में निर्यात करने में विफल",
+    "document": "दस्तावेज़",
+    "switchToCodeEditor": "कोड एडिटर पर स्विच करें",
+    "exportDocument": "दस्तावेज़ निर्यात करें",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "साधारण टेक्स्ट (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "बंद करें",
+    "editsNotSaved": "संपादन सहेजे नहीं गए हैं। किसी संदेश के माध्यम से भेजें या डाउनलोड करें ताकि कोई भी संपादन सुरक्षित हो सके।",
+    "fileDownloaded": "फ़ाइल डाउनलोड की गई",
+    "failedToDownload": "डाउनलोड करने में विफल",
+    "switchToDocumentEditor": "दस्तावेज़ संपादक पर स्विच करें",
+    "download": "डाउनलोड करें",
+    "fileIncludedWithMessage": "संदेश के साथ फ़ाइल और संपादन शामिल हैं",
+    "closeEditor": "एडिटर बंद करें",
+    "closeCodeEditor": "कोड एडिटर बंद करें",
+    "startWriting": "लिखना शुरू करें...",
+    "toolbar": {
+      "bold": "मोटा",
+      "italic": "तिरछा",
+      "underline": "रेखांकित",
+      "strikethrough": "स्ट्राइकथ्रू",
+      "heading1": "हेडिंग 1",
+      "heading2": "हेडिंग 2",
+      "heading3": "हेडिंग 3",
+      "bulletList": "बुलेट सूची",
+      "numberedList": "क्रमांकित सूची",
+      "codeBlock": "कोड ब्लॉक",
+      "quote": "उद्धरण",
+      "insertTable": "तालिका जोड़ें",
+      "table": "तालिका",
+      "undo": "पूर्ववत करें",
+      "redo": "फिर से करें"
+    },
+    "codeEditor": {
+      "startTyping": "टाइप करना शुरू करें या AI से कोड जनरेट करने के लिए कहें",
+      "codeWillSync": "कोड चैट संदेशों से स्वतः सिंक हो जाएगा",
+      "startCoding": "// कोडिंग शुरू करें..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "हर संदेश के लिए वेब सर्च सक्षम करें।\n\nरियल-टाइम Bing वेब एक्सेस से नवीनतम जानकारी प्राप्त करें।",
+    "attachTooltip": "फाइलें, चित्र या ऑडियो/वीडियो संलग्न करें।\n\nसमर्थित फॉर्मेट:\n• इमेज: JPEG, PNG, GIF, WebP (अधिकतम 5MB, 10 तक)\n• दस्तावेज़: PDF, DOCX, XLSX, PPTX, TXT, MD (अधिकतम 10MB, 3 तक)\n• डेटा: CSV, JSON, XML, YAML (अधिकतम 10MB, 3 तक)\n• कोड: PY, JS, TS, JAVA, C, CPP, GO आदि (अधिकतम 10MB, 3 तक)\n• ऑडियो/वीडियो: MP3, WAV, MP4, WebM (अधिकतम 25MB, 1 फाइल)\n\nकुलः 10 फाइलें, अधिकतम 50MB",
+    "transcribeTooltip": "ट्रांसक्रिप्शन के लिए ऑडियो या वीडियो फाइलें अपलोड करें।\n\nसमर्थित फॉर्मेट: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nअधिकतम आकार: 25MB\n\nजब आप संदेश भेजते हैं, ट्रांसक्रिप्शन स्वतः हो जाएगी।",
+    "selected": "चयनित",
+    "expandActions": "क्रियाएँ विस्तार करें",
+    "selectTone": "टोन चुनें",
+    "selectToneDescription": "अपने संदेशों के लिए वॉयस प्रोफाइल चुनें",
+    "noToneDefault": "कोई टोन नहीं (डिफ़ॉल्ट)",
+    "useDefaultStyle": "डिफ़ॉल्ट लेखन शैली का उपयोग करें",
+    "noTonesCreated": "अभी तक कोई टोन नहीं बनाई गई",
+    "createTonesHint": "त्वरित क्रियाओं में टोन बनाएं",
+    "translateDocumentTooltip": "दस्तावेज़ों का अनुवाद दूसरी भाषा में करें।\n\nसमर्थित फॉर्मेट: Word, Excel, PowerPoint, PDF, HTML, TXT\nअधिकतम आकार: 40MB\n\n80+ भाषाओं के लिए समर्थन, वैकल्पिक glossary फ़ाइल के साथ।"
+  },
+  "transcription": {
+    "addInstructions": "निर्देश जोड़ें",
+    "instructionsPlaceholder": "सटीकता में सुधार के लिए संदर्भ (जैसे, नाम, शब्द)",
+    "transcribesOnSend": "भेजने पर प्रतिलेखन करें",
+    "languages": {
+      "autoDetect": "स्वतः पहचानें",
+      "afrikaans": "अफ़्रीकांस",
+      "arabic": "अरबी",
+      "armenian": "आर्मेनियाई",
+      "azerbaijani": "अज़रबैजानी",
+      "belarusian": "बेलारूसी",
+      "bosnian": "बोस्नियाई",
+      "bulgarian": "बुल्गारियाई",
+      "burmese": "बर्मीज़",
+      "catalan": "कैटलन",
+      "chinese": "चीनी",
+      "croatian": "क्रोएशियाई",
+      "czech": "चेक",
+      "danish": "डेनिश",
+      "dutch": "डच",
+      "english": "अंग्रेज़ी",
+      "estonian": "एस्टोनियन",
+      "finnish": "फिनिश",
+      "french": "फ्रेंच",
+      "galician": "गैलिशियन",
+      "german": "जर्मन",
+      "greek": "यूनानी",
+      "hebrew": "हिब्रू",
+      "hindi": "हिन्दी",
+      "hungarian": "हंगेरियन",
+      "icelandic": "आइसलैंडिक",
+      "indonesian": "इंडोनेशियन",
+      "italian": "इतालवी",
+      "japanese": "जापानी",
+      "kannada": "कन्नड़",
+      "kazakh": "कज़ाख",
+      "korean": "कोरियाई",
+      "latvian": "लातवियाई",
+      "lithuanian": "लिथुआनियाई",
+      "macedonian": "मेसीडोनियन",
+      "malay": "मलय",
+      "maori": "माओरी",
+      "marathi": "मराठी",
+      "nepali": "नेपाली",
+      "norwegian": "नॉर्वेजियन",
+      "persian": "फारसी",
+      "polish": "पोलिश",
+      "portuguese": "पुर्तगाली",
+      "romanian": "रोमानियाई",
+      "russian": "रूसी",
+      "serbian": "सर्बियाई",
+      "slovak": "स्लोवाक",
+      "slovenian": "स्लोवेनियाई",
+      "spanish": "स्पैनिश",
+      "swahili": "स्वाहिली",
+      "swedish": "स्वीडिश",
+      "tagalog": "टागालोग",
+      "tamil": "तमिल",
+      "thai": "थाई",
+      "turkish": "तुर्की",
+      "ukrainian": "यूक्रेनी",
+      "urdu": "उर्दू",
+      "vietnamese": "वियतनामी",
+      "welsh": "वेल्श"
+    },
+    "inProgress": "ट्रांसक्रिप्शन प्रगति में है",
+    "processingFile": "प्रोसेस कर रहा है: {filename}",
+    "timeRemaining": "शेष समय: {time}",
+    "maxDurationNote": "बड़े फ़ाइलों में {minutes} मिनट लग सकते हैं",
+    "timedOut": "ट्रांसक्रिप्शन {minutes} मिनट के बाद समय सीमा से बाहर हो गया",
+    "timedOutToast": "ट्रांसक्रिप्शन की समय सीमा समाप्त: {filename}",
+    "failed": "ट्रांसक्रिप्शन विफल: {error}",
+    "failedToast": "ट्रांसक्रिप्शन विफल: {filename}",
+    "unknownError": "अज्ञात त्रुटि",
+    "completed": "ट्रांसक्रिप्शन पूर्ण",
+    "completedToast": "ट्रांसक्रिप्शन पूर्ण: {filename}",
+    "placeholder": "[ट्रांसक्रिप्शन प्रगति में: {filename}]",
+    "loadingTranscript": "{filename} के लिए ट्रांसक्रिप्ट लोड हो रहा है...",
+    "expiredOrDeleted": "यह ट्रांसक्रिप्ट समाप्त हो चुकी है या हटा दी गई है।",
+    "fetchError": "ट्रांसक्रिप्ट लोड करने में विफल। कृपया पुनः प्रयास करें।",
+    "transcriptExpired": "{filename} के लिए ट्रांसक्रिप्ट समाप्त हो गई है। गोपनीयता के लिए ट्रांसक्रिप्ट {days} दिन बाद स्वचालित रूप से हटा दी जाती है।",
+    "expirationWarning": "{filename} के लिए ट्रांसक्रिप्ट {days} दिन में समाप्त हो जाएगी। यदि आपको इसकी आवश्यकता है तो इसकी सामग्री कॉपी कर लें।"
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI की प्रतिक्रिया को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। इन्हें मुख्य व्यवहार दिशानिर्देशों के साथ जोड़ा जाता है ताकि प्रतिक्रियाएं सहायक, सटीक और सुरक्षित रहें।",
+  "Tip: Type \"/\" to select from saved prompt templates_": "टिप: सहेजे गए प्रॉम्प्ट टेम्पलेट्स में से चुनने के लिए \"/\" टाइप करें।",
+  "storageWarning": {
+    "title": {
+      "warning": "स्टोरेज कम हो रहा है",
+      "critical": "स्टोरेज लगभग भर चुका है",
+      "emergency": "स्टोरेज पूरा भर चुका है"
+    },
+    "message": {
+      "warning": "आपका ब्राउज़र स्टोरेज {percent}% क्षमतापर है।",
+      "critical": "आपका ब्राउज़र स्टोरेज गंभीर रूप से कम है ({percent}% क्षमता)।",
+      "emergency": "आपका ब्राउज़र स्टोरेज लगभग पूरा भर चुका है ({percent}%)!"
+    },
+    "consequence": "अगर स्टोरेज भर गया, तो आप नई बातचीतों का उपयोग नहीं कर पाएंगे और ऐप सही से काम नहीं करेगा।",
+    "storageUsage": "स्टोरेज उपयोग",
+    "optionsToFreeSpace": "स्थान खाली करने के विकल्प",
+    "clearOption": {
+      "keepRecent": "हाल की बातचीत रखें",
+      "olderThan": "इससे पुरानी बातचीत साफ़ करें",
+      "days": {
+        "7": "7 दिन",
+        "14": "14 दिन",
+        "30": "30 दिन",
+        "60": "60 दिन",
+        "90": "90 दिन"
+      }
+    },
+    "estimate": {
+      "willRemove": "यह {count} बातचीतें हटाएगा",
+      "willFree": "अनुमानित खाली स्थान: {size}"
+    },
+    "action": {
+      "exportFirst": "पहले डेटा निर्यात करें",
+      "clearNow": "अभी साफ़ करें",
+      "dismiss": "खारिज करें",
+      "cancel": "रद्द करें"
+    },
+    "confirm": {
+      "title": "साफ़ करने की पुष्टि करें",
+      "message": "यह {count} बातचीतें स्थायी रूप से हटाएगा। इसे वापस नहीं किया जा सकता।"
+    },
+    "clearing": {
+      "title": "स्टोरेज साफ़ किया जा रहा है",
+      "message": "कृपया प्रतीक्षा करें, बातचीतें हटाई जा रही हैं..."
+    },
+    "success": {
+      "title": "स्टोरेज साफ़ हुआ",
+      "message": "{count} बातचीतें सफलतापूर्वक हटाई गईं, {size} खाली हुआ।"
+    },
+    "error": {
+      "title": "साफ़ करना विफल हुआ",
+      "message": "बातचीतें साफ़ करते समय त्रुटि हुई। कृपया पुनः प्रयास करें।"
+    },
+    "close": "बंद करें"
+  },
+  "support": {
+    "selectOrganization": "अपना संगठन चुनें",
+    "organizationDescription": "उपयुक्त सहायता संपर्क देखने के लिए अपना MSF संगठन चुनें",
+    "autoDetect": "स्वतः-पहचानें",
+    "resetToAutoDetect": "स्वतः-पहचान पर रीसेट करें",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (जेनेवा)",
+      "OCA": "OCA (एम्स्टर्डम)",
+      "FIELD": "फील्ड / अन्य"
+    },
+    "emailSupport": "ईमेल सहायता",
+    "emailDescription": "{organization} सहायता टीम से संपर्क करें",
+    "escalationTitle": "फील्ड व अन्य MSF कर्मी",
+    "escalationDescription": "सहायता के लिए अपने संगठन के IT एस्केलेशन प्रक्रिया का पालन करें",
+    "escalationShort": "अपने स्थानीय IT सहायता से संपर्क करें",
+    "escalationStep1": "पहले अपने स्थानीय IT सहायता से संपर्क करें",
+    "escalationStep2": "यदि समस्या हल न हो, तो अपने ऑपरेशनल सेंटर (OC) IT विभाग तक पहुंचाएं",
+    "escalationStep3": "यदि अब भी हल न हो, तो OC IT, SITS (शेयर्ड IT सर्विसेज़) तक एस्केलेट कर सकता है"
+  },
+  "translateDocumentDropdown": "दस्तावेज़ अनुवाद करें",
+  "documentTranslation": {
+    "title": "दस्तावेज़ अनुवाद",
+    "targetLanguage": "लक्ष्य भाषा",
+    "sourceLanguage": "स्रोत भाषा",
+    "searchLanguage": "भाषा खोजें...",
+    "noLanguagesFound": "कोई भाषा नहीं मिली",
+    "autoDetect": "यदि निर्दिष्ट नहीं है तो स्वचालित पहचान",
+    "glossary": "Glossary फ़ाइल",
+    "glossaryHelp": "कस्टम शब्दावली के लिए CSV, TSV, या XLIFF glossary फ़ाइल अपलोड करें",
+    "uploadGlossary": "Glossary अपलोड करें",
+    "glossaryTooLarge": "Glossary फ़ाइल बहुत बड़ी है। अधिकतम आकार {maxSize} है।",
+    "outputFilename": "आउटपुट फ़ाइलनाम",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "दस्तावेज़ अनुवाद करें",
+    "translating": "अनुवाद किया जा रहा है...",
+    "noDocumentError": "कृपया अनुवाद के लिए कोई दस्तावेज़ चुनें।",
+    "noTargetLanguageError": "कृपया लक्ष्य भाषा चुनें।",
+    "documentTooLarge": "दस्तावेज़ बहुत बड़ा है। अधिकतम आकार {maxSize} है।",
+    "translationSuccess": "दस्तावेज़ का सफलतापूर्वक अनुवाद हो गया",
+    "translationFailed": "अनुवाद विफल: {error}",
+    "invalidReference": "अमान्य दस्तावेज़ अनुवाद संदर्भ",
+    "documentNotFound": "अनुवादित दस्तावेज़ नहीं मिला या इसकी वैधता समाप्त हो गई है",
+    "downloadFailed": "अनुवादित दस्तावेज़ डाउनलोड करने में विफल",
+    "downloadSuccess": "दस्तावेज़ सफलतापूर्वक डाउनलोड हुआ",
+    "translatedTo": "{language} में अनुवादित",
+    "download": "डाउनलोड करें",
+    "downloading": "डाउनलोड हो रहा है...",
+    "expired": "इस अनुवाद की वैधता समाप्त हो चुकी है और अब उपलब्ध नहीं है",
+    "expiresSoon": "{days} दिन में समाप्त होगा - शीघ्र डाउनलोड करें",
+    "expires": "{days} दिन तक उपलब्ध",
+    "learnMore": "और जानें",
+    "advancedOptions": "उन्नत विकल्प"
   }
 }

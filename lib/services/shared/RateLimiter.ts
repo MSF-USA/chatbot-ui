@@ -1,4 +1,4 @@
-import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, PipelineError } from '@/types/errors';
 
 /**
  * Rate limit information for a user.

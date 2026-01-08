@@ -19,6 +19,17 @@ vi.mock('@/client/stores/conversationStore', () => ({
   },
 }));
 
+// Mock the chat store
+const mockChatState = {
+  setRegeneratingIndex: vi.fn(),
+};
+
+vi.mock('@/client/stores/chatStore', () => ({
+  useChatStore: {
+    getState: vi.fn(() => mockChatState),
+  },
+}));
+
 // Mock window.confirm
 global.confirm = vi.fn(() => true);
 
@@ -30,6 +41,7 @@ describe('useChatActions', () => {
     vi.clearAllMocks();
     mockState.conversations = [];
     mockState.selectedConversationId = null;
+    mockChatState.setRegeneratingIndex.mockClear();
   });
 
   describe('handleClearAll', () => {
@@ -260,7 +272,7 @@ describe('useChatActions', () => {
   });
 
   describe('handleRegenerate', () => {
-    it('should remove messages after last user message and resend', () => {
+    it('should set regenerating index and resend last user message', () => {
       const messages: Message[] = [
         { role: 'user', content: 'Question 1', messageType: MessageType.TEXT },
         {
@@ -300,17 +312,16 @@ describe('useChatActions', () => {
         result.current.handleRegenerate();
       });
 
-      const expectedMessages = messages.slice(0, 3); // Up to and including last user message
+      // Should set the regenerating index to the last assistant message (index 3)
+      expect(mockChatState.setRegeneratingIndex).toHaveBeenCalledWith(3);
 
-      expect(mockUpdateConversation).toHaveBeenCalledWith('conv-1', {
-        messages: expectedMessages,
-      });
-
+      // Should send the last user message with a sliced conversation for the API
+      // The API conversation should only include messages up to the user message (indices 0-2)
       expect(mockSendMessage).toHaveBeenCalledWith(
         messages[2], // Last user message
         expect.objectContaining({
           id: 'conv-1',
-          messages: expectedMessages,
+          messages: messages.slice(0, 3), // Messages up to and including user message
         }),
         undefined,
       );

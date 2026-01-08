@@ -23,7 +23,7 @@ import {
 import { OpenAIModels } from '@/types/openai';
 
 import {
-  ClaudeIcon,
+  ClaudeAIIcon,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -68,7 +68,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
       case 'meta':
         return <MetaIcon {...iconProps} />;
       case 'anthropic':
-        return <ClaudeIcon {...iconProps} />;
+        return <ClaudeAIIcon {...iconProps} />;
       default:
         return null;
     }

@@ -5,8 +5,8 @@ import {
   createStreamEncoder,
   deduplicateCitations,
 } from '@/lib/utils/app/metadata';
-import { getMessagesToSend } from '@/lib/utils/server/chat';
-import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
+import { getMessagesToSend } from '@/lib/utils/server/chat/chat';
+import { getGlobalTiktoken } from '@/lib/utils/server/tiktoken/tiktokenCache';
 
 import {
   FileMessageContent,
@@ -49,6 +49,7 @@ export class AIFoundryAgentHandler {
     user: Session['user'],
     botId: string | undefined,
     threadId?: string,
+    streamingSpeed?: { charsPerBatch: number; delayMs: number },
   ): Promise<Response> {
     const startTime = Date.now();
 
@@ -260,6 +261,37 @@ export class AIFoundryAgentHandler {
               const citationMap = new Map<string, number>();
               let hasCompletedMessage = false;
 
+              // Two-stage buffering for citation markers and smooth streaming:
+              // - markerBuffer: Accumulates text to handle markers split across chunks
+              // - streamBuffer: Holds processed text for smooth output
+              let markerBuffer = '';
+              let streamBuffer = '';
+              let controllerClosed = false;
+
+              // Use configurable streaming speed or defaults
+              const charsPerBatch = streamingSpeed?.charsPerBatch ?? 3;
+              const delayMs = streamingSpeed?.delayMs ?? 8;
+
+              // Background task to stream buffered content smoothly
+              // Sends configured characters every configured ms for a consistent output rate
+              const smoothStream = async () => {
+                while (!controllerClosed) {
+                  if (streamBuffer.length > 0) {
+                    const charsToSend = Math.min(
+                      charsPerBatch,
+                      streamBuffer.length,
+                    );
+                    const toSend = streamBuffer.slice(0, charsToSend);
+                    streamBuffer = streamBuffer.slice(charsToSend);
+                    controller.enqueue(encoder.encode(toSend));
+                  }
+                  await new Promise((resolve) => setTimeout(resolve, delayMs));
+                }
+              };
+
+              // Start the smooth streaming background task
+              smoothStream();
+
               try {
                 for await (const eventMessage of streamEventMessages) {
                   // Handle different event types
@@ -285,24 +317,58 @@ export class AIFoundryAgentHandler {
                             contentPart.type === 'text' &&
                             contentPart.text?.value
                           ) {
-                            let textChunk = contentPart.text.value;
+                            const textChunk = contentPart.text.value;
 
-                            // Convert citation format on the fly
-                            textChunk = textChunk.replace(
-                              /【(\d+):(\d+)†source】/g,
+                            // Stage 1: Accumulate text in marker buffer
+                            markerBuffer += textChunk;
+
+                            // Stage 2: Process complete citation markers in accumulated buffer
+                            //
+                            // Azure agents return citations in two formats:
+                            // - Short: 【3:0†source】 (just the word "source")
+                            // - Long:  【3:0†Title†URL】 (embedded title and URL)
+                            //
+                            // Regex breakdown: /【(\d+):(\d+)†[^】]+】/g
+                            // - 【        : Opening bracket (Chinese left lenticular bracket)
+                            // - (\d+)    : First number (source index)
+                            // - :        : Literal colon
+                            // - (\d+)    : Second number (sub-index)
+                            // - †        : Dagger symbol separator
+                            // - [^】]+   : Any characters except closing bracket
+                            // - 】       : Closing bracket (Chinese right lenticular bracket)
+                            //
+                            // Each unique marker gets a sequential number [1], [2], etc.
+                            const processedBuffer = markerBuffer.replace(
+                              /【(\d+):(\d+)†[^】]+】/g,
                               (match: string) => {
                                 if (!citationMap.has(match)) {
                                   citationMap.set(match, citationIndex);
-                                  console.log(
-                                    `[AIFoundryAgentHandler] New citation marker: ${match} -> [${citationIndex}]`,
-                                  );
                                   citationIndex++;
                                 }
                                 return `[${citationMap.get(match)}]`;
                               },
                             );
 
-                            controller.enqueue(encoder.encode(textChunk));
+                            // Stage 3: Check for incomplete markers at end of buffer
+                            // If there's an opening bracket without a closing one, keep it
+                            const lastOpenBracket =
+                              processedBuffer.lastIndexOf('【');
+                            const lastCloseBracket =
+                              processedBuffer.lastIndexOf('】');
+
+                            if (lastOpenBracket > lastCloseBracket) {
+                              // Incomplete marker at end - keep it in buffer, send the rest
+                              streamBuffer += processedBuffer.slice(
+                                0,
+                                lastOpenBracket,
+                              );
+                              markerBuffer =
+                                processedBuffer.slice(lastOpenBracket);
+                            } else {
+                              // All markers complete - send everything
+                              streamBuffer += processedBuffer;
+                              markerBuffer = '';
+                            }
                           }
                         },
                       );
@@ -311,11 +377,6 @@ export class AIFoundryAgentHandler {
                     eventMessage.event === 'thread.message.completed'
                   ) {
                     hasCompletedMessage = true;
-
-                    console.log(
-                      '[AIFoundryAgentHandler] Final citationMap (inline markers to numbers):',
-                      Array.from(citationMap.entries()),
-                    );
 
                     // Extract citations from annotations
                     const messageData = eventMessage.data as {
@@ -332,11 +393,6 @@ export class AIFoundryAgentHandler {
                     if (messageData?.content?.[0]?.text?.annotations) {
                       const annotations =
                         messageData.content[0].text.annotations;
-
-                      console.log(
-                        '[AIFoundryAgentHandler] Raw annotations from agent:',
-                        JSON.stringify(annotations, null, 2),
-                      );
 
                       // Build a map from citation marker to annotation
                       const markerToAnnotation = new Map<
@@ -376,18 +432,24 @@ export class AIFoundryAgentHandler {
                         });
 
                         if (!urlCitation) {
-                          console.log(
-                            `[AIFoundryAgentHandler] Warning: No annotation found for marker ${marker}, using placeholder`,
+                          console.warn(
+                            `[AIFoundryAgentHandler] No annotation found for marker ${marker}, using placeholder`,
                           );
                         }
                       }
-
-                      console.log(
-                        '[AIFoundryAgentHandler] Processed citations (matched to citationMap):',
-                        JSON.stringify(citations, null, 2),
-                      );
                     }
                   } else if (eventMessage.event === 'thread.run.completed') {
+                    // Flush any remaining marker buffer to stream buffer
+                    if (markerBuffer) {
+                      streamBuffer += markerBuffer;
+                      markerBuffer = '';
+                    }
+
+                    // Wait for stream buffer to drain before appending metadata
+                    while (streamBuffer.length > 0) {
+                      await new Promise((resolve) => setTimeout(resolve, 10));
+                    }
+
                     // Append metadata at the very end using utility function
                     // No need to deduplicate - citationMap already ensured uniqueness
                     appendMetadataToStream(controller, {
@@ -395,16 +457,20 @@ export class AIFoundryAgentHandler {
                       threadId: isNewThread ? thread.id : undefined,
                     });
                   } else if (eventMessage.event === 'error') {
+                    controllerClosed = true;
                     controller.error(
                       new Error(
                         `Agent error: ${JSON.stringify(eventMessage.data)}`,
                       ),
                     );
                   } else if (eventMessage.event === 'done') {
+                    // Stop the smooth streaming loop and close
+                    controllerClosed = true;
                     controller.close();
                   }
                 }
               } catch (error) {
+                controllerClosed = true;
                 controller.error(error);
               }
             },

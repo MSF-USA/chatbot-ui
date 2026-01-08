@@ -7,6 +7,22 @@ export interface TranscriptMetadata {
   filename: string;
   transcript: string;
   processedContent?: string; // If user provided instructions for processing
+  jobId?: string; // For tracking async transcription jobs and reliable message updates
+}
+
+/**
+ * Pending transcription job info for async processing.
+ *
+ * Supports two job types:
+ * - Chunked: Local processing with FFmpeg + Whisper (blobPath is optional)
+ * - Batch: Azure Speech Services (blobPath is required for cleanup)
+ */
+export interface PendingTranscriptionInfo {
+  filename: string;
+  jobId: string;
+  blobPath?: string; // Only required for batch jobs
+  totalChunks?: number; // Only for chunked jobs
+  jobType?: 'chunked' | 'batch';
 }
 
 /**
@@ -18,6 +34,7 @@ export interface StreamMetadata {
   thinking?: string;
   transcript?: TranscriptMetadata;
   action?: string; // Current action being performed (e.g., "searching_web", "processing")
+  pendingTranscriptions?: PendingTranscriptionInfo[]; // Async batch transcription jobs
 }
 
 /**
@@ -30,6 +47,7 @@ export interface ParsedMetadata {
   thinking?: string;
   transcript?: TranscriptMetadata;
   action?: string;
+  pendingTranscriptions?: PendingTranscriptionInfo[];
   extractionMethod: 'metadata' | 'none';
 }
 
@@ -47,6 +65,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
   let thinking: string | undefined;
   let transcript: TranscriptMetadata | undefined;
   let action: string | undefined;
+  let pendingTranscriptions: PendingTranscriptionInfo[] | undefined;
   let extractionMethod: ParsedMetadata['extractionMethod'] = 'none';
 
   // Check for metadata format
@@ -77,6 +96,9 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
       if (parsedData.action) {
         action = parsedData.action;
       }
+      if (parsedData.pendingTranscriptions) {
+        pendingTranscriptions = parsedData.pendingTranscriptions;
+      }
     } catch (error) {
       console.error('Error parsing metadata JSON:', error);
     }
@@ -93,6 +115,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
     thinking,
     transcript,
     action,
+    pendingTranscriptions,
     extractionMethod,
   };
 }
@@ -118,6 +141,8 @@ export function appendMetadataToStream(
   if (metadata.thinking) cleanMetadata.thinking = metadata.thinking;
   if (metadata.transcript) cleanMetadata.transcript = metadata.transcript;
   if (metadata.action) cleanMetadata.action = metadata.action;
+  if (metadata.pendingTranscriptions)
+    cleanMetadata.pendingTranscriptions = metadata.pendingTranscriptions;
 
   // Only append if we have actual metadata
   if (Object.keys(cleanMetadata).length > 0) {

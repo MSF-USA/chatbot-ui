@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Yêu cầu nhập API Key từ tài khoản OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vui lòng nhập API Key từ tài khoản OpenAI của bạn vào ô dưới cùng của thanh bên trái.",
   "Stop Generating": "Dừng tạo",
-  "Prompt limit is {{maxLength}} characters": "Giới hạn Prompt là {{maxLength}} ký tự",
+  "Prompt limit is {{maxLength}} characters": "Giới hạn là {{maxLength}} ký tự",
   "System Prompt": "Prompt hệ thống",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Bạn là ChatGPT, một mô hình ngôn ngữ lớn được đào tạo bởi OpenAI. Hãy tuân theo hướng dẫn của người dùng một cách cẩn thận. Phản hồi bằng cách sử dụng định dạng markdown.",
   "Enter a prompt": "Nhập một Prompt",
@@ -128,7 +128,7 @@
   "Description": "Mô tả",
   "A description for your prompt_": "Một mô tả cho Prompt của bạn.",
   "Prompt": "nhắc nhở",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung Prompt. Sử dụng {{}} để biểu thị một biến. Ví dụ: {{name}} là một {{adjective}} {{noun}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung Prompt. Sử dụng '{{}}' để biểu thị một biến. Ví dụ: '{{name}}' là một '{{adjective}}' '{{noun}}'",
   "Save": "Lưu",
   "A name for your prompt_": "Tên cho lời nhắc của bạn.",
   "New chat": "Tạo hội thoại mới",
@@ -306,7 +306,19 @@
   "Team Templates": "Mẫu nhóm",
   "selected": "đã chọn",
   "folders": "thư mục",
-  "agents": "tác nhân",
+  "agents": {
+    "exportAgent": "Xuất tác nhân",
+    "editAgent": "Chỉnh sửa tác nhân",
+    "agentName": "Tên tác nhân",
+    "myResearchAssistant": "Trợ lý nghiên cứu của tôi",
+    "agentId": "ID tác nhân",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Mô tả (tùy chọn)",
+    "descriptionPlaceholder": "Tác nhân chuyên về các nhiệm vụ nghiên cứu...",
+    "baseModel": "Mô hình cơ sở",
+    "formatDescription": "Định dạng: asst_xxxxx (từ MSF AI Assistant Foundry)",
+    "importantInfo": "Tác nhân này sẽ có quyền truy cập vào ngữ cảnh cuộc trò chuyện và có thể sử dụng các công cụ giống như các mô hình tiêu chuẩn. Đảm bảo ID tác nhân chính xác vì không thể thay đổi sau này."
+  },
   "Quick Actions": "Thao tác nhanh",
   "Type / in chat to access your prompts": "Gõ / trong trò chuyện để truy cập lời nhắc của bạn",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Gõ / trong trò chuyện, chọn lời nhắc của bạn và điền các biến khi được nhắc",
@@ -439,15 +451,43 @@
   "enterTagsPlaceholder": "Thêm thẻ (nhấn Enter)",
   "enterPromptNamePlaceholder": "ví dụ: Trả lời Email",
   "enterPromptDescriptionPlaceholder": "Lời nhắc này dùng để làm gì?",
-  "enterPromptContentPlaceholder": "Viết lời nhắc của bạn ở đây. Sử dụng {{variable}} cho nội dung động.",
+  "enterPromptContentPlaceholder": "Viết lời nhắc của bạn ở đây. Sử dụng '{{variable}}' cho nội dung động.",
   "common": {
-    "contact": "Liên hệ"
+    "contact": "Liên hệ",
+    "close": "Đóng",
+    "remove": "Xóa",
+    "tryAgain": "Thử lại",
+    "menu": "Menu",
+    "copyToClipboard": "Sao chép vào bộ nhớ tạm",
+    "toggleDropdownMenu": "Chuyển đổi menu thả xuống",
+    "toggleMenu": "Chuyển đổi menu",
+    "closeModal": "Đóng cửa sổ",
+    "dismissBanner": "Tắt banner",
+    "searchEllipsis": "Tìm kiếm...",
+    "addTagEllipsis": "Thêm thẻ...",
+    "msfLogo": "Logo MSF",
+    "importantInformation": "Thông tin quan trọng",
+    "noResults": "Không tìm thấy kết quả",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục chỉnh sửa",
+    "yes": "Có",
+    "no": "Không"
   },
   "errors": {
     "unexpectedErrorOccurred": "Đã xảy ra lỗi không mong muốn",
     "criticalErrorReload": "Đã xảy ra lỗi nghiêm trọng. Vui lòng tải lại trang.",
     "reloadPage": "Tải lại trang",
-    "persistContactSupport": "Nếu sự cố này vẫn tiếp diễn, vui lòng liên hệ hỗ trợ"
+    "persistContactSupport": "Nếu sự cố này vẫn tiếp diễn, vui lòng liên hệ hỗ trợ",
+    "somethingWentWrong": "Đã xảy ra sự cố",
+    "anErrorOccurred": "Đã xảy ra lỗi",
+    "copyErrorMessage": "Sao chép thông báo lỗi",
+    "contactSupport": "Nếu sự cố vẫn tiếp diễn, vui lòng liên hệ bộ phận hỗ trợ tại",
+    "dismissError": "Đóng thông báo lỗi",
+    "applicationError": "Lỗi ứng dụng",
+    "chatLoadError": "Đã xảy ra lỗi khi tải cuộc trò chuyện",
+    "anErrorOccurredTryAgain": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
   "auth": {
     "authenticationError": "Lỗi Xác thực",
@@ -516,7 +556,53 @@
     "fullSizePreview": "Xem trước kích thước đầy đủ",
     "enterSearchQueryPlaceholder": "Nhập truy vấn hoặc câu hỏi tìm kiếm của bạn...",
     "errorFetchingUrl": "Đã xảy ra lỗi khi tải nội dung URL",
-    "errorInitiatingSearch": "Đã xảy ra lỗi khi bắt đầu tìm kiếm web"
+    "errorInitiatingSearch": "Đã xảy ra lỗi khi bắt đầu tìm kiếm web",
+    "regenerate": "Tạo lại",
+    "modelSwitchPrompt": "{original} thất bại nhưng {fallback} thành công. Bạn có muốn chuyển mô hình không?",
+    "keepOriginalModel": "Giữ {model}",
+    "switchToModel": "Chuyển sang {model}",
+    "alwaysSwitchToModel": "Luôn tự động chuyển",
+    "translateMessage": "Dịch tin nhắn",
+    "translating": "Đang dịch...",
+    "translationError": "Dịch không thành công",
+    "showOriginal": "Hiện bản gốc",
+    "translatedTo": "Đã dịch sang {language}",
+    "searchLanguages": "Tìm ngôn ngữ...",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "audioFromOriginal": "Âm thanh từ văn bản gốc",
+    "audioFromTranslation": "Âm thanh từ bản dịch {language}",
+    "thinking": "Đang suy nghĩ...",
+    "viewReasoningProcess": "Xem quá trình suy luận",
+    "collapseThinking": "Thu gọn suy nghĩ",
+    "expandThinking": "Mở rộng suy nghĩ",
+    "actionsDisabledForEmbed": "Vui lòng sử dụng các điều khiển trong nội dung nhúng ở trên",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Đang chuyển lời nói thành văn bản và xử lý...",
+      "transcribingAudio": "Đang chuyển lời nói thành văn bản...",
+      "analyzingFiles": "Đang phân tích các tệp...",
+      "analyzingDocuments": "Đang phân tích các tài liệu...",
+      "analyzingDocument": "Đang phân tích tài liệu...",
+      "analyzingImages": "Đang phân tích các hình ảnh...",
+      "analyzingImage": "Đang phân tích hình ảnh..."
+    },
+    "contentDescription": {
+      "text": "văn bản",
+      "imagesCount": "{count} hình ảnh",
+      "filesCount": "{count} tệp",
+      "audioVideo": "âm thanh/video",
+      "empty": "trống"
+    },
+    "discardChanges": "Huỷ thay đổi",
+    "discardChangesMessage": "Bạn có các thay đổi chưa lưu. Bạn có chắc muốn huỷ các thay đổi này không?",
+    "voiceInputStarting": "Đang khởi động...",
+    "voiceInputRecording": "Đang ghi âm...",
+    "voiceInputTapToStop": "Nhấn để dừng",
+    "stopRecording": "Dừng ghi âm",
+    "voiceInput": "Nhập bằng giọng nói",
+    "microphoneAccessDenied": "Truy cập micro đã bị từ chối. Vui lòng cho phép trong cài đặt trình duyệt của bạn.",
+    "microphoneAccessError": "Lỗi truy cập micro: {message}",
+    "voiceInputTranscribing": "Đang chuyển thành văn bản...",
+    "ttsRightClickHint": "Nhấn chuột phải để chọn tùy chọn giọng nói"
   },
   "sidebar": {
     "collapseSidebar": "Thu gọn thanh bên",
@@ -524,29 +610,135 @@
     "quickActionsTitle": "Hành động nhanh",
     "quickActions": "Hành động nhanh"
   },
-  "agents": {
-    "exportAgent": "Xuất tác nhân",
-    "editAgent": "Chỉnh sửa tác nhân",
-    "agentName": "Tên tác nhân",
-    "myResearchAssistant": "Trợ lý nghiên cứu của tôi",
-    "agentId": "ID tác nhân",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Mô tả (tùy chọn)",
-    "descriptionPlaceholder": "Tác nhân chuyên về các nhiệm vụ nghiên cứu...",
-    "baseModel": "Mô hình cơ sở",
-    "formatDescription": "Định dạng: asst_xxxxx (từ MSF AI Assistant Foundry)",
-    "importantInfo": "Tác nhân này sẽ có quyền truy cập vào ngữ cảnh cuộc trò chuyện và có thể sử dụng các công cụ giống như các mô hình tiêu chuẩn. Đảm bảo ID tác nhân chính xác vì không thể thay đổi sau này."
-  },
   "prompts": {
-    "buildReusablePrompts": "Xây dựng lời nhắc có thể tái sử dụng với sự hỗ trợ của AI"
+    "buildReusablePrompts": "Xây dựng lời nhắc có thể tái sử dụng với sự hỗ trợ của AI",
+    "noToneDefault": "Không có ngữ điệu (dùng mặc định)",
+    "tagHelp": "Trợ giúp thẻ",
+    "tagHelpContent": "Sử dụng thẻ để phân loại và nhanh chóng tìm kiếm prompt của bạn. Ví dụ:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "technical",
+      "customerSupport": "hỗ trợ-khách-hàng"
+    },
+    "variableHelp": "Trợ giúp biến",
+    "variableHelpIntro": "Sử dụng biến để làm cho prompt của bạn động hơn:",
+    "requiredVariables": "Biến bắt buộc (không có mặc định):",
+    "optionalVariables": "Biến tùy chọn (có mặc định):",
+    "userMustProvide": "Người dùng phải cung cấp giá trị",
+    "userCanProvide": "Người dùng có thể cung cấp giá trị, hoặc sử dụng giá trị mặc định",
+    "example": "Ví dụ:",
+    "variableExampleText": "Viết một email '{{tone:professional}}' cho '{{recipient}}' về '{{topic}}' bằng '{{language:English}}'",
+    "detectedVariables": "Các biến đã phát hiện",
+    "required": "Bắt buộc",
+    "aiAssistant": "Trợ lý AI",
+    "whatToImprove": "Bạn muốn cải thiện điều gì?",
+    "whatShouldPromptDo": "Prompt này nên làm gì?",
+    "improvePlaceholder": "vd: Làm cho chuyên nghiệp hơn, thêm ví dụ, rõ ràng hơn...",
+    "generatePlaceholder": "ví dụ: Tạo mẫu email chuyên nghiệp với biến cho người nhận và chủ đề...",
+    "addContextOptional": "Thêm ngữ cảnh (Tuỳ chọn)",
+    "revising": "Đang chỉnh sửa...",
+    "generating": "Đang tạo...",
+    "reviseWithAI": "Chỉnh sửa bằng AI",
+    "generatePrompt": "Tạo Prompt",
+    "revisionComplete": "Hoàn thành chỉnh sửa",
+    "generationComplete": "Hoàn thành tạo nội dung",
+    "revisedPrompt": "Prompt đã chỉnh sửa:",
+    "generatedPrompt": "Prompt đã tạo:",
+    "applyRevision": "Áp dụng chỉnh sửa này",
+    "useThisPrompt": "Sử dụng Prompt này",
+    "improvementsMade": "Các cải tiến đã thực hiện:",
+    "tips": "Mẹo:",
+    "howAICanHelp": "AI có thể hỗ trợ thế nào",
+    "helpItems": {
+      "improveClarity": "Cải thiện sự rõ ràng và cấu trúc",
+      "suggestVariables": "Gợi ý các biến hữu ích",
+      "addContext": "Thêm ngữ cảnh và ví dụ",
+      "optimize": "Tối ưu hóa để đạt kết quả tốt hơn"
+    },
+    "savePrompt": "Lưu Prompt",
+    "add": "Thêm"
   },
   "tones": {
     "createCustomVoiceProfile": "Tạo hồ sơ giọng nói tùy chỉnh với sự hỗ trợ của AI",
-    "examplePlaceholder": "ví dụ: Tạo giọng điệu chuyên nghiệp nhưng thân thiện cho dịch vụ khách hàng..."
+    "examplePlaceholder": "ví dụ: Tạo giọng điệu chuyên nghiệp nhưng thân thiện cho dịch vụ khách hàng...",
+    "tagHelp": "Trợ giúp thẻ",
+    "tagHelpContent": "Sử dụng thẻ để phân loại và nhanh chóng tìm kiếm tông giọng của bạn. Ví dụ:",
+    "tagExamples": {
+      "professional": "chuyên nghiệp",
+      "casual": "thân mật",
+      "technical": "kỹ thuật",
+      "marketing": "tiếp thị"
+    },
+    "add": "Thêm",
+    "aiToneAnalyzer": "AI Phân Tích Tông Giọng",
+    "describeToneToCreate": "Mô tả tông giọng bạn muốn tạo",
+    "uploadContentSamples": "Tải lên mẫu nội dung",
+    "analyzing": "Đang phân tích...",
+    "analyzeToneWithAI": "Phân tích tông giọng bằng AI",
+    "analysisComplete": "Hoàn thành phân tích",
+    "generatedVoiceGuidelines": "Hướng dẫn tông giọng đã tạo:",
+    "examplePhrases": "Cụm từ ví dụ:",
+    "suggestedTags": "Thẻ đề xuất:",
+    "applyThisAnalysis": "Áp dụng phân tích này",
+    "detectedCharacteristics": "Đặc điểm phát hiện:",
+    "howAICanHelp": "AI có thể hỗ trợ thế nào",
+    "helpItems": {
+      "transcribe": "Chuyển đổi nội dung âm thanh/video thành văn bản",
+      "analyzeContent": "Phân tích mẫu nội dung của bạn",
+      "extractPatterns": "Trích xuất mẫu tông giọng và phong cách",
+      "generateGuidelines": "Tạo hướng dẫn tông giọng",
+      "suggestTags": "Đề xuất thẻ phù hợp"
+    },
+    "saveTone": "Lưu tông giọng"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Xem sơ đồ luồng kỹ thuật"
+    "viewTechnicalFlowDiagram": "Xem sơ đồ luồng kỹ thuật",
+    "backToChat": "Quay lại trò chuyện",
+    "title": "Trung tâm trợ giúp",
+    "subtitle": "Tìm câu trả lời, tìm hiểu về quyền riêng tư và nhận hỗ trợ",
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "description": "Tìm câu trả lời cho các câu hỏi thường gặp về việc sử dụng Trợ lý AI",
+      "articles": "bài viết",
+      "searchPlaceholder": "Tìm kiếm FAQ...",
+      "noResults": "Không tìm thấy FAQ phù hợp với tìm kiếm của bạn",
+      "noResultsHint": "Thử tìm với từ khóa khác"
+    },
+    "privacy": {
+      "title": "Quyền riêng tư & Dữ liệu",
+      "description": "Tìm hiểu cách dữ liệu của bạn được lưu trữ và bảo vệ",
+      "topics": "chủ đề",
+      "searchPlaceholder": "Tìm kiếm chủ đề bảo mật...",
+      "noResults": "Không có chủ đề bảo mật phù hợp với tìm kiếm của bạn",
+      "noResultsHint": "Thử tìm với từ khóa khác",
+      "bannerTitle": "Quyền riêng tư của bạn quan trọng",
+      "bannerDescription": "Tất cả cuộc trò chuyện được lưu trữ cục bộ trên thiết bị của bạn. Xử lý dữ liệu diễn ra trong hệ thống MSF sử dụng hạ tầng Azure.",
+      "localStorageOnly": "Chỉ lưu trữ cục bộ",
+      "msfControlled": "MSF kiểm soát",
+      "noPersonalData": "Không có dữ liệu cá nhân",
+      "noSensitiveOps": "Không có hoạt động nhạy cảm"
+    },
+    "contact": {
+      "title": "Liên hệ & Tài nguyên",
+      "description": "Liên hệ với đội ngũ của chúng tôi và truy cập các liên kết hữu ích",
+      "supportAvailable": "Hỗ trợ sẵn có",
+      "submitRequest": "Gửi Yêu Cầu Hỗ Trợ",
+      "getHelp": "Nhận hỗ trợ từ đội ngũ chúng tôi",
+      "requestDescription": "Cần hỗ trợ hoặc muốn gửi phản hồi? Nhấn bên dưới để mở biểu mẫu hỗ trợ.",
+      "openSupportForm": "Mở biểu mẫu hỗ trợ",
+      "otherWays": "Các cách liên hệ khác",
+      "emailSupport": "Hỗ trợ qua Email",
+      "emailDescription": "Gửi email cho chúng tôi nếu có câu hỏi, góp ý hoặc vấn đề kỹ thuật"
+    },
+    "resources": {
+      "title": "Tài nguyên bổ sung",
+      "portalTitle": "Cổng AI Accelerator",
+      "portalDescription": "Tài liệu, cập nhật dự án và tài liệu đào tạo",
+      "githubTitle": "Kho mã nguồn mở",
+      "githubDescription": "Xem mã, báo cáo sự cố và đóng góp trên GitHub"
+    }
   },
   "settings": {
     "Settings": "Cài đặt",
@@ -614,9 +806,850 @@
     "FAQs, privacy policy, and guides": "Câu hỏi thường gặp, chính sách bảo mật và hướng dẫn",
     "Contact Support": "Liên hệ hỗ trợ",
     "Popular Questions": "Câu hỏi phổ biến",
-    "View all FAQs": "Xem tất cả câu hỏi thường gặp"
+    "View all FAQs": "Xem tất cả câu hỏi thường gặp",
+    "Delete legacy data after migration": "Xóa dữ liệu cũ sau khi chuyển đổi",
+    "frees up storage space": "giải phóng bộ nhớ",
+    "Legacy data deleted": "Đã xóa dữ liệu cũ",
+    "freed": "đã giải phóng",
+    "Conversations": "Cuộc trò chuyện",
+    "Legacy": "Dữ liệu cũ",
+    "Other": "Khác",
+    "Loading": "Đang tải",
+    "Legacy Data Detected": "Phát hiện dữ liệu cũ",
+    "legacyDataDescription": "Bạn có {size} dữ liệu từ phiên bản trước. Có thể chuyển đổi, xuất hoặc xóa để giải phóng dung lượng.",
+    "legacyDeleteSuccess": "Đã xóa thành công dữ liệu cũ và giải phóng {size}.",
+    "legacyDeleteError": "Xóa dữ liệu cũ không thành công. Vui lòng thử lại.",
+    "Explore solutions": "Khám phá giải pháp",
+    "Migrate to Current Format": "Chuyển sang định dạng hiện tại",
+    "Export Legacy Data": "Xuất dữ liệu cũ",
+    "Delete Legacy Data": "Xóa dữ liệu cũ",
+    "deleteLegacyConfirm": "Bạn có chắc chắn muốn xóa toàn bộ dữ liệu cũ? Hành động này không thể hoàn tác.",
+    "Deleting": "Đang xóa",
+    "Confirm Delete": "Xác nhận xóa",
+    "Cancel": "Hủy bỏ",
+    "Custom Instructions": "Hướng dẫn tùy chỉnh",
+    "Personalization": "Cá nhân hóa",
+    "Display Name": "Tên hiển thị",
+    "Display Name Description": "Chọn cách tên của bạn xuất hiện trong lời chào và trên toàn bộ ứng dụng",
+    "First Name": "Tên",
+    "Last Name": "Họ",
+    "Full Name": "Họ và tên",
+    "Custom": "Tùy chỉnh",
+    "None": "Không",
+    "Custom Display Name": "Tên hiển thị tùy chỉnh",
+    "Custom Display Name Placeholder": "Nhập tên bạn muốn sử dụng",
+    "howShouldWeAddressYou": "Chúng tôi nên xưng hô với bạn như thế nào?",
+    "displayNamePreview": "Xem trước: \"{greeting}\"",
+    "Streaming Speed": "Tốc độ truyền phát",
+    "Slow": "Chậm",
+    "Normal": "Bình thường",
+    "Fast": "Nhanh",
+    "Controls how smoothly text appears during AI responses": "Điều chỉnh độ mượt khi văn bản xuất hiện trong phản hồi của AI",
+    "aboutYou": {
+      "title": "Về bạn",
+      "shareBasicInfo": "Chia sẻ thông tin cơ bản với AI",
+      "shareBasicInfoDescription": "Khi bật, AI sẽ biết tên, chức danh và phòng ban của bạn từ hồ sơ",
+      "preferredName": "Tên bạn muốn dùng",
+      "preferredNamePlaceholder": "Bạn muốn được gọi là gì?",
+      "preferredNameDescription": "Ghi đè tên hiển thị của bạn. Để trống nếu muốn dùng tên hồ sơ",
+      "additionalContext": "Ngữ cảnh bổ sung",
+      "additionalContextPlaceholder": "Ví dụ: Tôi làm ở bộ phận hiện trường, thích câu trả lời ngắn gọn, thường hỏi về quy trình y tế...",
+      "additionalContextDescription": "Bất kỳ thông tin nào khác bạn muốn AI biết về bạn",
+      "preferredNameDescriptionWithSync": "Cách AI sẽ xưng hô với bạn. Để trống nếu muốn dùng tên hiển thị từ Cài đặt Chung."
+    },
+    "displayNameUIOnly": "Điều này kiểm soát cách tên của bạn hiển thị trong ứng dụng. AI sẽ không nhìn thấy tên này trừ khi bạn bật chia sẻ trong Cài đặt Trò chuyện.",
+    "tts": {
+      "title": "Chuyển văn bản thành giọng nói",
+      "language": "Ngôn ngữ",
+      "voice": "Giọng nói",
+      "multilingualVoices": "Giọng nói đa ngôn ngữ",
+      "voices": "Các giọng nói",
+      "rate": "Tốc độ",
+      "pitch": "Âm sắc",
+      "quality": "Chất lượng âm thanh",
+      "qualityDescription": "Chất lượng cao tạo âm thanh tốt hơn nhưng sử dụng nhiều băng thông hơn",
+      "preview": "Xem trước",
+      "previewing": "Đang phát...",
+      "previewFailed": "Không thể tạo âm thanh xem trước",
+      "previewText": "Đây là bản xem trước các thiết lập giọng nói đã chọn.",
+      "reset": "Đặt lại",
+      "default": "Mặc định",
+      "slower": "Chậm hơn",
+      "faster": "Nhanh hơn",
+      "lower": "Thấp hơn",
+      "higher": "Cao hơn",
+      "selectedVoice": "Đã chọn",
+      "noVoicesAvailable": "Không có giọng nói cho ngôn ngữ này",
+      "quickSettings": "Cài đặt giọng nói",
+      "overrideForThisMessage": "Điều chỉnh cài đặt cho tin nhắn này",
+      "speakWithSettings": "Đọc"
+    },
+    "Model Response Settings Description": "Cấu hình các tham số mặc định cho phản hồi của mô hình AI. Mỗi mô hình sử dụng các thiết lập khác nhau.",
+    "Default Reasoning Effort": "Mức Độ Suy Luận Mặc Định",
+    "reasoningEffortDescription": "Điều chỉnh độ sâu tư duy cho các mô hình suy luận. Mức độ cao hơn sẽ tạo ra phân tích kỹ lưỡng hơn.",
+    "Default Verbosity": "Mức Chi Tiết Mặc Định",
+    "verbosityDescription": "Điều chỉnh mức độ chi tiết của phản hồi cho các mô hình GPT-5."
   },
   "notFound": {
     "lostDog": "Chó bị lạc"
+  },
+  "Saved Prompts": "Nhắc nhở đã lưu",
+  "New conversation": "Cuộc trò chuyện mới",
+  "Edit": "Chỉnh sửa",
+  "Chat Settings": "Cài đặt trò chuyện",
+  "Default System Prompt": "Nhắc nhở hệ thống mặc định",
+  "Email": "Email",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Giới hạn nhắc nhở là {{maxLength}} ký tự. Bạn đã nhập {{valueLength}} ký tự.",
+  "Run Typewriter Intro": "Chạy phần giới thiệu Typewriter",
+  "Terms and Conditions": "Điều khoản và điều kiện",
+  "Loading terms and conditions_ellipsis": "Đang tải điều khoản và điều kiện...",
+  "Retry": "Thử lại",
+  "Terms of Service": "Điều khoản dịch vụ",
+  "Privacy Policy": "Chính sách bảo mật",
+  "Version": "Phiên bản",
+  "I accept the": "Tôi chấp nhận",
+  "Accept and Continue": "Chấp nhận và tiếp tục",
+  "Conversation exported successfully": "Xuất cuộc trò chuyện thành công",
+  "Failed to export conversation": "Xuất cuộc trò chuyện thất bại",
+  "Conversation imported successfully": "Nhập cuộc trò chuyện thành công",
+  "Failed to import conversation": "Nhập cuộc trò chuyện thất bại",
+  "Invalid conversation file": "Tệp cuộc trò chuyện không hợp lệ",
+  "Folder exported with {count} conversations": "Thư mục đã được xuất với {count} cuộc trò chuyện",
+  "Failed to export folder": "Xuất thư mục thất bại",
+  "Folder not found": "Không tìm thấy thư mục",
+  "Folder imported with {count} conversations": "Thư mục đã được nhập với {count} cuộc trò chuyện",
+  "Invalid folder file": "Tệp thư mục không hợp lệ",
+  "Failed to import file": "Nhập tệp thất bại",
+  "Unrecognized file format": "Định dạng tệp không được nhận diện",
+  "transcription": {
+    "transcribesOnSend": "Tự động phiên âm khi gửi",
+    "addInstructions": "Thêm hướng dẫn",
+    "instructionsPlaceholder": "Ngữ cảnh để tăng độ chính xác (ví dụ: tên, thuật ngữ)",
+    "languages": {
+      "autoDetect": "Tự động nhận diện",
+      "afrikaans": "Tiếng Afrikaans",
+      "arabic": "Tiếng Ả Rập",
+      "armenian": "Tiếng Armenia",
+      "azerbaijani": "Tiếng Azerbaijan",
+      "belarusian": "Tiếng Belarus",
+      "bosnian": "Tiếng Bosnia",
+      "bulgarian": "Tiếng Bulgaria",
+      "burmese": "Tiếng Myanmar",
+      "catalan": "Tiếng Catalan",
+      "chinese": "Tiếng Trung Quốc",
+      "croatian": "Tiếng Croatia",
+      "czech": "Tiếng Séc",
+      "danish": "Tiếng Đan Mạch",
+      "dutch": "Tiếng Hà Lan",
+      "english": "Tiếng Anh",
+      "estonian": "Tiếng Estonia",
+      "finnish": "Tiếng Phần Lan",
+      "french": "Tiếng Pháp",
+      "galician": "Tiếng Galicia",
+      "german": "Tiếng Đức",
+      "greek": "Tiếng Hy Lạp",
+      "hebrew": "Tiếng Do Thái",
+      "hindi": "Tiếng Hindi",
+      "hungarian": "Tiếng Hungary",
+      "icelandic": "Tiếng Iceland",
+      "indonesian": "Tiếng Indonesia",
+      "italian": "Tiếng Ý",
+      "japanese": "Tiếng Nhật",
+      "kannada": "Tiếng Kannada",
+      "kazakh": "Tiếng Kazakh",
+      "korean": "Tiếng Hàn Quốc",
+      "latvian": "Tiếng Latvia",
+      "lithuanian": "Tiếng Lithuania",
+      "macedonian": "Tiếng Macedonia",
+      "malay": "Tiếng Mã Lai",
+      "maori": "Tiếng Maori",
+      "marathi": "Tiếng Marathi",
+      "nepali": "Tiếng Nepal",
+      "norwegian": "Tiếng Na Uy",
+      "persian": "Tiếng Ba Tư",
+      "polish": "Tiếng Ba Lan",
+      "portuguese": "Tiếng Bồ Đào Nha",
+      "romanian": "Tiếng Romania",
+      "russian": "Tiếng Nga",
+      "serbian": "Tiếng Serbia",
+      "slovak": "Tiếng Slovakia",
+      "slovenian": "Tiếng Slovenia",
+      "spanish": "Tiếng Tây Ban Nha",
+      "swahili": "Tiếng Swahili",
+      "swedish": "Tiếng Thụy Điển",
+      "tagalog": "Tiếng Tagalog",
+      "tamil": "Tiếng Tamil",
+      "thai": "Tiếng Thái",
+      "turkish": "Tiếng Thổ Nhĩ Kỳ",
+      "ukrainian": "Tiếng Ukraina",
+      "urdu": "Tiếng Urdu",
+      "vietnamese": "Tiếng Việt",
+      "welsh": "Tiếng Wales"
+    },
+    "inProgress": "Đang chuyển lời",
+    "processingFile": "Đang xử lý: {filename}",
+    "timeRemaining": "Thời gian còn lại: {time}",
+    "maxDurationNote": "Tệp lớn có thể mất đến {minutes} phút",
+    "timedOut": "Hết thời gian sau {minutes} phút chuyển lời",
+    "timedOutToast": "Chuyển lời hết thời gian: {filename}",
+    "failed": "Chuyển lời thất bại: {error}",
+    "failedToast": "Chuyển lời thất bại: {filename}",
+    "unknownError": "Lỗi không xác định",
+    "completed": "Chuyển lời hoàn tất",
+    "completedToast": "Chuyển lời hoàn tất: {filename}",
+    "placeholder": "[Đang chuyển lời: {filename}]",
+    "loadingTranscript": "Đang tải bản ghi cho {filename}...",
+    "expiredOrDeleted": "Bản ghi này đã hết hạn hoặc bị xóa.",
+    "fetchError": "Tải bản ghi không thành công. Vui lòng thử lại.",
+    "transcriptExpired": "Bản ghi cho {filename} đã hết hạn. Bản ghi sẽ tự động bị xóa sau {days} ngày để đảm bảo quyền riêng tư.",
+    "expirationWarning": "Bản ghi cho {filename} sẽ hết hạn trong {days} ngày nữa. Hãy sao chép nội dung nếu bạn muốn lưu lại."
+  },
+  "transcriptionComplete": "Phiên âm hoàn tất! Văn bản đã được thêm vào ô nhập trò chuyện.",
+  "importBackupParseError": "Không thể phân tích tệp sao lưu. Vui lòng đảm bảo tệp ở định dạng JSON hợp lệ.",
+  "emptyState": {
+    "greeting": "Tôi có thể hỗ trợ gì?",
+    "greetingWithName": "Tôi có thể giúp gì cho bạn, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Tạo sơ đồ",
+        "prompt": "Hãy cho tôi biết cách bạn có thể tạo sơ đồ và lưu đồ. Bạn có thể hỗ trợ minh họa các quy trình, luồng công việc hoặc hệ thống nào? Vui lòng đưa ra một số ví dụ."
+      },
+      "draftContent": {
+        "title": "Soạn nội dung chuyên nghiệp",
+        "prompt": "Tôi cần hỗ trợ viết tài liệu chuyên nghiệp - email, báo cáo, tóm tắt. Bạn có thể minh họa bằng các ví dụ về cách hỗ trợ với các loại văn bản kinh doanh khác nhau không?"
+      },
+      "analyzeInformation": {
+        "title": "Phân tích thông tin",
+        "prompt": "Bạn có thể giúp tôi phân tích dữ liệu hoặc thông tin như thế nào? Cho tôi xem các cách bạn phân tích số liệu, phát hiện mẫu, hoặc rút ra thông tin từ tài liệu hay tập dữ liệu."
+      },
+      "planOrganize": {
+        "title": "Lập kế hoạch & Tổ chức",
+        "prompt": "Bạn có thể giúp tôi lên kế hoạch dự án hoặc tổ chức công việc không? Đưa ra ví dụ bạn có thể tạo tiến độ, chương trình nghị sự hoặc kế hoạch dự án với nhiều cấu trúc khác nhau."
+      },
+      "brainstormIdeas": {
+        "title": "Động não ý tưởng",
+        "prompt": "Tôi muốn tìm giải pháp cho một vấn đề. Hãy cho tôi xem bạn tiếp cận tư duy sáng tạo và tạo ý tưởng như thế nào - bạn sẽ đặt ra những câu hỏi gì và khám phá các khả năng ra sao?"
+      },
+      "buildPresentations": {
+        "title": "Tạo bài thuyết trình",
+        "prompt": "Bạn có thể giúp tôi tạo bài thuyết trình như thế nào? Cho tôi ví dụ về các cấu trúc trình bày, đề xuất hình ảnh, và cách bạn sắp xếp thông tin cho các đối tượng khác nhau."
+      },
+      "workWithCode": {
+        "title": "Làm việc với mã code",
+        "prompt": "Bạn có thể hỗ trợ lập trình hoặc script không? Hãy cho tôi các ví dụ - từ việc viết mã mới, sửa lỗi, đến giải thích cách một đoạn mã hoạt động từng bước."
+      },
+      "decisionSupport": {
+        "title": "Hỗ trợ ra quyết định",
+        "prompt": "Tôi cần ra quyết định nhưng chưa biết cách đánh giá các lựa chọn. Bạn có thể minh họa các khung phân tích hoặc phương pháp giúp tôi cân nhắc các lựa chọn không?"
+      },
+      "summarizeSynthesize": {
+        "title": "Tóm tắt & Tổng hợp",
+        "prompt": "Bạn hỗ trợ tôi tóm tắt tài liệu dài hoặc tổng hợp thông tin từ nhiều nguồn như thế nào? Hãy cho tôi ví dụ về các định dạng tóm tắt và mức độ chi tiết khác nhau."
+      },
+      "explainTopics": {
+        "title": "Giải thích chủ đề phức tạp",
+        "prompt": "Bạn có thể giải thích các khái niệm phức tạp bằng ngôn ngữ đơn giản không? Hãy cho tôi xem bạn phân tích ý tưởng phức tạp, sử dụng phép so sánh và điều chỉnh giải thích cho nhiều mức độ kiến thức như thế nào."
+      },
+      "createSchedules": {
+        "title": "Lên lịch trình",
+        "prompt": "Tôi cần giúp tổ chức thời gian và tạo lịch trình. Hãy cho tôi các ví dụ về cách bạn lên chương trình, lịch hoặc kế hoạch theo thời gian."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Mô hình",
+      "agents": "Tác vụ"
+    },
+    "sections": {
+      "baseModels": "Mô hình nền tảng"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Tính năng nâng cao",
+      "description": "Tạo và quản lý tác vụ AI tùy chỉnh với các khả năng chuyên biệt. Các tác vụ này hoạt động trên nền tảng MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Tính năng nâng cao - Cần phối hợp với đội kỹ thuật AI Assistant",
+      "advancedFeatureWarning": "Tác vụ tùy chỉnh chỉ hoạt động với MSF AI Assistant Foundry. ID tác vụ phải do đội kỹ thuật AI Assistant tạo trong phiên bản cụ thể này và phối hợp với bạn trước khi sử dụng.",
+      "createNewAgent": "Tạo tác vụ tùy chỉnh mới",
+      "noAgentsTitle": "Chưa có tác vụ tùy chỉnh",
+      "noAgentsDescription": "Tạo tác vụ tùy chỉnh đầu tiên của bạn để mở rộng khả năng AI với các công cụ và hành vi chuyên biệt."
+    },
+    "advancedOptions": {
+      "title": "Tùy chọn nâng cao",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "Lưu ý: Mô hình này sử dụng giá trị temperature cố định để đảm bảo tính nhất quán.",
+      "reasoningEffort": "Mức độ suy luận",
+      "minimal": "Tối thiểu",
+      "low": "Thấp",
+      "medium": "Trung bình",
+      "high": "Cao",
+      "verbosity": "Độ chi tiết"
+    },
+    "searchMode": {
+      "title": "Chế độ tìm kiếm",
+      "subtitle": "Sẽ sử dụng tìm kiếm web khi cần thiết",
+      "routingLabel": "Định tuyến tìm kiếm:",
+      "whatsDifference": "Sự khác biệt là gì?",
+      "privacyFocused": "Tập trung vào quyền riêng tư (Mặc định)",
+      "privacyFocusedDescription": "Chậm hơn nhưng riêng tư hơn",
+      "azureAgentMode": "Chế độ Azure AI Agent",
+      "azureAgentModeDescription": "Nhanh hơn nhưng lưu dữ liệu trò chuyện trên đám mây",
+      "privacyInfoTitle": "Thông tin bảo mật quan trọng",
+      "privacyInfoDescription": "Toàn bộ cuộc trò chuyện của bạn sẽ được gửi đến Azure AI Foundry agent.",
+      "learnMoreDataStorage": "Tìm hiểu thêm về lưu trữ dữ liệu",
+      "privacyEnabled": "Đã bật chế độ tìm kiếm bảo mật quyền riêng tư",
+      "learnPrivacy": "Tìm hiểu cách quyền riêng tư của bạn được bảo vệ"
+    },
+    "customAgent": {
+      "label": "Tùy chỉnh Agent:",
+      "description": "Agent này chạy trên phiên bản MSF AI Assistant Foundry với các công cụ luôn được kích hoạt.",
+      "webSearch": "Tìm kiếm web theo thời gian thực",
+      "codeInterpreter": "Diễn giải mã & phân tích tệp"
+    },
+    "header": {
+      "backToModels": "Quay lại danh sách mô hình",
+      "knowledgeCutoff": "Giới hạn kiến thức: {cutoff}",
+      "knowledgeCutoffLabel": "Giới hạn kiến thức"
+    },
+    "modelTypes": {
+      "foundational": "nền tảng",
+      "omni": "toàn diện",
+      "reasoning": "lý luận",
+      "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Sắp xếp theo",
+      "usage": "Sử dụng nhiều nhất",
+      "name": "Tên (A-Z)",
+      "cutoff": "Mô hình mới nhất",
+      "custom": "Tùy chỉnh",
+      "edit": "Chỉnh sửa",
+      "done": "Hoàn tất",
+      "reset": "Đặt lại",
+      "resetTooltip": "Đặt lại về thứ tự mặc định"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Tìm kiếm web theo thời gian thực"
+    },
+    "modelTypeIcons": {
+      "foundational": "Mô hình đa năng nhanh và hiệu quả",
+      "reasoning": "Nâng cao khả năng suy luận cho vấn đề phức tạp",
+      "omni": "Mô hình đa phương tiện với khả năng toàn diện",
+      "agent": "Tác nhân với công cụ thời gian thực & truy cập web"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Mô hình AI dựa trên GPT-4.1 với khả năng tìm kiếm web thực tế qua Bing. Cung cấp thông tin cập nhật, kiểm tra sự thật và nhận biết sự kiện hiện tại. Phù hợp nhất cho nghiên cứu cần thông tin mới, phân tích tin tức và xác minh thực tế.",
+      "knowledgeCutoff": "Tìm kiếm web thời gian thực"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Mô hình tiến tiến nhất của OpenAI, vượt trội về lý luận phức tạp, sinh mã và giải quyết vấn đề kỹ thuật. Tốt nhất cho các tác vụ phân tích, thử thách lập trình, nghiên cứu và giải thích chi tiết. Hỗ trợ điều chỉnh mức độ lý luận và độ dài phản hồi.",
+      "knowledgeCutoff": "6 Thg 8, 2025 8:00 PM"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Biến thể của GPT-5 nhanh hơn và tiết kiệm chi phí hơn, tối ưu cho tốc độ nhưng vẫn đảm bảo chất lượng cao. Phù hợp cho các tác vụ hàng ngày, truy vấn nhanh, định tuyến công cụ và ứng dụng cần phản hồi nhanh. Cân bằng tuyệt vời giữa hiệu suất và hiệu quả.",
+      "knowledgeCutoff": "6 Thg 8, 2025 8:00 PM"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Biến thể chuyên biệt của GPT-5 tối ưu cho tương tác hội thoại và trí tuệ cảm xúc. Xuất sắc trong giao tiếp giàu cảm thông, hỗ trợ sức khỏe tâm thần, viết sáng tạo, động não và đối thoại tự nhiên. Phù hợp nhất cho trò chuyện thông thường, tư vấn và các nhiệm vụ cần nhận diện cảm xúc.",
+      "knowledgeCutoff": "1 Thg 10, 2025 8:00 PM"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Mô hình lý luận tiên tiến nhất của OpenAI với khả năng giải quyết vấn đề vượt trội. Vượt trội trong toán học phức tạp, lý luận khoa học, thử thách lập trình và các tác vụ logic đa bước. Hỗ trợ cửa sổ ngữ cảnh mở rộng 200K. Có thể điều chỉnh nỗ lực lý luận.",
+      "knowledgeCutoff": "8 Thg 4, 2025 8:00 PM"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Mô hình nhanh và tiết kiệm chi phí từ Meta. Phù hợp cho các tác vụ hằng ngày như viết, tóm tắt và hỗ trợ lập trình cơ bản. Cân bằng tốt giữa tốc độ và chất lượng cho công việc thường xuyên.",
+      "knowledgeCutoff": "7 Thg 5, 2025 7:11 AM"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Chuyên gia lý luận với khả năng trình bày từng bước giải quyết. Tuyệt vời cho các bài toán, câu đố logic và hiểu các khái niệm phức tạp. Theo dõi quá trình suy nghĩ thời gian thực.",
+      "knowledgeCutoff": "20 Thg 1, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Mô hình đa năng mạnh mẽ, đặc biệt xuất sắc trong lập trình và viết tài liệu kỹ thuật. Tuyệt vời trong sửa lỗi, viết tài liệu và giải thích các khái niệm kỹ thuật. Nhanh và đáng tin cậy cho công việc phát triển.",
+      "knowledgeCutoff": "16 Thg 4, 2025 12:45 AM"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Mô hình đa năng của xAI nổi bật với phản hồi tinh tế. Phù hợp cho thảo luận mở, dự án sáng tạo và giải quyết vấn đề phức tạp.",
+      "knowledgeCutoff": "13 Thg 5, 2025 12:16 AM"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Mô hình mạnh nhất của Anthropic với lý luận, lập trình và sáng tạo xuất sắc. Lý tưởng cho phân tích phức tạp, nghiên cứu và các nhiệm vụ yêu cầu hiểu biết sâu.",
+      "knowledgeCutoff": "Tháng 1, 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Mô hình Claude cân bằng, hiệu suất vượt trội trong lập trình, phân tích và sáng tạo. Phù hợp cho nhu cầu sử dụng hằng ngày với thời gian phản hồi nhanh.",
+      "knowledgeCutoff": "Tháng 1, 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Phiên bản trước của mô hình Claude Opus. Xuất sắc cho các tác vụ lập trình phức tạp, phân tích chi tiết và hiểu biết sâu sắc.",
+      "knowledgeCutoff": "Tháng 1 năm 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Mô hình Claude nhanh và tiết kiệm, tối ưu cho các tác vụ nhanh. Phù hợp với câu hỏi đơn giản, tóm tắt và các ứng dụng số lượng lớn.",
+      "knowledgeCutoff": "Tháng 1 năm 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Mô hình tiên tiến nhất của OpenAI, vượt trội về lập luận phức tạp, tạo mã và giải quyết các vấn đề kỹ thuật. Phù hợp nhất cho các tác vụ phân tích, thử thách lập trình, nghiên cứu và giải thích chi tiết. Hỗ trợ điều chỉnh mức độ lập luận và độ dài phản hồi.",
+      "knowledgeCutoff": "Tháng 12/2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Biến thể chuyên biệt của GPT-5.2 được tối ưu cho tương tác hội thoại và trí tuệ cảm xúc. Vượt trội về giao tiếp đồng cảm, hỗ trợ sức khỏe tinh thần, sáng tác sáng tạo, động não và đối thoại tự nhiên. Phù hợp cho trò chuyện thân mật, tư vấn và các nhiệm vụ cần sự nhận biết cảm xúc.",
+      "knowledgeCutoff": "Tháng 12/2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Quay lại Trò chuyện",
+    "title": "Giải thích Chế độ Tìm kiếm",
+    "subtitle": "Hiểu các lựa chọn tìm kiếm và nơi dữ liệu của bạn được lưu trữ",
+    "quickComparison": "So sánh nhanh",
+    "noSearch": "Không tìm kiếm",
+    "privacyFocused": "Tập trung vào quyền riêng tư",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Tốc độ phản hồi",
+    "fastest": "Nhanh nhất",
+    "slowerMultiStep": "Chậm hơn (nhiều bước)",
+    "fasterDirect": "Nhanh hơn (trực tiếp)",
+    "fullConversationStored": "Toàn bộ cuộc trò chuyện được lưu trên đám mây",
+    "whatsStoredInAzure": "Những gì được lưu trữ trong Azure",
+    "nothingStateless": "Không lưu gì (chỉ trạng thái tự do)",
+    "searchQueriesOnly": "Chỉ lưu truy vấn tìm kiếm",
+    "fullConversationHistory": "Lưu toàn bộ lịch sử trò chuyện",
+    "modelAvailability": "Khả năng sử dụng mô hình",
+    "allModels": "Tất cả mô hình",
+    "gpt41Only": "Chỉ GPT-4.1",
+    "searchTurnedOff": "Đã tắt Tìm kiếm",
+    "noSearchDescription": "Phản hồi nhanh nhất mà không có khả năng tìm kiếm web. Toàn bộ cuộc trò chuyện của bạn chỉ lưu trên trình duyệt - không lưu trên đám mây.",
+    "viewDetailsBelow": "Để biết thêm chi tiết, vui lòng xem quy trình kỹ thuật bên dưới.",
+    "viewTechnicalFlowDiagram": "Xem sơ đồ quy trình kỹ thuật",
+    "legend": "Chú thích:",
+    "legendNoSearch": "Trình duyệt của bạn (lưu trữ cục bộ) | Máy chủ Trợ lý AI | Azure OpenAI (không lưu trạng thái)",
+    "privacyFocusedMode": "Chế độ tập trung quyền riêng tư",
+    "default": "Mặc định",
+    "privacyDescription": "Sử dụng tìm kiếm web khi cần thiết nhưng chậm hơn do có nhiều bước hơn. Chỉ truy vấn tìm kiếm được lưu trên Azure - toàn bộ cuộc trò chuyện còn lại trên trình duyệt của bạn.",
+    "legendPrivacy": "Trình duyệt của bạn (lưu trữ cục bộ) | Máy chủ Trợ lý AI | Azure AI Foundry (chỉ lưu truy vấn tìm kiếm) | Azure OpenAI (không lưu trạng thái)",
+    "azureAIFoundryMode": "Chế độ Azure AI Foundry",
+    "foundryDescription": "Phản hồi nhanh hơn với khả năng tìm kiếm web tích hợp. Toàn bộ cuộc trò chuyện của bạn được lưu trữ trong cơ sở dữ liệu của Azure AI Foundry, không chỉ trong trình duyệt của bạn.",
+    "legendFoundry": "Trình duyệt của bạn (lưu trữ cục bộ) | Máy chủ Trợ lý AI | Azure AI Foundry Agent (lưu toàn bộ cuộc trò chuyện)",
+    "whyTheseOptions": "Vì sao có những lựa chọn này?",
+    "whyTheseOptionsText1": "Đây là các phương thức tìm kiếm còn lại sau khi Azure ngừng hỗ trợ Bing Search API, vốn là nền tảng ban đầu của Trợ lý AI.",
+    "whyTheseOptionsText2": "Nhóm đang tiếp tục nghiên cứu các giải pháp tìm kiếm tập trung vào quyền riêng tư hơn. Cả hai lựa chọn hiện tại đều dùng khả năng tìm kiếm của Azure AI Foundry nhưng khác nhau về mức độ chia sẻ dữ liệu trò chuyện.",
+    "azureDeprecatedBingApi": "Azure đã ngừng hỗ trợ Bing Search API",
+    "footerNote": "Cả hai chế độ đều lưu cuộc trò chuyện của bạn trên trình duyệt. Bạn có thể đổi chế độ bất cứ lúc nào trong cài đặt mô hình.",
+    "note": "Lưu ý:",
+    "loadingDiagram": "Đang tải sơ đồ..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Đang kiểm tra bộ nhớ",
+      "analyzingData": "Đang phân tích dữ liệu của bạn...",
+      "updateAvailable": "Có bản cập nhật mới",
+      "storageSpaceLimited": "Dung lượng lưu trữ bị giới hạn",
+      "migratingData": "Đang di chuyển dữ liệu",
+      "migrationComplete": "Di chuyển hoàn tất",
+      "partiallyComplete": "Hoàn thành một phần",
+      "migrationFailed": "Di chuyển thất bại"
+    },
+    "descriptions": {
+      "foundLegacyData": "Chúng tôi đã tìm thấy dữ liệu từ phiên bản trước đó. Bạn có muốn di chuyển dữ liệu này để sử dụng với hệ thống được cải tiến không?",
+      "storageSpaceWarning": "Dữ liệu của bạn cần nhiều dung lượng hơn hiện có. Chúng tôi khuyến nghị sử dụng chế độ di chuyển từng phần.",
+      "pleaseWait": "Vui lòng chờ trong khi chúng tôi cập nhật dữ liệu của bạn...",
+      "dataIsSafe": "Dữ liệu gốc của bạn vẫn an toàn. Bạn có thể thử lại hoặc bỏ qua lúc này.",
+      "itemsTooLarge": "Các mục này quá lớn để lưu trữ. Bạn có thể xuất chúng, giải phóng dung lượng hoặc tiếp tục mà không bao gồm chúng.",
+      "settingsUpdated": "Cài đặt của bạn đã được cập nhật."
+    },
+    "benefits": {
+      "title": "Lợi ích",
+      "fasterPerformance": "Hiệu suất nhanh hơn",
+      "betterReliability": "Độ tin cậy cao hơn",
+      "dataPreserved": "Dữ liệu của bạn được bảo toàn"
+    },
+    "options": {
+      "advancedOptions": "Tùy chọn nâng cao",
+      "useIncrementalMode": "Sử dụng chế độ từng phần",
+      "slowerButSafer": "chậm hơn nhưng an toàn hơn",
+      "recommended": "khuyến nghị",
+      "deleteLegacyData": "Xóa dữ liệu cũ sau khi di chuyển",
+      "freesUpSpace": "giải phóng dung lượng lưu trữ"
+    },
+    "actions": {
+      "skip": "Bỏ qua",
+      "migrateData": "Di chuyển dữ liệu",
+      "migrateAnyway": "Vẫn di chuyển",
+      "continue": "Tiếp tục",
+      "retry": "Thử lại",
+      "exportBackupFirst": "Xuất bản sao lưu trước",
+      "exportSkippedItems": "Xuất các mục đã bỏ qua"
+    },
+    "quota": {
+      "availableSpace": "Dung lượng còn trống",
+      "dataToMigrate": "Dữ liệu cần di chuyển",
+      "additionalSpaceNeeded": "Cần thêm dung lượng"
+    },
+    "progress": {
+      "migratingConversations": "Đang di chuyển các cuộc trò chuyện",
+      "migratingPrompts": "Đang di chuyển các nhắc nhở",
+      "migratingAgents": "Đang di chuyển các tác nhân",
+      "finishingUp": "Đang hoàn tất"
+    },
+    "results": {
+      "successfullyMigrated": "Di chuyển thành công",
+      "notes": "Ghi chú",
+      "couldNotMigrate": "Không thể di chuyển",
+      "legacyDataDeleted": "Đã xóa dữ liệu cũ",
+      "freed": "đã giải phóng"
+    },
+    "units": {
+      "conversation": "cuộc trò chuyện",
+      "conversations": "các cuộc trò chuyện",
+      "folder": "thư mục",
+      "folders": "các thư mục",
+      "prompt": "nhắc nhở",
+      "prompts": "các nhắc nhở",
+      "customAgent": "tác nhân tuỳ chỉnh",
+      "customAgents": "các tác nhân tuỳ chỉnh",
+      "item": "mục",
+      "items": "các mục"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Chào mừng đến với AI Assistant V2",
+    "whatsNew": "Có gì mới",
+    "whatsNewQuestion": "Có gì mới?"
+  },
+  "welcomeV2": {
+    "backToChat": "Quay lại trò chuyện",
+    "title": "Chào mừng đến với AI Assistant V2",
+    "subtitle": "Thiết kế hoàn toàn mới với nhiều tính năng mạnh mẽ",
+    "webSearch": {
+      "title": "Chế độ Tìm kiếm web",
+      "description": "Cho phép AI truy cập tìm kiếm web theo thời gian thực với các tùy chọn tập trung vào quyền riêng tư",
+      "quickAccess": "Truy cập nhanh:",
+      "quickAccessInstructions": "Nhấn nút + bên cạnh ô nhập trò chuyện → Chọn \"Tìm kiếm web\"",
+      "setAsDefault": "Đặt làm mặc định:",
+      "setAsDefaultInstructions": "Mở cài đặt model và bật công tắc Chế độ Tìm kiếm web. Chọn một trong các chế độ sau:",
+      "privacyFocused": "Tập trung vào quyền riêng tư (mặc định)",
+      "privacyFocusedDescription": "Chỉ gửi truy vấn tìm kiếm ra ngoài",
+      "azureAIFoundry": "Chế độ Azure AI Foundry",
+      "azureAIFoundryDescription": "Nhanh hơn, nhưng toàn bộ cuộc trò chuyện sẽ được lưu bên ngoài",
+      "learnMore": "Tìm hiểu thêm về các chế độ tìm kiếm →"
+    },
+    "tones": {
+      "title": "Giọng điệu (Hồ sơ giọng nói)",
+      "description": "Điều chỉnh phong cách viết, mức độ trang trọng và cá tính của AI",
+      "createTones": "1. Tạo giọng điệu:",
+      "createTonesInstructions": "Tác vụ nhanh ở thanh bên → thẻ Giọng điệu",
+      "useTones": "2. Sử dụng giọng điệu:",
+      "useTonesInstructions": "Nhấn vào danh sách giọng điệu cạnh ô nhập trò chuyện",
+      "exampleProfessionalDesc": "Giọng trang trọng, kiểu doanh nghiệp",
+      "exampleCasualDesc": "Thân thiện, kiểu hội thoại"
+    },
+    "aiAssist": {
+      "title": "AI Hỗ trợ cho Lời nhắc & Giọng điệu",
+      "description": "Để AI giúp bạn tạo lời nhắc và giọng điệu hiệu quả hơn, nhanh hơn",
+      "step1": "Mở Tác vụ nhanh ở thanh bên",
+      "step2": "Đi tới thẻ {prompts} hoặc {tones}",
+      "step3": "Tìm bảng AI Assistant",
+      "getSuggestions": "Lấy gợi ý",
+      "getSuggestionsDesc": "AI phân tích bản nháp của bạn và đề xuất cải thiện",
+      "buildFromFiles": "Tạo từ file",
+      "buildFromFilesDesc": "Tải lên tài liệu để tạo prompt/giọng điệu",
+      "testBeforeSaving": "Thử trước khi lưu",
+      "testBeforeSavingDesc": "Dùng thử prompt/giọng điệu trong bản xem trước trò chuyện trực tiếp",
+      "step2Prefix": "Đi tới",
+      "step2Suffix": "tab"
+    },
+    "customAgents": {
+      "title": "Tác nhân tùy chỉnh",
+      "advancedBadge": "NÂNG CAO",
+      "description": "Tác nhân AI chuyên biệt với khả năng mở rộng như tìm kiếm web và phân tích mã",
+      "advancedFeature": "Tính năng nâng cao",
+      "advancedFeatureDesc": "Tác nhân tùy chỉnh chạy trên Azure AI Foundry với công cụ chuyên biệt. Cần phối hợp với đội kỹ thuật AI Assistant để tạo ID tác nhân.",
+      "howToAccess": "Cách truy cập:",
+      "howToAccessInstructions": "Cài đặt → Model → thẻ Agents",
+      "whatYouCanDo": "Bạn có thể làm gì:",
+      "configureAgents": "Cấu hình tác nhân với khả năng chuyên biệt",
+      "importExport": "Nhập/xuất cấu hình tác nhân",
+      "selectFromDropdown": "Chọn tác nhân tùy chỉnh từ danh sách model"
+    },
+    "audioTranslation": {
+      "title": "Chép âm thanh kèm dịch",
+      "description": "Tự động dịch bản ghi âm sang hơn 13 ngôn ngữ",
+      "howToUse": "Cách sử dụng:",
+      "step1": "Tải lên tệp âm thanh hoặc video",
+      "step2": "Nhấp vào menu thả xuống ngôn ngữ trong giao diện chép lời",
+      "step3": "Chọn ngôn ngữ đích",
+      "availableLanguages": "Ngôn ngữ có sẵn:",
+      "moreLanguages": "+7 ngôn ngữ khác"
+    },
+    "pwa": {
+      "title": "Cài đặt dưới dạng Ứng dụng Di động",
+      "description": "Progressive Web App với trải nghiệm như ứng dụng gốc",
+      "installTip": "Mẹo: Hãy cài đặt sau khi đăng nhập để lưu xác thực và có trải nghiệm tốt nhất.",
+      "howToInstall": "Cách cài đặt:",
+      "step1": "Đăng nhập vào tài khoản của bạn",
+      "step2": "Mở Cài đặt → Ứng dụng Di động để xem hướng dẫn chi tiết",
+      "step3": "Trên di động: Nhấn vào menu trình duyệt (⋮ hoặc ⚙️)",
+      "step4": "Tìm \"Thêm vào Màn hình chính\" hoặc \"Cài đặt ứng dụng\"",
+      "step5": "Làm theo hướng dẫn để cài đặt",
+      "benefits": "Lợi ích:",
+      "benefit1": "Khởi động như ứng dụng gốc từ màn hình chính",
+      "benefit2": "Toàn màn hình, không có giao diện trình duyệt",
+      "benefit3": "Truy cập ngoại tuyến các cuộc hội thoại đã lưu"
+    }
+  },
+  "Professional": "Chuyên nghiệp",
+  "Casual": "Thân mật",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Nhập lời nhắc hoặc gõ \"/\" để chọn lời nhắc..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Thêm hướng dẫn cá nhân để tùy chỉnh cách AI phản hồi. Những hướng dẫn này sẽ được kết hợp với các quy định cốt lõi nhằm đảm bảo phản hồi hữu ích, chính xác và an toàn."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Mẹo: Gõ \"/\" để chọn từ các mẫu lời nhắc đã lưu."
+  },
+  "fileUpload": {
+    "uploading": "Đang tải lên...",
+    "transcribing": "Đang chuyển đổi...",
+    "complete": "Hoàn tất",
+    "failed": "Thất bại",
+    "uploadFiles": "Tải lên tệp (âm thanh, video hoặc văn bản)",
+    "autoDetect": "Tự động phát hiện",
+    "fileNotAvailable": "Không thể chỉnh sửa tệp này",
+    "failedToOpenInEditor": "Không thể mở tệp trong trình chỉnh sửa mã. Vui lòng thử lại.",
+    "extractingAudio": "Đang trích xuất âm thanh...",
+    "queuedForTranscription": "Đang chờ chuyển lời",
+    "transcribed": "Đã chuyển lời",
+    "transcriptionFailed": "Chuyển lời thất bại",
+    "extractedFromSmaller": "Đã trích xuất từ {percent}% nhỏ hơn",
+    "textExtraction": "Trích xuất văn bản",
+    "opening": "Đang mở...",
+    "openInEditor": "Mở trong trình chỉnh sửa",
+    "failedToUpload": "Tải lên thất bại",
+    "attachment": "tệp đính kèm",
+    "attachments": "các tệp đính kèm"
+  },
+  "transcript": {
+    "originalTranscript": "Bản ghi gốc",
+    "transcript": "Bản ghi",
+    "transcriptionOf": "Bản ghi của",
+    "translating": "Đang dịch...",
+    "copied": "Đã sao chép!",
+    "copy": "Sao chép",
+    "download": "Tải xuống",
+    "translate": "Dịch",
+    "collapse": "Thu gọn",
+    "expand": "Mở rộng",
+    "expandHint": "Nhấp \"Mở rộng\" để xem bản ghi gốc",
+    "listen": "Nghe bản ghi",
+    "stopAudio": "Dừng âm thanh",
+    "openAsDocument": "Mở dưới dạng tài liệu"
+  },
+  "userMessage": {
+    "open": "Mở",
+    "showFullMessage": "Hiển thị toàn bộ tin nhắn",
+    "collapse": "Thu gọn",
+    "customTone": "Tông tùy chỉnh"
+  },
+  "codeBlock": {
+    "openInEditor": "Mở trong trình chỉnh sửa"
+  },
+  "artifact": {
+    "noContentToExport": "Không có nội dung để xuất",
+    "exportedAsHtml": "Đã xuất dưới dạng HTML",
+    "exportedAsMarkdown": "Đã xuất dưới dạng Markdown",
+    "exportedAsText": "Đã xuất dưới dạng văn bản",
+    "generatingPdf": "Đang tạo PDF...",
+    "exportedAsPdf": "Đã xuất dưới dạng PDF",
+    "generatingDocx": "Đang tạo DOCX...",
+    "exportedAsDocx": "Đã xuất dưới dạng DOCX",
+    "failedToExportAs": "Không thể xuất dưới dạng {format}",
+    "document": "Tài liệu",
+    "switchToCodeEditor": "Chuyển sang Trình soạn thảo Mã",
+    "exportDocument": "Xuất tài liệu",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Văn bản thuần (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Đóng",
+    "editsNotSaved": "Chỉnh sửa chưa được lưu. Gửi qua tin nhắn hoặc tải xuống để lưu các chỉnh sửa.",
+    "fileDownloaded": "Tệp đã được tải xuống",
+    "failedToDownload": "Không thể tải xuống",
+    "switchToDocumentEditor": "Chuyển sang Trình soạn thảo Tài liệu",
+    "download": "Tải xuống",
+    "fileIncludedWithMessage": "Tệp và chỉnh sửa được đính kèm với tin nhắn",
+    "closeEditor": "Đóng trình chỉnh sửa",
+    "closeCodeEditor": "Đóng trình chỉnh sửa mã",
+    "startWriting": "Bắt đầu viết...",
+    "toolbar": {
+      "bold": "Chữ đậm",
+      "italic": "Chữ nghiêng",
+      "underline": "Gạch chân",
+      "strikethrough": "Gạch ngang",
+      "heading1": "Tiêu đề 1",
+      "heading2": "Tiêu đề 2",
+      "heading3": "Tiêu đề 3",
+      "bulletList": "Danh sách dấu đầu dòng",
+      "numberedList": "Danh sách đánh số",
+      "codeBlock": "Khối mã",
+      "quote": "Trích dẫn",
+      "insertTable": "Chèn bảng",
+      "table": "Bảng",
+      "undo": "Hoàn tác",
+      "redo": "Làm lại"
+    },
+    "codeEditor": {
+      "startTyping": "Bắt đầu nhập hoặc yêu cầu AI tạo mã",
+      "codeWillSync": "Mã sẽ được đồng bộ tự động từ các tin nhắn trò chuyện",
+      "startCoding": "// Bắt đầu viết mã..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Bật tìm kiếm web cho mỗi tin nhắn.\n\nCung cấp thông tin cập nhật bằng truy cập Bing thời gian thực.",
+    "attachTooltip": "Đính kèm tệp, hình ảnh hoặc âm thanh/video.\n\nĐịnh dạng hỗ trợ:\n• Hình ảnh: JPEG, PNG, GIF, WebP (tối đa 5MB, tối đa 10 tệp)\n• Tài liệu: PDF, DOCX, XLSX, PPTX, TXT, MD (tối đa 10MB, tối đa 3 tệp)\n• Dữ liệu: CSV, JSON, XML, YAML (tối đa 10MB, tối đa 3 tệp)\n• Mã nguồn: PY, JS, TS, JAVA, C, CPP, GO, v.v. (tối đa 10MB, tối đa 3 tệp)\n• Âm thanh/Video: MP3, WAV, MP4, WebM (tối đa 25MB, 1 tệp)\n\nTổng cộng: 10 tệp, tối đa 50MB",
+    "transcribeTooltip": "Tải lên tệp âm thanh hoặc video để chuyển thành văn bản.\n\nĐịnh dạng hỗ trợ: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nDung lượng tối đa: 25MB\n\nChuyển đổi thành văn bản sẽ tự động khi bạn gửi tin nhắn.",
+    "selected": "Đã chọn",
+    "expandActions": "Mở rộng hành động",
+    "selectTone": "Chọn giọng điệu",
+    "selectToneDescription": "Chọn kiểu giọng cho tin nhắn của bạn",
+    "noToneDefault": "Không có giọng điệu (Mặc định)",
+    "useDefaultStyle": "Sử dụng phong cách viết mặc định",
+    "noTonesCreated": "Chưa tạo giọng điệu nào",
+    "createTonesHint": "Tạo giọng điệu trong Quick Actions",
+    "translateDocumentTooltip": "Dịch tài liệu sang ngôn ngữ khác.\n\nĐịnh dạng hỗ trợ: Word, Excel, PowerPoint, PDF, HTML, TXT\nKích thước tối đa: 40MB\n\nHỗ trợ hơn 80 ngôn ngữ với file thuật ngữ tùy chọn."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Thêm hướng dẫn cá nhân của bạn để tùy chỉnh cách AI phản hồi. Các hướng dẫn này sẽ được kết hợp với các quy tắc hành vi cốt lõi nhằm đảm bảo phản hồi hữu ích, chính xác và an toàn.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Mẹo: Gõ \"/\" để chọn từ các mẫu gợi ý đã lưu.",
+  "storageWarning": {
+    "title": {
+      "warning": "Bộ nhớ sắp đầy",
+      "critical": "Bộ nhớ gần đầy",
+      "emergency": "Bộ nhớ đã đầy"
+    },
+    "message": {
+      "warning": "Bộ nhớ trình duyệt của bạn đã sử dụng {percent}%.",
+      "critical": "Bộ nhớ trình duyệt của bạn đang ở mức rất thấp, đã sử dụng {percent}%.",
+      "emergency": "Bộ nhớ trình duyệt của bạn gần như đầy hoàn toàn ở mức {percent}%!"
+    },
+    "consequence": "Nếu bộ nhớ đầy, bạn có thể mất quyền truy cập vào các cuộc hội thoại mới và ứng dụng có thể không hoạt động đúng.",
+    "storageUsage": "Tình trạng sử dụng bộ nhớ",
+    "optionsToFreeSpace": "Tùy chọn giải phóng dung lượng",
+    "clearOption": {
+      "keepRecent": "Giữ lại các cuộc hội thoại gần nhất",
+      "olderThan": "Xóa các cuộc hội thoại cũ hơn",
+      "days": {
+        "7": "7 ngày",
+        "14": "14 ngày",
+        "30": "30 ngày",
+        "60": "60 ngày",
+        "90": "90 ngày"
+      }
+    },
+    "estimate": {
+      "willRemove": "Việc này sẽ xóa {count} cuộc hội thoại",
+      "willFree": "Dung lượng dự kiến được giải phóng: {size}"
+    },
+    "action": {
+      "exportFirst": "Xuất dữ liệu trước",
+      "clearNow": "Xóa ngay",
+      "dismiss": "Đóng",
+      "cancel": "Hủy"
+    },
+    "confirm": {
+      "title": "Xác nhận xóa",
+      "message": "Việc này sẽ xóa vĩnh viễn {count} cuộc hội thoại. Thao tác này không thể hoàn tác."
+    },
+    "clearing": {
+      "title": "Đang xóa bộ nhớ",
+      "message": "Vui lòng chờ các cuộc hội thoại đang được xóa..."
+    },
+    "success": {
+      "title": "Đã xóa bộ nhớ",
+      "message": "Đã xóa thành công {count} cuộc hội thoại, giải phóng {size}."
+    },
+    "error": {
+      "title": "Xóa không thành công",
+      "message": "Đã xảy ra lỗi khi xóa các cuộc hội thoại. Vui lòng thử lại."
+    },
+    "close": "Đóng"
+  },
+  "support": {
+    "selectOrganization": "Chọn tổ chức của bạn",
+    "organizationDescription": "Chọn tổ chức MSF của bạn để xem thông tin liên hệ hỗ trợ phù hợp",
+    "autoDetect": "Tự động phát hiện",
+    "resetToAutoDetect": "Đặt lại về tự động phát hiện",
+    "organizations": {
+      "USA": "MSF USA",
+      "OCG": "OCG (Geneva)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Dự án / Khác"
+    },
+    "emailSupport": "Hỗ trợ qua email",
+    "emailDescription": "Liên hệ đội hỗ trợ của {organization}",
+    "escalationTitle": "Nhân viên MSF tại dự án & Khác",
+    "escalationDescription": "Làm theo quy trình chuyển cấp IT của tổ chức bạn để được hỗ trợ",
+    "escalationShort": "Liên hệ bộ phận IT địa phương của bạn",
+    "escalationStep1": "Trước tiên, hãy liên hệ bộ phận IT địa phương của bạn",
+    "escalationStep2": "Nếu chưa được giải quyết, chuyển cấp lên phòng IT Trung Tâm Điều Hành (OC) của bạn",
+    "escalationStep3": "Nếu vẫn chưa được giải quyết, phòng IT OC có thể chuyển cấp lên SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Dịch tài liệu",
+  "documentTranslation": {
+    "title": "Dịch tài liệu",
+    "targetLanguage": "Ngôn ngữ đích",
+    "sourceLanguage": "Ngôn ngữ nguồn",
+    "searchLanguage": "Tìm kiếm ngôn ngữ...",
+    "noLanguagesFound": "Không tìm thấy ngôn ngữ nào",
+    "autoDetect": "Tự động nhận diện nếu không chỉ định",
+    "glossary": "Tệp thuật ngữ",
+    "glossaryHelp": "Tải lên file thuật ngữ định dạng CSV, TSV hoặc XLIFF cho thuật ngữ tùy chỉnh",
+    "uploadGlossary": "Tải lên thuật ngữ",
+    "glossaryTooLarge": "Tệp thuật ngữ quá lớn. Kích thước tối đa là {maxSize}.",
+    "outputFilename": "Tên tệp xuất",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Dịch tài liệu",
+    "translating": "Đang dịch...",
+    "noDocumentError": "Vui lòng chọn tài liệu để dịch.",
+    "noTargetLanguageError": "Vui lòng chọn ngôn ngữ đích.",
+    "documentTooLarge": "Tài liệu quá lớn. Kích thước tối đa là {maxSize}.",
+    "translationSuccess": "Dịch tài liệu thành công",
+    "translationFailed": "Dịch thất bại: {error}",
+    "invalidReference": "Tham chiếu dịch tài liệu không hợp lệ",
+    "documentNotFound": "Không tìm thấy tài liệu đã dịch hoặc đã hết hạn",
+    "downloadFailed": "Tải xuống tài liệu đã dịch thất bại",
+    "downloadSuccess": "Tải xuống tài liệu thành công",
+    "translatedTo": "Đã dịch sang {language}",
+    "download": "Tải xuống",
+    "downloading": "Đang tải xuống...",
+    "expired": "Bản dịch này đã hết hạn và không còn khả dụng",
+    "expiresSoon": "Sẽ hết hạn trong {days} ngày - hãy tải xuống sớm",
+    "expires": "Có thể tải trong {days} ngày",
+    "learnMore": "Tìm hiểu thêm",
+    "advancedOptions": "Tùy chọn nâng cao"
   }
 }

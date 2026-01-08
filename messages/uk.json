@@ -168,7 +168,7 @@
   "Options": "Параметри",
   "Are you sure you want to delete this folder?": "Ви впевнені, що хочете видалити цю папку?",
   "New Prompt": "Нова підказка",
-  "Edit Prompt": "Редагувати підказку",
+  "Edit Prompt": "Редагувати запит",
   "Prompt name": "Назва підказки",
   "Prompt content": "Вміст підказки",
   "Are you sure you want to delete this prompt?": "Ви впевнені, що хочете видалити цю підказку?",
@@ -253,7 +253,19 @@
   "Team Templates": "Командні шаблони",
   "selected": "вибрано",
   "folders": "папки",
-  "agents": "агенти",
+  "agents": {
+    "exportAgent": "Експортувати агента",
+    "editAgent": "Редагувати агента",
+    "agentName": "Ім'я агента",
+    "myResearchAssistant": "Мій дослідницький асистент",
+    "agentId": "ID агента",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Опис (необов'язково)",
+    "descriptionPlaceholder": "Агент, спеціалізований на дослідницьких завданнях...",
+    "baseModel": "Базова модель",
+    "formatDescription": "Формат: asst_xxxxx (з MSF AI Assistant Foundry)",
+    "importantInfo": "Цей агент матиме доступ до контексту розмови і зможе використовувати ті ж інструменти, що й стандартні моделі. Переконайтеся, що ID агента правильний, оскільки його неможливо буде змінити пізніше."
+  },
   "Quick Actions": "Швидкі дії",
   "Type / in chat to access your prompts": "Введіть / у чаті для доступу до ваших підказок",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Введіть / у чаті, виберіть підказку та заповніть змінні за запитом",
@@ -300,7 +312,6 @@
   "Custom Agents": "Користувацькі агенти",
   "Delete template and all its items": "Видалити шаблон та всі його елементи",
   "Description (Optional)": "Опис (необов'язково)",
-  "Edit Prompt": "Редагувати запит",
   "Edit Tone": "Редагувати тон",
   "Email Response Template": "Шаблон відповіді електронною поштою",
   "Example Prompt": "Приклад запиту",
@@ -387,15 +398,43 @@
   "enterTagsPlaceholder": "Додати теги (натисніть Enter)",
   "enterPromptNamePlaceholder": "напр., Відповідь на email",
   "enterPromptDescriptionPlaceholder": "Для чого цей запит?",
-  "enterPromptContentPlaceholder": "Напишіть свій запит тут. Використовуйте {{variable}} для динамічного вмісту.",
+  "enterPromptContentPlaceholder": "Напишіть свій запит тут. Використовуйте '{{variable}}' для динамічного вмісту.",
   "common": {
-    "contact": "Контакт"
+    "contact": "Контакт",
+    "close": "Закрити",
+    "remove": "Видалити",
+    "tryAgain": "Спробувати ще раз",
+    "menu": "Меню",
+    "copyToClipboard": "Скопіювати в буфер обміну",
+    "toggleDropdownMenu": "Перемкнути випадаюче меню",
+    "toggleMenu": "Перемкнути меню",
+    "closeModal": "Закрити модальне вікно",
+    "dismissBanner": "Сховати банер",
+    "searchEllipsis": "Пошук...",
+    "addTagEllipsis": "Додати тег...",
+    "msfLogo": "Логотип MSF",
+    "importantInformation": "Важлива інформація",
+    "noResults": "Результатів не знайдено",
+    "confirm": "Підтвердити",
+    "cancel": "Скасувати",
+    "discard": "Відхилити",
+    "keepEditing": "Продовжити редагування",
+    "yes": "Так",
+    "no": "Ні"
   },
   "errors": {
     "unexpectedErrorOccurred": "Сталася неочікувана помилка",
     "criticalErrorReload": "Сталася критична помилка. Будь ласка, перезавантажте сторінку.",
     "reloadPage": "Перезавантажити сторінку",
-    "persistContactSupport": "Якщо ця проблема не зникає, будь ласка, зв'яжіться з підтримкою"
+    "persistContactSupport": "Якщо ця проблема не зникає, будь ласка, зв'яжіться з підтримкою",
+    "somethingWentWrong": "Щось пішло не так",
+    "anErrorOccurred": "Виникла помилка",
+    "copyErrorMessage": "Скопіювати повідомлення про помилку",
+    "contactSupport": "Якщо проблема не зникає, зверніться до служби підтримки за адресою",
+    "dismissError": "Закрити помилку",
+    "applicationError": "Помилка додатку",
+    "chatLoadError": "Під час завантаження чату виникла помилка",
+    "anErrorOccurredTryAgain": "Виникла помилка. Будь ласка, спробуйте ще раз."
   },
   "auth": {
     "authenticationError": "Помилка автентифікації",
@@ -464,7 +503,53 @@
     "fullSizePreview": "Попередній перегляд у повному розмірі",
     "enterSearchQueryPlaceholder": "Введіть ваш пошуковий запит або питання...",
     "errorFetchingUrl": "Сталася помилка під час отримання вмісту URL",
-    "errorInitiatingSearch": "Сталася помилка під час ініціювання веб-пошуку"
+    "errorInitiatingSearch": "Сталася помилка під час ініціювання веб-пошуку",
+    "regenerate": "Перегенерувати",
+    "modelSwitchPrompt": "{original} не вдалося, але {fallback} спрацював. Бажаєте змінити модель?",
+    "keepOriginalModel": "Залишити {model}",
+    "switchToModel": "Перейти на {model}",
+    "alwaysSwitchToModel": "Завжди перемикати автоматично",
+    "translateMessage": "Перекласти повідомлення",
+    "translating": "Перекладення...",
+    "translationError": "Не вдалося перекласти",
+    "showOriginal": "Показати оригінал",
+    "translatedTo": "Перекладено на {language}",
+    "searchLanguages": "Пошук мов...",
+    "selectLanguage": "Виберіть мову",
+    "audioFromOriginal": "Аудіо з оригінального тексту",
+    "audioFromTranslation": "Аудіо з перекладу на {language}",
+    "thinking": "Обробка...",
+    "viewReasoningProcess": "Переглянути хід міркування",
+    "collapseThinking": "Згорнути хід міркування",
+    "expandThinking": "Розгорнути хід міркування",
+    "actionsDisabledForEmbed": "Використовуйте елементи керування у вбудованому вмісті вище",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Транскрибування та обробка...",
+      "transcribingAudio": "Транскрибування аудіо...",
+      "analyzingFiles": "Аналіз файлів...",
+      "analyzingDocuments": "Аналіз документів...",
+      "analyzingDocument": "Аналіз документа...",
+      "analyzingImages": "Аналіз зображень...",
+      "analyzingImage": "Аналіз зображення..."
+    },
+    "contentDescription": {
+      "text": "текст",
+      "imagesCount": "{count} зображення(нь)",
+      "filesCount": "{count} файл(ів)",
+      "audioVideo": "аудіо/відео",
+      "empty": "порожньо"
+    },
+    "discardChanges": "Відхилити зміни",
+    "discardChangesMessage": "У вас є незбережені зміни. Ви впевнені, що хочете їх відхилити?",
+    "voiceInputStarting": "Запуск...",
+    "voiceInputRecording": "Запис...",
+    "voiceInputTapToStop": "Торкніться, щоб зупинити",
+    "stopRecording": "Зупинити запис",
+    "voiceInput": "Голосовий ввід",
+    "microphoneAccessDenied": "Доступ до мікрофона заборонено. Будь ласка, увімкніть його в налаштуваннях браузера.",
+    "microphoneAccessError": "Помилка доступу до мікрофона: {message}",
+    "voiceInputTranscribing": "Транскрибування...",
+    "ttsRightClickHint": "Клацніть правою кнопкою для параметрів озвучування"
   },
   "sidebar": {
     "collapseSidebar": "Згорнути бічну панель",
@@ -472,29 +557,135 @@
     "quickActionsTitle": "Швидкі дії",
     "quickActions": "Швидкі дії"
   },
-  "agents": {
-    "exportAgent": "Експортувати агента",
-    "editAgent": "Редагувати агента",
-    "agentName": "Ім'я агента",
-    "myResearchAssistant": "Мій дослідницький асистент",
-    "agentId": "ID агента",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Опис (необов'язково)",
-    "descriptionPlaceholder": "Агент, спеціалізований на дослідницьких завданнях...",
-    "baseModel": "Базова модель",
-    "formatDescription": "Формат: asst_xxxxx (з MSF AI Assistant Foundry)",
-    "importantInfo": "Цей агент матиме доступ до контексту розмови і зможе використовувати ті ж інструменти, що й стандартні моделі. Переконайтеся, що ID агента правильний, оскільки його неможливо буде змінити пізніше."
-  },
   "prompts": {
-    "buildReusablePrompts": "Створюйте багаторазові підказки з допомогою ШІ"
+    "buildReusablePrompts": "Створюйте багаторазові підказки з допомогою ШІ",
+    "noToneDefault": "Без тону (типовий)",
+    "tagHelp": "Довідка по тегах",
+    "tagHelpContent": "Використовуйте теги для категоризації та швидкого пошуку підказок. Приклади:",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "technical",
+      "customerSupport": "customer-support"
+    },
+    "variableHelp": "Довідка по змінним",
+    "variableHelpIntro": "Використовуйте змінні, щоб зробити підказки динамічними:",
+    "requiredVariables": "Обовʼязкові змінні (без типового значення):",
+    "optionalVariables": "Опціональні змінні (з типовим значенням):",
+    "userMustProvide": "Користувач повинен вказати значення",
+    "userCanProvide": "Користувач може вказати значення, або буде використано типове",
+    "example": "Приклад:",
+    "variableExampleText": "Напишіть '{{tone:professional}}' листа для '{{recipient}}' щодо '{{topic}}' українською мовою ('{{language:English}}')",
+    "detectedVariables": "Виявлені змінні",
+    "required": "Обовʼязково",
+    "aiAssistant": "AI-асистент",
+    "whatToImprove": "Що ви хочете покращити?",
+    "whatShouldPromptDo": "Що має робити цей prompt?",
+    "improvePlaceholder": "наприклад, зробити більш професійним, додати приклади, підвищити зрозумілість...",
+    "generatePlaceholder": "наприклад, згенерувати професійний шаблон листа з змінними для отримувача та теми...",
+    "addContextOptional": "Додати контекст (необов’язково)",
+    "revising": "Редагування...",
+    "generating": "Генерування...",
+    "reviseWithAI": "Редагувати за допомогою AI",
+    "generatePrompt": "Згенерувати prompt",
+    "revisionComplete": "Редагування завершено",
+    "generationComplete": "Генерацію завершено",
+    "revisedPrompt": "Відредагований prompt:",
+    "generatedPrompt": "Згенерований prompt:",
+    "applyRevision": "Застосувати це редагування",
+    "useThisPrompt": "Використати цей prompt",
+    "improvementsMade": "Внесені покращення:",
+    "tips": "Поради:",
+    "howAICanHelp": "Як AI може допомогти",
+    "helpItems": {
+      "improveClarity": "Покращити зрозумілість і структуру",
+      "suggestVariables": "Запропонувати корисні змінні",
+      "addContext": "Додати контекст і приклади",
+      "optimize": "Оптимізувати для кращих результатів"
+    },
+    "savePrompt": "Зберегти prompt",
+    "add": "Додати"
   },
   "tones": {
     "createCustomVoiceProfile": "Створіть користувацький голосовий профіль з допомогою ШІ",
-    "examplePlaceholder": "напр., Створіть професійний, але дружній тон для служби підтримки клієнтів..."
+    "examplePlaceholder": "напр., Створіть професійний, але дружній тон для служби підтримки клієнтів...",
+    "tagHelp": "Довідка щодо тегів",
+    "tagHelpContent": "Використовуйте теги для категоризації та швидкого пошуку ваших тонів. Приклади:",
+    "tagExamples": {
+      "professional": "професійний",
+      "casual": "невимушений",
+      "technical": "технічний",
+      "marketing": "маркетинговий"
+    },
+    "add": "Додати",
+    "aiToneAnalyzer": "AI Аналізатор тону",
+    "describeToneToCreate": "Опишіть тон, який хочете створити",
+    "uploadContentSamples": "Завантажити зразки контенту",
+    "analyzing": "Аналізування...",
+    "analyzeToneWithAI": "Аналізувати тон за допомогою AI",
+    "analysisComplete": "Аналіз завершено",
+    "generatedVoiceGuidelines": "Згенеровані рекомендації для голосу:",
+    "examplePhrases": "Приклади фраз:",
+    "suggestedTags": "Рекомендовані теги:",
+    "applyThisAnalysis": "Застосувати цей аналіз",
+    "detectedCharacteristics": "Виявлені характеристики:",
+    "howAICanHelp": "Як AI може допомогти",
+    "helpItems": {
+      "transcribe": "Транскрибувати аудіо/відео контент",
+      "analyzeContent": "Аналізувати ваші зразки контенту",
+      "extractPatterns": "Виділити шаблони тону та стилю",
+      "generateGuidelines": "Згенерувати рекомендації для голосу",
+      "suggestTags": "Запропонувати відповідні теги"
+    },
+    "saveTone": "Зберегти тон"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Переглянути технічну діаграму потоку"
+    "viewTechnicalFlowDiagram": "Переглянути технічну діаграму потоку",
+    "backToChat": "Повернутися до чату",
+    "title": "Центр допомоги",
+    "subtitle": "Знаходьте відповіді, дізнавайтеся про конфіденційність і отримуйте підтримку",
+    "faq": {
+      "title": "Часті питання",
+      "description": "Знайдіть відповіді на поширені питання щодо використання AI Assistant",
+      "articles": "статті",
+      "searchPlaceholder": "Пошук у FAQ...",
+      "noResults": "У результатах пошуку немає відповідних FAQ",
+      "noResultsHint": "Спробуйте інший запит для пошуку"
+    },
+    "privacy": {
+      "title": "Конфіденційність і дані",
+      "description": "Дізнайтеся, як зберігаються та захищаються ваші дані",
+      "topics": "теми",
+      "searchPlaceholder": "Пошук з тем конфіденційності...",
+      "noResults": "Не знайдено тем із конфіденційності",
+      "noResultsHint": "Спробуйте інший запит для пошуку",
+      "bannerTitle": "Ваша конфіденційність важлива",
+      "bannerDescription": "Усі розмови зберігаються локально на вашому пристрої. Обробка даних здійснюється в системах MSF з використанням інфраструктури Azure.",
+      "localStorageOnly": "Тільки локальне зберігання",
+      "msfControlled": "Підконтрольно MSF",
+      "noPersonalData": "Без персональних даних",
+      "noSensitiveOps": "Без чутливих операцій"
+    },
+    "contact": {
+      "title": "Контакти і ресурси",
+      "description": "Зв’яжіться з нашою командою та отримайте корисні посилання",
+      "supportAvailable": "Підтримка доступна",
+      "submitRequest": "Надіслати запит до підтримки",
+      "getHelp": "Отримати допомогу від нашої команди",
+      "requestDescription": "Потрібна допомога чи хочете залишити відгук? Натисніть нижче, щоб відкрити форму підтримки.",
+      "openSupportForm": "Відкрити форму підтримки",
+      "otherWays": "Інші способи зв’язку",
+      "emailSupport": "Підтримка електронною поштою",
+      "emailDescription": "Надішліть нам лист з питаннями, відгуками або технічними проблемами"
+    },
+    "resources": {
+      "title": "Додаткові ресурси",
+      "portalTitle": "Портал AI Accelerator",
+      "portalDescription": "Документація, оновлення проєктів і навчальні матеріали",
+      "githubTitle": "Відкрите сховище",
+      "githubDescription": "Переглядайте код, повідомляйте про проблеми й долучайтеся на GitHub"
+    }
   },
   "settings": {
     "Settings": "Налаштування",
@@ -562,9 +753,903 @@
     "FAQs, privacy policy, and guides": "Часті запитання, політика конфіденційності та посібники",
     "Contact Support": "Зв'язатися з підтримкою",
     "Popular Questions": "Популярні запитання",
-    "View all FAQs": "Переглянути всі часті запитання"
+    "View all FAQs": "Переглянути всі часті запитання",
+    "Delete legacy data after migration": "Видалити застарілі дані після міграції",
+    "frees up storage space": "звільняє місце на пристрої",
+    "Legacy data deleted": "Застарілі дані видалено",
+    "freed": "звільнено",
+    "Conversations": "Розмови",
+    "Legacy": "Застарілі",
+    "Other": "Інше",
+    "Loading": "Завантаження",
+    "Legacy Data Detected": "Виявлено застарілі дані",
+    "legacyDataDescription": "Ви маєте {size} даних із попередньої версії. Їх можна перенести, експортувати або видалити для звільнення місця.",
+    "legacyDeleteSuccess": "Успішно видалено застарілі дані та звільнено {size}.",
+    "legacyDeleteError": "Не вдалося видалити застарілі дані. Спробуйте ще раз.",
+    "Explore solutions": "Ознайомтеся з рішеннями",
+    "Migrate to Current Format": "Перенести у поточний формат",
+    "Export Legacy Data": "Експортувати застарілі дані",
+    "Delete Legacy Data": "Видалити застарілі дані",
+    "deleteLegacyConfirm": "Ви впевнені, що бажаєте видалити всі застарілі дані? Цю дію не можна буде скасувати.",
+    "Deleting": "Видалення",
+    "Confirm Delete": "Підтвердити видалення",
+    "Cancel": "Скасувати",
+    "Custom Instructions": "Користувацькі інструкції",
+    "Personalization": "Персоналізація",
+    "Display Name": "Відображуване ім’я",
+    "Display Name Description": "Виберіть, як ваше ім’я буде відображатися в привітаннях та в додатку",
+    "First Name": "Ім’я",
+    "Last Name": "Прізвище",
+    "Full Name": "Повне ім’я",
+    "Custom": "Власне",
+    "None": "Не вказано",
+    "Custom Display Name": "Власне відображуване ім’я",
+    "Custom Display Name Placeholder": "Введіть бажане ім’я",
+    "howShouldWeAddressYou": "Як до вас звертатися?",
+    "displayNamePreview": "Попередній перегляд: \"{greeting}\"",
+    "Streaming Speed": "Швидкість відтворення",
+    "Slow": "Повільно",
+    "Normal": "Нормально",
+    "Fast": "Швидко",
+    "Controls how smoothly text appears during AI responses": "Визначає плавність появи тексту у відповідях ШІ",
+    "aboutYou": {
+      "title": "Про вас",
+      "shareBasicInfo": "Ділитися основною інформацією з AI",
+      "shareBasicInfoDescription": "Якщо ввімкнено, AI знатиме ваше ім’я, посаду та відділ з вашого профілю",
+      "preferredName": "Бажане ім’я",
+      "preferredNamePlaceholder": "Як ви хочете, щоб до вас звертались?",
+      "preferredNameDescription": "Замінити ім’я для відображення. Залиште поле порожнім, щоб використовувати ім’я з профілю",
+      "additionalContext": "Додаткова інформація",
+      "additionalContextPlaceholder": "Наприклад: працюю в польових операціях, віддаю перевагу коротким відповідям, часто запитую про медичні протоколи...",
+      "additionalContextDescription": "Інша інформація, яку ви хочете повідомити AI про себе",
+      "preferredNameDescriptionWithSync": "Як ШІ буде до вас звертатися. Залиште порожнім, щоб використовувати відображуване ім’я з Основних налаштувань."
+    },
+    "displayNameUIOnly": "Це визначає, як ваше ім’я відображається в застосунку. ШІ не бачить його, якщо ви не ввімкнете спільний доступ у Налаштуваннях чату.",
+    "tts": {
+      "title": "Озвучування тексту",
+      "language": "Мова",
+      "voice": "Голос",
+      "multilingualVoices": "Багатомовні голоси",
+      "voices": "Голоси",
+      "rate": "Швидкість",
+      "pitch": "Тон",
+      "quality": "Якість аудіо",
+      "qualityDescription": "Вища якість забезпечує кращий звук, але використовує більше трафіку",
+      "preview": "Попередній перегляд",
+      "previewing": "Відтворення...",
+      "previewFailed": "Не вдалося створити попередній аудіозапис",
+      "previewText": "Це попередній перегляд обраних параметрів голосу.",
+      "reset": "Скинути",
+      "default": "Типово",
+      "slower": "Повільніше",
+      "faster": "Швидше",
+      "lower": "Нижче",
+      "higher": "Вище",
+      "selectedVoice": "Вибрано",
+      "noVoicesAvailable": "Для цієї мови голоси недоступні",
+      "quickSettings": "Параметри голосу",
+      "overrideForThisMessage": "Налаштувати для цього повідомлення",
+      "speakWithSettings": "Озвучити"
+    },
+    "Model Response Settings Description": "Налаштуйте стандартні параметри відповідей AI-моделі. Різні моделі використовують різні налаштування.",
+    "Default Reasoning Effort": "Стандартний рівень міркування",
+    "reasoningEffortDescription": "Визначає глибину аналізу для моделей міркування. Вищий рівень забезпечує детальніший аналіз.",
+    "Default Verbosity": "Стандартна деталізація",
+    "verbosityDescription": "Визначає рівень деталізації відповіді для моделей GPT-5."
   },
   "notFound": {
     "lostDog": "Загублений пес"
+  },
+  "Saved Prompts": "Збережені підказки",
+  "New conversation": "Нова розмова",
+  "Edit": "Редагувати",
+  "Chat Settings": "Налаштування чату",
+  "Default System Prompt": "Підказка системи за замовчуванням",
+  "Name": "Ім’я",
+  "Email": "Електронна пошта",
+  "Cancel": "Скасувати",
+  "Are you sure?": "Ви впевнені?",
+  "Clear conversations": "Очистити розмови",
+  "Import data": "Імпортувати дані",
+  "Export data": "Експортувати дані",
+  "Temperature": "Temperature",
+  "AI": "ШІ",
+  "Are you sure you want to clear all messages?": "Ви впевнені, що хочете видалити всі повідомлення?",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI — це розширений набір чат-бота для моделей OpenAI, що імітує інтерфейс та функціонал ChatGPT.",
+  "Conversation": "Розмова",
+  "Enter a prompt": "Введіть підказку",
+  "Error fetching models_": "Помилка завантаження моделей.",
+  "Higher values like 0_8 will make the output more random, while lower values like 0_2 will make it more focused and deterministic_": "Вищі значення, як-от 0.8, зроблять результат більш випадковим, а нижчі, як-от 0.2, — більш сфокусованим і детермінованим.",
+  "If you completed this step, OpenAI may be experiencing issues_": "Якщо ви виконали цей крок, можливо, виникли проблеми з OpenAI.",
+  "If you don't have an OpenAI API key, you can get one here: ": "Якщо ви не маєте ключа OpenAI API, отримайте його тут: ",
+  "Loading_ellipsis": "Завантаження...",
+  "Make sure your OpenAI API key is set in the bottom left of the sidebar_": "Переконайтеся, що ваш OpenAI API ключ вказано у нижньому лівому куті бічної панелі.",
+  "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження на повідомлення — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
+  "Model": "Модель",
+  "OR": "АБО",
+  "OpenAI API Key Required": "Потрібен ключ OpenAI API",
+  "Please enter a message": "Будь ласка, введіть повідомлення",
+  "Please set your OpenAI API key in the bottom left of the sidebar_": "Будь ласка, задайте ваш OpenAI API ключ у нижньому лівому куті бічної панелі.",
+  "Prompt limit is {{maxLength}} characters": "Обмеження підказки — {{maxLength}} символів",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
+  "Regenerate response": "Згенерувати відповідь знову",
+  "Run Typewriter Intro": "Запустити Typewriter Intro",
+  "Save & Submit": "Зберегти й надіслати",
+  "Sorry, there was an error_": "Вибачте, сталася помилка.",
+  "Stop Generating": "Зупинити генерацію",
+  "System Prompt": "Системна підказка",
+  "Type a message or type \"/\" to select a prompt_ellipsis": "Введіть повідомлення або наберіть \"/\", щоб обрати підказку...",
+  "Type a message_ellipsis": "Введіть повідомлення...",
+  "View Account Usage": "Переглянути використання акаунта",
+  "You": "Ви",
+  "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ви — ChatGPT, велика мовна модель, навчена OpenAI. Чітко виконуйте інструкції користувача. Використовуйте markdown для відповіді.",
+  "click if using a _env_local file": "клікніть, якщо використовуєте файл .env.local",
+  "Terms and Conditions": "Умови та положення",
+  "Loading terms and conditions_ellipsis": "Завантаження умов і положень...",
+  "Retry": "Повторити",
+  "Terms of Service": "Умови користування",
+  "Privacy Policy": "Політика конфіденційності",
+  "Version": "Версія",
+  "I accept the": "Я приймаю",
+  "Accept and Continue": "Прийняти та продовжити",
+  "Copied!": "Скопійовано!",
+  "Copy code": "Скопіювати код",
+  "Enter file name": "Введіть назву файлу",
+  "A description for your prompt_": "Опис для вашого запиту.",
+  "Search prompts_ellipsis": "Пошук підказок",
+  "Description": "Опис",
+  "New folder": "Нова папка",
+  "Conversation exported successfully": "Розмову успішно експортовано",
+  "Failed to export conversation": "Не вдалося експортувати розмову",
+  "Conversation imported successfully": "Розмову успішно імпортовано",
+  "Failed to import conversation": "Не вдалося імпортувати розмову",
+  "Invalid conversation file": "Неприпустимий файл розмови",
+  "Folder exported with {count} conversations": "Папку експортовано з {count} розмовами",
+  "Failed to export folder": "Не вдалося експортувати папку",
+  "Folder not found": "Папку не знайдено",
+  "Folder imported with {count} conversations": "Папку імпортовано з {count} розмовами",
+  "Invalid folder file": "Неприпустимий файл папки",
+  "Failed to import file": "Не вдалося імпортувати файл",
+  "Unrecognized file format": "Невідомий формат файлу",
+  "No prompts_": "Немає підказок.",
+  "Prompt": "Підказка",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Вміст підказки. Використовуйте '{{}}' для позначення змінної. Наприклад: '{{name}}' — '{{adjective}}' '{{noun}}'",
+  "A name for your prompt_": "Назва для вашої підказки.",
+  "No conversations_": "Немає розмов.",
+  "OpenAI API Key": "OpenAI API Key",
+  "Plugin Keys": "Ключі плагінів",
+  "transcription": {
+    "transcribesOnSend": "Транскрибує при надсиланні",
+    "addInstructions": "Додати інструкції",
+    "instructionsPlaceholder": "Контекст для підвищення точності (наприклад, імена, терміни)",
+    "languages": {
+      "autoDetect": "Автовизначення",
+      "afrikaans": "Африкаанс",
+      "arabic": "Арабська",
+      "armenian": "Вірменська",
+      "azerbaijani": "Азербайджанська",
+      "belarusian": "Білоруська",
+      "bosnian": "Боснійська",
+      "bulgarian": "Болгарська",
+      "burmese": "Бірманська",
+      "catalan": "Каталонська",
+      "chinese": "Китайська",
+      "croatian": "Хорватська",
+      "czech": "Чеська",
+      "danish": "Данська",
+      "dutch": "Нідерландська",
+      "english": "Англійська",
+      "estonian": "Естонська",
+      "finnish": "Фінська",
+      "french": "Французька",
+      "galician": "Галісійська",
+      "german": "Німецька",
+      "greek": "Грецька",
+      "hebrew": "Іврит",
+      "hindi": "Гінді",
+      "hungarian": "Угорська",
+      "icelandic": "Ісландська",
+      "indonesian": "Індонезійська",
+      "italian": "Італійська",
+      "japanese": "Японська",
+      "kannada": "Каннада",
+      "kazakh": "Казахська",
+      "korean": "Корейська",
+      "latvian": "Латвійська",
+      "lithuanian": "Литовська",
+      "macedonian": "Македонська",
+      "malay": "Малайська",
+      "maori": "Маорі",
+      "marathi": "Маратгі",
+      "nepali": "Непальська",
+      "norwegian": "Норвезька",
+      "persian": "Перська",
+      "polish": "Польська",
+      "portuguese": "Португальська",
+      "romanian": "Румунська",
+      "russian": "Російська",
+      "serbian": "Сербська",
+      "slovak": "Словацька",
+      "slovenian": "Словенська",
+      "spanish": "Іспанська",
+      "swahili": "Суахілі",
+      "swedish": "Шведська",
+      "tagalog": "Тагальська",
+      "tamil": "Тамільська",
+      "thai": "Тайська",
+      "turkish": "Турецька",
+      "ukrainian": "Українська",
+      "urdu": "Урду",
+      "vietnamese": "В’єтнамська",
+      "welsh": "Валлійська"
+    },
+    "inProgress": "Транскрипція триває",
+    "processingFile": "Обробка: {filename}",
+    "timeRemaining": "Залишилось часу: {time}",
+    "maxDurationNote": "Обробка великих файлів може тривати до {minutes} хвилин",
+    "timedOut": "Час транскрипції вичерпано через {minutes} хвилин",
+    "timedOutToast": "Час транскрипції вичерпано: {filename}",
+    "failed": "Транскрипція не вдалася: {error}",
+    "failedToast": "Транскрипція не вдалася: {filename}",
+    "unknownError": "Невідома помилка",
+    "completed": "Транскрипція завершена",
+    "completedToast": "Транскрипцію завершено: {filename}",
+    "placeholder": "[Транскрипція триває: {filename}]",
+    "loadingTranscript": "Завантаження транскрипту для {filename}...",
+    "expiredOrDeleted": "Цей транскрипт протермінований або видалений.",
+    "fetchError": "Не вдалося завантажити транскрипт. Спробуйте ще раз.",
+    "transcriptExpired": "Транскрипт для {filename} протермінований. Транскрипти автоматично видаляються через {days} днів для захисту конфіденційності.",
+    "expirationWarning": "Транскрипт для {filename} протермінує через {days} дн(ів). Скопіюйте вміст, якщо вам потрібно його зберегти."
+  },
+  "transcriptionComplete": "Транскрибування завершено! Текст додано до поля введення чату.",
+  "No prompts found": "Підказок не знайдено",
+  "Select a prompt to view details": "Виберіть підказку, щоб переглянути деталі",
+  "Content": "Вміст",
+  "importBackupParseError": "Не вдалося розібрати файл резервної копії. Перевірте, чи це дійсний JSON.",
+  "emptyState": {
+    "greeting": "Чим можу допомогти?",
+    "greetingWithName": "Чим можу допомогти, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Створити діаграми",
+        "prompt": "Покажи, як можеш створювати діаграми та блок-схеми. Які процеси, робочі потоки чи системи ти можеш допомогти візуалізувати? Наведи приклади."
+      },
+      "draftContent": {
+        "title": "Чернетки професійних матеріалів",
+        "prompt": "Мені потрібна допомога у написанні професійних документів — листів, звітів, підсумків. Можеш навести приклади, як ти допомагаєш із різними типами ділового письма?"
+      },
+      "analyzeInformation": {
+        "title": "Аналізувати інформацію",
+        "prompt": "Як ти можеш допомогти мені аналізувати дані чи інформацію? Покажи різні способи аналізу чисел, пошуку закономірностей або отримання висновків з документів чи наборів даних."
+      },
+      "planOrganize": {
+        "title": "Планувати та організовувати",
+        "prompt": "Можеш допомогти спланувати проєкти або організувати роботу? Наведи приклади створення таймлайну, порядку денного чи проєктних планів із різною структурою."
+      },
+      "brainstormIdeas": {
+        "title": "Генерувати ідеї",
+        "prompt": "Я хочу знайти рішення для проблеми. Покажи, як ти підходиш до творчого мислення та генерації ідей — які питання ставиш і як досліджуєш можливості?"
+      },
+      "buildPresentations": {
+        "title": "Створювати презентації",
+        "prompt": "Як ти можеш допомогти створити презентації? Наведи приклади різних структур, візуальних підказок та організації інформації для різної аудиторії."
+      },
+      "workWithCode": {
+        "title": "Працювати з кодом",
+        "prompt": "Можеш допомогти із програмуванням чи скриптами? Покажи приклади — написання нового коду, пошуку помилок або поетапного пояснення роботи коду."
+      },
+      "decisionSupport": {
+        "title": "Підтримка прийняття рішень",
+        "prompt": "Мені потрібно прийняти рішення, але я не знаю, як оцінити варіанти. Покажи різні підходи або фреймворки, які ти використовуєш для аналізу вибору."
+      },
+      "summarizeSynthesize": {
+        "title": "Підсумовувати та синтезувати",
+        "prompt": "Як ти допомагаєш з підсумком довгих документів або синтезом інформації з різних джерел? Покажи приклади різних форматів резюме та рівнів деталізації."
+      },
+      "explainTopics": {
+        "title": "Пояснювати складні теми",
+        "prompt": "Можеш пояснити складні концепції простими словами? Покажи, як ти розбиваєш складні ідеї, використовуєш аналогії й адаптуєш пояснення для різного рівня знань."
+      },
+      "createSchedules": {
+        "title": "Створювати розклади",
+        "prompt": "Мені потрібна допомога з організацією часу та створенням розкладів. Покажи різні способи структурування порядку денного, календарів або планів із прикладами."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Моделі",
+      "agents": "Агенти"
+    },
+    "sections": {
+      "baseModels": "Базові моделі"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Розширена функція",
+      "description": "Створюйте та керуйте власними AI-агентами зі спеціальними можливостями. Ці агенти працюють на Foundry-екземплярі MSF AI Assistant.",
+      "advancedFeatureTitle": "Розширена функція — потребує координації з технічною командою AI Assistant",
+      "advancedFeatureWarning": "Власні агенти працюють лише з Foundry-екземпляром MSF AI Assistant. Ідентифікатори агентів повинні створюватися технічною командою AI Assistant саме в цьому екземплярі та погоджуватися з вами перед використанням.",
+      "createNewAgent": "Створити нового власного агента",
+      "noAgentsTitle": "Власних агентів ще немає",
+      "noAgentsDescription": "Створіть свого першого власного агента, щоб розширити можливості AI завдяки спеціальним інструментам і поведінці."
+    },
+    "advancedOptions": {
+      "title": "Додаткові параметри",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "Примітка: ця модель використовує фіксовані значення temperature для стабільної роботи.",
+      "reasoningEffort": "Рівень міркувань",
+      "minimal": "Мінімальний",
+      "low": "Низький",
+      "medium": "Середній",
+      "high": "Високий",
+      "verbosity": "Деталізація"
+    },
+    "searchMode": {
+      "title": "Режим пошуку",
+      "subtitle": "Використовуватиме пошук у мережі за потреби",
+      "routingLabel": "Маршрутизація пошуку:",
+      "whatsDifference": "У чому різниця?",
+      "privacyFocused": "Зосереджено на конфіденційності (типово)",
+      "privacyFocusedDescription": "Повільніше, але більш конфіденційно",
+      "azureAgentMode": "Режим Azure AI Agent",
+      "azureAgentModeDescription": "Швидше, але зберігає дані розмов у хмарі",
+      "privacyInfoTitle": "Важлива інформація щодо конфіденційності",
+      "privacyInfoDescription": "Ваша повна розмова буде надіслана агенту Azure AI Foundry.",
+      "learnMoreDataStorage": "Дізнатися більше про зберігання даних",
+      "privacyEnabled": "Увімкнено режим конфіденційного пошуку",
+      "learnPrivacy": "Дізнайтеся, як захищено вашу конфіденційність"
+    },
+    "customAgent": {
+      "label": "Власний агент:",
+      "description": "Цей агент працює на екземплярі MSF AI Assistant Foundry з увімкненими інструментами.",
+      "webSearch": "Пошук в Інтернеті в реальному часі",
+      "codeInterpreter": "Інтерпретатор коду та аналіз файлів"
+    },
+    "header": {
+      "backToModels": "Повернутися до моделей",
+      "knowledgeCutoff": "Актуальність знань: {cutoff}",
+      "knowledgeCutoffLabel": "Дата останнього оновлення знань"
+    },
+    "modelTypes": {
+      "foundational": "базова",
+      "omni": "omni",
+      "reasoning": "логічна",
+      "agent": "агент"
+    },
+    "orderMode": {
+      "label": "Сортувати за",
+      "usage": "Найчастіше використовується",
+      "name": "Назва (A-Я)",
+      "cutoff": "Нові моделі",
+      "custom": "Власний порядок",
+      "edit": "Редагувати",
+      "done": "Готово",
+      "reset": "Скинути",
+      "resetTooltip": "Скинути до стандартного порядку"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Пошук у реальному часі"
+    },
+    "modelTypeIcons": {
+      "foundational": "Швидка й ефективна універсальна модель",
+      "reasoning": "Розширене логічне мислення для складних завдань",
+      "omni": "Мультимодальна модель з широкими можливостями",
+      "agent": "Агент із засобами реального часу та доступом до вебу"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "AI-модель на основі GPT-4.1 із пошуком в Інтернеті через Bing у реальному часі. Забезпечує актуальну інформацію, перевірку фактів і обізнаність про події. Найкраще підходить для досліджень, що потребують свіжої інформації, аналізу новин і перевірки фактів.",
+      "knowledgeCutoff": "Пошук в Інтернеті в реальному часі"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Найпросунутіша модель OpenAI, яка відзначається складним логічним мисленням, генерацією коду та вирішенням технічних завдань. Ідеально для аналітичних задач, програмування, досліджень і детальних пояснень. Підтримує налаштування зусиль на міркування й об’ємності відповідей.",
+      "knowledgeCutoff": "6 серпня 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Швидший і більш економний варіант GPT-5, оптимізований для швидкості без помітної втрати якості. Ідеально підходить для щоденних завдань, швидких запитів, маршрутизації інструментів та застосувань, що вимагають миттєвої відповіді. Відмінний баланс продуктивності та ефективності.",
+      "knowledgeCutoff": "6 серпня 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Спеціалізований варіант GPT-5, оптимізований для бесід та емоційного інтелекту. Чудово працює з емпатійною комунікацією, підтримкою ментального здоров’я, творчим письмом, генеруванням ідей та природнім діалогом. Найкраще для неформальних розмов, консультування і завдань із підвищеною увагою до емоцій.",
+      "knowledgeCutoff": "1 жовтня 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Найпотужніша модель OpenAI для логічного мислення з революційними можливостями вирішення задач. Чудова для складної математики, наукового мислення, програмувальних викликів і багатокрокових логічних задач. Розширене контекстне вікно на 200K токенів. Підтримує управління рівнем міркування.",
+      "knowledgeCutoff": "8 квітня 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Швидка та економічна модель від Meta. Чудово підходить для типових завдань: написання текстів, підсумовування, базова допомога з кодуванням. Хороший баланс швидкості та якості для щоденної роботи.",
+      "knowledgeCutoff": "7 травня 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Спеціаліст із логічного мислення, який показує свої кроки поетапно. Відмінно підходить для розв’язання математичних задач, логічних головоломок і вивчення складних концепцій. Дивіться, як він міркує у реальному часі.",
+      "knowledgeCutoff": "20 січня 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Потужна універсальна модель, особливо хороша в кодуванні та технічному письмі. Чудова для відлагодження коду, написання документації та пояснення технічних понять. Швидка й надійна для розробки.",
+      "knowledgeCutoff": "16 квітня 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Універсальна модель xAI, відома нюансованими відповідями. Чудово підходить для відкритих дискусій, творчих проєктів і вирішення складних задач.",
+      "knowledgeCutoff": "13 травня 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Найпотужніша модель компанії Anthropic з винятковими навичками міркування, кодування та творчості. Найкраща для складного аналізу, досліджень і завдань, що вимагають глибокого розуміння.",
+      "knowledgeCutoff": "Січень 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Збалансована модель Claude з відмінною продуктивністю для кодування, аналізу та творчих завдань. Чудово підходить для щоденного використання з швидкими відповідями.",
+      "knowledgeCutoff": "січень 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Модель Claude Opus попереднього покоління. Відмінно підходить для складних задач програмування, детального аналізу та тонкого розуміння.",
+      "knowledgeCutoff": "січень 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Швидка та економічна модель Claude, оптимізована для коротких завдань. Чудово підходить для простих запитів, підсумування та роботи з великим обсягом даних.",
+      "knowledgeCutoff": "січень 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Найсучасніша модель від OpenAI, яка відзначається складним логічним мисленням, генерацією коду та вирішенням технічних задач. Найкраще підходить для аналітичних завдань, програмування, досліджень і детальних пояснень. Підтримує налаштування рівня опрацювання та деталізації відповідей.",
+      "knowledgeCutoff": "Грудень 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Спеціалізований варіант GPT-5.2, оптимізований для діалогів і емоційного інтелекту. Відзначається емпатійністю, підтримкою психічного здоров'я, творчістю, брейнштормінгом та природною комунікацією. Найкраще підходить для невимушених розмов, консультування та завдань, що потребують емоційної чутливості.",
+      "knowledgeCutoff": "Грудень 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Повернутися до чату",
+    "title": "Пояснення режиму пошуку",
+    "subtitle": "Зрозумійте свої варіанти пошуку та місце зберігання даних",
+    "quickComparison": "Швидке порівняння",
+    "noSearch": "Без пошуку",
+    "privacyFocused": "Орієнтований на конфіденційність",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Швидкість відповіді",
+    "fastest": "Найшвидше",
+    "slowerMultiStep": "Повільніше (кілька кроків)",
+    "fasterDirect": "Швидше (напряму)",
+    "fullConversationStored": "Уся розмова зберігається в хмарі",
+    "whatsStoredInAzure": "Що зберігається в Azure",
+    "nothingStateless": "Нічого (тільки без стану)",
+    "searchQueriesOnly": "Тільки пошукові запити",
+    "fullConversationHistory": "Уся історія розмов",
+    "modelAvailability": "Доступність моделей",
+    "allModels": "Усі моделі",
+    "gpt41Only": "Тільки GPT-4.1",
+    "searchTurnedOff": "Пошук вимкнено",
+    "noSearchDescription": "Найшвидші відповіді без можливості веб-пошуку. Вся ваша розмова залишається у вашому браузері — нічого не зберігається в хмарі.",
+    "viewDetailsBelow": "Докладніше дивіться на технічній схемі нижче.",
+    "viewTechnicalFlowDiagram": "Переглянути технічну схему",
+    "legend": "Легенда:",
+    "legendNoSearch": "Ваш браузер (локальне зберігання) | Сервер AI Assistant | Azure OpenAI (без стану)",
+    "privacyFocusedMode": "Режим орієнтації на конфіденційність",
+    "default": "За замовчуванням",
+    "privacyDescription": "Використовує веб-пошук при потребі, але працює повільніше, оскільки залучено більше етапів. В Azure зберігаються лише пошукові запити — уся ваша розмова залишається у браузері.",
+    "legendPrivacy": "Ваш браузер (локальне зберігання) | Сервер AI Assistant | Azure AI Foundry (лише пошукові запити) | Azure OpenAI (без стану)",
+    "azureAIFoundryMode": "Режим Azure AI Foundry",
+    "foundryDescription": "Швидші відповіді з інтегрованою можливістю веб-пошуку. Ваша повна розмова зберігається у базі даних Azure AI Foundry, а не лише у браузері.",
+    "legendFoundry": "Ваш браузер (локальне зберігання) | Сервер AI Assistant | Azure AI Foundry Agent (зберігає всю розмову)",
+    "whyTheseOptions": "Чому саме ці варіанти?",
+    "whyTheseOptionsText1": "Це доступні реалізації пошуку після того, як Azure припинила підтримку Bing Search API, на якому спочатку ґрунтувався AI Assistant.",
+    "whyTheseOptionsText2": "Команда активно досліджує варіанти пошуку з більшим акцентом на конфіденційність. Обидва поточні варіанти використовують можливості пошуку Azure AI Foundry, але різняться обсягом даних розмови, що надаються.",
+    "azureDeprecatedBingApi": "Azure припинила підтримку Bing Search API",
+    "footerNote": "В обох режимах ваша розмова зберігається локально у браузері. Ви можете перемикати режими у налаштуваннях моделі в будь-який час.",
+    "note": "Примітка:",
+    "loadingDiagram": "Завантаження схеми..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Перевірка сховища",
+      "analyzingData": "Аналіз ваших даних...",
+      "updateAvailable": "Доступне оновлення",
+      "storageSpaceLimited": "Обмежено простір для зберігання",
+      "migratingData": "Виконується міграція даних",
+      "migrationComplete": "Міграцію завершено",
+      "partiallyComplete": "Частково завершено",
+      "migrationFailed": "Міграція не вдалася"
+    },
+    "descriptions": {
+      "foundLegacyData": "Виявлено дані з попередньої версії. Бажаєте перенести їх у покращену систему?",
+      "storageSpaceWarning": "Для ваших даних потрібно більше місця, ніж зараз доступно. Рекомендуємо використати режим покрокової міграції.",
+      "pleaseWait": "Зачекайте, будь ласка, триває оновлення ваших даних...",
+      "dataIsSafe": "Ваші початкові дані в безпеці. Ви можете повторити спробу або пропустити поки що.",
+      "itemsTooLarge": "Ці елементи завеликі для зберігання. Можна експортувати їх, звільнити місце або продовжити без них.",
+      "settingsUpdated": "Ваші налаштування оновлено."
+    },
+    "benefits": {
+      "title": "Переваги",
+      "fasterPerformance": "Вища швидкодія",
+      "betterReliability": "Краща надійність",
+      "dataPreserved": "Ваші дані збережено"
+    },
+    "options": {
+      "advancedOptions": "Додаткові параметри",
+      "useIncrementalMode": "Використовувати покроковий режим",
+      "slowerButSafer": "повільніше, але безпечніше",
+      "recommended": "рекомендовано",
+      "deleteLegacyData": "Видалити старі дані після міграції",
+      "freesUpSpace": "звільняє місце для зберігання"
+    },
+    "actions": {
+      "skip": "Пропустити",
+      "migrateData": "Мігрувати дані",
+      "migrateAnyway": "Мігрувати все одно",
+      "continue": "Продовжити",
+      "retry": "Повторити",
+      "exportBackupFirst": "Експортувати резервну копію спочатку",
+      "exportSkippedItems": "Експортувати пропущені елементи"
+    },
+    "quota": {
+      "availableSpace": "Доступний простір",
+      "dataToMigrate": "Дані для міграції",
+      "additionalSpaceNeeded": "Потрібно додаткового простору"
+    },
+    "progress": {
+      "migratingConversations": "Міграція розмов",
+      "migratingPrompts": "Міграція підказок",
+      "migratingAgents": "Міграція агентів",
+      "finishingUp": "Завершення"
+    },
+    "results": {
+      "successfullyMigrated": "Успішно перенесено",
+      "notes": "Примітки",
+      "couldNotMigrate": "Не вдалося перенести",
+      "legacyDataDeleted": "Старі дані видалено",
+      "freed": "звільнено"
+    },
+    "units": {
+      "conversation": "розмова",
+      "conversations": "розмови",
+      "folder": "папка",
+      "folders": "папки",
+      "prompt": "підказка",
+      "prompts": "підказки",
+      "customAgent": "кастомний агент",
+      "customAgents": "кастомні агенти",
+      "item": "елемент",
+      "items": "елементи"
+    }
+  },
+  "languageSwahili": "Суахілі",
+  "welcomeBanner": {
+    "title": "Ласкаво просимо до AI Assistant V2",
+    "whatsNew": "Що нового",
+    "whatsNewQuestion": "Що нового?"
+  },
+  "welcomeV2": {
+    "backToChat": "Повернутися до чату",
+    "title": "Ласкаво просимо до AI Assistant V2",
+    "subtitle": "Повний редизайн із потужними новими функціями",
+    "webSearch": {
+      "title": "Режим веб-пошуку",
+      "description": "Дайте AI доступ до веб-пошуку в режимі реального часу з налаштуваннями конфіденційності",
+      "quickAccess": "Швидкий доступ:",
+      "quickAccessInstructions": "Натисніть кнопку + біля поля вводу чату → Оберіть \"Web Search\"",
+      "setAsDefault": "Встановити за замовчуванням:",
+      "setAsDefaultInstructions": "Відкрийте налаштування моделі та увімкніть перемикач Web Search Mode. Оберіть між:",
+      "privacyFocused": "Захист приватності (за замовчуванням)",
+      "privacyFocusedDescription": "Зовнішньо надсилається лише запит пошуку",
+      "azureAIFoundry": "Режим Azure AI Foundry",
+      "azureAIFoundryDescription": "Швидше, але вся розмова зберігається зовнішньо",
+      "learnMore": "Дізнатися більше про режими пошуку →"
+    },
+    "tones": {
+      "title": "Тони (профілі голосу)",
+      "description": "Керуйте стилем, офіційністю та характером письма AI",
+      "createTones": "1. Створіть тони:",
+      "createTonesInstructions": "Швидкі дії в боковій панелі → вкладка \"Тони\"",
+      "useTones": "2. Використовуйте тони:",
+      "useTonesInstructions": "Клацніть випадаючий список тону біля поля чату",
+      "exampleProfessionalDesc": "Офіційний, діловий тон",
+      "exampleCasualDesc": "Дружній, розмовний"
+    },
+    "aiAssist": {
+      "title": "AI-помічник для підказок і тонів",
+      "description": "Дозвольте AI допомогти створювати кращі підказки та тони швидше",
+      "step1": "Відкрийте Швидкі дії в боковій панелі",
+      "step2": "Перейдіть на вкладку {prompts} або {tones}",
+      "step3": "Знайдіть панель AI Assistant",
+      "getSuggestions": "Отримати пропозиції",
+      "getSuggestionsDesc": "AI аналізує ваш чернетковий текст і пропонує покращення",
+      "buildFromFiles": "Створити з файлів",
+      "buildFromFilesDesc": "Завантажте документи для генерації підказок/тонів",
+      "testBeforeSaving": "Тестуйте перед збереженням",
+      "testBeforeSavingDesc": "Випробуйте підказки/тони в демонстраційному чаті",
+      "step2Prefix": "Перейдіть на",
+      "step2Suffix": "вкладку"
+    },
+    "customAgents": {
+      "title": "Користувацькі агенти",
+      "advancedBadge": "РОЗШИРЕНО",
+      "description": "Спеціалізовані AI-агенти з можливостями веб-пошуку та інтерпретації коду",
+      "advancedFeature": "Розширена функція",
+      "advancedFeatureDesc": "Користувацькі агенти працюють на Azure AI Foundry зі спеціалізованими інструментами. Для створення ідентифікаторів агентів потрібна координація з технічною командою AI Assistant.",
+      "howToAccess": "Як отримати доступ:",
+      "howToAccessInstructions": "Налаштування → Моделі → вкладка \"Агенти\"",
+      "whatYouCanDo": "Ви можете:",
+      "configureAgents": "Налаштовувати агентів зі спеціалізованими можливостями",
+      "importExport": "Імпортувати/експортувати конфігурації агентів",
+      "selectFromDropdown": "Оберіть користувацьких агентів у випадаючому списку моделей"
+    },
+    "audioTranslation": {
+      "title": "Транскрипція аудіо з перекладом",
+      "description": "Автоматичний переклад транскрипцій аудіо на 13+ мов",
+      "howToUse": "Як користуватися:",
+      "step1": "Завантажте аудіо- або відеофайл",
+      "step2": "Натисніть випадаючий список мов у вікні транскрипції",
+      "step3": "Оберіть цільову мову",
+      "availableLanguages": "Доступні мови:",
+      "moreLanguages": "+7 інших"
+    },
+    "pwa": {
+      "title": "Встановити як мобільний додаток",
+      "description": "Прогресивний вебдодаток із нативним досвідом",
+      "installTip": "Порада: Встановіть після входу, щоб зберегти автентифікацію та отримати найкращий досвід.",
+      "howToInstall": "Як встановити:",
+      "step1": "Увійдіть у свій обліковий запис",
+      "step2": "Відкрийте Налаштування → Мобільний додаток для детальних інструкцій",
+      "step3": "На мобільному: Відкрийте меню браузера (⋮ або ⚙️)",
+      "step4": "Знайдіть \"Додати на головний екран\" або \"Встановити додаток\"",
+      "step5": "Дотримуйтесь підказок для встановлення",
+      "benefits": "Переваги:",
+      "benefit1": "Запуск як нативного додатка з головного екрану",
+      "benefit2": "Повноекранний режим без інтерфейсу браузера",
+      "benefit3": "Офлайн-доступ до збережених розмов"
+    }
+  },
+  "Professional": "Професійний",
+  "Casual": "Неформальний",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Введіть підказку або введіть \"/\", щоб вибрати підказку..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Додайте власні інструкції, щоб налаштувати відповіді ШІ. Вони поєднуються з основними правилами, що гарантують корисні, точні та безпечні відповіді."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Порада: введіть \"/\", щоб вибрати зі збережених шаблонів підказок."
+  },
+  "fileUpload": {
+    "uploading": "Вивантаження...",
+    "transcribing": "Транскрибування...",
+    "complete": "Завершено",
+    "failed": "Помилка",
+    "uploadFiles": "Завантажте файли (аудіо, відео або текст)",
+    "autoDetect": "Автовизначення",
+    "fileNotAvailable": "Файл недоступний для редагування",
+    "failedToOpenInEditor": "Не вдалося відкрити файл у редакторі коду. Спробуйте ще раз.",
+    "extractingAudio": "Витягуємо аудіо...",
+    "queuedForTranscription": "У черзі на транскрипцію",
+    "transcribed": "Транскрибовано",
+    "transcriptionFailed": "Не вдалося транскрибувати",
+    "extractedFromSmaller": "Отримано з {percent}% меншого",
+    "textExtraction": "Витяг тексту",
+    "opening": "Відкривається...",
+    "openInEditor": "Відкрити в редакторі",
+    "failedToUpload": "Не вдалося завантажити",
+    "attachment": "вкладення",
+    "attachments": "вкладення"
+  },
+  "transcript": {
+    "originalTranscript": "Оригінал стенограми",
+    "transcript": "Стенограма",
+    "transcriptionOf": "Стенограма для",
+    "translating": "Перекладається...",
+    "copied": "Скопійовано!",
+    "copy": "Копіювати",
+    "download": "Завантажити",
+    "translate": "Перекласти",
+    "collapse": "Згорнути",
+    "expand": "Розгорнути",
+    "expandHint": "Натисніть «Розгорнути», щоб переглянути оригінал стенограми",
+    "listen": "Прослухати стенограму",
+    "stopAudio": "Зупинити аудіо",
+    "openAsDocument": "Відкрити як документ"
+  },
+  "userMessage": {
+    "open": "Відкрити",
+    "showFullMessage": "Показати повне повідомлення",
+    "collapse": "Згорнути",
+    "customTone": "Власний тон"
+  },
+  "codeBlock": {
+    "openInEditor": "Відкрити в редакторі"
+  },
+  "artifact": {
+    "noContentToExport": "Немає вмісту для експорту",
+    "exportedAsHtml": "Експортовано як HTML",
+    "exportedAsMarkdown": "Експортовано як Markdown",
+    "exportedAsText": "Експортовано як текст",
+    "generatingPdf": "Створення PDF...",
+    "exportedAsPdf": "Експортовано як PDF",
+    "generatingDocx": "Створення DOCX...",
+    "exportedAsDocx": "Експортовано як DOCX",
+    "failedToExportAs": "Не вдалося експортувати у форматі {format}",
+    "document": "Документ",
+    "switchToCodeEditor": "Перейти до редактора коду",
+    "exportDocument": "Експортувати документ",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Текст (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Закрити",
+    "editsNotSaved": "Зміни не збережено. Надішліть через повідомлення або завантажте, щоб зберегти будь-які зміни.",
+    "fileDownloaded": "Файл завантажено",
+    "failedToDownload": "Не вдалося завантажити",
+    "switchToDocumentEditor": "Перейти до редактора документів",
+    "download": "Завантажити",
+    "fileIncludedWithMessage": "Файл і зміни включені до повідомлення",
+    "closeEditor": "Закрити редактор",
+    "closeCodeEditor": "Закрити редактор коду",
+    "startWriting": "Почніть писати...",
+    "toolbar": {
+      "bold": "Жирний",
+      "italic": "Курсив",
+      "underline": "Підкреслення",
+      "strikethrough": "Закреслений",
+      "heading1": "Заголовок 1",
+      "heading2": "Заголовок 2",
+      "heading3": "Заголовок 3",
+      "bulletList": "Маркірований список",
+      "numberedList": "Нумерований список",
+      "codeBlock": "Блок коду",
+      "quote": "Цитата",
+      "insertTable": "Вставити таблицю",
+      "table": "Таблиця",
+      "undo": "Скасувати",
+      "redo": "Повторити"
+    },
+    "codeEditor": {
+      "startTyping": "Почніть вводити або попросіть AI згенерувати код",
+      "codeWillSync": "Код буде автоматично синхронізовано з повідомленнями чату",
+      "startCoding": "// Почніть кодувати..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Увімкніть веб-пошук для кожного повідомлення.\n\nНадає актуальну інформацію через доступ до Bing у реальному часі.",
+    "attachTooltip": "Додавайте файли, зображення або аудіо/відео.\n\nПідтримувані формати:\n• Зображення: JPEG, PNG, GIF, WebP (до 5 МБ, до 10 штук)\n• Документи: PDF, DOCX, XLSX, PPTX, TXT, MD (до 10 МБ, до 3 штук)\n• Дані: CSV, JSON, XML, YAML (до 10 МБ, до 3 штук)\n• Код: PY, JS, TS, JAVA, C, CPP, GO тощо (до 10 МБ, до 3 штук)\n• Аудіо/відео: MP3, WAV, MP4, WebM (до 25 МБ, 1 файл)\n\nРазом: до 10 файлів, до 50 МБ",
+    "transcribeTooltip": "Завантажте аудіо або відеофайли для транскрипції.\n\nПідтримувані формати: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nМакс. розмір: 25 МБ\n\nТранскрипція виконується автоматично після надсилання повідомлення.",
+    "selected": "Вибрано",
+    "expandActions": "Розгорнути дії",
+    "selectTone": "Виберіть тон",
+    "selectToneDescription": "Виберіть голосовий профіль для ваших повідомлень",
+    "noToneDefault": "Без тону (за замовчуванням)",
+    "useDefaultStyle": "Використовувати стиль за замовчуванням",
+    "noTonesCreated": "Ще не створено жодного тону",
+    "createTonesHint": "Створюйте тони у Швидких діях",
+    "translateDocumentTooltip": "Перекладайте документи іншою мовою.\n\nПідтримувані формати: Word, Excel, PowerPoint, PDF, HTML, TXT\nМаксимальний розмір: 40 MB\n\nПідтримує 80+ мов і додаткові глосарії."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Додайте особисті інструкції, щоб налаштувати відповіді ШІ. Вони поєднуються з основними правилами, які забезпечують корисні, точні та безпечні відповіді.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Порада: введіть \"/\", щоб вибрати із збережених шаблонів підказок.",
+  "storageWarning": {
+    "title": {
+      "warning": "Мало вільного місця в сховищі",
+      "critical": "Майже повне сховище",
+      "emergency": "Сховище заповнене"
+    },
+    "message": {
+      "warning": "Сховище вашого браузера заповнене на {percent}%.",
+      "critical": "Сховище вашого браузера критично заповнене на {percent}%.",
+      "emergency": "Сховище вашого браузера майже повністю заповнене ({percent}%)!"
+    },
+    "consequence": "Якщо сховище буде повністю заповнене, ви можете втратити доступ до нових розмов, і додаток може працювати некоректно.",
+    "storageUsage": "Використання сховища",
+    "optionsToFreeSpace": "Варіанти звільнення місця",
+    "clearOption": {
+      "keepRecent": "Зберегти найновіші розмови",
+      "olderThan": "Видалити розмови старші ніж",
+      "days": {
+        "7": "7 днів",
+        "14": "14 днів",
+        "30": "30 днів",
+        "60": "60 днів",
+        "90": "90 днів"
+      }
+    },
+    "estimate": {
+      "willRemove": "Буде видалено {count} розмов(-и)",
+      "willFree": "Орієнтовно звільниться: {size}"
+    },
+    "action": {
+      "exportFirst": "Спочатку експортувати дані",
+      "clearNow": "Очистити зараз",
+      "dismiss": "Закрити",
+      "cancel": "Скасувати"
+    },
+    "confirm": {
+      "title": "Підтвердіть очищення",
+      "message": "Це остаточно видалить {count} розмов(-и). Дію неможливо скасувати."
+    },
+    "clearing": {
+      "title": "Очищення сховища",
+      "message": "Зачекайте, триває видалення розмов..."
+    },
+    "success": {
+      "title": "Сховище очищено",
+      "message": "Успішно видалено {count} розмов(-и), звільнено {size}."
+    },
+    "error": {
+      "title": "Не вдалося очистити",
+      "message": "Під час очищення розмов сталася помилка. Спробуйте ще раз."
+    },
+    "close": "Закрити"
+  },
+  "support": {
+    "selectOrganization": "Оберіть вашу організацію",
+    "organizationDescription": "Виберіть вашу організацію MSF, щоб побачити відповідний контакт служби підтримки",
+    "autoDetect": "Автоматичне визначення",
+    "resetToAutoDetect": "Скинути до автоматичного визначення",
+    "organizations": {
+      "USA": "MSF США",
+      "OCG": "OCG (Женева)",
+      "OCA": "OCA (Амстердам)",
+      "FIELD": "Польові/Інші"
+    },
+    "emailSupport": "Підтримка електронною поштою",
+    "emailDescription": "Зверніться до служби підтримки {organization}",
+    "escalationTitle": "Польовий персонал та інші співробітники MSF",
+    "escalationDescription": "Дотримуйтесь процедури ескалації ІТ у вашій організації для отримання підтримки",
+    "escalationShort": "Зверніться до місцевої ІТ-підтримки",
+    "escalationStep1": "Спочатку зверніться до місцевої ІТ-підтримки",
+    "escalationStep2": "Якщо питання не вирішено, зверніться до ІТ-відділу вашого Операційного центру (OC)",
+    "escalationStep3": "Якщо й досі не вирішено, OC IT може передати питання до SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Перекласти документ",
+  "documentTranslation": {
+    "title": "Переклад документів",
+    "targetLanguage": "Мова перекладу",
+    "sourceLanguage": "Мова оригіналу",
+    "searchLanguage": "Пошук мов...",
+    "noLanguagesFound": "Мови не знайдено",
+    "autoDetect": "Автовизначення, якщо не вказано",
+    "glossary": "Файл глосарію",
+    "glossaryHelp": "Завантажте глосарій у форматі CSV, TSV або XLIFF для власної термінології",
+    "uploadGlossary": "Завантажити глосарій",
+    "glossaryTooLarge": "Файл глосарію завеликий. Максимальний розмір — {maxSize}.",
+    "outputFilename": "Ім'я вихідного файлу",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "Перекласти документ",
+    "translating": "Переклад...",
+    "noDocumentError": "Оберіть документ для перекладу.",
+    "noTargetLanguageError": "Оберіть мову перекладу.",
+    "documentTooLarge": "Документ завеликий. Максимальний розмір — {maxSize}.",
+    "translationSuccess": "Документ успішно перекладений",
+    "translationFailed": "Помилка перекладу: {error}",
+    "invalidReference": "Недійсне посилання на переклад документа",
+    "documentNotFound": "Перекладений документ не знайдено або термін його дії закінчився",
+    "downloadFailed": "Не вдалося завантажити перекладений документ",
+    "downloadSuccess": "Документ успішно завантажено",
+    "translatedTo": "Перекладено на {language}",
+    "download": "Завантажити",
+    "downloading": "Завантаження...",
+    "expired": "Термін дії цього перекладу закінчився",
+    "expiresSoon": "Термін дії закінчується через {days} днi(в) — завантажте найближчим часом",
+    "expires": "Доступно протягом {days} днiв",
+    "learnMore": "Дізнатися більше",
+    "advancedOptions": "Додаткові параметри"
   }
 }

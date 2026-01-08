@@ -324,7 +324,18 @@ describe('conversationExport', () => {
         mockConversation.temperature,
       );
       expect(result.conversation?.folderId).toBe(mockConversation.folderId);
-      expect(result.conversation?.messages).toEqual(mockConversation.messages);
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(result.conversation?.messages).toHaveLength(2);
+      // User message preserved as-is
+      expect(result.conversation?.messages[0]).toEqual(
+        mockConversation.messages[0],
+      );
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = result.conversation?.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.activeIndex).toBe(0);
+      expect(assistantGroup.versions[0].content).toBe('Hi there!');
+      expect(assistantGroup.versions[0].messageType).toBe(MessageType.TEXT);
     });
 
     it('should handle conversation with folderId', () => {
@@ -393,9 +404,19 @@ describe('conversationExport', () => {
       const result = validateAndPrepareImport(exportData, []);
 
       expect(result.isValid).toBe(true);
-      expect(result.conversation?.messages).toEqual(
-        complexConversation.messages,
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(result.conversation?.messages).toHaveLength(3);
+      // User messages preserved as-is
+      expect(result.conversation?.messages[0]).toEqual(
+        complexConversation.messages[0],
       );
+      expect(result.conversation?.messages[2]).toEqual(
+        complexConversation.messages[2],
+      );
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = result.conversation?.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.versions[0].content).toBe('Hi!');
     });
   });
 });

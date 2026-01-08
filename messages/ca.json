@@ -2,7 +2,7 @@
   "OpenAI API Key Required": "Cal la clau d'API d'OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Si us plau, introdueix la teva clau d'API d'OpenAI a la cantonada inferior esquerra de la barra lateral.",
   "Stop Generating": "Parar de generar",
-  "Prompt limit is {{maxLength}} characters": "El límit del missatge és de {{maxLength}} caràcters",
+  "Prompt limit is {{maxLength}} characters": "El límit del prompt és de {{maxLength}} caràcters",
   "System Prompt": "Missatge del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ets ChatGPT, un model de llenguatge gran entrenat per OpenAI. Segueix les instruccions de l'usuari amb cura. Respon utilitzant markdown.",
   "Enter a prompt": "Introdueix un missatge",
@@ -128,7 +128,7 @@
   "Description": "Descripció",
   "A description for your prompt_": "Descripció del teu prompt.",
   "Prompt": "missatge",
-  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza {{}} per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza '{{}}' per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
   "Save": "Desa",
   "A name for your prompt_": "Un nom per al teu suggeriment.",
   "New chat": "Nova conversa",
@@ -226,7 +226,7 @@
   "Options": "Opcions",
   "Are you sure you want to delete this folder?": "Esteu segur que voleu eliminar aquesta carpeta?",
   "New Prompt": "Nou avís",
-  "Edit Prompt": "Edita l'avís",
+  "Edit Prompt": "Editar avís",
   "Prompt name": "Nom de l'avís",
   "Prompt content": "Contingut de l'avís",
   "Are you sure you want to delete this prompt?": "Esteu segur que voleu eliminar aquest avís?",
@@ -311,7 +311,19 @@
   "Team Templates": "Plantilles d'equip",
   "selected": "seleccionat",
   "folders": "carpetes",
-  "agents": "agents",
+  "agents": {
+    "exportAgent": "Exportar agent",
+    "editAgent": "Editar agent",
+    "agentName": "Nom de l'agent",
+    "myResearchAssistant": "El meu assistent de recerca",
+    "agentId": "ID d'agent",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Descripció (opcional)",
+    "descriptionPlaceholder": "Agent especialitzat per a tasques de recerca...",
+    "baseModel": "Model base",
+    "formatDescription": "Format: asst_xxxxx (de MSF AI Assistant Foundry)",
+    "importantInfo": "Aquest agent tindrà accés al context de la conversa i podrà utilitzar les mateixes eines que els models estàndard. Assegureu-vos que l'ID de l'agent sigui correcte ja que no es pot canviar més endavant."
+  },
   "Quick Actions": "Accions ràpides",
   "Type / in chat to access your prompts": "Escriu / al xat per accedir als teus avisos",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Escriu / al xat, selecciona el teu avís i omple les variables quan se't demani",
@@ -358,7 +370,6 @@
   "Custom Agents": "Agents personalitzats",
   "Delete template and all its items": "Eliminar plantilla i tots els seus elements",
   "Description (Optional)": "Descripció (opcional)",
-  "Edit Prompt": "Editar avís",
   "Edit Tone": "Editar to",
   "Email Response Template": "Plantilla de resposta de correu electrònic",
   "Example Prompt": "Exemple d'avís",
@@ -418,7 +429,6 @@
   "msf_logo_alt": "Logotip de MSF",
   "collapse_sidebar": "Reduir barra lateral",
   "expand_sidebar": "Expandir barra lateral",
-  "Voice Guidelines": "Directrius de veu",
   "Please upload some content or describe the tone you want": "Si us plau, carrega contingut o descriu el to que vols",
   "Untitled Tone": "To sense títol",
   "Failed to analyze tone": "Error en analitzar el to",
@@ -446,15 +456,43 @@
   "enterTagsPlaceholder": "Afegeix etiquetes (prem Enter)",
   "enterPromptNamePlaceholder": "p. ex., Resposta de correu electrònic",
   "enterPromptDescriptionPlaceholder": "Per a què és aquest avís?",
-  "enterPromptContentPlaceholder": "Escriu el teu avís aquí. Utilitza {{variable}} per al contingut dinàmic.",
+  "enterPromptContentPlaceholder": "Escriu el teu avís aquí. Utilitza '{{variable}}' per al contingut dinàmic.",
   "common": {
-    "contact": "Contacte"
+    "contact": "Contacte",
+    "close": "Tanca",
+    "remove": "Elimina",
+    "tryAgain": "Torneu-ho a provar",
+    "menu": "Menú",
+    "copyToClipboard": "Copia al porta-retalls",
+    "toggleDropdownMenu": "Mostra o oculta el menú desplegable",
+    "toggleMenu": "Mostra o oculta el menú",
+    "closeModal": "Tanca la finestra modal",
+    "dismissBanner": "Descarta el bàner",
+    "searchEllipsis": "Cerca...",
+    "addTagEllipsis": "Afegeix una etiqueta...",
+    "msfLogo": "Logotip de MSF",
+    "importantInformation": "Informació important",
+    "noResults": "No s'han trobat resultats",
+    "confirm": "Confirma",
+    "cancel": "Cancel·la",
+    "discard": "Descarta",
+    "keepEditing": "Continua editant",
+    "yes": "Sí",
+    "no": "No"
   },
   "errors": {
     "unexpectedErrorOccurred": "S'ha produït un error inesperat",
     "criticalErrorReload": "S'ha produït un error crític. Torneu a carregar la pàgina.",
     "reloadPage": "Torna a carregar la pàgina",
-    "persistContactSupport": "Si aquest problema persisteix, poseu-vos en contacte amb el suport"
+    "persistContactSupport": "Si aquest problema persisteix, poseu-vos en contacte amb el suport",
+    "somethingWentWrong": "Alguna cosa ha anat malament",
+    "anErrorOccurred": "S'ha produït un error",
+    "copyErrorMessage": "Copia el missatge d'error",
+    "contactSupport": "Si el problema persisteix, contacteu amb el suport a",
+    "dismissError": "Descarta l’error",
+    "applicationError": "Error de l'aplicació",
+    "chatLoadError": "S'ha produït un error en carregar la conversa",
+    "anErrorOccurredTryAgain": "S'ha produït un error. Torneu-ho a provar."
   },
   "auth": {
     "authenticationError": "Error d'autenticació",
@@ -523,7 +561,53 @@
     "fullSizePreview": "Vista prèvia a mida completa",
     "enterSearchQueryPlaceholder": "Introduïu la vostra consulta o pregunta de cerca...",
     "errorFetchingUrl": "S'ha produït un error en recuperar el contingut de l'URL",
-    "errorInitiatingSearch": "S'ha produït un error en iniciar la cerca web"
+    "errorInitiatingSearch": "S'ha produït un error en iniciar la cerca web",
+    "regenerate": "Regenera",
+    "modelSwitchPrompt": "{original} ha fallat, però {fallback} ha tingut èxit. Voleu canviar de model?",
+    "keepOriginalModel": "Mantén {model}",
+    "switchToModel": "Canvia a {model}",
+    "alwaysSwitchToModel": "Canvia automàticament sempre",
+    "translateMessage": "Traduir missatge",
+    "translating": "Traducció...",
+    "translationError": "La traducció ha fallat",
+    "showOriginal": "Mostra l’original",
+    "translatedTo": "Traduït a {language}",
+    "searchLanguages": "Cerca idiomes...",
+    "selectLanguage": "Selecciona un idioma",
+    "audioFromOriginal": "L’àudio prové del text original",
+    "audioFromTranslation": "L’àudio prové de la traducció a {language}",
+    "thinking": "Pensant...",
+    "viewReasoningProcess": "Veure el procés de raonament",
+    "collapseThinking": "Redueix el raonament",
+    "expandThinking": "Amplia el raonament",
+    "actionsDisabledForEmbed": "Utilitzeu els controls del contingut incrustat a dalt",
+    "loadingMessages": {
+      "transcribingAndProcessing": "Transcrivint i processant...",
+      "transcribingAudio": "Transcrivint l'àudio...",
+      "analyzingFiles": "Analitzant fitxers...",
+      "analyzingDocuments": "Analitzant documents...",
+      "analyzingDocument": "Analitzant document...",
+      "analyzingImages": "Analitzant imatges...",
+      "analyzingImage": "Analitzant imatge..."
+    },
+    "contentDescription": {
+      "text": "text",
+      "imagesCount": "{count} imatge(es)",
+      "filesCount": "{count} fitxer(s)",
+      "audioVideo": "àudio/vídeo",
+      "empty": "buit"
+    },
+    "discardChanges": "Descarta els canvis",
+    "discardChangesMessage": "Teniu canvis sense desar. Esteu segur que voleu descartar-los?",
+    "voiceInputStarting": "S'està iniciant...",
+    "voiceInputRecording": "Enregistrant...",
+    "voiceInputTapToStop": "Toca per aturar",
+    "stopRecording": "Atura l'enregistrament",
+    "voiceInput": "Entrada de veu",
+    "microphoneAccessDenied": "L'accés al micròfon està denegat. Activeu-lo a la configuració del vostre navegador.",
+    "microphoneAccessError": "Error d'accés al micròfon: {message}",
+    "voiceInputTranscribing": "Transcripció en curs...",
+    "ttsRightClickHint": "Clic dret per opcions de veu"
   },
   "sidebar": {
     "collapseSidebar": "Plegar barra lateral",
@@ -531,29 +615,135 @@
     "quickActionsTitle": "Accions ràpides",
     "quickActions": "Accions ràpides"
   },
-  "agents": {
-    "exportAgent": "Exportar agent",
-    "editAgent": "Editar agent",
-    "agentName": "Nom de l'agent",
-    "myResearchAssistant": "El meu assistent de recerca",
-    "agentId": "ID d'agent",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Descripció (opcional)",
-    "descriptionPlaceholder": "Agent especialitzat per a tasques de recerca...",
-    "baseModel": "Model base",
-    "formatDescription": "Format: asst_xxxxx (de MSF AI Assistant Foundry)",
-    "importantInfo": "Aquest agent tindrà accés al context de la conversa i podrà utilitzar les mateixes eines que els models estàndard. Assegureu-vos que l'ID de l'agent sigui correcte ja que no es pot canviar més endavant."
-  },
   "prompts": {
-    "buildReusablePrompts": "Crear indicacions reutilitzables amb assistència d'IA"
+    "buildReusablePrompts": "Crear indicacions reutilitzables amb assistència d'IA",
+    "noToneDefault": "Sense to (per defecte)",
+    "tagHelp": "Ajuda d’etiquetes",
+    "tagHelpContent": "Utilitzeu etiquetes per categoritzar i trobar ràpidament els vostres indicadors. Exemples:",
+    "tagExamples": {
+      "email": "correu electrònic",
+      "marketing": "màrqueting",
+      "technical": "tècnic",
+      "customerSupport": "atenció-al-client"
+    },
+    "variableHelp": "Ajuda de variables",
+    "variableHelpIntro": "Utilitzeu variables per fer que els vostres indicadors siguin dinàmics:",
+    "requiredVariables": "Variables requerides (sense valor per defecte):",
+    "optionalVariables": "Variables opcionals (amb valor per defecte):",
+    "userMustProvide": "L'usuari ha de proporcionar un valor",
+    "userCanProvide": "L'usuari pot proporcionar un valor o s'utilitza el valor per defecte",
+    "example": "Exemple:",
+    "variableExampleText": "Escriu un correu electrònic '{{tone:professional}}' a '{{recipient}}' sobre '{{topic}}' en '{{language:English}}'",
+    "detectedVariables": "Variables detectades",
+    "required": "Requerit",
+    "aiAssistant": "Assistant d’IA",
+    "whatToImprove": "Què voleu millorar?",
+    "whatShouldPromptDo": "Què hauria de fer aquest indicador?",
+    "improvePlaceholder": "p. ex., Fes-lo més professional, afegeix exemples, millora la claredat...",
+    "generatePlaceholder": "p. ex., Genera una plantilla de correu electrònic professional amb variables per a destinatari i tema...",
+    "addContextOptional": "Afegeix context (opcional)",
+    "revising": "Revisant...",
+    "generating": "Generant...",
+    "reviseWithAI": "Revisa amb IA",
+    "generatePrompt": "Genera un suggeriment",
+    "revisionComplete": "Revisió completada",
+    "generationComplete": "Generació completada",
+    "revisedPrompt": "Suggeriment revisat:",
+    "generatedPrompt": "Suggeriment generat:",
+    "applyRevision": "Aplica aquesta revisió",
+    "useThisPrompt": "Utilitza aquest suggeriment",
+    "improvementsMade": "Millores realitzades:",
+    "tips": "Consells:",
+    "howAICanHelp": "Com pot ajudar la IA",
+    "helpItems": {
+      "improveClarity": "Millora la claredat i l'estructura",
+      "suggestVariables": "Suggereix variables útils",
+      "addContext": "Afegeix context i exemples",
+      "optimize": "Optimitza per obtenir millors resultats"
+    },
+    "savePrompt": "Desa suggeriment",
+    "add": "Afegeix"
   },
   "tones": {
     "createCustomVoiceProfile": "Crear un perfil de veu personalitzat amb assistència d'IA",
-    "examplePlaceholder": "per exemple, Crear un to de suport al client professional però amigable..."
+    "examplePlaceholder": "per exemple, Crear un to de suport al client professional però amigable...",
+    "tagHelp": "Ajuda de les etiquetes",
+    "tagHelpContent": "Utilitza etiquetes per categoritzar i trobar ràpidament els teus tons. Exemples:",
+    "tagExamples": {
+      "professional": "professional",
+      "casual": "informal",
+      "technical": "tècnic",
+      "marketing": "màrqueting"
+    },
+    "add": "Afegeix",
+    "aiToneAnalyzer": "Analitzador de to amb IA",
+    "describeToneToCreate": "Descriu el to que vols crear",
+    "uploadContentSamples": "Puja mostres de contingut",
+    "analyzing": "S'està analitzant...",
+    "analyzeToneWithAI": "Analitza el to amb IA",
+    "analysisComplete": "Anàlisi completada",
+    "generatedVoiceGuidelines": "Directrius de veu generades:",
+    "examplePhrases": "Frases d'exemple:",
+    "suggestedTags": "Etiquetes suggerides:",
+    "applyThisAnalysis": "Aplica aquesta anàlisi",
+    "detectedCharacteristics": "Característiques detectades:",
+    "howAICanHelp": "Com pot ajudar la IA",
+    "helpItems": {
+      "transcribe": "Transcriu contingut d'àudio/vídeo",
+      "analyzeContent": "Analitza les teves mostres de contingut",
+      "extractPatterns": "Extreu patrons de to i estil",
+      "generateGuidelines": "Genera directrius de veu",
+      "suggestTags": "Suggereix etiquetes rellevants"
+    },
+    "saveTone": "Desa el to"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Veure diagrama de flux tècnic"
+    "viewTechnicalFlowDiagram": "Veure diagrama de flux tècnic",
+    "backToChat": "Torna al xat",
+    "title": "Centre d'ajuda",
+    "subtitle": "Troba respostes, informa't sobre la privacitat i obtén suport",
+    "faq": {
+      "title": "Preguntes freqüents",
+      "description": "Troba respostes a preguntes habituals sobre l'ús de l'Assistent d'IA",
+      "articles": "articles",
+      "searchPlaceholder": "Cerca a les FAQ...",
+      "noResults": "Cap FAQ coincideix amb la teva cerca",
+      "noResultsHint": "Prova amb un altre terme de cerca"
+    },
+    "privacy": {
+      "title": "Privacitat i dades",
+      "description": "Descobreix com s'emmagatzemen i es protegeixen les teves dades",
+      "topics": "temes",
+      "searchPlaceholder": "Cerca temes de privacitat...",
+      "noResults": "Cap tema de privacitat coincideix amb la teva cerca",
+      "noResultsHint": "Prova amb un altre terme de cerca",
+      "bannerTitle": "La teva privacitat importa",
+      "bannerDescription": "Totes les converses s'emmagatzemen localment al teu dispositiu. El processament de dades es fa dins dels sistemes de MSF utilitzant la infraestructura d'Azure.",
+      "localStorageOnly": "Només emmagatzematge local",
+      "msfControlled": "Controlat per MSF",
+      "noPersonalData": "Sense dades personals",
+      "noSensitiveOps": "Sense operacions sensibles"
+    },
+    "contact": {
+      "title": "Contacte i recursos",
+      "description": "Contacta amb el nostre equip i accedeix a enllaços útils",
+      "supportAvailable": "Suport disponible",
+      "submitRequest": "Envia una sol·licitud de suport",
+      "getHelp": "Obteniu ajuda del nostre equip",
+      "requestDescription": "Necessites ajuda o vols donar-nos el teu parer? Fes clic a continuació per obrir el formulari de suport.",
+      "openSupportForm": "Obre el formulari de suport",
+      "otherWays": "Altres maneres de contactar-nos",
+      "emailSupport": "Suport per correu electrònic",
+      "emailDescription": "Envia'ns un correu electrònic per preguntes, suggeriments o incidències tècniques"
+    },
+    "resources": {
+      "title": "Altres recursos",
+      "portalTitle": "Portal AI Accelerator",
+      "portalDescription": "Documentació, novetats de projectes i materials de formació",
+      "githubTitle": "Repositori de codi obert",
+      "githubDescription": "Consulteu el codi, reporteu errors i col·laboreu a GitHub"
+    }
   },
   "settings": {
     "Settings": "Configuració",
@@ -621,9 +811,845 @@
     "FAQs, privacy policy, and guides": "Preguntes freqüents, política de privadesa i guies",
     "Contact Support": "Contactar amb el suport",
     "Popular Questions": "Preguntes populars",
-    "View all FAQs": "Veure totes les preguntes freqüents"
+    "View all FAQs": "Veure totes les preguntes freqüents",
+    "Delete legacy data after migration": "Elimina les dades antigues després de la migració",
+    "frees up storage space": "allibera espai d'emmagatzematge",
+    "Legacy data deleted": "Dades antigues eliminades",
+    "freed": "alliberat",
+    "Conversations": "Converses",
+    "Legacy": "Antic",
+    "Other": "Altres",
+    "Loading": "Carregant",
+    "Legacy Data Detected": "S'han detectat dades antigues",
+    "legacyDataDescription": "Tens {size} de dades d'una versió anterior. Pots migrar-les, exportar-les o eliminar-les per alliberar espai.",
+    "legacyDeleteSuccess": "S'han eliminat correctament les dades antigues i s'ha alliberat {size}.",
+    "legacyDeleteError": "No s'han pogut eliminar les dades antigues. Torna-ho a intentar.",
+    "Explore solutions": "Explora solucions",
+    "Migrate to Current Format": "Migra al format actual",
+    "Export Legacy Data": "Exporta dades antigues",
+    "Delete Legacy Data": "Elimina dades antigues",
+    "deleteLegacyConfirm": "Segur que vols eliminar totes les dades antigues? Aquesta acció no es pot desfer.",
+    "Deleting": "Eliminant",
+    "Confirm Delete": "Confirma l'eliminació",
+    "Cancel": "Cancel·la",
+    "Custom Instructions": "Instruccions personalitzades",
+    "Personalization": "Personalització",
+    "Display Name": "Nom mostrat",
+    "Display Name Description": "Escull com vols que aparegui el teu nom a les salutacions i a tota l’aplicació",
+    "First Name": "Nom",
+    "Last Name": "Cognom",
+    "Full Name": "Nom complet",
+    "Custom": "Personalitzat",
+    "None": "Cap",
+    "Custom Display Name": "Nom mostrat personalitzat",
+    "Custom Display Name Placeholder": "Introdueix el nom que prefereixis",
+    "howShouldWeAddressYou": "Com t’hem d’anomenar?",
+    "displayNamePreview": "Previsualització: \"{greeting}\"",
+    "Streaming Speed": "Velocitat de transmissió",
+    "Slow": "Lenta",
+    "Normal": "Normal",
+    "Fast": "Ràpida",
+    "Controls how smoothly text appears during AI responses": "Controla com de suaument apareix el text durant les respostes de la IA",
+    "aboutYou": {
+      "title": "Sobre tu",
+      "shareBasicInfo": "Comparteix informació bàsica amb la IA",
+      "shareBasicInfoDescription": "Quan estigui activat, la IA sabrà el teu nom, càrrec i departament des del teu perfil",
+      "preferredName": "Nom preferit",
+      "preferredNamePlaceholder": "Com t'agradaria que et cridessin?",
+      "preferredNameDescription": "Substitueix el nom que es mostra. Deixa-ho en blanc per utilitzar el nom del perfil",
+      "additionalContext": "Context addicional",
+      "additionalContextPlaceholder": "Per exemple, treballo en operacions de camp, prefereixo respostes concises, sovint pregunto sobre protocols mèdics...",
+      "additionalContextDescription": "Qualsevol altra informació que vulguis que la IA sàpiga sobre tu",
+      "preferredNameDescriptionWithSync": "Com s'adreçarà la IA a tu. Deixa-ho en blanc per utilitzar el nom visible de la configuració general."
+    },
+    "displayNameUIOnly": "Això controla com apareix el teu nom a l'aplicació. La IA no el veurà tret que activis el compartir a la configuració del xat.",
+    "tts": {
+      "title": "Text a veu",
+      "language": "Idioma",
+      "voice": "Veu",
+      "multilingualVoices": "Veus multilingües",
+      "voices": "Veus",
+      "rate": "Velocitat",
+      "pitch": "To",
+      "quality": "Qualitat de l’àudio",
+      "qualityDescription": "Una qualitat més alta produeix un àudio millor però utilitza més amplada de banda",
+      "preview": "Previsualitza",
+      "previewing": "Reproduint...",
+      "previewFailed": "No s’ha pogut generar l’àudio de previsualització",
+      "previewText": "Aquesta és una previsualització de la configuració de veu seleccionada.",
+      "reset": "Restableix",
+      "default": "Per defecte",
+      "slower": "Més lent",
+      "faster": "Més ràpid",
+      "lower": "Més baix",
+      "higher": "Més alt",
+      "selectedVoice": "Seleccionada",
+      "noVoicesAvailable": "No hi ha veus disponibles per a aquest idioma",
+      "quickSettings": "Configuració de veu",
+      "overrideForThisMessage": "Ajusta la configuració per a aquest missatge",
+      "speakWithSettings": "Reprodueix"
+    },
+    "Model Response Settings Description": "Configura els paràmetres predeterminats per a les respostes dels models d’IA. Cada model utilitza una configuració diferent.",
+    "Default Reasoning Effort": "Esforç de raonament predeterminat",
+    "reasoningEffortDescription": "Controla la profunditat del raonament dels models. Un esforç més alt produeix una anàlisi més exhaustiva.",
+    "Default Verbosity": "Verbositats predeterminades",
+    "verbosityDescription": "Controla el nivell de detall de la resposta per als models GPT-5."
   },
   "notFound": {
     "lostDog": "Gos perdut"
+  },
+  "Saved Prompts": "Prompts desats",
+  "New conversation": "Nova conversa",
+  "Edit": "Edita",
+  "Chat Settings": "Configuració del xat",
+  "Default System Prompt": "Prompt de sistema per defecte",
+  "Email": "Correu electrònic",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "El límit del prompt és de {{maxLength}} caràcters. N'heu introduït {{valueLength}}.",
+  "Run Typewriter Intro": "Executa la introducció Typewriter",
+  "Conversation exported successfully": "Conversa exportada correctament",
+  "Failed to export conversation": "No s'ha pogut exportar la conversa",
+  "Conversation imported successfully": "Conversa importada correctament",
+  "Failed to import conversation": "No s'ha pogut importar la conversa",
+  "Invalid conversation file": "Fitxer de conversa no vàlid",
+  "Folder exported with {count} conversations": "Carpeta exportada amb {count} converses",
+  "Failed to export folder": "No s'ha pogut exportar la carpeta",
+  "Folder not found": "Carpeta no trobada",
+  "Folder imported with {count} conversations": "Carpeta importada amb {count} converses",
+  "Invalid folder file": "Fitxer de carpeta no vàlid",
+  "Failed to import file": "No s'ha pogut importar el fitxer",
+  "Unrecognized file format": "Format de fitxer no reconegut",
+  "transcription": {
+    "transcribesOnSend": "Transcriu en enviar",
+    "addInstructions": "Afegeix instruccions",
+    "instructionsPlaceholder": "Context per millorar la precisió (p. ex., noms, termes)",
+    "languages": {
+      "autoDetect": "Detecta automàticament",
+      "afrikaans": "Africà",
+      "arabic": "Àrab",
+      "armenian": "Armeni",
+      "azerbaijani": "Azerbaidjanès",
+      "belarusian": "Bielorús",
+      "bosnian": "Bosnià",
+      "bulgarian": "Búlgar",
+      "burmese": "Birmà",
+      "catalan": "Català",
+      "chinese": "Xinès",
+      "croatian": "Croat",
+      "czech": "Txec",
+      "danish": "Danès",
+      "dutch": "Neerlandès",
+      "english": "Anglès",
+      "estonian": "Estonià",
+      "finnish": "Finès",
+      "french": "Francès",
+      "galician": "Gallec",
+      "german": "Alemany",
+      "greek": "Grec",
+      "hebrew": "Hebreu",
+      "hindi": "Hindi",
+      "hungarian": "Hongarès",
+      "icelandic": "Islandès",
+      "indonesian": "Indonesi",
+      "italian": "Italià",
+      "japanese": "Japonès",
+      "kannada": "Kanès",
+      "kazakh": "Kazakh",
+      "korean": "Coreà",
+      "latvian": "Letó",
+      "lithuanian": "Lituà",
+      "macedonian": "Macedoni",
+      "malay": "Malai",
+      "maori": "Maori",
+      "marathi": "Marathi",
+      "nepali": "Nepalès",
+      "norwegian": "Noruec",
+      "persian": "Persa",
+      "polish": "Polonès",
+      "portuguese": "Portuguès",
+      "romanian": "Romanès",
+      "russian": "Rus",
+      "serbian": "Serbi",
+      "slovak": "Eslovac",
+      "slovenian": "Eslovè",
+      "spanish": "Espanyol",
+      "swahili": "Swahili",
+      "swedish": "Suec",
+      "tagalog": "Tagal",
+      "tamil": "Tàmil",
+      "thai": "Tai",
+      "turkish": "Turc",
+      "ukrainian": "Ucraïnès",
+      "urdu": "Urdú",
+      "vietnamese": "Vietnamita",
+      "welsh": "Gal·lès"
+    },
+    "inProgress": "Transcripció en curs",
+    "processingFile": "S'està processant: {filename}",
+    "timeRemaining": "Temps restant: {time}",
+    "maxDurationNote": "Els fitxers grans poden trigar fins a {minutes} minuts",
+    "timedOut": "La transcripció ha superat el temps límit després de {minutes} minuts",
+    "timedOutToast": "Temps límit excedit a la transcripció: {filename}",
+    "failed": "La transcripció ha fallat: {error}",
+    "failedToast": "La transcripció ha fallat: {filename}",
+    "unknownError": "Error desconegut",
+    "completed": "Transcripció finalitzada",
+    "completedToast": "Transcripció finalitzada: {filename}",
+    "placeholder": "[Transcripció en curs: {filename}]",
+    "loadingTranscript": "S'està carregant la transcripció per a {filename}...",
+    "expiredOrDeleted": "Aquesta transcripció ha caducat o ha estat eliminada.",
+    "fetchError": "No s'ha pogut carregar la transcripció. Torna-ho a intentar.",
+    "transcriptExpired": "La transcripció de {filename} ha caducat. Les transcripcions s'eliminen automàticament després de {days} dies per motius de privadesa.",
+    "expirationWarning": "La transcripció de {filename} caducarà en {days} dia(es). Copia el contingut si el vols conservar."
+  },
+  "transcriptionComplete": "Transcripció completa! Text afegit a l'entrada del xat.",
+  "No prompts found": "No s'ha trobat cap prompt",
+  "Select a prompt to view details": "Seleccioneu un prompt per veure'n els detalls",
+  "Content": "Contingut",
+  "importBackupParseError": "No s'ha pogut analitzar el fitxer de còpia de seguretat. Assegureu-vos que sigui JSON vàlid.",
+  "emptyState": {
+    "greeting": "Com et puc ajudar?",
+    "greetingWithName": "Com et puc ajudar, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Crea diagrames",
+        "prompt": "Mostra'm com pots crear diagrames i fluxogrames. Quins tipus de processos, fluxos de treball o sistemes pots ajudar-me a visualitzar? Dona'm alguns exemples."
+      },
+      "draftContent": {
+        "title": "Redacta contingut professional",
+        "prompt": "Necessito ajuda per redactar documents professionals: correus electrònics, informes, resums. Pots mostrar-me exemples de com pots ajudar amb diferents tipus d'escriptura empresarial?"
+      },
+      "analyzeInformation": {
+        "title": "Analitza informació",
+        "prompt": "Com pots ajudar-me a analitzar dades o informació? Mostra'm diferents maneres de desglossar xifres, trobar patrons o extreure conclusions de documents o conjunts de dades."
+      },
+      "planOrganize": {
+        "title": "Planifica i organitza",
+        "prompt": "Pots ajudar-me a planificar projectes o organitzar la feina? Dona'm exemples de com podries crear cronogrames, agendes o plans de projecte amb diferents estructures."
+      },
+      "brainstormIdeas": {
+        "title": "Genera idees",
+        "prompt": "Vull fer una pluja d'idees per trobar solucions a un problema. Mostra'm com enfoques el pensament creatiu i la generació d'idees: quines preguntes faries i com explores possibilitats?"
+      },
+      "buildPresentations": {
+        "title": "Crea presentacions",
+        "prompt": "Com pots ajudar-me a crear presentacions? Mostra'm exemples de diferents estructures, suggeriments visuals i com organitzes la informació segons el públic."
+      },
+      "workWithCode": {
+        "title": "Treu profit del codi",
+        "prompt": "Pots ajudar amb codi o scripts? Mostra'm exemples: ja sigui escrivint codi nou, depurant errors o explicant pas a pas com funciona alguna cosa."
+      },
+      "decisionSupport": {
+        "title": "Suport a la presa de decisions",
+        "prompt": "He de prendre una decisió però no sé com avaluar les opcions. Pots mostrar-me diferents marcs o enfocaments per ajudar a analitzar alternatives?"
+      },
+      "summarizeSynthesize": {
+        "title": "Resum i síntesi",
+        "prompt": "Com ajudes a resumir documents extensos o sintetitzar informació de diverses fonts? Mostra'm exemples de diferents formats de resum i nivells de detall."
+      },
+      "explainTopics": {
+        "title": "Explica temes complexes",
+        "prompt": "Pots explicar conceptes complicats de manera senzilla? Mostra'm com desglosses idees complexes, utilitzes analogies i adaptes les explicacions segons el nivell de coneixement."
+      },
+      "createSchedules": {
+        "title": "Crea horaris",
+        "prompt": "Necessito ajuda per organitzar el temps i crear horaris. Mostra'm diferents maneres d'estructurar agendes, calendaris o plans basats en el temps, amb exemples."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Models",
+      "agents": "Agents"
+    },
+    "sections": {
+      "baseModels": "Models base"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Funció avançada",
+      "description": "Crea i gestiona agents d'IA personalitzats amb capacitats especialitzades. Aquests agents funcionen a la instància MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Funció avançada - Cal coordinació amb l'equip tècnic de l'AI Assistant",
+      "advancedFeatureWarning": "Els agents personalitzats només funcionen amb la instància MSF AI Assistant Foundry. Els ID d'agent han de ser creats per l'equip tècnic de l'AI Assistant en aquesta instància específica i coordinats amb vostè abans de l'ús.",
+      "createNewAgent": "Crea un nou agent personalitzat",
+      "noAgentsTitle": "Encara no hi ha agents personalitzats",
+      "noAgentsDescription": "Crea el teu primer agent personalitzat per ampliar les capacitats de l'IA amb eines i comportaments especialitzats."
+    },
+    "advancedOptions": {
+      "title": "Opcions avançades",
+      "temperature": "Temperatura",
+      "fixedTemperatureNote": "Nota: Aquest model utilitza valors de temperatura fixos per garantir un rendiment consistent.",
+      "reasoningEffort": "Esforç de raonament",
+      "minimal": "Mínim",
+      "low": "Baix",
+      "medium": "Mitjà",
+      "high": "Alt",
+      "verbosity": "Verbosiat"
+    },
+    "searchMode": {
+      "title": "Mode de cerca",
+      "subtitle": "Utilitzarà la cerca web quan sigui necessari",
+      "routingLabel": "Enrutament de la cerca:",
+      "whatsDifference": "Quina diferència hi ha?",
+      "privacyFocused": "Enfocat a la privacitat (per defecte)",
+      "privacyFocusedDescription": "Més lent però més privat",
+      "azureAgentMode": "Mode Azure AI Agent",
+      "azureAgentModeDescription": "Més ràpid però desa dades de la conversa al núvol",
+      "privacyInfoTitle": "Informació important sobre la privacitat",
+      "privacyInfoDescription": "La teva conversa sencera s'enviarà a l'agent d'Azure AI Foundry.",
+      "learnMoreDataStorage": "Més informació sobre l'emmagatzematge de dades",
+      "privacyEnabled": "S'ha activat la cerca amb enfocament en la privadesa",
+      "learnPrivacy": "Descobreix com es protegeix la teva privadesa"
+    },
+    "customAgent": {
+      "label": "Agent personalitzat:",
+      "description": "Aquest agent s'executa a la instància Foundry de l'MSF AI Assistant, amb les eines sempre activades.",
+      "webSearch": "Cerca web en temps real",
+      "codeInterpreter": "Intèrpret de codi i anàlisi d'arxius"
+    },
+    "header": {
+      "backToModels": "Torna als models",
+      "knowledgeCutoff": "Límit de coneixement: {cutoff}",
+      "knowledgeCutoffLabel": "Límit de coneixement"
+    },
+    "modelTypes": {
+      "foundational": "fonamental",
+      "omni": "omni",
+      "reasoning": "raonament",
+      "agent": "agent"
+    },
+    "orderMode": {
+      "label": "Ordenar per",
+      "usage": "Més utilitzats",
+      "name": "Nom (A-Z)",
+      "cutoff": "Models més recents",
+      "custom": "Personalitzat",
+      "edit": "Editar",
+      "done": "Fet",
+      "reset": "Restableix",
+      "resetTooltip": "Restableix l'ordre predeterminat"
+    },
+    "knowledgeCutoff": {
+      "realtime": "Cerca web en temps real"
+    },
+    "modelTypeIcons": {
+      "foundational": "Model ràpid i eficient d'ús general",
+      "reasoning": "Capacitat de raonament ampliada per a problemes complexos",
+      "omni": "Model multimodal amb capacitats àmplies",
+      "agent": "Agent amb eines en temps real i accés web"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Model d'IA basat en GPT-4.1 amb cerca web en temps real via Bing. Proporciona informació actualitzada, verificació de fets i coneixement d'esdeveniments recents. Ideal per a investigació que requereixi informació recent, anàlisi de notícies i verificació de dades.",
+      "knowledgeCutoff": "Cerca web en temps real"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "El model més avançat d'OpenAI, excel·lent en raonament complex, generació de codi i resolució de problemes tècnics. Ideal per a tasques analítiques, reptes de programació, recerca i explicacions detallades. Permet ajustar l'esforç de raonament i la llargada de la resposta.",
+      "knowledgeCutoff": "6 d’agost 2025 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Variant més ràpida i econòmica de GPT-5, optimitzada per a la velocitat mantenint alta qualitat. Perfecta per a tasques diàries, consultes ràpides, ús d'eines i aplicacions que requereixen resposta instantània. Excel·lent equilibri entre rendiment i eficiència.",
+      "knowledgeCutoff": "6 d’agost 2025 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Versió especialitzada de GPT-5 optimitzada per a interaccions conversacionals i intel·ligència emocional. Excel·lent en comunicació empàtica, suport per a la salut mental, escriptura creativa, generació d'idees i diàleg natural. Ideal per a converses informals, escenaris de suport i tasques que requereixen consciència emocional.",
+      "knowledgeCutoff": "1 d’octubre 2025 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "El model de raonament més avançat d'OpenAI, amb capacitats innovadores de resolució de problemes. Excel·lent per a matemàtiques complexes, raonament científic, reptes de programació i tasques lògiques de diversos passos. Finestra de context ampliada a 200.000 tokens. Permet controlar l'esforç de raonament.",
+      "knowledgeCutoff": "8 d’abril 2025 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Model ràpid i rendible de Meta. Ideal per a tasques quotidianes com escriptura, resums i suport bàsic de programació. Bona combinació de velocitat i qualitat per a treballs rutinaris.",
+      "knowledgeCutoff": "7 de maig 2025 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Especialista en raonament que mostra el procés pas a pas. Excel·lent per a problemes de matemàtiques, trencaclosques de lògica i comprensió de conceptes complexos. Vegeu com resol problemes en temps real.",
+      "knowledgeCutoff": "20 de gener 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Model versàtil especialment competent en programació i redacció tècnica. Ideal per depurar codi, escriure documentació i explicar conceptes tècnics. Ràpid i fiable per a treball de desenvolupament.",
+      "knowledgeCutoff": "16 d’abril 2025 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Model versàtil de xAI conegut per respostes matisades. Idoni per a discussions obertes, projectes creatius i abordatge de problemes complexos.",
+      "knowledgeCutoff": "13 de maig 2025 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Model més capaç d’Anthropic, amb raonament excel·lent, habilitats de programació i creativitat destacades. Indicat per a anàlisi complexa, recerca i tasques que requereixen comprensió profunda.",
+      "knowledgeCutoff": "gener 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Model Claude equilibrat amb excel·lent rendiment en programació, anàlisi i tasques creatives. Ideal per a ús diari, amb respostes ràpides.",
+      "knowledgeCutoff": "gener 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Model Claude Opus de generació anterior. Excel·lent per a tasques complexes de programació, anàlisi detallada i comprensió matisada.",
+      "knowledgeCutoff": "gener 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Model Claude ràpid i econòmic optimitzat per a tasques àgils. Ideal per a consultes senzilles, resums i aplicacions d'alt volum.",
+      "knowledgeCutoff": "gener 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "El model més avançat d'OpenAI, excel·leix en raonament complex, generació de codi i resolució de problemes tècnics. Ideal per a tasques analítiques, reptes de programació, recerca i explicacions detallades. Permet ajustar l'esforç de raonament i la quantitat de detall en les respostes.",
+      "knowledgeCutoff": "des. 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variant especialitzada de GPT-5.2 optimitzada per a converses i intel·ligència emocional. Excel·leix en la comunicació empàtica, suport en salut mental, escriptura creativa, generació d'idees i diàlegs naturals. Recomanada per a converses informals, escenaris de suport i tasques que requereixen consciència emocional.",
+      "knowledgeCutoff": "des. 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Tornar al xat",
+    "title": "Explicació del mode de cerca",
+    "subtitle": "Entendre les opcions de cerca i on s’emmagatzema la teva informació",
+    "quickComparison": "Comparació ràpida",
+    "noSearch": "Sense cerca",
+    "privacyFocused": "Enfocament en la privacitat",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Velocitat de resposta",
+    "fastest": "Més ràpid",
+    "slowerMultiStep": "Més lent (multi-pas)",
+    "fasterDirect": "Més ràpid (directe)",
+    "fullConversationStored": "Conversació completa emmagatzemada al núvol",
+    "whatsStoredInAzure": "Què s’emmagatzema a Azure",
+    "nothingStateless": "Res (només sense estat)",
+    "searchQueriesOnly": "Només cerques",
+    "fullConversationHistory": "Historial complet de la conversa",
+    "modelAvailability": "Disponibilitat del model",
+    "allModels": "Tots els models",
+    "gpt41Only": "Només GPT-4.1",
+    "searchTurnedOff": "Cerca desactivada",
+    "noSearchDescription": "Respostes més ràpides sense capacitat de cerca web. La conversa completa es manté en el teu navegador: res no s'emmagatzema al núvol.",
+    "viewDetailsBelow": "Per a més detalls, consulta el flux tècnic a continuació.",
+    "viewTechnicalFlowDiagram": "Veure el diagrama de flux tècnic",
+    "legend": "Llegenda:",
+    "legendNoSearch": "El teu navegador (emmagatzematge local) | Servidor de l’assistent d’IA | Azure OpenAI (sense estat)",
+    "privacyFocusedMode": "Mode centrat en la privacitat",
+    "default": "Per defecte",
+    "privacyDescription": "Utilitza la cerca web quan cal, però és més lent perquè implica més passos. Només s'emmagatzemen les consultes de cerca a Azure; la conversa completa es manté en el teu navegador.",
+    "legendPrivacy": "El teu navegador (emmagatzematge local) | Servidor de l’assistent d’IA | Azure AI Foundry (només consultes de cerca) | Azure OpenAI (sense estat)",
+    "azureAIFoundryMode": "Mode Azure AI Foundry",
+    "foundryDescription": "Respostes més ràpides amb cerca web integrada. La conversa completa s'emmagatzema a la base de dades d'Azure AI Foundry, no només al teu navegador.",
+    "legendFoundry": "El teu navegador (emmagatzematge local) | Servidor de l’assistent d’IA | Agent Azure AI Foundry (guarda la conversa completa)",
+    "whyTheseOptions": "Per què aquestes opcions?",
+    "whyTheseOptionsText1": "Aquestes són les implementacions de cerca disponibles després que Azure retirés la seva Bing Search API, de la qual depenia originalment l'assistent d'IA.",
+    "whyTheseOptionsText2": "L'equip està explorant alternatives de cerca més enfocades a la privacitat. Les dues opcions actuals utilitzen les capacitats de cerca d'Azure AI Foundry però difereixen en la quantitat de dades de conversa compartides.",
+    "azureDeprecatedBingApi": "Azure ha deixat d’oferir la Bing Search API",
+    "footerNote": "Ambdós modes desen la conversa localment al teu navegador. Pots canviar de mode en qualsevol moment als ajustos del model.",
+    "note": "Nota:",
+    "loadingDiagram": "S’està carregant el diagrama..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Comprovant l’emmagatzematge",
+      "analyzingData": "S’està analitzant la teva informació...",
+      "updateAvailable": "Actualització disponible",
+      "storageSpaceLimited": "Espai d’emmagatzematge limitat",
+      "migratingData": "Migrant dades",
+      "migrationComplete": "Migració completada",
+      "partiallyComplete": "Completat parcialment",
+      "migrationFailed": "Migració fallida"
+    },
+    "descriptions": {
+      "foundLegacyData": "Hem trobat dades d’una versió anterior. Vols migrar-les perquè funcionin amb el sistema millorat?",
+      "storageSpaceWarning": "Les teves dades ocupen més espai del disponible actualment. Et recomanem utilitzar el mode de migració incremental.",
+      "pleaseWait": "Espera mentre actualitzem les teves dades...",
+      "dataIsSafe": "Les dades originals estan segures. Pots tornar-ho a intentar o ometre-ho de moment.",
+      "itemsTooLarge": "Aquests elements són massa grans per emmagatzemar-los. Pots exportar-los, alliberar espai o continuar sense ells.",
+      "settingsUpdated": "La configuració s'ha actualitzat."
+    },
+    "benefits": {
+      "title": "Avantatges",
+      "fasterPerformance": "Millor rendiment",
+      "betterReliability": "Més fiabilitat",
+      "dataPreserved": "Les teves dades es conserven"
+    },
+    "options": {
+      "advancedOptions": "Opcions avançades",
+      "useIncrementalMode": "Utilitza el mode incremental",
+      "slowerButSafer": "més lent però més segur",
+      "recommended": "recomanat",
+      "deleteLegacyData": "Elimina les dades antigues després de la migració",
+      "freesUpSpace": "allibera espai d'emmagatzematge"
+    },
+    "actions": {
+      "skip": "Omet",
+      "migrateData": "Migrar dades",
+      "migrateAnyway": "Migrar igualment",
+      "continue": "Continua",
+      "retry": "Torna-ho a intentar",
+      "exportBackupFirst": "Exporta la còpia de seguretat primer",
+      "exportSkippedItems": "Exporta els elements omesos"
+    },
+    "quota": {
+      "availableSpace": "Espai disponible",
+      "dataToMigrate": "Dades a migrar",
+      "additionalSpaceNeeded": "Espai addicional necessari"
+    },
+    "progress": {
+      "migratingConversations": "S'estan migrant les converses",
+      "migratingPrompts": "S'estan migrant els prompts",
+      "migratingAgents": "S'estan migrant els agents",
+      "finishingUp": "Finalitzant"
+    },
+    "results": {
+      "successfullyMigrated": "Migració completada amb èxit",
+      "notes": "Notes",
+      "couldNotMigrate": "No s'ha pogut migrar",
+      "legacyDataDeleted": "Dades antigues eliminades",
+      "freed": "alliberat"
+    },
+    "units": {
+      "conversation": "conversa",
+      "conversations": "converses",
+      "folder": "carpeta",
+      "folders": "carpetes",
+      "prompt": "prompt",
+      "prompts": "prompts",
+      "customAgent": "agent personalitzat",
+      "customAgents": "agents personalitzats",
+      "item": "element",
+      "items": "elements"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Benvingut/da a l'AI Assistant V2",
+    "whatsNew": "Novetats",
+    "whatsNewQuestion": "Quines són les novetats?"
+  },
+  "welcomeV2": {
+    "backToChat": "Tornar al xat",
+    "title": "Benvingut/da a l'AI Assistant V2",
+    "subtitle": "Un redisseny complet amb noves funcionalitats potents",
+    "webSearch": {
+      "title": "Mode de cerca web",
+      "description": "Permet que l'IA accedeixi a cerques web en temps real amb opcions centrades en la privacitat",
+      "quickAccess": "Accés ràpid:",
+      "quickAccessInstructions": "Fes clic al botó + al costat de l'entrada del xat → Selecciona \"Web Search\"",
+      "setAsDefault": "Establir com a predeterminat:",
+      "setAsDefaultInstructions": "Obre la configuració del model i activa el commutador de Mode de cerca web. Tria entre:",
+      "privacyFocused": "Orientat a la privacitat (predeterminat)",
+      "privacyFocusedDescription": "Només la consulta de cerca s'envia externament",
+      "azureAIFoundry": "Mode Azure AI Foundry",
+      "azureAIFoundryDescription": "Més ràpid, però tota la conversa s'emmagatzema externament",
+      "learnMore": "Més informació sobre els modes de cerca →"
+    },
+    "tones": {
+      "title": "Tons (Perfils de veu)",
+      "description": "Controla l'estil d'escriptura, la formalitat i la personalitat de l'IA",
+      "createTones": "1. Crea tons:",
+      "createTonesInstructions": "Accions ràpides a la barra lateral → Pestanya Tons",
+      "useTones": "2. Utilitza tons:",
+      "useTonesInstructions": "Fes clic al desplegable de to al costat de l'entrada del xat",
+      "exampleProfessionalDesc": "To formal i empresarial",
+      "exampleCasualDesc": "Amistós i conversacional"
+    },
+    "aiAssist": {
+      "title": "Assistència IA per a Prompts i Tons",
+      "description": "Deixa que l'IA t'ajudi a crear millors prompts i tons més ràpid",
+      "step1": "Obre les Accions ràpides a la barra lateral",
+      "step2": "Ves a la pestanya {prompts} o {tones}",
+      "step3": "Busca el panell de l'AI Assistant",
+      "getSuggestions": "Obtén suggeriments",
+      "getSuggestionsDesc": "L'IA analitza el teu esborrany i proposa millores",
+      "buildFromFiles": "Genera des d'arxius",
+      "buildFromFilesDesc": "Carrega documents per generar prompts/tons",
+      "testBeforeSaving": "Prova abans de desar",
+      "testBeforeSavingDesc": "Prova prompts/tons en una vista prèvia de xat en directe",
+      "step2Prefix": "Ves a",
+      "step2Suffix": "pestanya"
+    },
+    "customAgents": {
+      "title": "Agents personalitzats",
+      "advancedBadge": "ADVANÇAT",
+      "description": "Agents d'IA especialitzats amb funcions ampliades com cerca web i interpretació de codi",
+      "advancedFeature": "Funció avançada",
+      "advancedFeatureDesc": "Els Agents personalitzats funcionen a Azure AI Foundry amb eines especialitzades. Cal coordinar-se amb l'equip tècnic de l'AI Assistant per crear identificadors d'agent.",
+      "howToAccess": "Com accedir-hi:",
+      "howToAccessInstructions": "Configuració → Models → Pestanya Agents",
+      "whatYouCanDo": "Què pots fer:",
+      "configureAgents": "Configura agents amb funcionalitats especialitzades",
+      "importExport": "Importa/exporta configuracions d'agents",
+      "selectFromDropdown": "Selecciona agents personalitzats des del desplegable del model"
+    },
+    "audioTranslation": {
+      "title": "Transcripció d'àudio amb traducció",
+      "description": "Traducció automàtica de transcripcions d'àudio a més de 13 idiomes",
+      "howToUse": "Com utilitzar-ho:",
+      "step1": "Carregueu un fitxer d'àudio o vídeo",
+      "step2": "Feu clic al desplegable d'idioma a la interfície de transcripció",
+      "step3": "Seleccioneu l'idioma de destinació",
+      "availableLanguages": "Idiomes disponibles:",
+      "moreLanguages": "+7 més"
+    },
+    "pwa": {
+      "title": "Instal·la com a aplicació mòbil",
+      "description": "Aplicació web progressiva amb experiència nativa",
+      "installTip": "Consell: Instal·leu després d'iniciar la sessió per conservar l'autenticació i obtenir la millor experiència.",
+      "howToInstall": "Com instal·lar-ho:",
+      "step1": "Inicieu sessió al vostre compte",
+      "step2": "Obriu Paràmetres → Aplicació mòbil per a instruccions detallades",
+      "step3": "Al mòbil: Toqueu el menú del navegador (⋮ o ⚙️)",
+      "step4": "Cerqueu \"Afegeix a la pantalla d'inici\" o \"Instal·la l'aplicació\"",
+      "step5": "Seguiu les indicacions per instal·lar",
+      "benefits": "Beneficis:",
+      "benefit1": "Llanceu-la com una aplicació des de la pantalla d'inici",
+      "benefit2": "Pantalla completa sense la interfície del navegador",
+      "benefit3": "Accés fora de línia a les converses desades"
+    }
+  },
+  "Professional": "Professional",
+  "Casual": "Informal",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "Introduïu un prompt o escriviu \"/\" per seleccionar-ne un..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "Afegiu instruccions personals per personalitzar la resposta de la IA. Es combinaran amb les directrius bàsiques per garantir respostes útils, precises i segures."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "Consell: Escriviu \"/\" per triar entre plantilles de prompt desades."
+  },
+  "fileUpload": {
+    "uploading": "Pujant...",
+    "transcribing": "Transcrivint...",
+    "complete": "Completat",
+    "failed": "Error",
+    "uploadFiles": "Carregueu fitxers (àudio, vídeo o text)",
+    "autoDetect": "Detecció automàtica",
+    "fileNotAvailable": "Fitxer no disponible per editar",
+    "failedToOpenInEditor": "No s'ha pogut obrir el fitxer a l'editor de codi. Torna-ho a provar.",
+    "extractingAudio": "S'està extraient l'àudio...",
+    "queuedForTranscription": "En cua per a la transcripció",
+    "transcribed": "Transcrit",
+    "transcriptionFailed": "Error en la transcripció",
+    "extractedFromSmaller": "Extret, {percent}% més petit",
+    "textExtraction": "Extracció de text",
+    "opening": "S'està obrint...",
+    "openInEditor": "Obre a l'editor",
+    "failedToUpload": "No s'ha pogut pujar",
+    "attachment": "adjunt",
+    "attachments": "adjunts"
+  },
+  "transcript": {
+    "originalTranscript": "Transcripció original",
+    "transcript": "Transcripció",
+    "transcriptionOf": "Transcripció de",
+    "translating": "Traducció en curs...",
+    "copied": "Copiat!",
+    "copy": "Copia",
+    "download": "Descarrega",
+    "translate": "Tradueix",
+    "collapse": "Redueix",
+    "expand": "Amplia",
+    "expandHint": "Fes clic a \"Amplia\" per veure la transcripció original",
+    "listen": "Escolta la transcripció",
+    "stopAudio": "Atura l'àudio",
+    "openAsDocument": "Obre com a document"
+  },
+  "userMessage": {
+    "open": "Obre",
+    "showFullMessage": "Mostra el missatge complet",
+    "collapse": "Redueix",
+    "customTone": "To personalitzat"
+  },
+  "codeBlock": {
+    "openInEditor": "Obre a l'editor"
+  },
+  "artifact": {
+    "noContentToExport": "No hi ha contingut per exportar",
+    "exportedAsHtml": "Exportat com a HTML",
+    "exportedAsMarkdown": "Exportat com a Markdown",
+    "exportedAsText": "Exportat com a text",
+    "generatingPdf": "S'està generant el PDF...",
+    "exportedAsPdf": "Exportat com a PDF",
+    "generatingDocx": "S'està generant el DOCX...",
+    "exportedAsDocx": "Exportat com a DOCX",
+    "failedToExportAs": "No s'ha pogut exportar com a {format}",
+    "document": "Document",
+    "switchToCodeEditor": "Canvia a l'editor de codi",
+    "exportDocument": "Exporta el document",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Text pla (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Tanca",
+    "editsNotSaved": "Els canvis no s'han desat. Envieu-ho per missatge o descarregueu per desar els canvis.",
+    "fileDownloaded": "Fitxer descarregat",
+    "failedToDownload": "No s'ha pogut descarregar",
+    "switchToDocumentEditor": "Canvia a l'editor de documents",
+    "download": "Descarrega",
+    "fileIncludedWithMessage": "Fitxer i edicions inclosos amb el missatge",
+    "closeEditor": "Tanca l'editor",
+    "closeCodeEditor": "Tanca l'editor de codi",
+    "startWriting": "Comença a escriure...",
+    "toolbar": {
+      "bold": "Negreta",
+      "italic": "Cursiva",
+      "underline": "Subratllat",
+      "strikethrough": "Ratllat",
+      "heading1": "Títol 1",
+      "heading2": "Títol 2",
+      "heading3": "Títol 3",
+      "bulletList": "Llista amb vinyetes",
+      "numberedList": "Llista numerada",
+      "codeBlock": "Bloc de codi",
+      "quote": "Citació",
+      "insertTable": "Insereix taula",
+      "table": "Taula",
+      "undo": "Desfés",
+      "redo": "Refés"
+    },
+    "codeEditor": {
+      "startTyping": "Comença a escriure o demana a la IA que generi codi",
+      "codeWillSync": "El codi se sincronitzarà automàticament des dels missatges de xat",
+      "startCoding": "// Comença a programar..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "Activa la cerca web per a cada missatge.\n\nOfereix informació actualitzada amb accés en temps real a Bing.",
+    "attachTooltip": "Adjunta fitxers, imatges o àudio/vídeo.\n\nFormats admesos:\n• Imatges: JPEG, PNG, GIF, WebP (màx. 5MB, fins a 10)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (màx. 10MB, fins a 3)\n• Dades: CSV, JSON, XML, YAML (màx. 10MB, fins a 3)\n• Codi: PY, JS, TS, JAVA, C, CPP, GO, etc. (màx. 10MB, fins a 3)\n• Àudio/Vídeo: MP3, WAV, MP4, WebM (màx. 25MB, 1 fitxer)\n\nTotal: 10 fitxers, màx. 50MB",
+    "transcribeTooltip": "Puja fitxers d'àudio o vídeo per a la transcripció.\n\nFormats admesos: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMida màxima: 25MB\n\nLa transcripció es fa automàticament quan enviïs el missatge.",
+    "selected": "Seleccionat",
+    "expandActions": "Amplia accions",
+    "selectTone": "Selecciona el to",
+    "selectToneDescription": "Trieu un perfil de veu per als vostres missatges",
+    "noToneDefault": "Sense to (per defecte)",
+    "useDefaultStyle": "Fes servir l'estil d'escriptura per defecte",
+    "noTonesCreated": "Encara no s'ha creat cap to",
+    "createTonesHint": "Crea tons a Accions Ràpides",
+    "translateDocumentTooltip": "Traduïu documents a un altre idioma.\n\nFormats admesos: Word, Excel, PowerPoint, PDF, HTML, TXT\nMida màxima: 40 MB\n\nAdmet més de 80 idiomes amb arxius de glossari opcionals."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Afegeix les teves instruccions personals per personalitzar com respon la IA. Aquestes es combinen amb les directrius bàsiques de comportament que garanteixen respostes útils, precises i segures.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "Consell: Escriu \"/\" per seleccionar d'entre les plantilles de prompt desades.",
+  "storageWarning": {
+    "title": {
+      "warning": "Emmagatzematge gairebé ple",
+      "critical": "Emmagatzematge pràcticament ple",
+      "emergency": "Emmagatzematge ple"
+    },
+    "message": {
+      "warning": "L’emmagatzematge del navegador està al {percent}% de la capacitat.",
+      "critical": "L’emmagatzematge del navegador és críticament baix, al {percent}% de la capacitat.",
+      "emergency": "L’emmagatzematge del navegador està gairebé completament ple al {percent}%!"
+    },
+    "consequence": "Si s’omple l’emmagatzematge, podríeu perdre l’accés a converses noves i l’aplicació podria deixar de funcionar correctament.",
+    "storageUsage": "Ús d’emmagatzematge",
+    "optionsToFreeSpace": "Opcions per alliberar espai",
+    "clearOption": {
+      "keepRecent": "Conserva les converses més recents",
+      "olderThan": "Elimina converses de més de",
+      "days": {
+        "7": "7 dies",
+        "14": "14 dies",
+        "30": "30 dies",
+        "60": "60 dies",
+        "90": "90 dies"
+      }
+    },
+    "estimate": {
+      "willRemove": "Això eliminarà {count} converses",
+      "willFree": "Espai estimat que s’alliberarà: {size}"
+    },
+    "action": {
+      "exportFirst": "Exporta primer les dades",
+      "clearNow": "Elimina ara",
+      "dismiss": "Descarta",
+      "cancel": "Cancel·la"
+    },
+    "confirm": {
+      "title": "Confirma l’eliminació",
+      "message": "Això suprimirà permanentment {count} converses. Aquesta acció no es pot desfer."
+    },
+    "clearing": {
+      "title": "S’està eliminant l’emmagatzematge",
+      "message": "Espereu mentre s’eliminen les converses..."
+    },
+    "success": {
+      "title": "Emmagatzematge buidat",
+      "message": "S’han eliminat correctament {count} converses, alliberant {size}."
+    },
+    "error": {
+      "title": "Error en eliminar",
+      "message": "S’ha produït un error mentre s’eliminaven les converses. Torneu-ho a intentar."
+    },
+    "close": "Tanca"
+  },
+  "support": {
+    "selectOrganization": "Selecciona la teva organització",
+    "organizationDescription": "Tria la teva organització MSF per veure el contacte d’assistència corresponent",
+    "autoDetect": "Detecció automàtica",
+    "resetToAutoDetect": "Restableix a detecció automàtica",
+    "organizations": {
+      "USA": "MSF EUA",
+      "OCG": "OCG (Ginebra)",
+      "OCA": "OCA (Amsterdam)",
+      "FIELD": "Camp / Altres"
+    },
+    "emailSupport": "Assistència per correu electrònic",
+    "emailDescription": "Contacta amb l’equip d’assistència de {organization}",
+    "escalationTitle": "Personal de camp i altres de MSF",
+    "escalationDescription": "Segueix el recorregut d’escalada de TI de la teva organització per rebre assistència",
+    "escalationShort": "Contacta amb el teu suport informàtic local",
+    "escalationStep1": "Contacta primer amb el teu suport informàtic local",
+    "escalationStep2": "Si no es resol, escala-ho al departament de TI del Centre Operacional (OC)",
+    "escalationStep3": "Si encara no es resol, el TI de l’OC pot escalar-ho a SITS (Shared IT Services)"
+  },
+  "translateDocumentDropdown": "Traduir document",
+  "documentTranslation": {
+    "title": "Traducció de documents",
+    "targetLanguage": "Idioma de destinació",
+    "sourceLanguage": "Idioma d'origen",
+    "searchLanguage": "Cerca idiomes...",
+    "noLanguagesFound": "No s'ha trobat cap idioma",
+    "autoDetect": "Detecció automàtica si no s'especifica",
+    "glossary": "Arxiu de glossari",
+    "glossaryHelp": "Carregueu un arxiu de glossari CSV, TSV o XLIFF per a una terminologia personalitzada",
+    "uploadGlossary": "Puja glossari",
+    "glossaryTooLarge": "L'arxiu del glossari és massa gran. La mida màxima és {maxSize}.",
+    "outputFilename": "Nom de l'arxiu de sortida",
+    "outputFilenamePlaceholder": "document_ca.docx",
+    "translateButton": "Traduir document",
+    "translating": "S'està traduint...",
+    "noDocumentError": "Seleccioneu un document per traduir.",
+    "noTargetLanguageError": "Seleccioneu un idioma de destinació.",
+    "documentTooLarge": "El document és massa gran. La mida màxima és {maxSize}.",
+    "translationSuccess": "Document traduït correctament",
+    "translationFailed": "Error en la traducció: {error}",
+    "invalidReference": "Referència de traducció del document no vàlida",
+    "documentNotFound": "No s'ha trobat el document traduït o ha caducat",
+    "downloadFailed": "No s'ha pogut descarregar el document traduït",
+    "downloadSuccess": "Document descarregat correctament",
+    "translatedTo": "Traduït a {language}",
+    "download": "Descarrega",
+    "downloading": "S'està descarregant...",
+    "expired": "Aquesta traducció ha caducat i ja no està disponible",
+    "expiresSoon": "Caduca en {days} dia(es) - descarregueu aviat",
+    "expires": "Disponible durant {days} dies",
+    "learnMore": "Més informació",
+    "advancedOptions": "Opcions avançades"
   }
 }

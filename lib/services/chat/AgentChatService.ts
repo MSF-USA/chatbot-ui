@@ -167,15 +167,35 @@ export class AgentChatService {
 
               // Check if this chunk contains metadata using the correct format
               if (chunk.includes('<<<METADATA_START>>>')) {
+                console.log(
+                  '[AgentChatService] Found METADATA_START in chunk, length:',
+                  chunk.length,
+                );
                 // Extract metadata
                 const metadataMatch = chunk.match(
                   /<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
                 );
                 if (metadataMatch) {
+                  console.log(
+                    '[AgentChatService] Metadata regex matched, raw:',
+                    metadataMatch[1],
+                  );
                   try {
                     const metadata = JSON.parse(metadataMatch[1]);
+                    console.log(
+                      '[AgentChatService] Parsed metadata:',
+                      JSON.stringify(metadata, null, 2),
+                    );
                     if (metadata.citations) {
                       citations = metadata.citations;
+                      console.log(
+                        '[AgentChatService] Extracted citations count:',
+                        citations.length,
+                      );
+                    } else {
+                      console.log(
+                        '[AgentChatService] No citations field in metadata',
+                      );
                     }
                   } catch (e) {
                     console.error(
@@ -183,6 +203,10 @@ export class AgentChatService {
                       e,
                     );
                   }
+                } else {
+                  console.log(
+                    '[AgentChatService] Metadata regex did not match full pattern',
+                  );
                 }
 
                 // Remove metadata from text

@@ -79,6 +79,14 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
+
+                  // Set RTL direction based on locale from URL path
+                  var pathSegments = window.location.pathname.split('/').filter(Boolean);
+                  var pathLocale = pathSegments[0] || 'en';
+                  var rtlLocales = ['ar', 'he', 'fa', 'ur'];
+                  var isRTL = rtlLocales.includes(pathLocale);
+                  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+                  document.documentElement.lang = pathLocale;
                 } catch (e) {
                   // Fallback to dark on error
                   document.documentElement.classList.add('dark');

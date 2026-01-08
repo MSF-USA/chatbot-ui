@@ -49,8 +49,6 @@ export class ToolRouterEnricher extends BasePipelineStage {
   }
 
   protected async executeStage(context: ChatContext): Promise<ChatContext> {
-    console.log(`[ToolRouterEnricher] Search mode: ${context.searchMode}`);
-
     // Start with current messages (may already be enriched by RAG)
     const baseMessages = context.enrichedMessages || context.messages;
 
@@ -82,15 +80,8 @@ export class ToolRouterEnricher extends BasePipelineStage {
       // Merge with user's message
       if (additionalContext.length > 0) {
         currentMessage = `${currentMessage}\n\n${additionalContext.join('\n\n')}`;
-        console.log(
-          `[ToolRouterEnricher] Including processed content: ${context.processedContent.fileSummaries?.length || 0} files, ${context.processedContent.transcripts?.length || 0} transcripts`,
-        );
       }
     }
-
-    console.log(
-      `[ToolRouterEnricher] Analyzing message for tool needs: "${currentMessage.substring(0, 100)}..."`,
-    );
 
     // Determine which tools are needed
     const forceWebSearch = context.searchMode === SearchMode.ALWAYS;
@@ -103,16 +94,8 @@ export class ToolRouterEnricher extends BasePipelineStage {
     const toolResponse =
       await this.toolRouterService.determineTool(toolRouterRequest);
 
-    console.log('[ToolRouterEnricher] Tool router response:', {
-      tools: toolResponse.tools,
-      reasoning: toolResponse.reasoning,
-    });
-
     // If no tools needed, return unchanged context
     if (toolResponse.tools.length === 0) {
-      console.log(
-        '[ToolRouterEnricher] No tools needed, continuing without search',
-      );
       return context;
     }
 
@@ -144,6 +127,10 @@ export class ToolRouterEnricher extends BasePipelineStage {
         console.log(
           `[ToolRouterEnricher] Search completed: ${searchResult.text.length} chars, ${searchResult.citations?.length || 0} citations`,
         );
+        console.log(
+          '[ToolRouterEnricher] Search result citations detail:',
+          JSON.stringify(searchResult.citations, null, 2),
+        );
 
         // Add search results as a system message before the last user message
         const citationReferences = searchResult.citations
@@ -166,6 +153,10 @@ export class ToolRouterEnricher extends BasePipelineStage {
         ];
 
         // Store citations in metadata for later use
+        console.log(
+          '[ToolRouterEnricher] Storing citations in context.processedContent.metadata:',
+          searchResult.citations?.length || 0,
+        );
         return {
           ...context,
           enrichedMessages,

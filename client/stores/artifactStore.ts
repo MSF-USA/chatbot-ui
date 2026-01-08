@@ -3,7 +3,7 @@
 import {
   htmlToMarkdown,
   htmlToPlainText,
-} from '@/lib/utils/document/exportUtils';
+} from '@/lib/utils/shared/document/exportUtils';
 
 import { create } from 'zustand';
 
@@ -22,6 +22,7 @@ interface ArtifactStore {
   isArtifactOpen: boolean; // Track if artifact overlay is visible
   editorMode: EditorMode; // Track whether we're in code or document mode
   sourceFormat: SourceFormat; // Format of the source content (md, txt, html, etc.) - determines conversion behavior
+  isDirty: boolean; // Track if user has made modifications since opening
 
   // Actions
   setModifiedCode: (code: string) => void;
@@ -48,6 +49,7 @@ interface ArtifactStore {
     code: string;
   } | null>; // Get artifact metadata for including in messages
   canSwitchToDocumentMode: () => boolean; // Check if current file can switch to document mode
+  hasUnsavedChanges: () => boolean; // Check if document has been modified since opening
 }
 
 export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
@@ -62,13 +64,15 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
   isArtifactOpen: false,
   editorMode: 'code',
   sourceFormat: null,
+  isDirty: false,
 
   // Actions
   setModifiedCode: (code) => {
-    // User edits update immediately
+    // User edits mark the document as dirty
     set({
       modifiedCode: code,
       originalCode: code,
+      isDirty: true,
     });
   },
 
@@ -157,6 +161,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       fileName: 'untitled.ts',
       isLoading: false,
       error: null,
+      isDirty: false,
     }),
 
   downloadFile: () => {
@@ -194,35 +199,40 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
     }
 
     // Import conversion utilities
-    import('@/lib/utils/document/formatConverter').then(({ convertToHtml }) => {
-      import('@/lib/utils/document/exportUtils').then(
-        async ({ htmlToMarkdown, htmlToPlainText }) => {
-          let convertedContent = modifiedCode;
+    import('@/lib/utils/shared/document/formatConverter').then(
+      ({ convertToHtml }) => {
+        import('@/lib/utils/shared/document/exportUtils').then(
+          async ({ htmlToMarkdown, htmlToPlainText }) => {
+            let convertedContent = modifiedCode;
 
-          // Convert between formats when switching modes
-          if (mode === 'document' && currentMode === 'code') {
-            // Code → Document: Convert source format to HTML
-            convertedContent = await convertToHtml(modifiedCode, sourceFormat);
-          } else if (mode === 'code' && currentMode === 'document') {
-            // Document → Code: Convert HTML back to source format
-            if (sourceFormat === 'md' || sourceFormat === 'markdown') {
-              convertedContent = htmlToMarkdown(modifiedCode);
-            } else if (sourceFormat === 'txt') {
-              convertedContent = await htmlToPlainText(modifiedCode);
-            } else if (sourceFormat === 'html' || sourceFormat === 'htm') {
-              // HTML stays as-is
-              convertedContent = modifiedCode;
+            // Convert between formats when switching modes
+            if (mode === 'document' && currentMode === 'code') {
+              // Code → Document: Convert source format to HTML
+              convertedContent = await convertToHtml(
+                modifiedCode,
+                sourceFormat,
+              );
+            } else if (mode === 'code' && currentMode === 'document') {
+              // Document → Code: Convert HTML back to source format
+              if (sourceFormat === 'md' || sourceFormat === 'markdown') {
+                convertedContent = htmlToMarkdown(modifiedCode);
+              } else if (sourceFormat === 'txt') {
+                convertedContent = await htmlToPlainText(modifiedCode);
+              } else if (sourceFormat === 'html' || sourceFormat === 'htm') {
+                // HTML stays as-is
+                convertedContent = modifiedCode;
+              }
             }
-          }
 
-          set({
-            editorMode: mode,
-            modifiedCode: convertedContent,
-            originalCode: convertedContent,
-          });
-        },
-      );
-    });
+            set({
+              editorMode: mode,
+              modifiedCode: convertedContent,
+              originalCode: convertedContent,
+            });
+          },
+        );
+      },
+    );
   },
 
   openArtifact: (code, language = 'typescript', fileName?) => {
@@ -264,6 +274,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       isEditorOpen: true,
       editorMode: 'code',
       sourceFormat: null, // Pure code files don't have a document format
+      isDirty: false, // Fresh document, no modifications yet
     });
   },
 
@@ -284,7 +295,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
 
     // If starting in document mode, convert to HTML first
     if (initialMode === 'document' && sourceFormat) {
-      import('@/lib/utils/document/formatConverter').then(
+      import('@/lib/utils/shared/document/formatConverter').then(
         async ({ convertToHtml }) => {
           const htmlContent = await convertToHtml(content, sourceFormat);
           set({
@@ -296,6 +307,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
             isEditorOpen: true,
             editorMode: 'document',
             sourceFormat,
+            isDirty: false, // Fresh document, no modifications yet
           });
         },
       );
@@ -310,6 +322,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
         isEditorOpen: true,
         editorMode: 'code',
         sourceFormat,
+        isDirty: false, // Fresh document, no modifications yet
       });
     }
   },
@@ -318,6 +331,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
     set({
       isArtifactOpen: false,
       isEditorOpen: false,
+      isDirty: false, // Reset dirty state when closing
     });
   },
 
@@ -376,5 +390,11 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       (sourceFormat !== null &&
         ['md', 'markdown', 'txt', 'html', 'htm'].includes(sourceFormat))
     );
+  },
+
+  hasUnsavedChanges: () => {
+    const { isDirty, isArtifactOpen } = get();
+    // Only report unsaved changes if artifact is open and has been modified
+    return isArtifactOpen && isDirty;
   },
 }));

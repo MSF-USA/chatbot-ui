@@ -50,7 +50,7 @@ export const createDefaultConversation = (
 
   return {
     id: uuidv4(),
-    name: 'New Conversation',
+    name: '',
     messages: [],
     model: defaultModel,
     prompt: systemPrompt || '',

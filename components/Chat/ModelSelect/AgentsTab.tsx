@@ -6,6 +6,8 @@ import {
 } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { OpenAIModel } from '@/types/openai';
 
 import { AzureAIIcon } from '@/components/Icons/providers';
@@ -39,6 +41,8 @@ export const AgentsTab: FC<AgentsTabProps> = ({
   customAgentModels,
   selectedModelId,
 }) => {
+  const t = useTranslations();
+
   return (
     <div
       className="flex-1 overflow-hidden flex flex-col animate-fade-in-fast"
@@ -47,12 +51,11 @@ export const AgentsTab: FC<AgentsTabProps> = ({
       <div className="mb-6 p-4 md:p-0">
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-            Advanced Feature
+            {t('modelSelect.agents.advancedFeatureBadge')}
           </span>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Create and manage custom AI agents with specialized capabilities.
-          These agents run on the MSF AI Assistant Foundry instance.
+          {t('modelSelect.agents.description')}
         </p>
 
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 overflow-hidden">
@@ -66,8 +69,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
             />
             <div className="flex-1 text-left">
               <div className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                Advanced Feature - Requires Coordination with AI Assistant
-                Technical Team
+                {t('modelSelect.agents.advancedFeatureTitle')}
               </div>
             </div>
             {showAgentWarning ? (
@@ -84,10 +86,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
           </button>
           {showAgentWarning && (
             <div className="px-4 pb-4 text-sm text-blue-700 dark:text-blue-300">
-              Custom agents only work with the{' '}
-              <strong>MSF AI Assistant Foundry instance</strong>. Agent IDs must
-              be created by the AI Assistant technical team in this specific
-              instance and coordinated with you before use.
+              {t('modelSelect.agents.advancedFeatureWarning')}
             </div>
           )}
         </div>
@@ -99,7 +98,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
           className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all flex items-center justify-center gap-2"
         >
           <IconPlus size={18} />
-          Create New Custom Agent
+          {t('modelSelect.agents.createNewAgent')}
         </button>
       </div>
 
@@ -126,11 +125,10 @@ export const AgentsTab: FC<AgentsTabProps> = ({
               <AzureAIIcon className="w-8 h-8" />
             </div>
             <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No Custom Agents Yet
+              {t('modelSelect.agents.noAgentsTitle')}
             </h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md">
-              Create your first custom agent to extend AI capabilities with
-              specialized tools and behaviors.
+              {t('modelSelect.agents.noAgentsDescription')}
             </p>
           </div>
         )}

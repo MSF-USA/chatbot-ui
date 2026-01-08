@@ -261,7 +261,19 @@
   "Team Templates": "قالب‌های تیمی",
   "selected": "انتخاب شده",
   "folders": "پوشه‌ها",
-  "agents": "عامل‌ها",
+  "agents": {
+    "exportAgent": "صادرات عامل",
+    "editAgent": "ویرایش عامل",
+    "agentName": "نام عامل",
+    "myResearchAssistant": "دستیار تحقیق من",
+    "agentId": "شناسه عامل",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "توضیحات (اختیاری)",
+    "descriptionPlaceholder": "عامل متخصص در وظایف تحقیق...",
+    "baseModel": "مدل پایه",
+    "formatDescription": "فرمت: asst_xxxxx (از MSF AI Assistant Foundry)",
+    "importantInfo": "این عامل به زمینه مکالمه دسترسی خواهد داشت و می‌تواند از همان ابزارهای مدل‌های استاندارد استفاده کند. مطمئن شوید که شناسه عامل صحیح است زیرا بعداً نمی‌توان آن را تغییر داد."
+  },
   "Quick Actions": "اقدامات سریع",
   "Type / in chat to access your prompts": "در چت / را تایپ کنید تا به دستورات خود دسترسی پیدا کنید",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "در چت / را تایپ کنید، دستور خود را انتخاب کنید و متغیرها را زمانی که درخواست می‌شود پر کنید",
@@ -308,7 +320,6 @@
   "Custom Agents": "عامل‌های سفارشی",
   "Delete template and all its items": "حذف قالب و تمام موارد آن",
   "Description (Optional)": "توضیحات (اختیاری)",
-  "Edit Prompt": "ویرایش دستور",
   "Edit Tone": "ویرایش لحن",
   "Email Response Template": "قالب پاسخ ایمیل",
   "Example Prompt": "دستور نمونه",
@@ -368,7 +379,6 @@
   "msf_logo_alt": "لوگوی MSF",
   "collapse_sidebar": "جمع کردن نوار کناری",
   "expand_sidebar": "گسترش نوار کناری",
-  "Voice Guidelines": "دستورالعمل‌های صدا",
   "Please upload some content or describe the tone you want": "لطفاً محتوایی بارگذاری کنید یا لحن مورد نظر خود را توصیف کنید",
   "Untitled Tone": "لحن بدون عنوان",
   "Failed to analyze tone": "تحلیل لحن ناموفق بود",
@@ -396,15 +406,43 @@
   "enterTagsPlaceholder": "برچسب‌ها را اضافه کنید (Enter را فشار دهید)",
   "enterPromptNamePlaceholder": "مثلاً، پاسخ ایمیل",
   "enterPromptDescriptionPlaceholder": "این دستور برای چیست؟",
-  "enterPromptContentPlaceholder": "دستور خود را اینجا بنویسید. از {{variable}} برای محتوای پویا استفاده کنید.",
+  "enterPromptContentPlaceholder": "دستور خود را اینجا بنویسید. از '{{variable}}' برای محتوای پویا استفاده کنید.",
   "common": {
-    "contact": "تماس"
+    "contact": "تماس",
+    "close": "بستن",
+    "remove": "حذف",
+    "tryAgain": "دوباره تلاش کنید",
+    "menu": "منو",
+    "copyToClipboard": "کپی به کلیپ‌بورد",
+    "toggleDropdownMenu": "باز/بسته کردن منوی کشویی",
+    "toggleMenu": "باز/بسته کردن منو",
+    "closeModal": "بستن پنجره",
+    "dismissBanner": "بستن پیام",
+    "searchEllipsis": "جستجو...",
+    "addTagEllipsis": "افزودن برچسب...",
+    "msfLogo": "لوگوی MSF",
+    "importantInformation": "اطلاعات مهم",
+    "noResults": "نتیجه‌ای یافت نشد",
+    "confirm": "تایید",
+    "cancel": "لغو",
+    "discard": "صرف‌نظر",
+    "keepEditing": "ادامه ویرایش",
+    "yes": "بله",
+    "no": "خیر"
   },
   "errors": {
     "unexpectedErrorOccurred": "یک خطای غیرمنتظره رخ داد",
     "criticalErrorReload": "یک خطای حیاتی رخ داد. لطفاً صفحه را دوباره بارگیری کنید.",
     "reloadPage": "صفحه را دوباره بارگیری کنید",
-    "persistContactSupport": "اگر این مشکل ادامه دارد، لطفاً با پشتیبانی تماس بگیرید"
+    "persistContactSupport": "اگر این مشکل ادامه دارد، لطفاً با پشتیبانی تماس بگیرید",
+    "somethingWentWrong": "مشکلی پیش آمد",
+    "anErrorOccurred": "خطایی رخ داد",
+    "copyErrorMessage": "کپی پیام خطا",
+    "contactSupport": "اگر این مشکل ادامه داشت، لطفاً با پشتیبانی تماس بگیرید:",
+    "dismissError": "بستن پیام خطا",
+    "applicationError": "خطای برنامه",
+    "chatLoadError": "خطا در بارگذاری چت رخ داد",
+    "anErrorOccurredTryAgain": "خطایی رخ داد. لطفاً دوباره تلاش بفرمایید."
   },
   "auth": {
     "authenticationError": "خطای احراز هویت",
@@ -473,7 +511,53 @@
     "fullSizePreview": "پیش‌نمایش تمام صفحه",
     "enterSearchQueryPlaceholder": "پرس و جو یا سوال جستجوی خود را وارد کنید...",
     "errorFetchingUrl": "خطایی در دریافت محتوای URL رخ داد",
-    "errorInitiatingSearch": "خطایی در شروع جستجوی وب رخ داد"
+    "errorInitiatingSearch": "خطایی در شروع جستجوی وب رخ داد",
+    "regenerate": "بازتولید",
+    "modelSwitchPrompt": "{original} انجام نشد اما {fallback} موفق شد. آیا مایلید مدل را تغییر دهید؟",
+    "keepOriginalModel": "نگه داشتن {model}",
+    "switchToModel": "تغییر به {model}",
+    "alwaysSwitchToModel": "همیشه به‌صورت خودکار تغییر بده",
+    "translateMessage": "ترجمه پیام",
+    "translating": "در حال ترجمه...",
+    "translationError": "ترجمه انجام نشد",
+    "showOriginal": "نمایش متن اصلی",
+    "translatedTo": "ترجمه‌شده به {language}",
+    "searchLanguages": "جستجوی زبان‌ها...",
+    "selectLanguage": "انتخاب زبان",
+    "audioFromOriginal": "صدا از متن اصلی است",
+    "audioFromTranslation": "صدا از ترجمه {language} است",
+    "thinking": "در حال تفکر...",
+    "viewReasoningProcess": "مشاهده فرایند استدلال",
+    "collapseThinking": "جمع کردن تفکر",
+    "expandThinking": "گسترش تفکر",
+    "actionsDisabledForEmbed": "از کنترل‌های موجود در محتوای تعبیه‌شده بالا استفاده کنید",
+    "loadingMessages": {
+      "transcribingAndProcessing": "در حال تبدیل و پردازش...",
+      "transcribingAudio": "در حال تبدیل صوت به متن...",
+      "analyzingFiles": "در حال تجزیه و تحلیل فایل‌ها...",
+      "analyzingDocuments": "در حال تجزیه و تحلیل اسناد...",
+      "analyzingDocument": "در حال تجزیه و تحلیل سند...",
+      "analyzingImages": "در حال تجزیه و تحلیل تصاویر...",
+      "analyzingImage": "در حال تجزیه و تحلیل تصویر..."
+    },
+    "contentDescription": {
+      "text": "متن",
+      "imagesCount": "{count} تصویر",
+      "filesCount": "{count} فایل",
+      "audioVideo": "صوت/ویدئو",
+      "empty": "خالی"
+    },
+    "discardChanges": "لغو تغییرات",
+    "discardChangesMessage": "شما تغییرات ذخیره‌نشده دارید. مطمئن هستید که می‌خواهید آن‌ها را لغو کنید؟",
+    "voiceInputStarting": "در حال شروع...",
+    "voiceInputRecording": "در حال ضبط...",
+    "voiceInputTapToStop": "برای توقف ضربه بزنید",
+    "stopRecording": "توقف ضبط",
+    "voiceInput": "ورودی صوتی",
+    "microphoneAccessDenied": "دسترسی به میکروفون رد شده است. لطفاً این دسترسی را در تنظیمات مرورگر فعال کنید.",
+    "microphoneAccessError": "خطا در دسترسی به میکروفون: {message}",
+    "voiceInputTranscribing": "در حال تبدیل گفتار به متن...",
+    "ttsRightClickHint": "برای گزینه‌های صوتی کلیک راست کنید"
   },
   "sidebar": {
     "collapseSidebar": "بستن نوار کناری",
@@ -481,29 +565,135 @@
     "quickActionsTitle": "اقدامات سریع",
     "quickActions": "اقدامات سریع"
   },
-  "agents": {
-    "exportAgent": "صادرات عامل",
-    "editAgent": "ویرایش عامل",
-    "agentName": "نام عامل",
-    "myResearchAssistant": "دستیار تحقیق من",
-    "agentId": "شناسه عامل",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "توضیحات (اختیاری)",
-    "descriptionPlaceholder": "عامل متخصص در وظایف تحقیق...",
-    "baseModel": "مدل پایه",
-    "formatDescription": "فرمت: asst_xxxxx (از MSF AI Assistant Foundry)",
-    "importantInfo": "این عامل به زمینه مکالمه دسترسی خواهد داشت و می‌تواند از همان ابزارهای مدل‌های استاندارد استفاده کند. مطمئن شوید که شناسه عامل صحیح است زیرا بعداً نمی‌توان آن را تغییر داد."
-  },
   "prompts": {
-    "buildReusablePrompts": "ساخت پرامپت‌های قابل استفاده مجدد با کمک هوش مصنوعی"
+    "buildReusablePrompts": "ساخت پرامپت‌های قابل استفاده مجدد با کمک هوش مصنوعی",
+    "noToneDefault": "بدون لحن (پیش‌فرض استفاده شود)",
+    "tagHelp": "راهنمای برچسب",
+    "tagHelpContent": "برای دسته‌بندی و یافتن سریع‌تر پرامپت‌های خود از برچسب‌ها استفاده کنید. مثال:",
+    "tagExamples": {
+      "email": "ایمیل",
+      "marketing": "بازاریابی",
+      "technical": "فنی",
+      "customerSupport": "پشتیبانی-مشتریان"
+    },
+    "variableHelp": "راهنمای متغیر",
+    "variableHelpIntro": "برای پویا کردن پرامپت‌های خود از متغیرها استفاده کنید:",
+    "requiredVariables": "متغیرهای اجباری (بدون مقدار پیش‌فرض):",
+    "optionalVariables": "متغیرهای اختیاری (دارای مقدار پیش‌فرض):",
+    "userMustProvide": "کاربر باید مقدار را وارد کند",
+    "userCanProvide": "کاربر می‌تواند مقدار وارد کند یا مقدار پیش‌فرض استفاده می‌شود",
+    "example": "مثال:",
+    "variableExampleText": "یک ایمیل '{{tone:professional}}' به '{{recipient}}' درباره '{{topic}}' به زبان '{{language:English}}' بنویس",
+    "detectedVariables": "متغیرهای شناسایی‌شده",
+    "required": "اجباری",
+    "aiAssistant": "دستیار هوش مصنوعی",
+    "whatToImprove": "مایلید چه چیزی بهبود یابد؟",
+    "whatShouldPromptDo": "این پرامپت باید چه کاری انجام دهد؟",
+    "improvePlaceholder": "مثلاً: حرفه‌ای‌تر شود، مثال اضافه کن، وضوح را افزایش بده...",
+    "generatePlaceholder": "مثلاً: یک قالب ایمیل حرفه‌ای با متغیر برای گیرنده و موضوع تولید کن...",
+    "addContextOptional": "افزودن زمینه (اختیاری)",
+    "revising": "در حال بازبینی...",
+    "generating": "در حال تولید...",
+    "reviseWithAI": "بازبینی با هوش مصنوعی",
+    "generatePrompt": "ایجاد پرامپت",
+    "revisionComplete": "بازنگری کامل شد",
+    "generationComplete": "تولید کامل شد",
+    "revisedPrompt": "پرامپت بازنگری‌شده:",
+    "generatedPrompt": "پرامپت تولیدشده:",
+    "applyRevision": "اعمال این بازنگری",
+    "useThisPrompt": "استفاده از این پرامپت",
+    "improvementsMade": "بهبودهای انجام‌شده:",
+    "tips": "نکات:",
+    "howAICanHelp": "هوش مصنوعی چگونه می‌تواند کمک کند",
+    "helpItems": {
+      "improveClarity": "افزایش وضوح و ساختار",
+      "suggestVariables": "پیشنهاد متغیرهای مفید",
+      "addContext": "افزودن زمینه و مثال",
+      "optimize": "بهینه‌سازی برای نتایج بهتر"
+    },
+    "savePrompt": "ذخیره پرامپت",
+    "add": "افزودن"
   },
   "tones": {
     "createCustomVoiceProfile": "ایجاد نمایه صوتی سفارشی با کمک هوش مصنوعی",
-    "examplePlaceholder": "به عنوان مثال، ایجاد لحن حرفه‌ای اما دوستانه برای خدمات مشتری..."
+    "examplePlaceholder": "به عنوان مثال، ایجاد لحن حرفه‌ای اما دوستانه برای خدمات مشتری...",
+    "tagHelp": "راهنمای برچسب",
+    "tagHelpContent": "برای دسته‌بندی و جست‌وجوی سریع‌تر تُن‌ها از برچسب استفاده کنید. مثال:",
+    "tagExamples": {
+      "professional": "حرفه‌ای",
+      "casual": "خودمانی",
+      "technical": "فنی",
+      "marketing": "بازاریابی"
+    },
+    "add": "افزودن",
+    "aiToneAnalyzer": "تحلیلگر تُن با هوش مصنوعی",
+    "describeToneToCreate": "تُنی را که می‌خواهید ایجاد کنید توصیف نمایید",
+    "uploadContentSamples": "بارگذاری نمونه‌های محتوا",
+    "analyzing": "در حال تحلیل...",
+    "analyzeToneWithAI": "تحلیل تُن با هوش مصنوعی",
+    "analysisComplete": "تحلیل کامل شد",
+    "generatedVoiceGuidelines": "راهنمای صوتی ایجادشده:",
+    "examplePhrases": "عبارات نمونه:",
+    "suggestedTags": "برچسب‌های پیشنهادی:",
+    "applyThisAnalysis": "اعمال این تحلیل",
+    "detectedCharacteristics": "ویژگی‌های شناسایی‌شده:",
+    "howAICanHelp": "هوش مصنوعی چگونه می‌تواند کمک کند",
+    "helpItems": {
+      "transcribe": "رونویسی از محتوای صوتی/تصویری",
+      "analyzeContent": "تحلیل نمونه‌های محتوای شما",
+      "extractPatterns": "استخراج الگوهای تُن و سبک",
+      "generateGuidelines": "ایجاد راهنمای صوتی",
+      "suggestTags": "پیشنهاد برچسب‌های مرتبط"
+    },
+    "saveTone": "ذخیره تُن"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "مشاهده نمودار جریان فنی"
+    "viewTechnicalFlowDiagram": "مشاهده نمودار جریان فنی",
+    "backToChat": "بازگشت به گفتگو",
+    "title": "مرکز راهنما",
+    "subtitle": "پاسخ‌ها را بیابید، درباره حریم خصوصی یاد بگیرید و پشتیبانی بگیرید",
+    "faq": {
+      "title": "سؤالات پرتکرار",
+      "description": "پاسخ سؤالات متداول درباره استفاده از دستیار هوشمند را بیابید",
+      "articles": "مقالات",
+      "searchPlaceholder": "جستجوی سؤالات متداول...",
+      "noResults": "هیچ سؤالی مطابق با جست‌وجوی شما یافت نشد",
+      "noResultsHint": "عبارت جست‌وجوی دیگری را امتحان کنید"
+    },
+    "privacy": {
+      "title": "حریم خصوصی و داده‌ها",
+      "description": "با نحوه ذخیره و محافظت از داده‌های خود آشنا شوید",
+      "topics": "موضوعات",
+      "searchPlaceholder": "جستجوی موضوعات حریم خصوصی...",
+      "noResults": "هیچ موضوعی مطابق با جستجوی شما یافت نشد",
+      "noResultsHint": "عبارت جستجو را تغییر دهید",
+      "bannerTitle": "حریم خصوصی شما مهم است",
+      "bannerDescription": "تمام مکالمات به صورت محلی روی دستگاه شما ذخیره می‌شوند. پردازش داده‌ها در سیستم‌های MSF و با استفاده از زیرساخت Azure انجام می‌شود.",
+      "localStorageOnly": "فقط ذخیره‌سازی محلی",
+      "msfControlled": "تحت کنترل MSF",
+      "noPersonalData": "بدون داده شخصی",
+      "noSensitiveOps": "بدون عملیات حساس"
+    },
+    "contact": {
+      "title": "ارتباط و منابع",
+      "description": "با تیم ما در تماس باشید و به لینک‌های مفید دسترسی پیدا کنید",
+      "supportAvailable": "پشتیبانی در دسترس است",
+      "submitRequest": "ارسال درخواست پشتیبانی",
+      "getHelp": "دریافت کمک از تیم ما",
+      "requestDescription": "نیاز به کمک دارید یا می‌خواهید بازخورد دهید؟ برای باز کردن فرم پشتیبانی، روی دکمه زیر کلیک کنید.",
+      "openSupportForm": "باز کردن فرم پشتیبانی",
+      "otherWays": "راه‌های دیگر تماس با ما",
+      "emailSupport": "پشتیبانی ایمیلی",
+      "emailDescription": "برای سوالات، بازخورد یا مشکلات فنی ایمیل ارسال کنید"
+    },
+    "resources": {
+      "title": "منابع بیشتر",
+      "portalTitle": "پرتال AI Accelerator",
+      "portalDescription": "مستندات، به‌روزرسانی پروژه‌ها و منابع آموزشی",
+      "githubTitle": "مخزن متن‌باز",
+      "githubDescription": "مشاهده کد، گزارش مشکلات و مشارکت در GitHub"
+    }
   },
   "settings": {
     "Settings": "تنظیمات",
@@ -571,9 +761,895 @@
     "FAQs, privacy policy, and guides": "سوالات متداول، سیاست حفظ حریم خصوصی و راهنماها",
     "Contact Support": "تماس با پشتیبانی",
     "Popular Questions": "سوالات محبوب",
-    "View all FAQs": "مشاهده همه سوالات متداول"
+    "View all FAQs": "مشاهده همه سوالات متداول",
+    "Delete legacy data after migration": "حذف داده‌های قدیمی پس از مهاجرت",
+    "frees up storage space": "فضای ذخیره‌سازی را آزاد می‌کند",
+    "Legacy data deleted": "داده‌های قدیمی حذف شد",
+    "freed": "آزاد شد",
+    "Conversations": "مکالمات",
+    "Legacy": "قدیمی",
+    "Other": "سایر",
+    "Loading": "در حال بارگذاری",
+    "Legacy Data Detected": "داده‌های قدیمی شناسایی شد",
+    "legacyDataDescription": "شما {size} داده از نسخه قبلی دارید. این داده‌ها را می‌توانید مهاجرت، صادر یا حذف کنید تا فضا آزاد شود.",
+    "legacyDeleteSuccess": "داده‌های قدیمی با موفقیت حذف شد و {size} آزاد شد.",
+    "legacyDeleteError": "حذف داده‌های قدیمی ناموفق بود. لطفاً دوباره تلاش کنید.",
+    "Explore solutions": "بررسی راه‌حل‌ها",
+    "Migrate to Current Format": "مهاجرت به فرمت فعلی",
+    "Export Legacy Data": "استخراج داده‌های قدیمی",
+    "Delete Legacy Data": "حذف داده‌های قدیمی",
+    "deleteLegacyConfirm": "آیا مطمئن هستید که می‌خواهید همه داده‌های قدیمی را حذف کنید؟ این اقدام قابل بازگشت نیست.",
+    "Deleting": "در حال حذف",
+    "Confirm Delete": "تأیید حذف",
+    "Cancel": "لغو",
+    "Custom Instructions": "دستورالعمل‌های سفارشی",
+    "Personalization": "شخصی‌سازی",
+    "Display Name": "نام نمایشی",
+    "Display Name Description": "انتخاب کنید نام شما چگونه در خوشامدگویی و بخش‌های مختلف برنامه نمایش داده شود",
+    "First Name": "نام",
+    "Last Name": "نام خانوادگی",
+    "Full Name": "نام کامل",
+    "Custom": "سفارشی",
+    "None": "هیچ‌کدام",
+    "Custom Display Name": "نام نمایشی سفارشی",
+    "Custom Display Name Placeholder": "نام دلخواه خود را وارد کنید",
+    "howShouldWeAddressYou": "مایلیم شما را چگونه خطاب کنیم؟",
+    "displayNamePreview": "پیش‌نمایش: «{greeting}»",
+    "Streaming Speed": "سرعت پخش",
+    "Slow": "کند",
+    "Normal": "عادی",
+    "Fast": "سریع",
+    "Controls how smoothly text appears during AI responses": "نحوه نمایش روان متن هنگام پاسخ‌های هوش مصنوعی را کنترل می‌کند",
+    "aboutYou": {
+      "title": "درباره شما",
+      "shareBasicInfo": "اشتراک‌گذاری اطلاعات پایه با هوش مصنوعی",
+      "shareBasicInfoDescription": "در صورت فعال بودن، هوش مصنوعی نام، عنوان و بخش شما را از پروفایل‌تان می‌داند",
+      "preferredName": "نام دلخواه",
+      "preferredNamePlaceholder": "مایلید با چه نامی خطاب شوید؟",
+      "preferredNameDescription": "نام نمایشی شما را تغییر می‌دهد. برای استفاده از نام پروفایل، این قسمت را خالی بگذارید",
+      "additionalContext": "زمینه‌ی اضافی",
+      "additionalContextPlaceholder": "مثلاً: من در عملیات میدانی کار می‌کنم، پاسخ‌های مختصر را ترجیح می‌دهم، اغلب درباره پروتکل‌های پزشکی سؤال می‌کنم...",
+      "additionalContextDescription": "هر اطلاعات دیگری که می‌خواهید هوش مصنوعی درباره شما بداند",
+      "preferredNameDescriptionWithSync": "نحوه خطاب قرار دادن شما توسط هوش مصنوعی. اگر خالی بگذارید، نام نمایشی شما از تنظیمات عمومی استفاده می‌شود."
+    },
+    "displayNameUIOnly": "این گزینه تعیین می‌کند که نام شما در برنامه چگونه نمایش داده شود. هوش مصنوعی این نام را نمی‌بیند مگر اینکه اشتراک‌گذاری را در تنظیمات گفت‌وگو فعال کنید.",
+    "tts": {
+      "title": "تبدیل متن به گفتار",
+      "language": "زبان",
+      "voice": "صدا",
+      "multilingualVoices": "صداهای چندزبانه",
+      "voices": "صداها",
+      "rate": "سرعت",
+      "pitch": "زیر و بمی",
+      "quality": "کیفیت صدا",
+      "qualityDescription": "کیفیت بالاتر صدای بهتری ایجاد می‌کند اما پهنای باند بیشتری مصرف می‌کند",
+      "preview": "پیش‌نمایش",
+      "previewing": "در حال پخش...",
+      "previewFailed": "تولید صدای پیش‌نمایش ناموفق بود",
+      "previewText": "این پیش‌نمایشی از تنظیمات صدای انتخاب‌شده است.",
+      "reset": "بازنشانی",
+      "default": "پیش‌فرض",
+      "slower": "کندتر",
+      "faster": "سریع‌تر",
+      "lower": "پایین‌تر",
+      "higher": "بالاتر",
+      "selectedVoice": "انتخاب شده",
+      "noVoicesAvailable": "برای این زبان صدایی موجود نیست",
+      "quickSettings": "تنظیمات صدا",
+      "overrideForThisMessage": "تنظیمات این پیام را تغییر دهید",
+      "speakWithSettings": "پخش"
+    },
+    "Model Response Settings Description": "پارامترهای پیش‌فرض پاسخ مدل AI را تنظیم کنید. مدل‌های مختلف تنظیمات متفاوتی دارند.",
+    "Default Reasoning Effort": "میزان پیش‌فرض تلاش برای استدلال",
+    "reasoningEffortDescription": "عمق تفکر مدل‌های استدلال را کنترل می‌کند. تلاش بیشتر، تحلیل دقیق‌تری ایجاد می‌کند.",
+    "Default Verbosity": "سطح پیش‌فرض جزئیات پاسخ",
+    "verbosityDescription": "سطح جزئیات پاسخ برای مدل‌های GPT-5 را کنترل می‌کند."
   },
   "notFound": {
     "lostDog": "سگ گمشده"
+  },
+  "Saved Prompts": "پرامپت‌های ذخیره‌شده",
+  "New conversation": "گفتگوی جدید",
+  "Edit": "ویرایش",
+  "Chat Settings": "تنظیمات گفتگو",
+  "Default System Prompt": "پرامپت پیش‌فرض سیستم",
+  "Name": "نام",
+  "Email": "ایمیل",
+  "Cancel": "لغو",
+  "Are you sure?": "آیا مطمئن هستید؟",
+  "Clear conversations": "پاک کردن گفتگوها",
+  "Import data": "وارد کردن داده",
+  "Export data": "خروجی گرفتن از داده",
+  "Temperature": "Temperature",
+  "AI": "هوش مصنوعی",
+  "Are you sure you want to clear all messages?": "آیا مطمئن هستید که می‌خواهید همه پیام‌ها را پاک کنید؟",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "رابط کاربری Chatbot یک کیت پیشرفته برای مدل‌های چت OpenAI است که با هدف شبیه‌سازی رابط و عملکرد ChatGPT طراحی شده است.",
+  "Conversation": "گفتگو",
+  "Enter a prompt": "یک پرامپت وارد کنید",
+  "Error fetching models_": "خطا در دریافت مدل‌ها.",
+  "Higher values like 0_8 will make the output more random, while lower values like 0_2 will make it more focused and deterministic_": "مقادیر بالاتر مانند ۰.۸ خروجی را تصادفی‌تر می‌کند و مقادیر پایین‌تر مانند ۰.۲ آن را متمرکزتر و قطعی‌تر می‌سازد.",
+  "If you completed this step, OpenAI may be experiencing issues_": "اگر این مرحله را انجام داده‌اید، ممکن است OpenAI دچار مشکل شده باشد.",
+  "If you don't have an OpenAI API key, you can get one here: ": "اگر کلید OpenAI API ندارید، می‌توانید از اینجا دریافت کنید: ",
+  "Loading_ellipsis": "در حال بارگذاری...",
+  "Make sure your OpenAI API key is set in the bottom left of the sidebar_": "اطمینان حاصل کنید که کلید OpenAI API شما در پایین سمت چپ نوار کناری تنظیم شده است.",
+  "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پیام {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
+  "Model": "مدل",
+  "OR": "یا",
+  "OpenAI API Key Required": "نیاز به کلید OpenAI API",
+  "Please enter a message": "لطفاً یک پیام وارد کنید",
+  "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
+  "Prompt limit is {{maxLength}} characters": "حداکثر تعداد کاراکتر مجاز برای راهنما {{maxLength}} است",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
+  "Regenerate response": "تولید مجدد پاسخ",
+  "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",
+  "Save & Submit": "ذخیره و ارسال",
+  "Sorry, there was an error_": "متاسفانه خطایی رخ داد.",
+  "Stop Generating": "توقف تولید",
+  "System Prompt": "پرامپت سیستم",
+  "Type a message or type \"/\" to select a prompt_ellipsis": "یک پیام بنویسید یا با «/» یک پرامپت انتخاب کنید...",
+  "Type a message_ellipsis": "یک پیام بنویسید...",
+  "View Account Usage": "مشاهده مصرف حساب",
+  "You": "شما",
+  "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "شما ChatGPT هستید، یک مدل زبانی بزرگ آموزش‌دیده توسط OpenAI. دستورالعمل‌های کاربر را با دقت دنبال کنید. پاسخ را با استفاده از markdown ارائه دهید.",
+  "click if using a _env_local file": "کلیک کنید اگر از فایل .env.local استفاده می‌کنید",
+  "Copied!": "کپی شد!",
+  "Copy code": "کپی کد",
+  "Enter file name": "نام فایل را وارد کنید",
+  "A description for your prompt_": "یک توضیح برای پرامپت خود وارد کنید.",
+  "Search prompts_ellipsis": "جستجوی پرامپت‌ها",
+  "Description": "توضیحات",
+  "New folder": "پوشه جدید",
+  "Conversation exported successfully": "گفتگو با موفقیت صادر شد",
+  "Failed to export conversation": "صدور گفتگو انجام نشد",
+  "Conversation imported successfully": "گفتگو با موفقیت وارد شد",
+  "Failed to import conversation": "وارد کردن گفتگو انجام نشد",
+  "Invalid conversation file": "فایل گفتگو نامعتبر است",
+  "Folder exported with {count} conversations": "پوشه با {count} گفتگو صادر شد",
+  "Failed to export folder": "صدور پوشه انجام نشد",
+  "Folder not found": "پوشه پیدا نشد",
+  "Folder imported with {count} conversations": "پوشه با {count} گفتگو وارد شد",
+  "Invalid folder file": "فایل پوشه نامعتبر است",
+  "Failed to import file": "وارد کردن فایل انجام نشد",
+  "Unrecognized file format": "فرمت فایل ناشناخته است",
+  "No prompts_": "بدون پرامپت.",
+  "Prompt": "پرامپت",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "محتوای پرامپت. برای نمایش متغیر از '{{}}' استفاده کنید. مثال: '{{name}}' یک '{{adjective}}' '{{noun}}' است",
+  "A name for your prompt_": "یک نام برای پرامپت خود.",
+  "No conversations_": "بدون گفتگو.",
+  "OpenAI API Key": "کلید OpenAI API",
+  "Plugin Keys": "کلیدهای افزونه",
+  "transcription": {
+    "transcribesOnSend": "تبدیل گفتار هنگام ارسال",
+    "addInstructions": "افزودن دستورالعمل",
+    "instructionsPlaceholder": "زمینه برای بهبود دقت (مثال: نام‌ها، اصطلاحات)",
+    "languages": {
+      "autoDetect": "تشخیص خودکار",
+      "afrikaans": "آفریکانس",
+      "arabic": "عربی",
+      "armenian": "ارمنی",
+      "azerbaijani": "آذربایجانی",
+      "belarusian": "بلاروسی",
+      "bosnian": "بوسنیایی",
+      "bulgarian": "بلغاری",
+      "burmese": "برمه‌ای",
+      "catalan": "کاتالان",
+      "chinese": "چینی",
+      "croatian": "کرواتی",
+      "czech": "چکی",
+      "danish": "دانمارکی",
+      "dutch": "هلندی",
+      "english": "انگلیسی",
+      "estonian": "استونیایی",
+      "finnish": "فنلاندی",
+      "french": "فرانسوی",
+      "galician": "گالیسی",
+      "german": "آلمانی",
+      "greek": "یونانی",
+      "hebrew": "عبری",
+      "hindi": "هندی",
+      "hungarian": "مجاری",
+      "icelandic": "آیسلندی",
+      "indonesian": "اندونزیایی",
+      "italian": "ایتالیایی",
+      "japanese": "ژاپنی",
+      "kannada": "کانادا",
+      "kazakh": "قزاقی",
+      "korean": "کره‌ای",
+      "latvian": "لتونیایی",
+      "lithuanian": "لیتوانیایی",
+      "macedonian": "مقدونی",
+      "malay": "مالای",
+      "maori": "مائوری",
+      "marathi": "مراتی",
+      "nepali": "نپالی",
+      "norwegian": "نروژی",
+      "persian": "فارسی",
+      "polish": "لهستانی",
+      "portuguese": "پرتغالی",
+      "romanian": "رومانیایی",
+      "russian": "روسی",
+      "serbian": "صربی",
+      "slovak": "اسلواک",
+      "slovenian": "اسلوونیایی",
+      "spanish": "اسپانیایی",
+      "swahili": "سواحیلی",
+      "swedish": "سوئدی",
+      "tagalog": "تاگالوگ",
+      "tamil": "تامیلی",
+      "thai": "تایلندی",
+      "turkish": "ترکی",
+      "ukrainian": "اوکراینی",
+      "urdu": "اردو",
+      "vietnamese": "ویتنامی",
+      "welsh": "ولزی"
+    },
+    "inProgress": "رونویسی در حال انجام",
+    "processingFile": "در حال پردازش: {filename}",
+    "timeRemaining": "زمان باقی‌مانده: {time}",
+    "maxDurationNote": "فایل‌های بزرگ ممکن است تا {minutes} دقیقه طول بکشند",
+    "timedOut": "رونویسی پس از {minutes} دقیقه زمان‌بر شد",
+    "timedOutToast": "رونویسی با گذشت زمان پایان نیافت: {filename}",
+    "failed": "رونویسی ناموفق بود: {error}",
+    "failedToast": "رونویسی ناموفق بود: {filename}",
+    "unknownError": "خطای ناشناخته",
+    "completed": "رونویسی کامل شد",
+    "completedToast": "رونویسی کامل شد: {filename}",
+    "placeholder": "[رونویسی در حال انجام: {filename}]",
+    "loadingTranscript": "در حال بارگذاری متن پیاده‌سازی برای {filename}...",
+    "expiredOrDeleted": "این متن پیاده‌سازی منقضی شده یا حذف شده است.",
+    "fetchError": "بارگذاری متن پیاده‌سازی انجام نشد. لطفاً دوباره تلاش کنید.",
+    "transcriptExpired": "متن پیاده‌سازی برای {filename} منقضی شده است. برای حفظ حریم خصوصی، متون پیاده‌سازی پس از {days} روز به‌صورت خودکار حذف می‌شوند.",
+    "expirationWarning": "متن پیاده‌سازی برای {filename} در {days} روز آینده منقضی می‌شود. اگر نیاز به نگهداری دارید، محتوا را کپی کنید."
+  },
+  "transcriptionComplete": "تبدیل گفتار کامل شد! متن به ورودی چت اضافه شد.",
+  "No prompts found": "هیچ پرامپتی یافت نشد",
+  "Select a prompt to view details": "یک پرامپت را برای مشاهده جزییات انتخاب کنید",
+  "Content": "محتوا",
+  "importBackupParseError": "خواندن فایل پشتیبان با خطا مواجه شد. لطفاً مطمئن شوید فایل JSON معتبر است.",
+  "emptyState": {
+    "greeting": "چطور می‌توانم کمک کنم؟",
+    "greetingWithName": "چطور می‌توانم کمک کنم، {name}؟",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "ایجاد نمودار",
+        "prompt": "نشان دهید چگونه می‌توانید نمودارها و فلوچارت‌ها ایجاد کنید. چه نوع فرایندها، جریان‌های کاری یا سیستم‌هایی را می‌توانید برای من تصویرسازی کنید؟ چند مثال بزنید."
+      },
+      "draftContent": {
+        "title": "پیش‌نویس محتوای حرفه‌ای",
+        "prompt": "برای نوشتن اسناد حرفه‌ای مثل ایمیل‌ها، گزارش‌ها و خلاصه‌ها به کمک نیاز دارم. می‌توانید نمونه‌هایی از انواع مختلف نگارش تجاری که می‌توانید کمک کنید، نشان دهید؟"
+      },
+      "analyzeInformation": {
+        "title": "تحلیل اطلاعات",
+        "prompt": "چگونه می‌توانید به من در تحلیل داده‌ها یا اطلاعات کمک کنید؟ راه‌های مختلف تجزیه و تحلیل اعداد، یافتن الگوها یا استخراج بینش از اسناد یا دیتاست‌ها را نشان دهید."
+      },
+      "planOrganize": {
+        "title": "برنامه‌ریزی و سازماندهی",
+        "prompt": "می‌توانید در برنامه‌ریزی پروژه‌ها یا سازماندهی کارها به من کمک کنید؟ نمونه‌هایی از ساختارهای مختلف تایم‌لاین، دستور جلسه یا برنامه پروژه را نشان دهید."
+      },
+      "brainstormIdeas": {
+        "title": "بارش فکری ایده‌ها",
+        "prompt": "می‌خواهم برای حل یک مشکل ایده‌پردازی کنم. نشان دهید چگونه به تفکر خلاق و تولید ایده می‌پردازید – چه نوع سوالاتی می‌پرسید و چگونه احتمالات را بررسی می‌کنید؟"
+      },
+      "buildPresentations": {
+        "title": "ساخت ارائه‌ها",
+        "prompt": "چگونه می‌توانید در ساخت ارائه‌ها به من کمک کنید؟ نمونه‌هایی از ساختارهای مختلف ارائه، پیشنهادهای بصری و نحوه سازماندهی اطلاعات برای مخاطبین مختلف را نشان دهید."
+      },
+      "workWithCode": {
+        "title": "کار با کد",
+        "prompt": "می‌توانید در زمینه برنامه‌نویسی یا اسکریپت‌ها کمک کنید؟ نمونه‌هایی از نوشتن کد جدید، رفع اشکال یا توضیح گام به گام عملکرد کد را ارائه دهید."
+      },
+      "decisionSupport": {
+        "title": "حمایت تصمیم‌گیری",
+        "prompt": "نیاز به تصمیم‌گیری دارم اما در ارزیابی گزینه‌ها مطمئن نیستم. می‌توانید چارچوب‌ها یا رویکردهای مختلفی که برای بررسی انتخاب‌ها استفاده می‌کنید، نشان دهید؟"
+      },
+      "summarizeSynthesize": {
+        "title": "خلاصه‌سازی و ترکیب مطالب",
+        "prompt": "چگونه در خلاصه‌سازی اسناد طولانی یا ترکیب اطلاعات از منابع مختلف کمک می‌کنید؟ نمونه‌هایی از فرمت‌ها و سطوح مختلف خلاصه را نشان دهید."
+      },
+      "explainTopics": {
+        "title": "توضیح موضوعات پیچیده",
+        "prompt": "می‌توانید مفاهیم پیچیده را به زبان ساده توضیح دهید؟ نشان دهید چگونه موضوعات دشوار را ساده می‌کنید، از قیاس استفاده می‌کنید و توضیحات را با توجه به دانش مخاطب تطبیق می‌دهید."
+      },
+      "createSchedules": {
+        "title": "ایجاد برنامه زمانی",
+        "prompt": "برای سازماندهی زمان و ساخت برنامه نیاز به کمک دارم. روش‌های مختلف ساختاردهی دستور جلسه، تقویم یا برنامه‌های زمانی را با مثال نشان دهید."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "مدل‌ها",
+      "agents": "عامل‌ها"
+    },
+    "sections": {
+      "baseModels": "مدل‌های پایه"
+    },
+    "agents": {
+      "advancedFeatureBadge": "ویژگی پیشرفته",
+      "description": "عامل‌های هوش مصنوعی سفارشی با قابلیت‌های تخصصی بسازید و مدیریت کنید. این عامل‌ها روی نمونه MSF AI Assistant Foundry اجرا می‌شوند.",
+      "advancedFeatureTitle": "ویژگی پیشرفته - نیازمند هماهنگی با تیم فنی AI Assistant",
+      "advancedFeatureWarning": "عامل‌های سفارشی فقط با نمونه MSF AI Assistant Foundry کار می‌کنند. شناسۀ عامل باید توسط تیم فنی AI Assistant در همین نمونه ایجاد و قبل از استفاده با شما هماهنگ شود.",
+      "createNewAgent": "ایجاد عامل سفارشی جدید",
+      "noAgentsTitle": "هنوز عامل سفارشی وجود ندارد",
+      "noAgentsDescription": "اولین عامل سفارشی خود را برای گسترش قابلیت هوش مصنوعی با ابزارها و رفتارهای تخصصی بسازید."
+    },
+    "advancedOptions": {
+      "title": "تنظیمات پیشرفته",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "توجه: این مدل برای عملکرد ثابت، مقدار temperature را به صورت ثابت استفاده می‌کند.",
+      "reasoningEffort": "تلاش استدلال",
+      "minimal": "حداقلی",
+      "low": "کم",
+      "medium": "متوسط",
+      "high": "زیاد",
+      "verbosity": "میزان جزئیات"
+    },
+    "searchMode": {
+      "title": "حالت جستجو",
+      "subtitle": "در صورت نیاز از جستجوی وب استفاده می‌کند",
+      "routingLabel": "مسیر جستجو:",
+      "whatsDifference": "تفاوت چیست؟",
+      "privacyFocused": "متمرکز بر حریم خصوصی (پیش‌فرض)",
+      "privacyFocusedDescription": "کندتر اما با حریم خصوصی بیشتر",
+      "azureAgentMode": "حالت Azure AI Agent",
+      "azureAgentModeDescription": "سریع‌تر اما اطلاعات گفتگو را در فضای ابری ذخیره می‌کند",
+      "privacyInfoTitle": "اطلاعات مهم درباره حریم خصوصی",
+      "privacyInfoDescription": "کل مکالمه شما به عامل Azure AI Foundry ارسال خواهد شد.",
+      "learnMoreDataStorage": "اطلاعات بیشتر درباره ذخیره‌سازی داده‌ها",
+      "privacyEnabled": "جستجوی متمرکز بر حریم خصوصی فعال شد",
+      "learnPrivacy": "اطلاع از نحوه حفظ حریم خصوصی شما"
+    },
+    "customAgent": {
+      "label": "عامل سفارشی:",
+      "description": "این عامل روی نمونه Foundry دستیار هوش مصنوعی MSF اجرا می‌شود و ابزارها همواره فعال هستند.",
+      "webSearch": "جستجوی وب بلادرنگ",
+      "codeInterpreter": "تفسیر کد و تحلیل فایل"
+    },
+    "header": {
+      "backToModels": "بازگشت به مدل‌ها",
+      "knowledgeCutoff": "حذف دانش: {cutoff}",
+      "knowledgeCutoffLabel": "بازه دانشی"
+    },
+    "modelTypes": {
+      "foundational": "پایه‌ای",
+      "omni": "اومنی",
+      "reasoning": "استدلال",
+      "agent": "عامل"
+    },
+    "orderMode": {
+      "label": "مرتب‌سازی بر اساس",
+      "usage": "بیشترین استفاده",
+      "name": "نام (A-Z)",
+      "cutoff": "جدیدترین مدل‌ها",
+      "custom": "سفارشی",
+      "edit": "ویرایش",
+      "done": "تمام",
+      "reset": "بازنشانی",
+      "resetTooltip": "بازنشانی به ترتیب پیش‌فرض"
+    },
+    "knowledgeCutoff": {
+      "realtime": "جستجوی وب لحظه‌ای"
+    },
+    "modelTypeIcons": {
+      "foundational": "مدل سریع و کارآمد با کاربرد عمومی",
+      "reasoning": "استدلال پیشرفته برای مسائل پیچیده",
+      "omni": "مدل چندرسانه‌ای با قابلیت‌های گسترده",
+      "agent": "نماینده با ابزارهای لحظه‌ای و دسترسی به وب"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "مدل هوش مصنوعی مبتنی بر GPT-4.1 با جستجوی وب بلادرنگ از طریق Bing. ارائه اطلاعات به‌روز، بررسی صحت اطلاعات و آگاهی از رویدادهای جاری. بهترین گزینه برای تحقیقاتی که نیاز به اطلاعات اخیر، تحلیل اخبار و صحت‌سنجی دارند.",
+      "knowledgeCutoff": "جستجوی وب بلادرنگ"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "پیشرفته‌ترین مدل OpenAI، برتر در استدلال پیچیده، تولید کد و حل مسائل فنی. مناسب برای وظایف تحلیلی، چالش‌های برنامه‌نویسی، پژوهش و توضیحات دقیق. قابلیت تنظیم میزان تلاش استدلال و درجه جزئیات پاسخ را دارد.",
+      "knowledgeCutoff": "۶ اوت ۲۰۲۵ ساعت ۸:۰۰ شب"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "نسخه سریع‌تر و مقرون‌به‌صرفه‌تر از GPT-5، بهینه برای سرعت و حفظ کیفیت بالا. ایده‌آل برای کارهای روزمره، پرسش‌های سریع، مسیریابی ابزار و کاربردهایی با نیاز به پاسخ فوری. تعادل عالی بین عملکرد و بهره‌وری.",
+      "knowledgeCutoff": "۶ اوت ۲۰۲۵ ساعت ۸:۰۰ شب"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "نسخه تخصصی GPT-5 بهینه‌شده برای مکالمه و هوش هیجانی. برتر در ارتباط همدلانه، حمایت سلامت روان، نویسندگی خلاق، ایده‌پردازی و گفتگوهای طبیعی. مناسب برای مکالمات غیررسمی، مشاوره و وظایف نیازمند آگاهی عاطفی.",
+      "knowledgeCutoff": "۱ اکتبر ۲۰۲۵ ساعت ۸:۰۰ شب"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "پیشرفته‌ترین مدل استدلال OpenAI با توانمندی قابل توجه حل مسئله. برتر در ریاضیات پیچیده، استدلال علمی، چالش‌های برنامه‌نویسی و وظایف منطقی چندمرحله‌ای. پنجره زمینه ۲۰۰K افزایش‌یافته. پشتیبانی از کنترل تلاش استدلال.",
+      "knowledgeCutoff": "۸ آوریل ۲۰۲۵ ساعت ۸:۰۰ شب"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "مدل سریع و مقرون‌به‌صرفه از Meta. عالی برای کارهای روزمره مثل نویسندگی، خلاصه‌سازی و کمک‌های ابتدایی برنامه‌نویسی. تعادل خوب بین سرعت و کیفیت برای امور روتین.",
+      "knowledgeCutoff": "۷ مه ۲۰۲۵ ساعت ۷:۱۱ صبح"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "متخصص استدلال که فرآیند را گام‌به‌گام نشان می‌دهد. عالی برای مسائل ریاضی، معماهای منطقی و درک مفاهیم پیچیده. نحوه تفکر مدل را در لحظه مشاهده کنید.",
+      "knowledgeCutoff": "۲۰ ژانویه ۲۰۲۵"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "مدلی همه‌جانبه و قوی، به ویژه مناسب برای برنامه‌نویسی و نگارش فنی. عالی برای رفع اشکال کد، تدوین مستندات و توضیح مفاهیم فنی. سریع و قابل اعتماد برای کارهای توسعه.",
+      "knowledgeCutoff": "۱۶ آوریل ۲۰۲۵ ساعت ۱۲:۴۵ صبح"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "مدلی چندمنظوره از xAI با پاسخ‌های دقیق و ظریف. مناسب برای بحث‌های باز، پروژه‌های خلاقانه و حل مسائل پیچیده.",
+      "knowledgeCutoff": "۱۳ مه ۲۰۲۵ ساعت ۱۲:۱۶ صبح"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "توانمندترین مدل Anthropic با قابلیت‌های استدلال، برنامه‌نویسی و خلاقیت عالی. بهترین گزینه برای تحلیل‌های پیچیده، پژوهش و وظایف نیازمند درک عمیق.",
+      "knowledgeCutoff": "ژانویه ۲۰۲۵"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "مدل متعادل Claude با عملکرد عالی در برنامه‌نویسی، تحلیل و وظایف خلاقانه. مناسب برای استفاده روزمره با زمان پاسخ‌دهی سریع.",
+      "knowledgeCutoff": "ژانویه ۲۰۲۵"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "نسل قبلی مدل Claude Opus. عالی برای کارهای برنامه‌نویسی پیچیده، تحلیل دقیق و درک ظریف.",
+      "knowledgeCutoff": "ژانویه ۲۰۲۵"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "مدل سریع و مقرون‌به‌صرفه Claude بهینه‌شده برای کارهای سریع. مناسب برای پرسش‌های ساده، خلاصه‌سازی و کاربردهای پرتکرار.",
+      "knowledgeCutoff": "ژانویه ۲۰۲۵"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "پیشرفته‌ترین مدل OpenAI، برجسته در استدلال پیچیده، تولید کد و حل مسائل فنی. بهترین گزینه برای کارهای تحلیلی، چالش‌های برنامه‌نویسی، پژوهش و توضیحات دقیق. امکان تنظیم میزان استدلال و طول پاسخ را دارد.",
+      "knowledgeCutoff": "دسامبر ۲۰۲۵"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "نوع تخصصی‌شده GPT-5.2 برای گفتگو و هوش هیجانی بهینه‌سازی شده است. در برقراری ارتباط همدلانه، حمایت روانی، نویسندگی خلاق، طوفان فکری و گفت‌وگوهای طبیعی بسیار توانمند است. مناسب برای مکالمات غیررسمی، مشاوره و وظایف نیازمند آگاهی هیجانی.",
+      "knowledgeCutoff": "دسامبر ۲۰۲۵"
+    }
+  },
+  "searchMode": {
+    "backToChat": "بازگشت به گفتگو",
+    "title": "توضیح حالت جستجو",
+    "subtitle": "آشنایی با گزینه‌های جستجو و محل ذخیره‌سازی داده‌ها",
+    "quickComparison": "مقایسه سریع",
+    "noSearch": "بدون جستجو",
+    "privacyFocused": "متمرکز بر حریم خصوصی",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "سرعت پاسخ",
+    "fastest": "سریع‌ترین",
+    "slowerMultiStep": "کندتر (چندمرحله‌ای)",
+    "fasterDirect": "سریع‌تر (مستقیم)",
+    "fullConversationStored": "ذخیره کل گفتگو در فضای ابری",
+    "whatsStoredInAzure": "چه چیزی در Azure ذخیره می‌شود",
+    "nothingStateless": "هیچ‌چیز (فقط بدون حالت)",
+    "searchQueriesOnly": "فقط جستجوها",
+    "fullConversationHistory": "کل تاریخچه گفتگو",
+    "modelAvailability": "دسترسی مدل",
+    "allModels": "همه مدل‌ها",
+    "gpt41Only": "فقط GPT-4.1",
+    "searchTurnedOff": "جستجو غیرفعال است",
+    "noSearchDescription": "سریع‌ترین پاسخ‌ها بدون امکان جستجو در وب. تمام مکالمه شما فقط در مرورگر شما باقی می‌ماند و در فضای ابری ذخیره نمی‌شود.",
+    "viewDetailsBelow": "برای جزئیات بیشتر، جریان فنی زیر را مشاهده کنید.",
+    "viewTechnicalFlowDiagram": "مشاهده نمودار جریان فنی",
+    "legend": "راهنما:",
+    "legendNoSearch": "مرورگر شما (فضای ذخیره‌سازی محلی) | سرور دستیار هوشمند | Azure OpenAI (بدون حالت)",
+    "privacyFocusedMode": "حالت متمرکز بر حریم خصوصی",
+    "default": "پیش‌فرض",
+    "privacyDescription": "در صورت نیاز از جستجوی وب استفاده می‌کند و به دلیل وجود مراحل بیشتر کمی کندتر است. فقط عبارات جستجو در Azure ذخیره می‌شود و کل مکالمه شما در مرورگر می‌ماند.",
+    "legendPrivacy": "مرورگر شما (فضای ذخیره‌سازی محلی) | سرور دستیار هوشمند | Azure AI Foundry (فقط عبارات جستجو) | Azure OpenAI (بدون حالت)",
+    "azureAIFoundryMode": "حالت Azure AI Foundry",
+    "foundryDescription": "پاسخ‌های سریع‌تر با قابلیت جستجوی وب داخلی. کل گفتگوی شما در پایگاه‌داده Azure AI Foundry ذخیره می‌شود، نه فقط در مرورگر.",
+    "legendFoundry": "مرورگر شما (فضای ذخیره‌سازی محلی) | سرور دستیار هوشمند | نماینده Azure AI Foundry (ذخیره کل گفتگو)",
+    "whyTheseOptions": "چرا این گزینه‌ها؟",
+    "whyTheseOptionsText1": "این گزینه‌های جستجو پس از توقف Bing Search API توسط Azure ارائه شده‌اند که دستیار هوشمند قبلاً به آن متکی بود.",
+    "whyTheseOptionsText2": "تیم در حال بررسی گزینه‌های جستجوی متمرکز بر حریم خصوصی بیشتری است. هر دو گزینه فعلی از قابلیت جستجوی Azure AI Foundry استفاده می‌کنند اما میزان اشتراک‌گذاری داده‌های گفتگو متفاوت است.",
+    "azureDeprecatedBingApi": "Azure سرویس Bing Search API را متوقف کرده است",
+    "footerNote": "در هر دو حالت، گفتگوهای شما در مرورگر ذخیره می‌شوند. می‌توانید هر زمان در تنظیمات مدل، حالت را تغییر دهید.",
+    "note": "توجه:",
+    "loadingDiagram": "در حال بارگذاری نمودار..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "در حال بررسی فضای ذخیره‌سازی",
+      "analyzingData": "در حال تجزیه و تحلیل داده‌ها...",
+      "updateAvailable": "به‌روزرسانی موجود است",
+      "storageSpaceLimited": "فضای ذخیره‌سازی محدود است",
+      "migratingData": "در حال انتقال داده‌ها",
+      "migrationComplete": "انتقال داده کامل شد",
+      "partiallyComplete": "انتقال داده به‌صورت جزئی انجام شد",
+      "migrationFailed": "انتقال داده ناموفق بود"
+    },
+    "descriptions": {
+      "foundLegacyData": "داده‌هایی از نسخه قبلی یافت شد. آیا مایلید آن‌ها را برای استفاده در سیستم جدید منتقل کنید؟",
+      "storageSpaceWarning": "داده‌های شما به فضای بیشتری نسبت به مقدار فعلی نیاز دارند. توصیه می‌کنیم از حالت انتقال تدریجی استفاده کنید.",
+      "pleaseWait": "لطفاً منتظر بمانید تا داده‌های شما به‌روزرسانی شود...",
+      "dataIsSafe": "داده‌های اصلی شما محفوظ است. می‌توانید دوباره تلاش کنید یا فعلاً از این مرحله عبور کنید.",
+      "itemsTooLarge": "این موارد برای ذخیره‌سازی بیش از حد بزرگ هستند. می‌توانید آن‌ها را صادر کنید، فضای بیشتری آزاد کنید یا بدون آن‌ها ادامه دهید.",
+      "settingsUpdated": "تنظیمات شما به‌روزرسانی شد."
+    },
+    "benefits": {
+      "title": "مزایا",
+      "fasterPerformance": "عملکرد سریع‌تر",
+      "betterReliability": "پایداری بهتر",
+      "dataPreserved": "داده‌های شما حفظ می‌شود"
+    },
+    "options": {
+      "advancedOptions": "گزینه‌های پیشرفته",
+      "useIncrementalMode": "استفاده از حالت مرحله‌ای",
+      "slowerButSafer": "کندتر اما ایمن‌تر",
+      "recommended": "توصیه‌شده",
+      "deleteLegacyData": "حذف داده‌های قدیمی پس از مهاجرت",
+      "freesUpSpace": "فضای ذخیره‌سازی را آزاد می‌کند"
+    },
+    "actions": {
+      "skip": "رد کردن",
+      "migrateData": "انتقال داده‌ها",
+      "migrateAnyway": "انتقال به هر حال",
+      "continue": "ادامه",
+      "retry": "تلاش مجدد",
+      "exportBackupFirst": "ابتدا نسخه پشتیبان را صادر کنید",
+      "exportSkippedItems": "صادر کردن موارد رد شده"
+    },
+    "quota": {
+      "availableSpace": "فضای موجود",
+      "dataToMigrate": "داده‌های قابل انتقال",
+      "additionalSpaceNeeded": "فضای اضافه مورد نیاز"
+    },
+    "progress": {
+      "migratingConversations": "در حال انتقال گفتگوها",
+      "migratingPrompts": "در حال انتقال پرامپت‌ها",
+      "migratingAgents": "در حال انتقال ایجنت‌ها",
+      "finishingUp": "در حال اتمام"
+    },
+    "results": {
+      "successfullyMigrated": "با موفقیت منتقل شد",
+      "notes": "یادداشت‌ها",
+      "couldNotMigrate": "انتقال انجام نشد",
+      "legacyDataDeleted": "داده‌های قدیمی حذف شد",
+      "freed": "آزاد شد"
+    },
+    "units": {
+      "conversation": "گفتگو",
+      "conversations": "گفتگوها",
+      "folder": "پوشه",
+      "folders": "پوشه‌ها",
+      "prompt": "پرامپت",
+      "prompts": "پرامپت‌ها",
+      "customAgent": "ایجنت سفارشی",
+      "customAgents": "ایجنت‌های سفارشی",
+      "item": "مورد",
+      "items": "موارد"
+    }
+  },
+  "languageSwahili": "سواحیلی",
+  "welcomeBanner": {
+    "title": "به دستیار هوش مصنوعی نسخه ۲ خوش آمدید",
+    "whatsNew": "چه چیز جدیدی اضافه شده است",
+    "whatsNewQuestion": "چه چیز جدیدی اضافه شده است؟"
+  },
+  "welcomeV2": {
+    "backToChat": "بازگشت به چت",
+    "title": "به دستیار هوش مصنوعی نسخه ۲ خوش آمدید",
+    "subtitle": "بازطراحی کامل با قابلیت‌های جدید و قدرتمند",
+    "webSearch": {
+      "title": "حالت جستجوی وب",
+      "description": "دسترسی هوش مصنوعی به جستجوی وب لحظه‌ای با گزینه‌های متمرکز بر حفظ حریم خصوصی",
+      "quickAccess": "دسترسی سریع:",
+      "quickAccessInstructions": "روی دکمه + کنار ورودی چت کلیک کنید → \"جستجوی وب\" را انتخاب نمایید",
+      "setAsDefault": "تنظیم به عنوان پیش‌فرض:",
+      "setAsDefaultInstructions": "تنظیمات مدل را باز کرده و گزینه حالت جستجوی وب را فعال کنید. انتخاب بین:",
+      "privacyFocused": "مبتنی بر حریم خصوصی (پیش‌فرض)",
+      "privacyFocusedDescription": "فقط جستجوی ارسال‌شده به صورت خارجی",
+      "azureAIFoundry": "حالت Azure AI Foundry",
+      "azureAIFoundryDescription": "سریع‌تر اما کل مکالمه به صورت خارجی ذخیره می‌شود",
+      "learnMore": "اطلاعات بیشتر درباره حالت‌های جستجو →"
+    },
+    "tones": {
+      "title": "لحن‌ها (پروفایل‌های صوتی)",
+      "description": "کنترل سبک نوشتار، میزان رسمیت، و شخصیت هوش مصنوعی",
+      "createTones": "۱. ساخت لحن‌ها:",
+      "createTonesInstructions": "اقدامات سریع در نوار کناری → برگه لحن‌ها",
+      "useTones": "۲. استفاده از لحن‌ها:",
+      "useTonesInstructions": "روی منوی انتخاب لحن کنار ورودی چت کلیک کنید",
+      "exampleProfessionalDesc": "رسمی، لحن اداری",
+      "exampleCasualDesc": "دوستانه، محاوره‌ای"
+    },
+    "aiAssist": {
+      "title": "کمک هوش مصنوعی برای پرامپت‌ها و لحن‌ها",
+      "description": "با کمک هوش مصنوعی، سریع‌تر پرامپت‌ها و لحن‌های بهتری بسازید",
+      "step1": "اقدامات سریع را از نوار کناری باز کنید",
+      "step2": "به تب {prompts} یا {tones} بروید",
+      "step3": "دنبال پنل دستیار هوش مصنوعی بگردید",
+      "getSuggestions": "دریافت پیشنهادها",
+      "getSuggestionsDesc": "هوش مصنوعی پیش‌نویس شما را تحلیل و پیشنهادهایی ارائه می‌دهد",
+      "buildFromFiles": "ساخت از فایل‌ها",
+      "buildFromFilesDesc": "بارگذاری اسناد برای تولید پرامپت/لحن",
+      "testBeforeSaving": "آزمایش قبل از ذخیره",
+      "testBeforeSavingDesc": "پرامپت/لحن را در پیش‌نمایش چت امتحان کنید",
+      "step2Prefix": "به",
+      "step2Suffix": "زبانه"
+    },
+    "customAgents": {
+      "title": "عوامل سفارشی",
+      "advancedBadge": "پیشرفته",
+      "description": "مامورهای تخصصی هوش مصنوعی با قابلیت‌های بیشتری مانند جستجوی وب و تفسیر کد",
+      "advancedFeature": "ویژگی پیشرفته",
+      "advancedFeatureDesc": "عوامل سفارشی روی Azure AI Foundry با ابزارهای تخصصی اجرا می‌شوند. ایجاد شناسه عامل نیازمند هماهنگی با تیم فنی دستیار هوش مصنوعی است.",
+      "howToAccess": "نحوه دسترسی:",
+      "howToAccessInstructions": "تنظیمات → مدل‌ها → برگه عوامل",
+      "whatYouCanDo": "کارهایی که می‌توانید انجام دهید:",
+      "configureAgents": "پیکربندی عوامل با قابلیت‌های تخصصی",
+      "importExport": "وارد کردن/خروجی گرفتن از پیکربندی عوامل",
+      "selectFromDropdown": "انتخاب عوامل سفارشی از منوی مدل‌ها"
+    },
+    "audioTranslation": {
+      "title": "تبدیل صوت به متن همراه با ترجمه",
+      "description": "ترجمه خودکار متن صوتی به بیش از ۱۳ زبان",
+      "howToUse": "نحوه استفاده:",
+      "step1": "یک فایل صوتی یا ویدیویی بارگذاری کنید",
+      "step2": "در رابط رونویسی، روی منوی کشویی زبان کلیک کنید",
+      "step3": "زبان مقصد خود را انتخاب کنید",
+      "availableLanguages": "زبان‌های موجود:",
+      "moreLanguages": "+۷ زبان دیگر"
+    },
+    "pwa": {
+      "title": "نصب به عنوان اپلیکیشن موبایل",
+      "description": "اپلیکیشن وب پیش‌رونده با تجربه بومی",
+      "installTip": "نکته: پس از ورود به حساب، نصب کنید تا احراز هویت شما حفظ شود و بهترین تجربه را داشته باشید.",
+      "howToInstall": "نحوه نصب:",
+      "step1": "به حساب خود وارد شوید",
+      "step2": "برای دستورالعمل‌های کامل به تنظیمات → اپلیکیشن موبایل مراجعه کنید",
+      "step3": "در موبایل: منوی مرورگر (⋮ یا ⚙️) را لمس کنید",
+      "step4": "دنبال گزینه \"Add to Home Screen\" یا \"Install App\" باشید",
+      "step5": "دستورالعمل‌ها را برای نصب دنبال کنید",
+      "benefits": "مزایا:",
+      "benefit1": "مانند یک اپلیکیشن بومی از صفحه اصلی اجرا کنید",
+      "benefit2": "تمام‌صفحه بدون رابط مرورگر",
+      "benefit3": "دسترسی آفلاین به گفتگوهای ذخیره‌شده"
+    }
+  },
+  "Professional": "حرفه‌ای",
+  "Casual": "غیررسمی",
+  "Enter a prompt or type \"/\" to select a prompt": {
+    "": {
+      "": {
+        "": "یک درخواست وارد کنید یا «/» را برای انتخاب درخواست بنویسید..."
+      }
+    }
+  },
+  "Add your personal instructions to customize how the AI responds": {
+    " These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses": {
+      "": "دستورالعمل‌های شخصی خود را برای سفارشی‌سازی پاسخ‌های هوش مصنوعی اضافه کنید. این دستورالعمل‌ها همراه با راهنمایی‌های اصلی برای اطمینان از پاسخ‌های مفید، دقیق و امن ترکیب می‌شوند."
+    }
+  },
+  "Tip: Type \"/\" to select from saved prompt templates": {
+    "": "نکته: «/» را تایپ کنید تا از قالب‌های ذخیره‌شده درخواست انتخاب کنید."
+  },
+  "fileUpload": {
+    "uploading": "در حال بارگذاری...",
+    "transcribing": "در حال تبدیل گفتار به نوشتار...",
+    "complete": "تکمیل شد",
+    "failed": "ناموفق",
+    "uploadFiles": "فایل‌ها را بارگذاری کنید (صوتی، تصویری یا متنی)",
+    "autoDetect": "تشخیص خودکار",
+    "fileNotAvailable": "فایل برای ویرایش در دسترس نیست",
+    "failedToOpenInEditor": "باز کردن فایل در ویرایشگر کد ناموفق بود. لطفاً دوباره تلاش کنید.",
+    "extractingAudio": "در حال استخراج صدا...",
+    "queuedForTranscription": "در صف تبدیل به متن",
+    "transcribed": "تبدیل به متن شد",
+    "transcriptionFailed": "تبدیل به متن ناموفق بود",
+    "extractedFromSmaller": "از فایل {percent}% کوچکتر استخراج شد",
+    "textExtraction": "استخراج متن",
+    "opening": "در حال باز کردن...",
+    "openInEditor": "باز کردن در ویرایشگر",
+    "failedToUpload": "بارگذاری ناموفق بود",
+    "attachment": "پیوست",
+    "attachments": "پیوست‌ها"
+  },
+  "transcript": {
+    "originalTranscript": "رونویس اصلی",
+    "transcript": "رونویس",
+    "transcriptionOf": "رونویسیِ",
+    "translating": "در حال ترجمه...",
+    "copied": "کپی شد!",
+    "copy": "کپی",
+    "download": "دانلود",
+    "translate": "ترجمه",
+    "collapse": "بستن",
+    "expand": "باز کردن",
+    "expandHint": "برای مشاهده رونویس اصلی روی «باز کردن» کلیک کنید",
+    "listen": "گوش دادن به رونویس",
+    "stopAudio": "توقف صدا",
+    "openAsDocument": "باز کردن به‌صورت سند"
+  },
+  "userMessage": {
+    "open": "باز کردن",
+    "showFullMessage": "نمایش پیام کامل",
+    "collapse": "جمع کردن",
+    "customTone": "لحن سفارشی"
+  },
+  "codeBlock": {
+    "openInEditor": "باز کردن در ویرایشگر"
+  },
+  "artifact": {
+    "noContentToExport": "محتوایی برای صدور وجود ندارد",
+    "exportedAsHtml": "به صورت HTML صادر شد",
+    "exportedAsMarkdown": "به صورت Markdown صادر شد",
+    "exportedAsText": "به صورت متن صادر شد",
+    "generatingPdf": "در حال تولید PDF...",
+    "exportedAsPdf": "به صورت PDF صادر شد",
+    "generatingDocx": "در حال تولید DOCX...",
+    "exportedAsDocx": "به صورت DOCX صادر شد",
+    "failedToExportAs": "صدور به فرمت {format} انجام نشد",
+    "document": "سند",
+    "switchToCodeEditor": "تغییر به ویرایشگر کد",
+    "exportDocument": "صدور سند",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "متن ساده (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "بستن",
+    "editsNotSaved": "ویرایش‌ها ذخیره نشده‌اند. برای ذخیره، پیام ارسال کنید یا دانلود نمایید.",
+    "fileDownloaded": "فایل دانلود شد",
+    "failedToDownload": "دانلود انجام نشد",
+    "switchToDocumentEditor": "تغییر به ویرایشگر سند",
+    "download": "دانلود",
+    "fileIncludedWithMessage": "فایل و ویرایش‌ها همراه پیام ارسال شده‌اند",
+    "closeEditor": "بستن ویرایشگر",
+    "closeCodeEditor": "بستن ویرایشگر کد",
+    "startWriting": "شروع به نوشتن...",
+    "toolbar": {
+      "bold": "درشت",
+      "italic": "مورب",
+      "underline": "زیرخط‌دار",
+      "strikethrough": "خط خورده",
+      "heading1": "سرفصل ۱",
+      "heading2": "سرفصل ۲",
+      "heading3": "سرفصل ۳",
+      "bulletList": "فهرست گلوله‌ای",
+      "numberedList": "فهرست شماره‌دار",
+      "codeBlock": "بلوک کد",
+      "quote": "نقل قول",
+      "insertTable": "درج جدول",
+      "table": "جدول",
+      "undo": "واگرد",
+      "redo": "انجام دوباره"
+    },
+    "codeEditor": {
+      "startTyping": "شروع به تایپ یا درخواست تولید کد از AI",
+      "codeWillSync": "کد به‌طور خودکار از پیام‌های چت همگام می‌شود",
+      "startCoding": "// شروع به کدنویسی..."
+    }
+  },
+  "dropdown": {
+    "searchTooltip": "جستجوی وب را برای هر پیام فعال کنید.\n\nاطلاعات به‌روز را با دسترسی لحظه‌ای به وب Bing فراهم می‌کند.",
+    "attachTooltip": "ضمیمه کردن فایل‌ها، تصاویر یا صوت/ویدیو.\n\nفرمت‌های پشتیبانی‌شده:\n• تصاویر: JPEG، PNG، GIF، WebP (حداکثر ۵ مگابایت، تا ۱۰ عدد)\n• اسناد: PDF، DOCX، XLSX، PPTX، TXT، MD (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• داده‌ها: CSV، JSON، XML، YAML (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• کد: PY، JS، TS، JAVA، C، CPP، GO و غیره (حداکثر ۱۰ مگابایت، تا ۳ عدد)\n• صوت/ویدیو: MP3، WAV، MP4، WebM (حداکثر ۲۵ مگابایت، ۱ فایل)\n\nمجموع: ۱۰ فایل، حداکثر ۵۰ مگابایت",
+    "transcribeTooltip": "آپلود فایل‌های صوتی یا ویدیویی برای تبدیل به متن.\n\nفرمت‌های پشتیبانی‌شده: MP3، MP4، WAV، WebM، M4A، MPEG، MPGA\nحداکثر اندازه: ۲۵ مگابایت\n\nتبدیل به متن به‌صورت خودکار هنگام ارسال پیام انجام می‌شود.",
+    "selected": "انتخاب شده",
+    "expandActions": "گسترش عملیات",
+    "selectTone": "انتخاب لحن",
+    "selectToneDescription": "یک پروفایل صدا برای پیام خود انتخاب کنید",
+    "noToneDefault": "بدون لحن (پیش‌فرض)",
+    "useDefaultStyle": "استفاده از سبک نوشتاری پیش‌فرض",
+    "noTonesCreated": "هنوز لحنی ایجاد نشده است",
+    "createTonesHint": "می‌توانید لحن را در عملیات سریع ایجاد کنید",
+    "translateDocumentTooltip": "ترجمه اسناد به زبان دیگر.\n\nفرمت‌های پشتیبانی‌شده: Word، Excel، PowerPoint، PDF، HTML، TXT\nحداکثر اندازه: ۴۰ مگابایت\n\nپشتیبانی از بیش از ۸۰ زبان همراه با فایل واژه‌نامه انتخابی."
+  },
+  "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "دستورالعمل‌های شخصی خود را برای سفارشی‌سازی نحوه پاسخ‌دهی هوش مصنوعی اضافه کنید. این دستورالعمل‌ها همراه با راهنماهای اصلی رفتاری برای تضمین پاسخ‌های مفید، دقیق و ایمن ترکیب می‌شوند.",
+  "Tip: Type \"/\" to select from saved prompt templates_": "نکته: با وارد کردن \"/\" می‌توانید از قالب‌های ذخیره‌شده راهنما انتخاب کنید.",
+  "storageWarning": {
+    "title": {
+      "warning": "فضای ذخیره‌سازی رو به کاهش است",
+      "critical": "فضای ذخیره‌سازی تقریباً پر است",
+      "emergency": "فضای ذخیره‌سازی پر شده است"
+    },
+    "message": {
+      "warning": "فضای ذخیره‌سازی مرورگر شما به {percent}% ظرفیت رسیده است.",
+      "critical": "فضای ذخیره‌سازی مرورگر شما به شدت کم است ({percent}% ظرفیت).",
+      "emergency": "فضای ذخیره‌سازی مرورگر شما تقریباً به طور کامل پر شده است ({percent}%)!"
+    },
+    "consequence": "اگر فضای ذخیره‌سازی پر شود، ممکن است به مکالمات جدید دسترسی نداشته باشید و برنامه به درستی کار نکند.",
+    "storageUsage": "مصرف فضای ذخیره‌سازی",
+    "optionsToFreeSpace": "گزینه‌ها برای آزادسازی فضا",
+    "clearOption": {
+      "keepRecent": "نگه‌داشتن آخرین مکالمات",
+      "olderThan": "پاک‌کردن مکالمات قدیمی‌تر از",
+      "days": {
+        "7": "۷ روز",
+        "14": "۱۴ روز",
+        "30": "۳۰ روز",
+        "60": "۶۰ روز",
+        "90": "۹۰ روز"
+      }
+    },
+    "estimate": {
+      "willRemove": "این اقدام {count} مکالمه را حذف می‌کند",
+      "willFree": "فضای تخمینی آزاد شده: {size}"
+    },
+    "action": {
+      "exportFirst": "ابتدا داده‌ها را صادر کنید",
+      "clearNow": "پاک‌سازی اکنون",
+      "dismiss": "رد کردن",
+      "cancel": "لغو"
+    },
+    "confirm": {
+      "title": "تأیید پاک‌سازی",
+      "message": "این کار {count} مکالمه را به طور دائمی حذف می‌کند. این عمل قابل بازگشت نیست."
+    },
+    "clearing": {
+      "title": "در حال پاک‌سازی فضای ذخیره‌سازی",
+      "message": "لطفاً منتظر بمانید تا مکالمات حذف شوند..."
+    },
+    "success": {
+      "title": "فضای ذخیره‌سازی پاک شد",
+      "message": "{count} مکالمه با موفقیت حذف شد و {size} فضا آزاد گردید."
+    },
+    "error": {
+      "title": "پاک‌سازی ناموفق بود",
+      "message": "در هنگام پاک‌سازی مکالمات خطایی رخ داد. لطفاً دوباره تلاش کنید."
+    },
+    "close": "بستن"
+  },
+  "support": {
+    "selectOrganization": "سازمان خود را انتخاب کنید",
+    "organizationDescription": "سازمان MSF خود را انتخاب کنید تا اطلاعات تماس پشتیبانی مناسب را مشاهده کنید",
+    "autoDetect": "شناسایی خودکار",
+    "resetToAutoDetect": "بازنشانی به شناسایی خودکار",
+    "organizations": {
+      "USA": "MSF آمریکا",
+      "OCG": "OCG (ژنو)",
+      "OCA": "OCA (آمستردام)",
+      "FIELD": "میدان / سایر"
+    },
+    "emailSupport": "پشتیبانی ایمیلی",
+    "emailDescription": "تماس با تیم پشتیبانی {organization}",
+    "escalationTitle": "پرسنل میدان و سایر اعضای MSF",
+    "escalationDescription": "برای دریافت پشتیبانی، مسیر ارجاع فناوری اطلاعات سازمان خود را دنبال کنید",
+    "escalationShort": "با پشتیبانی فناوری اطلاعات محلی خود تماس بگیرید",
+    "escalationStep1": "ابتدا با پشتیبانی فناوری اطلاعات محلی خود تماس بگیرید",
+    "escalationStep2": "در صورت حل نشدن مشکل، به بخش IT مرکز عملیاتی (OC) خود ارجاع دهید",
+    "escalationStep3": "در صورت باقی بودن مشکل، بخش IT OC می‌تواند موضوع را به SITS (خدمات مشترک IT) ارجاع دهد"
+  },
+  "translateDocumentDropdown": "ترجمه سند",
+  "documentTranslation": {
+    "title": "ترجمه سند",
+    "targetLanguage": "زبان مقصد",
+    "sourceLanguage": "زبان مبدا",
+    "searchLanguage": "جستجوی زبان‌ها...",
+    "noLanguagesFound": "زبانی یافت نشد",
+    "autoDetect": "در صورت مشخص نبودن، به صورت خودکار تشخیص داده می‌شود",
+    "glossary": "فایل واژه‌نامه",
+    "glossaryHelp": "یک فایل واژه‌نامه با فرمت CSV، TSV یا XLIFF برای اصطلاحات سفارشی بارگذاری کنید",
+    "uploadGlossary": "بارگذاری واژه‌نامه",
+    "glossaryTooLarge": "فایل واژه‌نامه بیش از حد بزرگ است. حداکثر اندازه {maxSize} است.",
+    "outputFilename": "نام فایل خروجی",
+    "outputFilenamePlaceholder": "document_es.docx",
+    "translateButton": "ترجمه سند",
+    "translating": "در حال ترجمه...",
+    "noDocumentError": "لطفاً یک سند برای ترجمه انتخاب کنید.",
+    "noTargetLanguageError": "لطفاً زبان مقصد را انتخاب کنید.",
+    "documentTooLarge": "سند بسیار بزرگ است. حداکثر اندازه {maxSize} است.",
+    "translationSuccess": "سند با موفقیت ترجمه شد",
+    "translationFailed": "ترجمه انجام نشد: {error}",
+    "invalidReference": "ارجاع ترجمه سند نامعتبر است",
+    "documentNotFound": "سند ترجمه‌شده پیدا نشد یا منقضی شده است",
+    "downloadFailed": "دانلود سند ترجمه‌شده ناموفق بود",
+    "downloadSuccess": "سند با موفقیت دانلود شد",
+    "translatedTo": "ترجمه شده به {language}",
+    "download": "دانلود",
+    "downloading": "در حال دانلود...",
+    "expired": "این ترجمه منقضی شده و دیگر در دسترس نیست.",
+    "expiresSoon": "تا {days} روز دیگر منقضی می‌شود - هرچه زودتر دانلود کنید",
+    "expires": "به مدت {days} روز در دسترس است",
+    "learnMore": "بیشتر بدانید",
+    "advancedOptions": "گزینه‌های پیشرفته"
   }
 }

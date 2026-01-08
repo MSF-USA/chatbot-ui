@@ -15,7 +15,7 @@ import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
 import { SearchMode } from '@/types/searchMode';
-import { Settings } from '@/types/settings';
+import { DEFAULT_STREAMING_SPEED, Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
 import { MigrationDialog } from '../Migration/MigrationDialog';
@@ -55,6 +55,12 @@ export function SettingDialog() {
       systemPrompt: '',
       advancedMode: false,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false,
+      preferredName: '',
+      userContext: '',
     },
   });
 
@@ -199,6 +205,12 @@ export function SettingDialog() {
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       advancedMode: false,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false,
+      preferredName: '',
+      userContext: '',
     };
     setTheme(defaultTheme);
     setTemperature(0.5);

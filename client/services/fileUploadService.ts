@@ -2,7 +2,14 @@ import toast from 'react-hot-toast';
 
 import { cacheImageBase64 } from '@/lib/services/imageService';
 
-import { FILE_SIZE_LIMITS, FILE_SIZE_LIMITS_MB } from '@/lib/utils/app/const';
+import { uploadFileAction } from '@/lib/actions/fileUpload';
+import {
+  getMaxSizeForFile,
+  validateFileSize,
+} from '@/lib/constants/fileLimits';
+
+// Threshold for using Server Action (files larger than 10MB use Server Action)
+const SERVER_ACTION_THRESHOLD = 10 * 1024 * 1024; // 10MB
 
 export interface UploadProgress {
   [fileName: string]: number;
@@ -80,34 +87,26 @@ export class FileUploadService {
   }
 
   /**
-   * Get max file size for given file type
+   * Check if file is a video (not just audio)
    */
-  static getMaxSize(file: File): { bytes: number; mb: number } {
-    const isImage = this.isImage(file);
-    const isAudioVideo = this.isAudioOrVideo(file);
-
-    if (isImage) {
-      return {
-        bytes: FILE_SIZE_LIMITS.IMAGE_MAX_BYTES,
-        mb: FILE_SIZE_LIMITS_MB.IMAGE,
-      };
-    }
-    if (isAudioVideo) {
-      return {
-        bytes: FILE_SIZE_LIMITS.AUDIO_VIDEO_MAX_BYTES,
-        mb: FILE_SIZE_LIMITS_MB.AUDIO_VIDEO,
-      };
-    }
-    return {
-      bytes: FILE_SIZE_LIMITS.FILE_MAX_BYTES,
-      mb: FILE_SIZE_LIMITS_MB.FILE,
-    };
+  static isVideo(file: File): boolean {
+    return file.type.startsWith('video/');
   }
 
   /**
-   * Validate file before upload
+   * Get max file size for given file type.
+   * Uses centralized limits from lib/constants/fileLimits.ts.
+   */
+  static getMaxSize(file: File): { bytes: number; display: string } {
+    return getMaxSizeForFile(file);
+  }
+
+  /**
+   * Validate file before upload.
+   * Checks file type allowlist and size limits.
    */
   static validateFile(file: File): { valid: boolean; error?: string } {
+    // Check if file type is allowed
     if (!this.isFileAllowed(file)) {
       return {
         valid: false,
@@ -115,11 +114,12 @@ export class FileUploadService {
       };
     }
 
-    const { bytes, mb } = this.getMaxSize(file);
-    if (file.size > bytes) {
+    // Validate file size using centralized limits
+    const sizeValidation = validateFileSize(file);
+    if (!sizeValidation.valid) {
       return {
         valid: false,
-        error: `${file.name} must be less than ${mb}MB`,
+        error: sizeValidation.error,
       };
     }
 
@@ -160,71 +160,121 @@ export class FileUploadService {
   }
 
   /**
-   * Upload file with chunked upload support
+   * Upload file using FormData with XMLHttpRequest for progress tracking.
+   * Uses native binary upload to avoid base64 encoding corruption issues.
+   *
+   * For files larger than 10MB, uses Server Action to bypass Route Handler
+   * body size limits. Server Actions support up to 1.6GB (configured in next.config.js).
+   *
+   * @param file - The file to upload
+   * @param onProgress - Optional progress callback (0-100)
+   * @returns Upload result with URL and metadata
    */
   static async uploadFile(
     file: File,
     onProgress?: (progress: number) => void,
   ): Promise<UploadResult> {
-    const chunkSize = FILE_SIZE_LIMITS.UPLOAD_CHUNK_BYTES;
-    let uploadedBytes = 0;
+    // Use Server Action for large files to bypass Route Handler body size limit
+    if (file.size > SERVER_ACTION_THRESHOLD) {
+      return this.uploadFileViaServerAction(file, onProgress);
+    }
 
+    // Use XHR for smaller files (better progress tracking)
+    return this.uploadFileViaXHR(file, onProgress);
+  }
+
+  /**
+   * Upload file via Server Action (supports up to 1.6GB).
+   * Used for large files that exceed Route Handler body size limits.
+   */
+  private static async uploadFileViaServerAction(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<UploadResult> {
+    // Show indeterminate progress for Server Action uploads
+    if (onProgress) onProgress(10);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('filename', file.name);
+    formData.append('filetype', this.getFileType(file));
+    formData.append('mime', file.type);
+
+    if (onProgress) onProgress(30);
+
+    const result = await uploadFileAction(formData);
+
+    if (!result.success || !result.uri) {
+      throw new Error(result.error || `Failed to upload ${file.name}`);
+    }
+
+    if (onProgress) onProgress(100);
+
+    return {
+      url: result.uri,
+      originalFilename: file.name,
+      type: this.getFileType(file),
+    };
+  }
+
+  /**
+   * Upload file via XMLHttpRequest (supports progress tracking).
+   * Used for smaller files that fit within Route Handler body size limits.
+   */
+  private static uploadFileViaXHR(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<UploadResult> {
     return new Promise((resolve, reject) => {
-      const uploadChunk = () => {
-        const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
+      const xhr = new XMLHttpRequest();
+      const formData = new FormData();
+      formData.append('file', file);
 
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64Chunk = btoa(reader.result as string);
-          const encodedFileName = encodeURIComponent(file.name);
-          const encodedMimeType = encodeURIComponent(file.type);
+      // Track upload progress
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable && onProgress) {
+          onProgress((e.loaded / e.total) * 100);
+        }
+      });
 
+      // Handle successful completion
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
           try {
-            const response = await fetch(
-              `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
-              {
-                method: 'POST',
-                body: base64Chunk,
-                headers: {
-                  'x-file-name': encodedFileName,
-                },
-              },
-            );
-
-            if (response.ok) {
-              uploadedBytes += chunkSize;
-              const progress = Math.min((uploadedBytes / file.size) * 100, 100);
-
-              if (onProgress) onProgress(progress);
-
-              if (uploadedBytes < file.size) {
-                // More chunks to upload - don't read response body yet
-                uploadChunk();
-              } else {
-                // Last chunk - now read the response
-                const response_data = await response.json();
-                const resp = response_data.data || response_data;
-                resolve({
-                  url: resp.uri ?? resp.filename ?? '',
-                  originalFilename: file.name,
-                  type: this.getFileType(file),
-                });
-              }
-            } else {
-              // Read error response
-              const errorText = await response.text();
-              reject(
-                new Error(`File upload failed: ${file.name} - ${errorText}`),
-              );
-            }
-          } catch (error) {
-            reject(error);
+            const data = JSON.parse(xhr.responseText);
+            const resp = data.data || data;
+            resolve({
+              url: resp.uri ?? resp.filename ?? '',
+              originalFilename: file.name,
+              type: this.getFileType(file),
+            });
+          } catch (parseError) {
+            reject(new Error(`Failed to parse upload response: ${file.name}`));
           }
-        };
-        reader.readAsBinaryString(chunk);
-      };
+        } else {
+          reject(
+            new Error(
+              `File upload failed: ${file.name} - ${xhr.status} ${xhr.statusText}`,
+            ),
+          );
+        }
+      });
 
-      uploadChunk();
+      // Handle network errors
+      xhr.addEventListener('error', () =>
+        reject(new Error(`Upload failed: ${file.name}`)),
+      );
+      xhr.addEventListener('abort', () =>
+        reject(new Error(`Upload aborted: ${file.name}`)),
+      );
+
+      // Build URL with query parameters
+      const encodedFileName = encodeURIComponent(file.name);
+      const encodedMimeType = encodeURIComponent(file.type);
+      const url = `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`;
+
+      xhr.open('POST', url);
+      xhr.send(formData);
     });
   }
 
@@ -298,7 +348,9 @@ async function uploadImageToAPI(
     `/api/file/upload?filename=${encodedFileName}&filetype=image`,
     {
       method: 'POST',
-      body: base64String.split(',')[1],
+      // Send full data URL (including "data:image/...;base64," prefix)
+      // so getBlobBase64String() can detect and return it correctly
+      body: base64String,
       headers: {
         'x-file-name': encodedFileName,
       },

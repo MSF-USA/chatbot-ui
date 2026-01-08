@@ -4,6 +4,8 @@ import { Editor, loader } from '@monaco-editor/react';
 import { IconLoader2 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { useArtifactStore } from '@/client/stores/artifactStore';
 
 // Configure Monaco to load from local node_modules instead of CDN
@@ -20,6 +22,7 @@ interface CodeEditorProps {
 }
 
 export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
+  const t = useTranslations();
   const { modifiedCode, language, setModifiedCode } = useArtifactStore();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -65,11 +68,9 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="text-center text-neutral-400 dark:text-neutral-500">
             <p className="text-lg mb-2">
-              Start typing or ask AI to generate code
+              {t('artifact.codeEditor.startTyping')}
             </p>
-            <p className="text-sm">
-              Code will automatically sync from chat messages
-            </p>
+            <p className="text-sm">{t('artifact.codeEditor.codeWillSync')}</p>
           </div>
         </div>
       )}
@@ -78,7 +79,7 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
         height="100%"
         width="100%"
         defaultLanguage={language}
-        defaultValue={modifiedCode || '// Start coding...'}
+        defaultValue={modifiedCode || t('artifact.codeEditor.startCoding')}
         theme={monacoTheme}
         onMount={handleEditorDidMount}
         onChange={(value) => {

@@ -31,9 +31,16 @@ const serverEnvSchema = z.object({
   OPENAI_API_VERSION: z.string().default('2025-04-01-preview'),
   OPENAI_EMBEDDING_DEPLOYMENT: z.string().default('text-embedding'),
 
+  // Azure Speech Services (for batch transcription)
+  AZURE_SPEECH_KEY: z.string().optional(),
+  AZURE_SPEECH_REGION: z.string().default('eastus'),
+
   // Azure AI Foundry
   AZURE_AI_FOUNDRY_ENDPOINT: z.string().url().optional(),
   AZURE_AI_FOUNDRY_OPENAI_ENDPOINT: z.string().url().optional(),
+
+  // Azure Translator (Document Translation) - falls back to AI Foundry endpoint in service layer
+  AZURE_TRANSLATOR_ENDPOINT: z.string().url().optional(),
 
   // Azure Blob Storage (uses Entra ID authentication via DefaultAzureCredential)
   AZURE_BLOB_STORAGE_NAME: z.string().optional(),
@@ -81,7 +88,8 @@ const serverEnvSchema = z.object({
   NEXT_PUBLIC_EMAIL: z.string().email().optional(),
 
   // System Prompt Configuration
-  NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(),
+  BASE_SYSTEM_PROMPT: z.string().optional(), // Overrides the default base system prompt
+  NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(), // Legacy: user's default prompt
   NEXT_PUBLIC_DEFAULT_TEMPERATURE: z.string().default('0.5'),
 
   // Application Environment

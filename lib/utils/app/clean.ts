@@ -1,3 +1,8 @@
+import {
+  migrateLegacyMessages,
+  needsMigration,
+} from '@/lib/utils/shared/chat/messageVersioning';
+
 import { Conversation } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -39,6 +44,9 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
 
       if (!conversation.messages) {
         conversation.messages = [];
+      } else if (needsMigration(conversation.messages)) {
+        // Migrate legacy assistant messages to AssistantMessageGroup format
+        conversation.messages = migrateLegacyMessages(conversation.messages);
       }
 
       acc.push(conversation);
