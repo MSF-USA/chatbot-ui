@@ -18,17 +18,12 @@ import {
 import { Tone } from '@/types/tone';
 import { DEFAULT_TTS_SETTINGS, TTSSettings } from '@/types/tts';
 
+import { SETTINGS_CONSTANTS } from '@/lib/constants/settings';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 /** Model ordering mode for the model selection UI */
 export type ModelOrderMode = 'usage' | 'name' | 'cutoff' | 'custom';
-
-/**
- * Consecutive usage threshold before model order is updated.
- * Prevents jarring order changes during experimentation.
- */
-export const MODEL_USAGE_CONSECUTIVE_THRESHOLD = 3;
 
 /** Tracks consecutive usage of a model for stability in ordering */
 export interface ConsecutiveModelUsage {
@@ -314,9 +309,11 @@ export const useSettingsStore = create<SettingsStore>()(
           const { consecutiveModelUsage, modelUsageStats } = state;
           const isSameModel = consecutiveModelUsage.modelId === modelId;
           const newCount = isSameModel ? consecutiveModelUsage.count + 1 : 1;
+          const threshold =
+            SETTINGS_CONSTANTS.MODEL_ORDER.CONSECUTIVE_USAGE_THRESHOLD;
 
           // Check if we've reached the threshold
-          if (newCount >= MODEL_USAGE_CONSECUTIVE_THRESHOLD) {
+          if (newCount >= threshold) {
             // Increment usage stats and reset consecutive counter
             return {
               modelUsageStats: {
@@ -397,6 +394,7 @@ export const useSettingsStore = create<SettingsStore>()(
           modelOrderMode: 'usage' as ModelOrderMode,
           customModelOrder: [],
           modelUsageStats: {},
+          consecutiveModelUsage: { modelId: null, count: 0 },
           organizationPreference: null,
           ttsSettings: DEFAULT_TTS_SETTINGS,
           reasoningEffort: undefined,
@@ -405,7 +403,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 12, // Increment this when schema changes to trigger migrations
+      version: 13, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -425,6 +423,7 @@ export const useSettingsStore = create<SettingsStore>()(
         modelOrderMode: state.modelOrderMode,
         customModelOrder: state.customModelOrder,
         modelUsageStats: state.modelUsageStats,
+        consecutiveModelUsage: state.consecutiveModelUsage,
         organizationPreference: state.organizationPreference,
         ttsSettings: state.ttsSettings,
         reasoningEffort: state.reasoningEffort,
@@ -500,6 +499,13 @@ export const useSettingsStore = create<SettingsStore>()(
           if (state.reasoningEffort === undefined)
             state.reasoningEffort = undefined;
           if (state.verbosity === undefined) state.verbosity = undefined;
+        }
+
+        // Version 12 → 13: Add consecutiveModelUsage for stable model ordering
+        if (version < 13) {
+          if (state.consecutiveModelUsage === undefined) {
+            state.consecutiveModelUsage = { modelId: null, count: 0 };
+          }
         }
 
         return state;
