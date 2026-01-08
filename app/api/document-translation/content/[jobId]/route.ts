@@ -19,6 +19,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/server/api/apiResponse';
 import { AzureBlobStorage, BlobProperty } from '@/lib/utils/server/blob/blob';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { getDocumentContentType } from '@/types/documentTranslation';
 
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const contentType = getDocumentContentType(filename);
 
     console.log(
-      `[DocumentTranslation] Downloaded ${isOriginal ? 'original' : 'translated'} file for job ${jobId}: ${blobPath} (${content.length} bytes)`,
+      `[DocumentTranslation] Downloaded ${isOriginal ? 'original' : 'translated'} file for job ${jobId}: ${sanitizeForLog(blobPath)} (${content.length} bytes)`,
     );
 
     // Return the file as a binary response (convert Buffer to Uint8Array for NextResponse compatibility)

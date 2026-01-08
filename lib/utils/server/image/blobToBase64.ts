@@ -21,12 +21,22 @@ import { lookup } from 'mime-types';
 
 /**
  * Checks if a URL is an Azure Blob Storage URL that needs conversion.
+ * Validates the hostname properly to prevent URL spoofing attacks.
  *
  * @param url - The URL to check
  * @returns True if this is an Azure Blob Storage URL
  */
 export function isBlobStorageUrl(url: string): boolean {
-  return url.includes('.blob.core.windows.net');
+  try {
+    const { hostname } = new URL(url);
+    return (
+      hostname === 'blob.core.windows.net' ||
+      hostname.endsWith('.blob.core.windows.net')
+    );
+  } catch {
+    // Invalid URL format
+    return false;
+  }
 }
 
 /**

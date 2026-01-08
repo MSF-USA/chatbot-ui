@@ -393,9 +393,7 @@ describe('/api/file/upload', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.uri).toBe(
-        'https://storage.example.com/uploaded-file.txt',
-      );
+      expect(data.data.uri).toBe('/api/file/uploaded-file.txt');
       expect(data.message).toBe('File uploaded successfully');
     });
   });

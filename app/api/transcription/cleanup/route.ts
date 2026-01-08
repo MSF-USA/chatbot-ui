@@ -19,6 +19,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/server/api/apiResponse';
 import { AzureBlobStorage } from '@/lib/utils/server/blob/blob';
+import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
 import { auth } from '@/auth';
 import { env } from '@/config/environment';
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
         await batchService.deleteTranscription(jobId);
         results.jobDeleted = true;
         console.log(
-          `[TranscriptionCleanup] Deleted transcription job: ${jobId}`,
+          `[TranscriptionCleanup] Deleted transcription job: ${sanitizeForLog(jobId)}`,
         );
       } else {
         results.errors?.push('Batch transcription service not configured');
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       console.warn(
-        `[TranscriptionCleanup] Failed to delete transcription job ${jobId}:`,
+        `[TranscriptionCleanup] Failed to delete transcription job ${sanitizeForLog(jobId)}:`,
         errorMessage,
       );
       results.errors?.push(`Job deletion failed: ${errorMessage}`);
@@ -104,10 +105,12 @@ export async function POST(request: NextRequest) {
       if (exists) {
         await blobClient.delete();
         results.blobDeleted = true;
-        console.log(`[TranscriptionCleanup] Deleted blob: ${blobPath}`);
+        console.log(
+          `[TranscriptionCleanup] Deleted blob: ${sanitizeForLog(blobPath)}`,
+        );
       } else {
         console.log(
-          `[TranscriptionCleanup] Blob not found (already deleted?): ${blobPath}`,
+          `[TranscriptionCleanup] Blob not found (already deleted?): ${sanitizeForLog(blobPath)}`,
         );
         results.blobDeleted = true; // Consider it a success if already gone
       }
@@ -115,7 +118,7 @@ export async function POST(request: NextRequest) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       console.warn(
-        `[TranscriptionCleanup] Failed to delete blob ${blobPath}:`,
+        `[TranscriptionCleanup] Failed to delete blob ${sanitizeForLog(blobPath)}:`,
         errorMessage,
       );
       results.errors?.push(`Blob deletion failed: ${errorMessage}`);
