@@ -5,6 +5,11 @@ import DocumentEditor from '@/components/DocumentEditor/DocumentEditor';
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Mock next-intl to prevent context errors in tests
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+}));
+
 // Create a chainable mock for TipTap
 const createChainableMock = () => {
   const chainable: any = {
