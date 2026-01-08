@@ -51,28 +51,54 @@ const JOB_STORE_DIR = '/tmp/chunked-transcription-jobs';
 const JOB_RETENTION_MS = 60 * 60 * 1000;
 
 /**
- * Ensures the job store directory exists.
+ * Validates that a job ID contains only safe characters.
+ * Prevents path traversal attacks.
+ *
+ * @param jobId - The job ID to validate
+ * @throws Error if the job ID format is invalid
+ */
+function validateJobId(jobId: string): void {
+  // Job IDs should be alphanumeric with hyphens and underscores only
+  // This prevents path traversal (e.g., "../../../etc/passwd")
+  if (!/^[a-zA-Z0-9_-]+$/.test(jobId)) {
+    throw new Error('Invalid job ID format');
+  }
+}
+
+/**
+ * Ensures the job store directory exists with secure permissions.
+ * Directory is created with mode 0o700 (owner read/write/execute only).
  */
 function ensureStoreDir(): void {
   if (!fs.existsSync(JOB_STORE_DIR)) {
-    fs.mkdirSync(JOB_STORE_DIR, { recursive: true });
+    fs.mkdirSync(JOB_STORE_DIR, { recursive: true, mode: 0o700 });
   }
 }
 
 /**
  * Gets the file path for a job's JSON file.
+ * Validates jobId to prevent path traversal attacks.
+ *
+ * @param jobId - The job ID
+ * @returns The full path to the job's JSON file
+ * @throws Error if jobId format is invalid
  */
 function getJobFilePath(jobId: string): string {
+  validateJobId(jobId);
   return path.join(JOB_STORE_DIR, `${jobId}.json`);
 }
 
 /**
- * Saves a job to the file system.
+ * Saves a job to the file system with secure permissions.
+ * Files are created with mode 0o600 (owner read/write only).
  */
 function saveJob(job: ChunkedJob): void {
   ensureStoreDir();
   const filePath = getJobFilePath(job.jobId);
-  fs.writeFileSync(filePath, JSON.stringify(job, null, 2), 'utf-8');
+  fs.writeFileSync(filePath, JSON.stringify(job, null, 2), {
+    encoding: 'utf-8',
+    mode: 0o600,
+  });
 }
 
 /**
