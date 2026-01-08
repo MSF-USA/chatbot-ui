@@ -35,7 +35,6 @@ jobs:
         with:
           # Disable summaries to avoid exceeding GitHub's 1024k limit
           comment-summary-in-pr: never
-          summary-only: false
         #   fail-on-severity: moderate
         #   deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
         #   retry-on-snapshot-warnings: true
