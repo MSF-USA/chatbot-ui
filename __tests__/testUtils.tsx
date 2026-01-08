@@ -19,11 +19,35 @@ const mockMessages = {
     pdf: {
       info: 'PDF files are automatically processed',
     },
-    fileUpload: {
-      uploading: 'Uploading',
-      failed: 'Failed',
-      remove: 'Remove',
-      removeFile: 'Remove file',
+  },
+  // fileUpload keys at root level (component calls t('fileUpload.xxx'))
+  fileUpload: {
+    uploading: 'Uploading',
+    failed: 'Failed',
+    remove: 'Remove',
+    removeFile: 'Remove file',
+    attachment: 'attachment',
+    attachments: 'attachments',
+    extractingAudio: 'Extracting audio...',
+    queuedForTranscription: 'Queued for transcription',
+    transcribing: 'Transcribing...',
+    transcribed: 'Transcribed',
+    transcriptionFailed: 'Transcription failed',
+    extractedFromSmaller: 'Extracted from {percent}% smaller',
+    textExtraction: 'Text extraction',
+    opening: 'Opening...',
+    openInEditor: 'Open in Editor',
+    failedToUpload: 'Failed to upload',
+    fileNotAvailable: 'File not available',
+    failedToOpenInEditor: 'Failed to open in editor',
+  },
+  // transcription keys at root level
+  transcription: {
+    transcribesOnSend: 'Transcribes on send',
+    addInstructions: 'Add instructions',
+    instructionsPlaceholder: 'Add context or instructions...',
+    languages: {
+      autoDetect: 'Auto-detect',
     },
   },
   ui: {
