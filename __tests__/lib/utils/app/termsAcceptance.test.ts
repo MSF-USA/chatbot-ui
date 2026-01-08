@@ -92,7 +92,6 @@ describe('termsAcceptance utility', () => {
 
   afterEach(() => {
     delete (global as any).window;
-    delete (global as any).localStorage;
     vi.clearAllMocks();
   });
 
