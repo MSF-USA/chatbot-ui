@@ -21,9 +21,6 @@ const mockSetModelOrderMode = vi.fn(
   },
 );
 const mockMoveModelInOrder = vi.fn();
-const mockIncrementModelUsage = vi.fn((modelId: string) => {
-  mockModelUsageStats[modelId] = (mockModelUsageStats[modelId] ?? 0) + 1;
-});
 const mockResetModelOrder = vi.fn(() => {
   mockModelOrderMode = 'usage';
   mockCustomModelOrder = [];
@@ -36,7 +33,6 @@ vi.mock('@/client/stores/settingsStore', () => ({
     modelUsageStats: mockModelUsageStats,
     setModelOrderMode: mockSetModelOrderMode,
     moveModelInOrder: mockMoveModelInOrder,
-    incrementModelUsage: mockIncrementModelUsage,
     resetModelOrder: mockResetModelOrder,
   })),
 }));
@@ -323,21 +319,6 @@ describe('useModelOrder', () => {
       expect(mockMoveModelInOrder).toHaveBeenCalledWith(
         OpenAIModelID.GPT_4_1,
         'up',
-      );
-    });
-  });
-
-  describe('incrementUsage', () => {
-    it('should call incrementModelUsage from store', () => {
-      const testModels = createTestModels();
-      const { result } = renderHook(() => useModelOrder(testModels));
-
-      act(() => {
-        result.current.incrementUsage(OpenAIModelID.GPT_5_2);
-      });
-
-      expect(mockIncrementModelUsage).toHaveBeenCalledWith(
-        OpenAIModelID.GPT_5_2,
       );
     });
   });
