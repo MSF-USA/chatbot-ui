@@ -27,6 +27,34 @@ vi.mock('next-auth/react', () => ({
 // Mock CSS imports
 vi.mock('katex/dist/katex.min.css', () => ({}));
 
+// Mock next-intl for component tests
+// This provides a global fallback that returns translation keys,
+// ensuring tests don't fail due to missing NextIntlClientProvider context
+vi.mock('next-intl', () => ({
+  useTranslations:
+    () => (key: string, params?: Record<string, string | number>) => {
+      if (params) {
+        // Handle interpolation: "Hello {name}" with {name: "World"} => "Hello World"
+        return Object.entries(params).reduce(
+          (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+          key,
+        );
+      }
+      return key;
+    },
+  useLocale: () => 'en',
+  useMessages: () => ({}),
+  useNow: () => new Date(),
+  useTimeZone: () => 'UTC',
+  useFormatter: () => ({
+    dateTime: () => '',
+    number: () => '',
+    relativeTime: () => '',
+  }),
+  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
+}));
+
 // Mock localStorage for Zustand persist middleware in jsdom environment
 // jsdom has localStorage but it may not be fully compatible with Zustand's persist middleware
 const localStorageMock = {
