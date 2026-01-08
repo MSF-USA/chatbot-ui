@@ -82,7 +82,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     orderMode,
     setOrderMode,
     moveModel,
-    incrementUsage,
     resetOrder,
     canMoveUp,
     canMoveDown,
@@ -197,9 +196,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       );
       return;
     }
-
-    // Track usage for model ordering
-    incrementUsage(model.id);
 
     // Switch to details view on mobile when a model is selected
     setMobileView('details');
