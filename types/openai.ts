@@ -288,7 +288,7 @@ function createModelConfigs(
       modelType: 'omni',
       description:
         "Anthropic's most capable model with exceptional reasoning, coding, and creative abilities. Best for complex analysis, research, and tasks requiring deep understanding.",
-      isDisabled: false,
+      isDisabled: true,
       provider: 'anthropic',
       knowledgeCutoffDate: '2025-01',
       sdk: 'anthropic-foundry',
@@ -322,7 +322,7 @@ function createModelConfigs(
       modelType: 'omni',
       description:
         'Previous generation Claude Opus model. Excellent for complex coding tasks, detailed analysis, and nuanced understanding.',
-      isDisabled: false,
+      isDisabled: true,
       provider: 'anthropic',
       knowledgeCutoffDate: '2025-01',
       sdk: 'anthropic-foundry',
