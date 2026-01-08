@@ -309,6 +309,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         pendingTranscriptions,
       );
 
+      // Track successful model usage for ordering stability
+      const { recordSuccessfulModelUsage } = useSettingsStore.getState();
+      recordSuccessfulModelUsage(conversation.model.id);
+
       // Clear state
       get().clearStreamingState();
 
