@@ -370,12 +370,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const settings = useSettingsStore.getState();
     const modelSupportsStreaming = conversation.model.stream !== false;
 
-    // Merge conversation model with latest configuration
-    const latestModelConfig =
+    // Get latest model config - if model no longer exists, use fallback
+    let latestModelConfig =
       OpenAIModels[conversation.model.id as OpenAIModelID];
-    const modelToSend = latestModelConfig
-      ? { ...conversation.model, ...latestModelConfig }
-      : conversation.model;
+
+    if (!latestModelConfig) {
+      console.warn(
+        `[chatStore] Model "${conversation.model.id}" no longer exists, using fallback model`,
+      );
+      // Try settings default, then global fallback
+      const fallbackId = settings.defaultModelId || fallbackModelID;
+      latestModelConfig = OpenAIModels[fallbackId];
+
+      if (!latestModelConfig) {
+        throw new Error(
+          `No valid model available. Requested: ${conversation.model.id}, Fallback: ${fallbackId}`,
+        );
+      }
+    }
+
+    const modelToSend = { ...conversation.model, ...latestModelConfig };
 
     // Flatten messages for API call
     const messagesForAPI = flattenEntriesForAPI(conversation.messages);
