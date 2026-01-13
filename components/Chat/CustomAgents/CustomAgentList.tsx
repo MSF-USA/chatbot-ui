@@ -2,6 +2,7 @@
 
 import {
   IconAlertCircle,
+  IconAlertTriangle,
   IconDownload,
   IconEdit,
   IconFileExport,
@@ -39,6 +40,7 @@ interface CustomAgentListProps {
   onImport: (agents: CustomAgent[]) => void;
   onSelect: (agent: CustomAgent) => void;
   selectedModelId?: string;
+  defunctAgentIds: Set<string>;
 }
 
 export const CustomAgentList: FC<CustomAgentListProps> = ({
@@ -48,6 +50,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
   onImport,
   onSelect,
   selectedModelId,
+  defunctAgentIds,
 }) => {
   const t = useTranslations();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -260,15 +263,18 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
           const baseModel = OpenAIModels[agent.baseModelId];
           const isDeleting = deleteConfirm === agent.id;
           const isSelected = selectedModelId === `custom-${agent.id}`;
+          const isDefunct = defunctAgentIds.has(agent.id);
 
           return (
             <div
               key={agent.id}
-              onClick={() => onSelect(agent)}
-              className={`p-4 bg-white dark:bg-[#2A2A2A] border-2 rounded-lg transition-colors cursor-pointer ${
-                isSelected
-                  ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/10'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
+              onClick={() => !isDefunct && onSelect(agent)}
+              className={`p-4 bg-white dark:bg-[#2A2A2A] border-2 rounded-lg transition-colors ${
+                isDefunct
+                  ? 'border-amber-300 dark:border-amber-700 opacity-60 cursor-not-allowed'
+                  : isSelected
+                    ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/10 cursor-pointer'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer'
               }`}
             >
               <div className="flex items-start justify-between">
@@ -348,6 +354,18 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
                   />
                   <span className="text-xs text-red-700 dark:text-red-300">
                     Click delete again to confirm removal
+                  </span>
+                </div>
+              )}
+
+              {isDefunct && (
+                <div className="mt-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 flex items-start">
+                  <IconAlertTriangle
+                    size={16}
+                    className="mr-2 mt-0.5 flex-shrink-0 text-amber-600 dark:text-amber-400"
+                  />
+                  <span className="text-xs text-amber-700 dark:text-amber-300">
+                    {t('agents.defunctWarning')}
                   </span>
                 </div>
               )}
