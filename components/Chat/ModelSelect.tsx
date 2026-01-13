@@ -102,20 +102,21 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     setIsEditingOrder(!isEditingOrder);
   };
 
-  // Convert custom agents to OpenAIModel format
-  // Filters out agents with invalid/missing base models to prevent runtime errors
+  // Track which agents have defunct base models (deprecated/removed)
+  // These agents are shown in the UI but cannot be selected
+  const defunctAgentIds = useMemo(() => {
+    return new Set(
+      customAgents
+        .filter((agent) => !OpenAIModels[agent.baseModelId])
+        .map((agent) => agent.id),
+    );
+  }, [customAgents]);
+
+  // Convert custom agents to OpenAIModel format (only valid ones)
+  // Agents with defunct base models are filtered out here but displayed separately in AgentsTab
   const customAgentModels: OpenAIModel[] = useMemo(() => {
     return customAgents
-      .filter((agent) => {
-        const baseModel = OpenAIModels[agent.baseModelId];
-        if (!baseModel) {
-          console.warn(
-            `[ModelSelect] Custom agent "${agent.name}" references invalid baseModelId: ${agent.baseModelId}`,
-          );
-          return false;
-        }
-        return true;
-      })
+      .filter((agent) => !defunctAgentIds.has(agent.id))
       .map((agent) => {
         const baseModel = OpenAIModels[agent.baseModelId];
         return {
@@ -124,12 +125,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           name: agent.name,
           agentId: agent.agentId,
           description:
-            agent.description || `Custom agent based on ${baseModel!.name}`,
+            agent.description || `Custom agent based on ${baseModel.name}`,
           modelType: 'agent' as const,
           isCustomAgent: true,
         };
       });
-  }, [customAgents]);
+  }, [customAgents, defunctAgentIds]);
 
   // Combine base models and custom agents
   const availableModels = [...baseModels, ...customAgentModels];
@@ -449,6 +450,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           handleModelSelect={handleModelSelect}
           customAgentModels={customAgentModels}
           selectedModelId={selectedModelId}
+          defunctAgentIds={defunctAgentIds}
         />
       )}
 
