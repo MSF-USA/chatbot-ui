@@ -4,6 +4,7 @@ import {
   DEFAULT_MODEL_ORDER,
   OpenAIModel,
   OpenAIModelID,
+  OpenAIModels,
 } from '@/types/openai';
 import { MSFOrganization } from '@/types/organization';
 import { Prompt } from '@/types/prompt';
@@ -509,6 +510,33 @@ export const useSettingsStore = create<SettingsStore>()(
         }
 
         return state;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Validate defaultModelId still exists - if not, reset it
+          if (
+            state.defaultModelId &&
+            !OpenAIModels[state.defaultModelId as OpenAIModelID]
+          ) {
+            console.warn(
+              `[SettingsStore] Default model "${state.defaultModelId}" no longer exists, resetting to undefined`,
+            );
+            state.defaultModelId = undefined;
+          }
+
+          // Clean up defunct model IDs from customModelOrder
+          if (state.customModelOrder && state.customModelOrder.length > 0) {
+            const validModelIds = state.customModelOrder.filter(
+              (id) => OpenAIModels[id as OpenAIModelID],
+            );
+            if (validModelIds.length !== state.customModelOrder.length) {
+              console.warn(
+                `[SettingsStore] Removed ${state.customModelOrder.length - validModelIds.length} defunct model IDs from custom order`,
+              );
+              state.customModelOrder = validModelIds;
+            }
+          }
+        }
       },
     },
   ),
