@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "Specializovaný agent pro výzkumné úkoly...",
     "baseModel": "Základní model",
     "formatDescription": "Formát: asst_xxxxx (z MSF AI Assistant Foundry)",
-    "importantInfo": "Tento agent bude mít přístup ke kontextu konverzace a může používat stejné nástroje jako standardní modely. Ujistěte se, že ID agenta je správné, protože jej nelze později změnit."
+    "importantInfo": "Tento agent bude mít přístup ke kontextu konverzace a může používat stejné nástroje jako standardní modely. Ujistěte se, že ID agenta je správné, protože jej nelze později změnit.",
+    "defunctWarning": "Základní model tohoto agenta již není k dispozici. Upravte agenta a vyberte nový základní model, nebo ho smažte."
   },
   "Quick Actions": "Rychlé akce",
   "Type / in chat to access your prompts": "Napište / v chatu pro přístup k vašim výzvám",

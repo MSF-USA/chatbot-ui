@@ -344,7 +344,8 @@
     "descriptionPlaceholder": "Agent wyspecjalizowany w zadaniach badawczych...",
     "baseModel": "Model bazowy",
     "formatDescription": "Format: asst_xxxxx (z MSF AI Assistant Foundry)",
-    "importantInfo": "Ten agent będzie miał dostęp do kontekstu rozmowy i będzie mógł korzystać z tych samych narzędzi co standardowe modele. Upewnij się, że ID agenta jest poprawne, ponieważ nie można go później zmienić."
+    "importantInfo": "Ten agent będzie miał dostęp do kontekstu rozmowy i będzie mógł korzystać z tych samych narzędzi co standardowe modele. Upewnij się, że ID agenta jest poprawne, ponieważ nie można go później zmienić.",
+    "defunctWarning": "Model bazowy tego agenta nie jest już dostępny. Edytuj agenta, aby wybrać nowy model bazowy, lub usuń go."
   },
   "Quick Actions": "Szybkie akcje",
   "Type / in chat to access your prompts": "Wpisz / w czacie, aby uzyskać dostęp do swoich promptów",

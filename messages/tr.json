@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "Araştırma görevlerinde uzmanlaşmış ajan...",
     "baseModel": "Temel model",
     "formatDescription": "Format: asst_xxxxx (MSF AI Assistant Foundry'den)",
-    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
+    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez.",
+    "defunctWarning": "Bu ajanın temel modeli artık mevcut değil. Yeni bir temel model seçmek için ajanı düzenleyin veya silin."
   },
   "Quick Actions": "Hızlı İşlemler",
   "Type / in chat to access your prompts": "İstemlerinize erişmek için sohbette / yazın",

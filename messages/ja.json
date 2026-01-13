@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "研究タスクに特化したエージェント...",
     "baseModel": "ベースモデル",
     "formatDescription": "形式：asst_xxxxx（MSF AI Assistant Foundryより）",
-    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。"
+    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。",
+    "defunctWarning": "このエージェントのベースモデルは利用できなくなりました。新しいベースモデルを選択するか、エージェントを削除してください。"
   },
   "Quick Actions": "クイックアクション",
   "Type / in chat to access your prompts": "チャットで / を入力してプロンプトにアクセス",

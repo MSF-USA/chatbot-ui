@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "专门从事研究任务的代理...",
     "baseModel": "基础模型",
     "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
-    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
+    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。",
+    "defunctWarning": "此代理的基础模型已不可用。请编辑代理以选择新的基础模型，或删除该代理。"
   },
   "Quick Actions": "快速操作",
   "Type / in chat to access your prompts": "在聊天中输入 / 以访问您的提示",

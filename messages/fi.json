@@ -322,7 +322,8 @@
     "descriptionPlaceholder": "Tutkimustehtäviin erikoistunut agentti...",
     "baseModel": "Perusmalli",
     "formatDescription": "Muoto: asst_xxxxx (MSF AI Assistant Foundrysta)",
-    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin."
+    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin.",
+    "defunctWarning": "Tämän agentin perusmalli ei ole enää saatavilla. Muokkaa agenttia valitaksesi uuden perusmallin tai poista agentti."
   },
   "Quick Actions": "Pikatoiminnot",
   "Type / in chat to access your prompts": "Kirjoita / keskustelussa päästäksesi kehotteisiisi",

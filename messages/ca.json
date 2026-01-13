@@ -322,7 +322,8 @@
     "descriptionPlaceholder": "Agent especialitzat per a tasques de recerca...",
     "baseModel": "Model base",
     "formatDescription": "Format: asst_xxxxx (de MSF AI Assistant Foundry)",
-    "importantInfo": "Aquest agent tindrà accés al context de la conversa i podrà utilitzar les mateixes eines que els models estàndard. Assegureu-vos que l'ID de l'agent sigui correcte ja que no es pot canviar més endavant."
+    "importantInfo": "Aquest agent tindrà accés al context de la conversa i podrà utilitzar les mateixes eines que els models estàndard. Assegureu-vos que l'ID de l'agent sigui correcte ja que no es pot canviar més endavant.",
+    "defunctWarning": "El model base d’aquest agent ja no està disponible. Modifiqueu l’agent per seleccionar-ne un de nou o suprimiu-lo."
   },
   "Quick Actions": "Accions ràpides",
   "Type / in chat to access your prompts": "Escriu / al xat per accedir als teus avisos",

@@ -317,7 +317,8 @@
     "descriptionPlaceholder": "Tác nhân chuyên về các nhiệm vụ nghiên cứu...",
     "baseModel": "Mô hình cơ sở",
     "formatDescription": "Định dạng: asst_xxxxx (từ MSF AI Assistant Foundry)",
-    "importantInfo": "Tác nhân này sẽ có quyền truy cập vào ngữ cảnh cuộc trò chuyện và có thể sử dụng các công cụ giống như các mô hình tiêu chuẩn. Đảm bảo ID tác nhân chính xác vì không thể thay đổi sau này."
+    "importantInfo": "Tác nhân này sẽ có quyền truy cập vào ngữ cảnh cuộc trò chuyện và có thể sử dụng các công cụ giống như các mô hình tiêu chuẩn. Đảm bảo ID tác nhân chính xác vì không thể thay đổi sau này.",
+    "defunctWarning": "Mô hình cơ sở của agent này không còn khả dụng. Hãy chỉnh sửa agent để chọn mô hình cơ sở mới hoặc xóa agent này."
   },
   "Quick Actions": "Thao tác nhanh",
   "Type / in chat to access your prompts": "Gõ / trong trò chuyện để truy cập lời nhắc của bạn",

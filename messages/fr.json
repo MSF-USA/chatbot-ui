@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "Agent spécialisé pour les tâches de recherche...",
     "baseModel": "Modèle de base",
     "formatDescription": "Format: asst_xxxxx (de MSF AI Assistant Foundry)",
-    "importantInfo": "Cet agent aura accès au contexte de la conversation et pourra utiliser les mêmes outils que les modèles standard. Assurez-vous que l'ID de l'agent est correct car il ne pourra pas être modifié ultérieurement."
+    "importantInfo": "Cet agent aura accès au contexte de la conversation et pourra utiliser les mêmes outils que les modèles standard. Assurez-vous que l'ID de l'agent est correct car il ne pourra pas être modifié ultérieurement.",
+    "defunctWarning": "Le modèle de base de cet agent n’est plus disponible. Modifiez l’agent pour sélectionner un nouveau modèle de base, ou supprimez-le."
   },
   "Quick Actions": "Actions rapides",
   "Type / in chat to access your prompts": "Tapez / dans le chat pour accéder à vos instructions",

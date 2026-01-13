@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "Agent specialiserad på forskningsuppgifter...",
     "baseModel": "Basmodell",
     "formatDescription": "Format: asst_xxxxx (från MSF AI Assistant Foundry)",
-    "importantInfo": "Denna agent kommer att ha tillgång till konversationskontexten och kan använda samma verktyg som standardmodeller. Se till att agent-ID:t är korrekt eftersom det inte kan ändras senare."
+    "importantInfo": "Denna agent kommer att ha tillgång till konversationskontexten och kan använda samma verktyg som standardmodeller. Se till att agent-ID:t är korrekt eftersom det inte kan ändras senare.",
+    "defunctWarning": "Den här agentens basmodell är inte längre tillgänglig. Redigera agenten för att välja en ny basmodell eller ta bort den."
   },
   "Quick Actions": "Snabbåtgärder",
   "Type / in chat to access your prompts": "Skriv / i chatten för att komma åt dina prompter",

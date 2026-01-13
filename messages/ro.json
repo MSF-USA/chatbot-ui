@@ -345,7 +345,8 @@
     "descriptionPlaceholder": "Agent specializat pentru sarcini de cercetare...",
     "baseModel": "Model de bază",
     "formatDescription": "Format: asst_xxxxx (de la MSF AI Assistant Foundry)",
-    "importantInfo": "Acest agent va avea acces la contextul conversației și va putea folosi aceleași instrumente ca modelele standard. Asigurați-vă că ID-ul agentului este corect deoarece nu poate fi modificat ulterior."
+    "importantInfo": "Acest agent va avea acces la contextul conversației și va putea folosi aceleași instrumente ca modelele standard. Asigurați-vă că ID-ul agentului este corect deoarece nu poate fi modificat ulterior.",
+    "defunctWarning": "Modelul de bază al acestui agent nu mai este disponibil. Editați agentul pentru a selecta un nou model de bază sau ștergeți-l."
   },
   "Quick Actions": "Acțiuni rapide",
   "Type / in chat to access your prompts": "Tastați / în chat pentru a accesa solicitările",
