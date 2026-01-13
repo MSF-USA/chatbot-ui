@@ -103,20 +103,32 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   };
 
   // Convert custom agents to OpenAIModel format
+  // Filters out agents with invalid/missing base models to prevent runtime errors
   const customAgentModels: OpenAIModel[] = useMemo(() => {
-    return customAgents.map((agent) => {
-      const baseModel = OpenAIModels[agent.baseModelId];
-      return {
-        ...baseModel,
-        id: `custom-${agent.id}`,
-        name: agent.name,
-        agentId: agent.agentId,
-        description:
-          agent.description || `Custom agent based on ${baseModel.name}`,
-        modelType: 'agent' as const,
-        isCustomAgent: true,
-      };
-    });
+    return customAgents
+      .filter((agent) => {
+        const baseModel = OpenAIModels[agent.baseModelId];
+        if (!baseModel) {
+          console.warn(
+            `[ModelSelect] Custom agent "${agent.name}" references invalid baseModelId: ${agent.baseModelId}`,
+          );
+          return false;
+        }
+        return true;
+      })
+      .map((agent) => {
+        const baseModel = OpenAIModels[agent.baseModelId];
+        return {
+          ...baseModel,
+          id: `custom-${agent.id}`,
+          name: agent.name,
+          agentId: agent.agentId,
+          description:
+            agent.description || `Custom agent based on ${baseModel!.name}`,
+          modelType: 'agent' as const,
+          isCustomAgent: true,
+        };
+      });
   }, [customAgents]);
 
   // Combine base models and custom agents
