@@ -27,6 +27,7 @@ interface AgentsTabProps {
   handleModelSelect: (model: OpenAIModel) => void;
   customAgentModels: OpenAIModel[];
   selectedModelId: string | null | undefined;
+  defunctAgentIds: Set<string>;
 }
 
 export const AgentsTab: FC<AgentsTabProps> = ({
@@ -40,6 +41,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
   handleModelSelect,
   customAgentModels,
   selectedModelId,
+  defunctAgentIds,
 }) => {
   const t = useTranslations();
 
@@ -118,6 +120,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
               }
             }}
             selectedModelId={selectedModelId ?? undefined}
+            defunctAgentIds={defunctAgentIds}
           />
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
