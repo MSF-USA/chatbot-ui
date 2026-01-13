@@ -47,7 +47,7 @@ export function useConversations() {
     ? conversations
     : conversations.filter((c) => {
         const searchLower = searchTerm.toLowerCase();
-        if (c.name.toLowerCase().includes(searchLower)) return true;
+        if (c.name?.toLowerCase().includes(searchLower)) return true;
 
         // Search in message content
         return c.messages.some((entry) => {
