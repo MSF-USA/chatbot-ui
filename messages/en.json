@@ -351,7 +351,8 @@
     "descriptionPlaceholder": "Specialized agent for research tasks...",
     "baseModel": "Base Model",
     "formatDescription": "Format: asst_xxxxx (from MSF AI Assistant Foundry)",
-    "importantInfo": "This agent will have access to conversation context and can use the same tools as standard models. Make sure the Agent ID is correct as it cannot be changed later."
+    "importantInfo": "This agent will have access to conversation context and can use the same tools as standard models. Make sure the Agent ID is correct as it cannot be changed later.",
+    "defunctWarning": "This agent's base model is no longer available. Edit the agent to select a new base model, or delete it."
   },
   "Quick Actions": "Quick Actions",
   "Type / in chat to access your prompts": "Type / in chat to access your prompts",
