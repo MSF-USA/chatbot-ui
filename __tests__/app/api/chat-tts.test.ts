@@ -91,6 +91,16 @@ vi.mock('microsoft-cognitiveservices-speech-sdk', () => ({
   },
 }));
 
+// Mock @azure/identity to fail immediately when no API key is configured
+// This prevents timeout when the route falls back to managed identity
+vi.mock('@azure/identity', () => ({
+  DefaultAzureCredential: vi.fn(() => ({
+    getToken: vi
+      .fn()
+      .mockRejectedValue(new Error('Mock: No credentials available')),
+  })),
+}));
+
 /**
  * Tests for POST /api/chat/tts
  * Text-to-speech endpoint using Azure Speech Services
