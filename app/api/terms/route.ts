@@ -117,55 +117,7 @@ Si vous avez des préoccupations ou souhaitez signaler un incident, veuillez con
 Ces conditions peuvent être modifiées à tout moment par MSF --- nous vous en informerons en cas de changement --- votre utilisation continue de ai.msf.org vaut acceptation de toute modification.
 `;
 
-// Spanish terms
-const termsTextEs: string = `# TÉRMINOS DE USO
-
-Al utilizar ai.msf.org, acepta los siguientes términos y condiciones:
-
-**NO utilizará ai.msf.org (MSF AI Assistant) para los siguientes propósitos:**
-
-• **Atención médica** (para proporcionar atención médica o responder preguntas relacionadas con la salud)
-
-• **Vigilancia o monitoreo de pacientes o comunidades de MSF o cualquier otro individuo**
-
-• **Decisiones relacionadas con el empleo** (para asistir o reemplazar decisiones relacionadas con el empleo)
-
-• **Toma de decisiones automatizada** (para tomar decisiones que podrían ser perjudiciales para un individuo o comunidad)
-
-• **Creación de contenido mediático para comunicaciones externas sobre asuntos de interés público**
-
-• **Actividades ilegales o dañinas**
-
-**NO ingresará en ai.msf.org (MSF AI Assistant) ni cargará la siguiente información:**
-
-• **Datos personales** (nombres, números de teléfono, CVs, testimonios, cualquier cosa que pueda identificar directa o indirectamente a un individuo, esto incluye una combinación de datos que juntos pueden hacer posible identificar a un individuo)
-
-• **Datos altamente sensibles** (datos que pueden ser utilizados intencional o no intencionalmente para dañar a individuos, comunidades, MSF o su personal; determinar la sensibilidad de los datos requiere incorporar análisis de contexto, por ejemplo, ubicaciones de proyectos sensibles o grupos en riesgo, incidentes de seguridad y otros detalles operacionales)
-
-## Uso responsable
-
-Acepta utilizar ai.msf.org de manera responsable. Usted:
-
-• Utilizará el MSF AI Assistant de acuerdo con las políticas aplicables de TIC (Tecnología de la Información y Comunicación), IA y otras políticas de sus entidades MSF.
-
-• Siempre verificará la precisión, inclusividad y sesgo de los resultados. ai.msf.org utiliza tecnología experimental; no garantiza que los resultados sean precisos. Además, la tecnología no ha sido entrenada utilizando datos representativos de los pacientes y comunidades de MSF. Los resultados de IA pueden perpetuar sesgos, discriminación y estereotipos. Usted es responsable de verificar los resultados producidos.
-
-• Verificará que los resultados no infrinjan los derechos de propiedad intelectual de terceros, especialmente para cualquier cosa utilizada públicamente. Como otros sistemas de IA generativa, la tecnología detrás de ai.msf.org ha sido entrenada con propiedad intelectual de terceros sin permisos y licencias claras.
-
-• Será transparente sobre su uso de IA. Informe a las personas si algo que utiliza ha sido producido por IA y marque los resultados como generados por IA.
-
-## Privacidad
-
-El uso de ai.msf.org es un entorno más seguro y protegido que el uso de otras herramientas de IA externas gratuitas, que ofrecen muy pocas garantías de privacidad. Sin embargo, tenga en cuenta que todavía hay límites y advertencias; consulte la política de uso para más detalles.
-
-Al igual que otros productos de Microsoft, su información de inicio de sesión será procesada por MSF como se describe en la política de privacidad de su entidad MSF.
-
-## Infracciones/comentarios
-
-Si tiene alguna preocupación o desea notificar un incidente, comuníquese con su responsable de seguridad informática, su DPO o su responsable de TIC (Tecnología de la Información y Comunicación) local. Para OCA, puede [reportar una violación de datos o seguridad a través de Elixir](https://msfintl.sharepoint.com/sites/oca-dept-control-gdpr/SitePages/Report-data-breach-incident.aspx?web=1).
-
-Estos términos pueden ser modificados en cualquier momento por MSF; le proporcionaremos un aviso si los cambiamos; su uso continuo de ai.msf.org constituye la aceptación de cualquier cambio.
-`;
+// TODO: Add Spanish terms when official translation is available for version 2.0.1
 
 const calculateHash = (content: string): string => {
   return crypto.createHash('sha256').update(content).digest('hex');
@@ -199,12 +151,8 @@ const termsData: TermsData = {
         content: termsTextFr,
         hash: calculateHash(termsTextFr),
       },
-      es: {
-        content: termsTextEs,
-        hash: calculateHash(termsTextEs),
-      },
     },
-    version: '1.0.1',
+    version: '2.0.1',
     required: true,
   },
 };
