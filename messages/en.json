@@ -597,6 +597,15 @@
     "yes": "Yes",
     "no": "No"
   },
+  "terms": {
+    "officialLanguages": "Official version:",
+    "translateForUnderstanding": "Translate to help understand",
+    "aiTranslationNotice": "This is an AI translation provided to help you understand the terms. The legally binding terms are available in English and French only.",
+    "viewOfficialVersion": "View official version",
+    "translating": "Translating...",
+    "translationError": "Failed to translate. Please try again.",
+    "selectLanguage": "Select language"
+  },
   "chat": {
     "discardChanges": "Discard Changes",
     "discardChangesMessage": "You have unsaved changes. Are you sure you want to discard them?",
