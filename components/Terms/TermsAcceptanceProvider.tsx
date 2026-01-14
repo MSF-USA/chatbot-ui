@@ -34,6 +34,16 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     const checkTermsAcceptance = async () => {
       if (status === 'loading') return;
 
+      // Check for force terms override (useful for testing or forcing re-acceptance)
+      const forceTerms = process.env.NEXT_PUBLIC_FORCE_TERMS_MODAL === 'true';
+
+      if (forceTerms && status === 'authenticated' && session?.user) {
+        // Force show terms for all authenticated users, bypassing region and acceptance checks
+        setShowTermsModal(true);
+        setCheckingTerms(false);
+        return;
+      }
+
       // Only show terms for authenticated EU users (not US-based)
       if (
         status === 'authenticated' &&
