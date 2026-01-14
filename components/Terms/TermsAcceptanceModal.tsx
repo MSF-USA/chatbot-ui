@@ -133,10 +133,56 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     }
   };
 
-  // Handle locale change
+  // Handle official locale change (clears any AI translation)
   const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentLocale(e.target.value);
+    // Clear AI translation when switching to official language
+    setTranslatedContent(null);
+    setTranslationLocale(null);
+    setTranslationError(null);
   };
+
+  // Handle translation to a non-official language
+  const handleTranslate = useCallback(
+    async (targetLocale: string) => {
+      if (!termsData?.platformTerms) return;
+
+      setIsTranslating(true);
+      setTranslationError(null);
+      setShowTranslationDropdown(false);
+
+      try {
+        // Get the English content as source (most complete/accurate)
+        const sourceContent =
+          termsData.platformTerms.localized['en']?.content || '';
+
+        const response = await translateText({
+          sourceText: sourceContent,
+          targetLocale: targetLocale,
+        });
+
+        if (response.success && response.data?.translatedText) {
+          setTranslatedContent(response.data.translatedText);
+          setTranslationLocale(targetLocale);
+        } else {
+          setTranslationError(t('terms.translationError'));
+        }
+      } catch (err) {
+        console.error('Translation error:', err);
+        setTranslationError(t('terms.translationError'));
+      } finally {
+        setIsTranslating(false);
+      }
+    },
+    [termsData, t],
+  );
+
+  // Clear AI translation and return to official version
+  const handleViewOfficialVersion = useCallback(() => {
+    setTranslatedContent(null);
+    setTranslationLocale(null);
+    setTranslationError(null);
+  }, []);
 
   // Get localized name for a language
   const getLanguageName = (locale: string): string => {
@@ -147,6 +193,10 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     };
     return localeNames[locale] || locale;
   };
+
+  // Determine if we're showing AI translation
+  const isShowingTranslation =
+    translatedContent !== null && translationLocale !== null;
 
   if (loading) {
     return (
@@ -214,38 +264,97 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-2xl max-w-xl w-full max-h-[80vh] flex flex-col overflow-hidden border border-gray-300 dark:border-gray-600">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-              {t('Terms and Conditions')}
-            </h2>
-            <span className="text-[10px] text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
-              v{versions}
-            </span>
-          </div>
-          {/* Language selector */}
-          <div className="flex items-center gap-2 text-sm">
-            <IconLanguage
-              size={16}
-              className="text-gray-600 dark:text-gray-300"
-            />
-            <select
-              id="language-select"
-              value={currentLocale}
-              onChange={handleLocaleChange}
-              className="bg-transparent text-gray-800 dark:text-white text-xs font-medium cursor-pointer focus:outline-none border-0"
-            >
-              {availableLocales.map((locale) => (
-                <option
-                  key={locale}
-                  value={locale}
-                  className="bg-white dark:bg-gray-800"
+        <div className="px-5 py-4 border-b border-gray-300 dark:border-gray-600">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                {t('Terms and Conditions')}
+              </h2>
+              <span className="text-[10px] text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
+                v{versions}
+              </span>
+            </div>
+            {/* Official language selector */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-sm">
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                  {t('terms.officialLanguages')}
+                </span>
+                <IconLanguage
+                  size={14}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <select
+                  id="language-select"
+                  value={currentLocale}
+                  onChange={handleLocaleChange}
+                  disabled={isShowingTranslation}
+                  className="bg-transparent text-gray-800 dark:text-white text-xs font-medium cursor-pointer focus:outline-none border-0 disabled:opacity-50"
                 >
-                  {getLanguageName(locale)}
-                </option>
-              ))}
-            </select>
+                  {availableLocales.map((locale) => (
+                    <option
+                      key={locale}
+                      value={locale}
+                      className="bg-white dark:bg-gray-800"
+                    >
+                      {getLanguageName(locale)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
+
+          {/* Translation option row */}
+          <div className="mt-3 flex items-center justify-between">
+            <div className="relative">
+              <button
+                onClick={() =>
+                  setShowTranslationDropdown(!showTranslationDropdown)
+                }
+                disabled={isTranslating}
+                className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
+              >
+                <IconWorld size={14} />
+                <span>{t('terms.translateForUnderstanding')}</span>
+                {isTranslating && (
+                  <IconLoader2 size={12} className="animate-spin ml-1" />
+                )}
+              </button>
+
+              {/* Translation language dropdown */}
+              {showTranslationDropdown && (
+                <div className="absolute top-full left-0 mt-1 w-48 max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                  {translationLocales.map((locale) => (
+                    <button
+                      key={locale}
+                      onClick={() => handleTranslate(locale)}
+                      className="w-full px-3 py-2 text-left text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {getAutonym(locale)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* View official version link (shown when viewing translation) */}
+            {isShowingTranslation && (
+              <button
+                onClick={handleViewOfficialVersion}
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t('terms.viewOfficialVersion')}
+              </button>
+            )}
+          </div>
+
+          {/* Translation error */}
+          {translationError && (
+            <div className="mt-2 text-xs text-red-600 dark:text-red-400">
+              {translationError}
+            </div>
+          )}
         </div>
 
         {/* Content */}
