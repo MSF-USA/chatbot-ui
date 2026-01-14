@@ -1,9 +1,17 @@
-import { IconLanguage } from '@tabler/icons-react';
-import React, { FC, useEffect, useState } from 'react';
+import {
+  IconAlertTriangle,
+  IconLanguage,
+  IconLoader2,
+  IconWorld,
+} from '@tabler/icons-react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
+import { translateText } from '@/lib/services/translation/translationService';
+
+import { getAutonym, getSupportedLocales } from '@/lib/utils/app/locales';
 import {
   TermsData,
   fetchTermsData,
@@ -29,6 +37,27 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
   const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
+
+  // Translation state
+  const [translatedContent, setTranslatedContent] = useState<string | null>(
+    null,
+  );
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translationLocale, setTranslationLocale] = useState<string | null>(
+    null,
+  );
+  const [translationError, setTranslationError] = useState<string | null>(null);
+  const [showTranslationDropdown, setShowTranslationDropdown] =
+    useState<boolean>(false);
+
+  // Get all supported locales for translation (excluding official ones)
+  const translationLocales = useMemo(() => {
+    const allLocales = getSupportedLocales();
+    // Filter out official locales (en, fr) and sort alphabetically by autonym
+    return allLocales
+      .filter((locale) => !availableLocales.includes(locale))
+      .sort((a, b) => getAutonym(a).localeCompare(getAutonym(b)));
+  }, [availableLocales]);
 
   // Use email (mail) as the primary identifier for terms acceptance
   // This ensures consistency with checkUserTermsAcceptance
