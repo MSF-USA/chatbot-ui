@@ -1652,5 +1652,14 @@
     "expires": "{days} দিন পর্যন্ত উপলব্ধ",
     "learnMore": "আরও জানুন",
     "advancedOptions": "উন্নত অপশন"
+  },
+  "terms": {
+    "officialLanguages": "সরকারি সংস্করণ:",
+    "translateForUnderstanding": "বোঝার জন্য অনুবাদ করুন",
+    "aiTranslationNotice": "এটি বোঝার সুবিধার জন্য একটি এআই অনুবাদ। আইনগতভাবে বাধ্যতামূলক শর্তাবলি শুধুমাত্র ইংরেজি এবং ফরাসিতে উপলব্ধ।",
+    "viewOfficialVersion": "সরকারি সংস্করণ দেখুন",
+    "translating": "অনুবাদ করা হচ্ছে...",
+    "translationError": "অনুবাদ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "selectLanguage": "ভাষা নির্বাচন করুন"
   }
 }

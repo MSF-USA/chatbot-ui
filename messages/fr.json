@@ -1652,5 +1652,14 @@
     "expires": "Disponible pendant {days} jours",
     "learnMore": "En savoir plus",
     "advancedOptions": "Options avancées"
+  },
+  "terms": {
+    "officialLanguages": "Version officielle :",
+    "translateForUnderstanding": "Traduire pour comprendre",
+    "aiTranslationNotice": "Il s'agit d'une traduction par IA fournie pour vous aider à comprendre les conditions. Les conditions juridiquement contraignantes sont disponibles uniquement en anglais et en français.",
+    "viewOfficialVersion": "Voir la version officielle",
+    "translating": "Traduction en cours...",
+    "translationError": "Échec de la traduction. Veuillez réessayer.",
+    "selectLanguage": "Sélectionner la langue"
   }
 }

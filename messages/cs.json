@@ -1652,5 +1652,14 @@
     "expires": "K dispozici {days} dní",
     "learnMore": "Zjistit více",
     "advancedOptions": "Pokročilé možnosti"
+  },
+  "terms": {
+    "officialLanguages": "Oficiální verze:",
+    "translateForUnderstanding": "Přeložit pro lepší porozumění",
+    "aiTranslationNotice": "Toto je AI překlad, který vám má pomoci porozumět podmínkám. Právně závazné podmínky jsou k dispozici pouze v angličtině a francouzštině.",
+    "viewOfficialVersion": "Zobrazit oficiální verzi",
+    "translating": "Překládání…",
+    "translationError": "Překlad se nezdařil. Zkuste to prosím znovu.",
+    "selectLanguage": "Vyberte jazyk"
   }
 }

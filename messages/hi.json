@@ -1652,5 +1652,14 @@
     "expires": "{days} दिन तक उपलब्ध",
     "learnMore": "और जानें",
     "advancedOptions": "उन्नत विकल्प"
+  },
+  "terms": {
+    "officialLanguages": "आधिकारिक संस्करण:",
+    "translateForUnderstanding": "समझने के लिए अनुवाद करें",
+    "aiTranslationNotice": "यह एक AI अनुवाद है जो शर्तें समझने में आपकी सहायता के लिए प्रदान किया गया है। कानूनी रूप से बाध्यकारी शर्तें केवल अंग्रेज़ी और फ़्रेंच में उपलब्ध हैं।",
+    "viewOfficialVersion": "आधिकारिक संस्करण देखें",
+    "translating": "अनुवाद हो रहा है...",
+    "translationError": "अनुवाद करने में विफल। कृपया पुनः प्रयास करें।",
+    "selectLanguage": "भाषा चुनें"
   }
 }

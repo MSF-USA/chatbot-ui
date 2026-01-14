@@ -1652,5 +1652,14 @@
     "expires": "{days}일간 이용 가능",
     "learnMore": "자세히 알아보기",
     "advancedOptions": "고급 옵션"
+  },
+  "terms": {
+    "officialLanguages": "공식 버전:",
+    "translateForUnderstanding": "이해를 돕기 위한 번역",
+    "aiTranslationNotice": "이것은 용어 이해를 돕기 위해 제공된 AI 번역입니다. 법적 구속력이 있는 공식 약관은 영어와 프랑스어로만 제공됩니다.",
+    "viewOfficialVersion": "공식 버전 보기",
+    "translating": "번역 중...",
+    "translationError": "번역에 실패했습니다. 다시 시도해 주세요.",
+    "selectLanguage": "언어 선택"
   }
 }

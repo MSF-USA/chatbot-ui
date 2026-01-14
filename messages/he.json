@@ -1652,5 +1652,14 @@
     "expires": "זמין למשך {days} ימים",
     "learnMore": "למידע נוסף",
     "advancedOptions": "אפשרויות מתקדמות"
+  },
+  "terms": {
+    "officialLanguages": "גרסה רשמית:",
+    "translateForUnderstanding": "תרגום לצורך הבנה",
+    "aiTranslationNotice": "זהו תרגום בינה מלאכותית שנועד לסייע בהבנת התנאים. הגרסאות המחייבות מבחינה משפטית זמינות באנגלית ובצרפתית בלבד.",
+    "viewOfficialVersion": "הצג גרסה רשמית",
+    "translating": "מתרגם...",
+    "translationError": "התרגום נכשל. אנא נסה שוב.",
+    "selectLanguage": "בחר שפה"
   }
 }

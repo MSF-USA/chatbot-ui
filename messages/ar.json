@@ -1652,5 +1652,14 @@
     "expires": "متوفر لمدة {days} يوم",
     "learnMore": "اعرف المزيد",
     "advancedOptions": "خيارات متقدمة"
+  },
+  "terms": {
+    "officialLanguages": "النسخة الرسمية:",
+    "translateForUnderstanding": "ترجمة للمساعدة على الفهم",
+    "aiTranslationNotice": "هذه ترجمة آلية مقدمة لمساعدتك على فهم الشروط. الشروط الملزمة قانونياً متوفرة باللغة الإنجليزية والفرنسية فقط.",
+    "viewOfficialVersion": "عرض النسخة الرسمية",
+    "translating": "جارٍ الترجمة...",
+    "translationError": "فشلت عملية الترجمة. يرجى المحاولة مرة أخرى.",
+    "selectLanguage": "اختر اللغة"
   }
 }

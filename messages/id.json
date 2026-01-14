@@ -1652,5 +1652,14 @@
     "expires": "Tersedia selama {days} hari",
     "learnMore": "Pelajari lebih lanjut",
     "advancedOptions": "Opsi lanjutan"
+  },
+  "terms": {
+    "officialLanguages": "Versi resmi:",
+    "translateForUnderstanding": "Terjemahkan untuk membantu memahami",
+    "aiTranslationNotice": "Ini adalah terjemahan AI yang disediakan untuk membantu Anda memahami persyaratan. Persyaratan yang mengikat secara hukum hanya tersedia dalam bahasa Inggris dan Prancis.",
+    "viewOfficialVersion": "Lihat versi resmi",
+    "translating": "Sedang menerjemahkan...",
+    "translationError": "Gagal menerjemahkan. Silakan coba lagi.",
+    "selectLanguage": "Pilih bahasa"
   }
 }

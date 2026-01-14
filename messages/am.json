@@ -1652,5 +1652,14 @@
     "expires": "ለ{days} ቀናት ይገኛል",
     "learnMore": "ተጨማሪ ያስሱ",
     "advancedOptions": "የቀላል አማራጮች"
+  },
+  "terms": {
+    "officialLanguages": "አካባቢ ትክክለኛ ቅጽ:",
+    "translateForUnderstanding": "ለግንዛቤ ትርጉም አድርግ",
+    "aiTranslationNotice": "ይህ የሚረዳዎ ዘንድ የሰጠ AI ትርጉም ነው። በሕግ የሚገባው የቃላት ቅጽ በእንግሊዝኛ እና በፈረንሳይኛ ብቻ ይገኛል።",
+    "viewOfficialVersion": "አካቢ ትክክለኛውን ቅጽ ይመልከቱ",
+    "translating": "ትርጉም በማድረግ ላይ...",
+    "translationError": "ትርጉም ማድረግ አልተቻለም። እባክዎን እንደገና ይሞክሩ።",
+    "selectLanguage": "ቋንቋ ይምረጡ"
   }
 }

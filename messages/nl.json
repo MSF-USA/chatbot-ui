@@ -1652,5 +1652,14 @@
     "expires": "Beschikbaar gedurende {days} dagen",
     "learnMore": "Meer informatie",
     "advancedOptions": "Geavanceerde opties"
+  },
+  "terms": {
+    "officialLanguages": "Officiële versie:",
+    "translateForUnderstanding": "Vertaal ter verduidelijking",
+    "aiTranslationNotice": "Dit is een AI-vertaling om u te helpen de voorwaarden te begrijpen. De juridisch bindende voorwaarden zijn alleen beschikbaar in het Engels en Frans.",
+    "viewOfficialVersion": "Bekijk officiële versie",
+    "translating": "Bezig met vertalen...",
+    "translationError": "Vertalen mislukt. Probeer het opnieuw.",
+    "selectLanguage": "Selecteer taal"
   }
 }

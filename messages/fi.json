@@ -1652,5 +1652,14 @@
     "expires": "Saatavilla {days} päivän ajan",
     "learnMore": "Lue lisää",
     "advancedOptions": "Lisäasetukset"
+  },
+  "terms": {
+    "officialLanguages": "Virallinen versio:",
+    "translateForUnderstanding": "Käännä ymmärtämisen helpottamiseksi",
+    "aiTranslationNotice": "Tämä on tekoälyn tuottama käännös, joka auttaa ymmärtämään ehtoja. Oikeudellisesti sitovat ehdot ovat saatavilla vain englanniksi ja ranskaksi.",
+    "viewOfficialVersion": "Näytä virallinen versio",
+    "translating": "Käännetään...",
+    "translationError": "Käännös epäonnistui. Yritä uudelleen.",
+    "selectLanguage": "Valitse kieli"
   }
 }

@@ -1652,5 +1652,14 @@
     "expires": "Tillgänglig i {days} dagar",
     "learnMore": "Läs mer",
     "advancedOptions": "Avancerade alternativ"
+  },
+  "terms": {
+    "officialLanguages": "Officiell version:",
+    "translateForUnderstanding": "Översätt för förståelse",
+    "aiTranslationNotice": "Detta är en AI-översättning för att hjälpa dig förstå villkoren. De rättsligt bindande villkoren finns endast på engelska och franska.",
+    "viewOfficialVersion": "Visa officiell version",
+    "translating": "Översätter...",
+    "translationError": "Det gick inte att översätta. Försök igen.",
+    "selectLanguage": "Välj språk"
   }
 }

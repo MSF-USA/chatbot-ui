@@ -1652,5 +1652,14 @@
     "expires": "{days} دن تک دستیاب",
     "learnMore": "مزید جانیں",
     "advancedOptions": "جدید اختیارات"
+  },
+  "terms": {
+    "officialLanguages": "سرکاری نسخہ:",
+    "translateForUnderstanding": "سمجھنے میں مدد کے لیے ترجمہ کریں",
+    "aiTranslationNotice": "یہ AI کے ذریعے کیا گیا ترجمہ ہے جو صرف سمجھنے میں مدد کے لیے فراہم کیا گیا ہے۔ قانونی طور پر مؤثر شرائط صرف انگریزی اور فرانسیسی میں دستیاب ہیں۔",
+    "viewOfficialVersion": "سرکاری نسخہ دیکھیں",
+    "translating": "ترجمہ ہو رہا ہے...",
+    "translationError": "ترجمہ ناکام ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "selectLanguage": "زبان منتخب کریں"
   }
 }

@@ -1652,5 +1652,14 @@
     "expires": "Disponible durant {days} dies",
     "learnMore": "Més informació",
     "advancedOptions": "Opcions avançades"
+  },
+  "terms": {
+    "officialLanguages": "Versió oficial:",
+    "translateForUnderstanding": "Traduir per ajudar a comprendre",
+    "aiTranslationNotice": "Aquesta és una traducció amb IA proporcionada per ajudar-vos a entendre els termes. Els termes legalment vinculants estan disponibles només en anglès i francès.",
+    "viewOfficialVersion": "Veure la versió oficial",
+    "translating": "S'està traduint...",
+    "translationError": "No s'ha pogut traduir. Torneu-ho a provar.",
+    "selectLanguage": "Seleccioneu l'idioma"
   }
 }

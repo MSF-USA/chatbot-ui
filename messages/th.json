@@ -1652,5 +1652,14 @@
     "expires": "สามารถใช้งานได้ {days} วัน",
     "learnMore": "ดูข้อมูลเพิ่มเติม",
     "advancedOptions": "ตัวเลือกขั้นสูง"
+  },
+  "terms": {
+    "officialLanguages": "ฉบับทางการ:",
+    "translateForUnderstanding": "แปลเพื่อช่วยในการเข้าใจ",
+    "aiTranslationNotice": "นี่คือการแปลโดย AI เพื่อช่วยให้คุณเข้าใจข้อกำหนด ข้อกำหนดที่มีผลผูกพันตามกฎหมายมีเฉพาะในภาษาอังกฤษและภาษาฝรั่งเศสเท่านั้น",
+    "viewOfficialVersion": "ดูฉบับทางการ",
+    "translating": "กำลังแปล...",
+    "translationError": "ไม่สามารถแปลได้ กรุณาลองใหม่อีกครั้ง",
+    "selectLanguage": "เลือกภาษา"
   }
 }

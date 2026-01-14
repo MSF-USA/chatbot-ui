@@ -1652,5 +1652,14 @@
     "expires": "{days} gün boyunca kullanılabilir",
     "learnMore": "Daha fazla bilgi edinin",
     "advancedOptions": "Gelişmiş seçenekler"
+  },
+  "terms": {
+    "officialLanguages": "Resmi sürüm:",
+    "translateForUnderstanding": "Anlamak için çevir",
+    "aiTranslationNotice": "Bu, terimleri anlamanızı kolaylaştırmak için sunulan bir yapay zeka çevirisidir. Yasal olarak bağlayıcı olan terimler yalnızca İngilizce ve Fransızca dillerinde mevcuttur.",
+    "viewOfficialVersion": "Resmi sürümü görüntüle",
+    "translating": "Çevriliyor...",
+    "translationError": "Çeviri başarısız oldu. Lütfen tekrar deneyin.",
+    "selectLanguage": "Dil seçin"
   }
 }

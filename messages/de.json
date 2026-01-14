@@ -1652,5 +1652,14 @@
     "expires": "Verfügbar für {days} Tag(e)",
     "learnMore": "Mehr erfahren",
     "advancedOptions": "Erweiterte Optionen"
+  },
+  "terms": {
+    "officialLanguages": "Offizielle Version:",
+    "translateForUnderstanding": "Zur besseren Verständlichkeit übersetzen",
+    "aiTranslationNotice": "Dies ist eine KI-Übersetzung, die das Verständnis der Bedingungen erleichtern soll. Die rechtlich verbindlichen Bedingungen sind nur auf Englisch und Französisch verfügbar.",
+    "viewOfficialVersion": "Offizielle Version anzeigen",
+    "translating": "Übersetze...",
+    "translationError": "Übersetzung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "selectLanguage": "Sprache auswählen"
   }
 }

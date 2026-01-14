@@ -1652,5 +1652,14 @@
     "expires": "Inapatikana kwa siku {days}",
     "learnMore": "Jifunze zaidi",
     "advancedOptions": "Chaguo za juu"
+  },
+  "terms": {
+    "officialLanguages": "Toleo rasmi:",
+    "translateForUnderstanding": "Tafsiri ili kusaidia kuelewa",
+    "aiTranslationNotice": "Hii ni tafsiri ya AI iliyotolewa ili kusaidia kuelewa masharti. Masharti rasmi ya kisheria yanapatikana kwa Kiingereza na Kifaransa pekee.",
+    "viewOfficialVersion": "Tazama toleo rasmi",
+    "translating": "Inatafsiri...",
+    "translationError": "Imeshindwa kutafsiri. Tafadhali jaribu tena.",
+    "selectLanguage": "Chagua lugha"
   }
 }

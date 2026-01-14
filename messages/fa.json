@@ -1652,5 +1652,14 @@
     "expires": "به مدت {days} روز در دسترس است",
     "learnMore": "بیشتر بدانید",
     "advancedOptions": "گزینه‌های پیشرفته"
+  },
+  "terms": {
+    "officialLanguages": "نسخه رسمی:",
+    "translateForUnderstanding": "ترجمه برای درک بهتر",
+    "aiTranslationNotice": "این ترجمه توسط هوش مصنوعی ارائه شده تا به شما در درک شروط کمک کند. شروط الزام‌آور قانونی فقط به انگلیسی و فرانسوی در دسترس هستند.",
+    "viewOfficialVersion": "مشاهده نسخه رسمی",
+    "translating": "در حال ترجمه...",
+    "translationError": "ترجمه انجام نشد. لطفاً دوباره تلاش کنید.",
+    "selectLanguage": "انتخاب زبان"
   }
 }

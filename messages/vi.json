@@ -1652,5 +1652,14 @@
     "expires": "Có thể tải trong {days} ngày",
     "learnMore": "Tìm hiểu thêm",
     "advancedOptions": "Tùy chọn nâng cao"
+  },
+  "terms": {
+    "officialLanguages": "Phiên bản chính thức:",
+    "translateForUnderstanding": "Dịch để hỗ trợ hiểu",
+    "aiTranslationNotice": "Đây là bản dịch AI nhằm giúp bạn hiểu các điều khoản. Các điều khoản có giá trị pháp lý chỉ có bằng tiếng Anh và tiếng Pháp.",
+    "viewOfficialVersion": "Xem phiên bản chính thức",
+    "translating": "Đang dịch...",
+    "translationError": "Không thể dịch. Vui lòng thử lại.",
+    "selectLanguage": "Chọn ngôn ngữ"
   }
 }
