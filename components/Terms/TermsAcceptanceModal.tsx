@@ -359,30 +359,67 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {Object.entries(termsData).map(([docType, doc]) => {
-            if (!doc) return null;
-
-            let documentContent =
-              doc.localized[currentLocale]?.content ||
-              doc.localized['en']?.content ||
-              '';
-
-            // Remove the main title from the markdown content
-            // This removes lines like "# ai.msf.org Terms of Use"
-            documentContent = documentContent.replace(
-              /^#\s+.*?Terms.*?\n+/i,
-              '',
-            );
-
-            return (
-              <div
-                key={docType}
-                className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200"
-              >
-                <Streamdown>{documentContent}</Streamdown>
+          {/* AI Translation disclaimer */}
+          {isShowingTranslation && (
+            <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <div className="flex items-start gap-2">
+                <IconAlertTriangle
+                  size={16}
+                  className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0"
+                />
+                <p className="text-xs text-amber-800 dark:text-amber-200">
+                  {t('terms.aiTranslationNotice')}
+                </p>
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {/* Translating indicator */}
+          {isTranslating && (
+            <div className="flex items-center justify-center py-8">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <IconLoader2 size={20} className="animate-spin" />
+                <span className="text-sm">{t('terms.translating')}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Show translated content or official content */}
+          {!isTranslating && (
+            <>
+              {isShowingTranslation && translatedContent ? (
+                <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200">
+                  <Streamdown>
+                    {translatedContent.replace(/^#\s+.*?Terms.*?\n+/i, '')}
+                  </Streamdown>
+                </div>
+              ) : (
+                Object.entries(termsData).map(([docType, doc]) => {
+                  if (!doc) return null;
+
+                  let documentContent =
+                    doc.localized[currentLocale]?.content ||
+                    doc.localized['en']?.content ||
+                    '';
+
+                  // Remove the main title from the markdown content
+                  documentContent = documentContent.replace(
+                    /^#\s+.*?Terms.*?\n+/i,
+                    '',
+                  );
+
+                  return (
+                    <div
+                      key={docType}
+                      className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200"
+                    >
+                      <Streamdown>{documentContent}</Streamdown>
+                    </div>
+                  );
+                })
+              )}
+            </>
+          )}
         </div>
 
         {/* Footer */}
