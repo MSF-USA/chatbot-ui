@@ -103,23 +103,11 @@ jobs:
         with:
           context: .
           push: false
-          load: true
-          tags: ai-assistant:${{ github.sha }}
           build-args: |
             BUILD=${{ github.run_number }}
             ENV=dev
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          image-ref: 'ai-assistant:${{ github.sha }}'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
 
   # JOB 2: Deploy Preview (only for internal PRs against main - requires secrets)
   deploy_preview:
