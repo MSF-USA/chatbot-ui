@@ -40,16 +40,54 @@ vi.mock('@/lib/data/ttsVoices', () => ({
 }));
 
 // Mock Azure Speech SDK - we won't test full synthesis, just validation
+// The mock synthesizer calls the error callback immediately to prevent hanging
 vi.mock('microsoft-cognitiveservices-speech-sdk', () => ({
   SpeechConfig: {
-    fromSubscription: vi.fn(),
+    fromSubscription: vi.fn(() => ({
+      speechSynthesisOutputFormat: null,
+      speechSynthesisVoiceName: null,
+    })),
   },
-  SpeechSynthesizer: vi.fn(),
+  SpeechSynthesizer: vi.fn(() => ({
+    speakTextAsync: vi.fn(
+      (
+        _text: string,
+        _onResult: (result: unknown) => void,
+        onError: (error: string) => void,
+      ) => {
+        // Call error callback immediately to prevent timeout
+        onError('Mock: No real synthesis in tests');
+      },
+    ),
+    speakSsmlAsync: vi.fn(
+      (
+        _ssml: string,
+        _onResult: (result: unknown) => void,
+        onError: (error: string) => void,
+      ) => {
+        // Call error callback immediately to prevent timeout
+        onError('Mock: No real synthesis in tests');
+      },
+    ),
+    close: vi.fn(),
+  })),
   SpeechSynthesisOutputFormat: {
     Audio16Khz32KBitRateMonoMp3: 3,
+    Audio16Khz64KBitRateMonoMp3: 4,
+    Audio24Khz48KBitRateMonoMp3: 5,
+    Audio24Khz96KBitRateMonoMp3: 6,
+    Audio48Khz96KBitRateMonoMp3: 7,
+    Audio48Khz192KBitRateMonoMp3: 8,
   },
   ResultReason: {
     SynthesizingAudioCompleted: 3,
+  },
+  CancellationDetails: {
+    fromResult: vi.fn(() => ({
+      reason: 'Error',
+      ErrorCode: 'MockError',
+      errorDetails: 'Mock synthesis error',
+    })),
   },
 }));
 
@@ -82,8 +120,8 @@ describe('/api/chat/tts', () => {
       locale.split('-')[0].toLowerCase(),
     );
 
-    // Mock environment variable
-    process.env.OPENAI_API_KEY = 'test-api-key';
+    // Mock environment variable - route checks AZURE_SPEECH_KEY, not OPENAI_API_KEY
+    process.env.AZURE_SPEECH_KEY = 'test-api-key';
   });
 
   const createTTSRequest = (options: {
@@ -223,7 +261,7 @@ describe('/api/chat/tts', () => {
 
   describe('Configuration', () => {
     it('returns error when API key is not configured', async () => {
-      delete process.env.OPENAI_API_KEY;
+      delete process.env.AZURE_SPEECH_KEY;
 
       const request = createTTSRequest({});
       const response = await POST(request);
@@ -233,7 +271,7 @@ describe('/api/chat/tts', () => {
       expect(data.error).toBe('Internal server error');
 
       // Restore for other tests
-      process.env.OPENAI_API_KEY = 'test-api-key';
+      process.env.AZURE_SPEECH_KEY = 'test-api-key';
     });
   });
 
