@@ -253,6 +253,24 @@ export class FileProcessor extends BasePipelineStage {
                       `[FileProcessor] Audio extraction FAILED for ${sanitizeForLog(filename)}:`,
                       extractionError,
                     );
+
+                    // Preserve user-friendly error messages from audio extraction
+                    const originalMessage =
+                      extractionError instanceof Error
+                        ? extractionError.message
+                        : String(extractionError);
+
+                    // Check for known user-friendly error patterns that should be surfaced
+                    const isUserFriendlyError =
+                      originalMessage.includes(
+                        'does not contain an audio track',
+                      ) || originalMessage.includes('FFmpeg is not available');
+
+                    if (isUserFriendlyError) {
+                      throw new Error(originalMessage);
+                    }
+
+                    // Fallback to generic message for unknown errors
                     throw new Error(
                       `Cannot transcribe video file "${filename}": Audio extraction failed. ` +
                         `Please ensure FFmpeg is properly installed, or try uploading an audio file instead.`,
