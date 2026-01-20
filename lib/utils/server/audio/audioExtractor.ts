@@ -163,16 +163,24 @@ export async function extractAudioFromVideo(
     ? inputPath.replace(/\.[^.]+$/, `_audio.${outputFormat}`)
     : `${inputPath}_audio.${outputFormat}`;
 
+  console.log(`[AudioExtractor] Input: ${inputPath}`);
+  console.log(`[AudioExtractor] Output: ${outputPath}`);
+
   return new Promise((resolve, reject) => {
-    // Important: codec and format must be set BEFORE .output() for proper FFmpeg argument ordering
-    const command = ffmpeg(inputPath)
-      .noVideo()
-      .audioCodec(getAudioCodec(outputFormat))
-      .audioBitrate(audioBitrate)
-      .toFormat(outputFormat)
-      .output(outputPath);
+    // Match the working pattern from audioSplitter.ts:
+    // 1. Create command with input
+    // 2. Set .output()
+    // 3. Apply codec/bitrate settings after
+    const command = ffmpeg(inputPath).noVideo().output(outputPath);
+
+    // Apply audio settings (after .output(), matching audioSplitter pattern)
+    command.audioCodec(getAudioCodec(outputFormat));
+    command.audioBitrate(audioBitrate);
 
     command
+      .on('start', (cmdLine) => {
+        console.log(`[AudioExtractor] Running: ${cmdLine}`);
+      })
       .on('end', () => {
         console.log(
           `[AudioExtractor] Successfully extracted audio to: ${outputPath}`,
