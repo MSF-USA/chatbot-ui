@@ -175,6 +175,58 @@ export class StandardChatHandler extends BasePipelineStage {
             }
           }
 
+          // Check if file processing failed and we should return an error response
+          const fileProcessingFailed =
+            context.processedContent?.metadata?.fileProcessingFailed;
+          if (
+            fileProcessingFailed &&
+            context.errors &&
+            context.errors.length > 0
+          ) {
+            // Log the actual error for debugging (server-side only)
+            const fileError = context.errors.find(
+              (e) =>
+                e.message.includes('transcribe') ||
+                e.message.includes('Audio extraction') ||
+                e.message.includes('Cannot transcribe') ||
+                e.message.includes('file'),
+            );
+
+            if (fileError) {
+              console.error(
+                '[StandardChatHandler] File processing failed:',
+                fileError.message,
+              );
+            }
+
+            console.log(
+              '[StandardChatHandler] File processing failed, returning error response',
+            );
+
+            const encoder = new TextEncoder();
+            // User-friendly message without technical details
+            const errorMessage =
+              'I was unable to process the uploaded file. Please try uploading the file again or use a different file format.';
+
+            const stream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(encoder.encode(errorMessage));
+                controller.close();
+              },
+            });
+
+            return {
+              ...context,
+              response: new Response(stream, {
+                headers: {
+                  'Content-Type': 'text/plain; charset=utf-8',
+                  'Cache-Control': 'no-cache',
+                  Connection: 'keep-alive',
+                },
+              }),
+            };
+          }
+
           // Build final messages from enriched messages or processed content
           const messagesToSend = this.buildFinalMessages(context);
 
