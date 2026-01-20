@@ -71,6 +71,30 @@ export interface BlobStorage {
    * @returns Promise resolving to the SAS URL
    */
   generateSasUrl(blobName: string, expiryHours?: number): Promise<string>;
+  /**
+   * Stages a block as part of a chunked upload.
+   * Used with Azure Block Blob API for uploading large files in chunks.
+   *
+   * @param blobName - The blob path
+   * @param blockId - Base64-encoded block ID (must be consistent length, e.g., padded index)
+   * @param content - The chunk data
+   * @returns Promise that resolves when block is staged
+   */
+  stageBlock(blobName: string, blockId: string, content: Buffer): Promise<void>;
+  /**
+   * Commits a list of blocks to form the final blob.
+   * Called after all chunks have been staged with stageBlock.
+   *
+   * @param blobName - The blob path
+   * @param blockIds - Array of block IDs in order (must match staged block IDs)
+   * @param options - Optional upload options (e.g., content type headers)
+   * @returns Promise resolving to the blob URL
+   */
+  commitBlockList(
+    blobName: string,
+    blockIds: string[],
+    options?: BlockBlobUploadOptions,
+  ): Promise<string>;
 }
 
 export interface QueueStorage {
@@ -332,6 +356,49 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
     ).toString();
 
     return `${blockBlobClient.url}?${sasToken}`;
+  }
+
+  /**
+   * Stages a block as part of a chunked upload.
+   * The block is identified by a base64-encoded blockId and will be committed
+   * later using commitBlockList.
+   *
+   * @param blobName - The blob path
+   * @param blockId - Base64-encoded block ID
+   * @param content - The chunk data as a Buffer
+   */
+  async stageBlock(
+    blobName: string,
+    blockId: string,
+    content: Buffer,
+  ): Promise<void> {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.containerName as string,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    await blockBlobClient.stageBlock(blockId, content, content.length);
+  }
+
+  /**
+   * Commits a list of previously staged blocks to form the final blob.
+   * Block IDs must be provided in the order they should appear in the final blob.
+   *
+   * @param blobName - The blob path
+   * @param blockIds - Array of base64-encoded block IDs in order
+   * @param options - Optional upload options (e.g., HTTP headers for content type)
+   * @returns The URL of the committed blob
+   */
+  async commitBlockList(
+    blobName: string,
+    blockIds: string[],
+    options?: BlockBlobUploadOptions,
+  ): Promise<string> {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.containerName as string,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    await blockBlobClient.commitBlockList(blockIds, options);
+    return blockBlobClient.url;
   }
 
   // Queue methods
