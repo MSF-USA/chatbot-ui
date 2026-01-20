@@ -119,6 +119,23 @@ export interface AudioExtractionOptions {
 }
 
 /**
+ * Returns the appropriate audio codec for the given output format.
+ *
+ * @param format - The output audio format
+ * @returns The codec name for FFmpeg
+ */
+function getAudioCodec(format: 'mp3' | 'wav' | 'm4a'): string {
+  switch (format) {
+    case 'mp3':
+      return 'libmp3lame';
+    case 'wav':
+      return 'pcm_s16le';
+    case 'm4a':
+      return 'aac';
+  }
+}
+
+/**
  * Extracts audio from a video file to the specified format.
  *
  * @param inputPath - Path to the input video file
@@ -147,23 +164,13 @@ export async function extractAudioFromVideo(
     : `${inputPath}_audio.${outputFormat}`;
 
   return new Promise((resolve, reject) => {
+    // Important: codec and format must be set BEFORE .output() for proper FFmpeg argument ordering
     const command = ffmpeg(inputPath)
       .noVideo()
+      .audioCodec(getAudioCodec(outputFormat))
       .audioBitrate(audioBitrate)
+      .toFormat(outputFormat)
       .output(outputPath);
-
-    // Set audio codec based on format
-    switch (outputFormat) {
-      case 'mp3':
-        command.audioCodec('libmp3lame');
-        break;
-      case 'wav':
-        command.audioCodec('pcm_s16le');
-        break;
-      case 'm4a':
-        command.audioCodec('aac');
-        break;
-    }
 
     command
       .on('end', () => {
