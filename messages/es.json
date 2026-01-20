@@ -1542,7 +1542,8 @@
     "expiredOrDeleted": "Esta transcripción ha expirado o ha sido eliminada.",
     "fetchError": "No se pudo cargar la transcripción. Por favor, inténtelo de nuevo.",
     "transcriptExpired": "La transcripción de {filename} ha expirado. Las transcripciones se eliminan automáticamente después de {days} días por motivos de privacidad.",
-    "expirationWarning": "La transcripción de {filename} expirará en {days} día(s). Copie el contenido si necesita conservarlo."
+    "expirationWarning": "La transcripción de {filename} expirará en {days} día(s). Copie el contenido si necesita conservarlo.",
+    "elapsedTime": "Transcurrido: {time}"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "Agregue sus instrucciones personales para personalizar cómo responde la IA. Estas se combinan con las pautas principales de comportamiento que garantizan respuestas útiles, precisas y seguras.",
   "Tip: Type \"/\" to select from saved prompt templates_": "Consejo: Escriba \"/\" para seleccionar entre las plantillas de mensajes guardadas.",

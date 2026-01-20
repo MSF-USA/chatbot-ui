@@ -1542,7 +1542,8 @@
     "expiredOrDeleted": "यह ट्रांसक्रिप्ट समाप्त हो चुकी है या हटा दी गई है।",
     "fetchError": "ट्रांसक्रिप्ट लोड करने में विफल। कृपया पुनः प्रयास करें।",
     "transcriptExpired": "{filename} के लिए ट्रांसक्रिप्ट समाप्त हो गई है। गोपनीयता के लिए ट्रांसक्रिप्ट {days} दिन बाद स्वचालित रूप से हटा दी जाती है।",
-    "expirationWarning": "{filename} के लिए ट्रांसक्रिप्ट {days} दिन में समाप्त हो जाएगी। यदि आपको इसकी आवश्यकता है तो इसकी सामग्री कॉपी कर लें।"
+    "expirationWarning": "{filename} के लिए ट्रांसक्रिप्ट {days} दिन में समाप्त हो जाएगी। यदि आपको इसकी आवश्यकता है तो इसकी सामग्री कॉपी कर लें।",
+    "elapsedTime": "बीता समय: {time}"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI की प्रतिक्रिया को अनुकूलित करने के लिए अपनी व्यक्तिगत निर्देश जोड़ें। इन्हें मुख्य व्यवहार दिशानिर्देशों के साथ जोड़ा जाता है ताकि प्रतिक्रियाएं सहायक, सटीक और सुरक्षित रहें।",
   "Tip: Type \"/\" to select from saved prompt templates_": "टिप: सहेजे गए प्रॉम्प्ट टेम्पलेट्स में से चुनने के लिए \"/\" टाइप करें।",

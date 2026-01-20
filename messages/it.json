@@ -1000,7 +1000,8 @@
     "expiredOrDeleted": "Questa trascrizione è scaduta o è stata eliminata.",
     "fetchError": "Impossibile caricare la trascrizione. Riprova.",
     "transcriptExpired": "La trascrizione per {filename} è scaduta. Le trascrizioni vengono eliminate automaticamente dopo {days} giorni per motivi di privacy.",
-    "expirationWarning": "La trascrizione per {filename} scadrà tra {days} giorno(i). Copia il contenuto se desideri conservarlo."
+    "expirationWarning": "La trascrizione per {filename} scadrà tra {days} giorno(i). Copia il contenuto se desideri conservarlo.",
+    "elapsedTime": "Trascorso: {time}"
   },
   "transcriptionComplete": "Trascrizione completata! Testo aggiunto al campo di input.",
   "No prompts found": "Nessun prompt trovato",

@@ -1254,7 +1254,8 @@
     "expiredOrDeleted": "Tafsiri hii imeisha muda wake au imefutwa.",
     "fetchError": "Imeshindikana kupakia tafsiri. Tafadhali jaribu tena.",
     "transcriptExpired": "Tafsiri ya {filename} imeisha muda wake. Tafsiri huondolewa moja kwa moja baada ya siku {days} kwa sababu za faragha.",
-    "expirationWarning": "Tafsiri ya {filename} itaisha muda wake ndani ya siku {days}. Nakili yaliyomo ikiwa unahitaji kuyahifadhi."
+    "expirationWarning": "Tafsiri ya {filename} itaisha muda wake ndani ya siku {days}. Nakili yaliyomo ikiwa unahitaji kuyahifadhi.",
+    "elapsedTime": "Imepita: {time}"
   },
   "migration": {
     "status": {

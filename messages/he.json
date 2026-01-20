@@ -1000,7 +1000,8 @@
     "expiredOrDeleted": "התמלול הזה פג תוקף או נמחק.",
     "fetchError": "טעינת התמלול נכשלה. אנא נסו שוב.",
     "transcriptExpired": "התמלול עבור {filename} פג תוקף. תמלולים נמחקים אוטומטית לאחר {days} ימים לשמירה על פרטיות.",
-    "expirationWarning": "התמלול עבור {filename} יפוג בעוד {days} יום/ימים. העתיקו את התוכן אם ברצונכם לשמור אותו."
+    "expirationWarning": "התמלול עבור {filename} יפוג בעוד {days} יום/ימים. העתיקו את התוכן אם ברצונכם לשמור אותו.",
+    "elapsedTime": "משך הזמן: {time}"
   },
   "transcriptionComplete": "התעתוק הושלם! הטקסט התווסף לשדה השיחה.",
   "No prompts found": "לא נמצאו הנחיות",

@@ -972,7 +972,8 @@
     "expiredOrDeleted": "Transkrip ini telah kedaluwarsa atau dihapus.",
     "fetchError": "Gagal memuat transkrip. Silakan coba lagi.",
     "transcriptExpired": "Transkrip untuk {filename} telah kedaluwarsa. Transkrip akan dihapus secara otomatis setelah {days} hari demi privasi.",
-    "expirationWarning": "Transkrip untuk {filename} akan kedaluwarsa dalam {days} hari. Salin kontennya jika Anda ingin menyimpannya."
+    "expirationWarning": "Transkrip untuk {filename} akan kedaluwarsa dalam {days} hari. Salin kontennya jika Anda ingin menyimpannya.",
+    "elapsedTime": "Waktu berlalu: {time}"
   },
   "transcriptionComplete": "Transkripsi selesai! Teks telah ditambahkan ke input chat.",
   "importBackupParseError": "Gagal mengurai file cadangan. Pastikan itu adalah JSON yang valid.",

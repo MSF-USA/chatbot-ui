@@ -1542,7 +1542,8 @@
     "expiredOrDeleted": "এই ট্রান্সক্রিপ্টটির মেয়াদ শেষ হয়ে গেছে বা এটি মুছে ফেলা হয়েছে।",
     "fetchError": "ট্রান্সক্রিপ্ট লোড করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
     "transcriptExpired": "{filename}-এর ট্রান্সক্রিপ্টটির মেয়াদ শেষ হয়ে গেছে। ব্যক্তিগত গোপনীয়তার জন্য ট্রান্সক্রিপ্ট {days} দিন পর স্বয়ংক্রিয়ভাবে মুছে ফেলা হয়।",
-    "expirationWarning": "{filename}-এর ট্রান্সক্রিপ্ট {days} দিনের মধ্যে মেয়াদ শেষ হয়ে যাবে। সংরক্ষণ করতে চাইলে কপি করে রাখুন।"
+    "expirationWarning": "{filename}-এর ট্রান্সক্রিপ্ট {days} দিনের মধ্যে মেয়াদ শেষ হয়ে যাবে। সংরক্ষণ করতে চাইলে কপি করে রাখুন।",
+    "elapsedTime": "অতিক্রান্ত: {time}"
   },
   "Add your personal instructions to customize how the AI responds_ These are combined with core behavior guidelines that ensure helpful, accurate, and safe responses_": "AI কিভাবে প্রতিক্রিয়া জানাবে তা কাস্টমাইজ করতে আপনার ব্যক্তিগত নির্দেশনা যোগ করুন। এগুলো মূল আচরণ নির্দেশিকার সঙ্গে একত্রিত হয়, যা সহায়ক, সঠিক ও নিরাপদ প্রতিক্রিয়া নিশ্চিত করে।",
   "Tip: Type \"/\" to select from saved prompt templates_": "টিপ: সংরক্ষিত প্রম্পট টেমপ্লেট থেকে নির্বাচন করতে \"/\" লিখুন।",

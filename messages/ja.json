@@ -1213,7 +1213,8 @@
     "expiredOrDeleted": "この書き起こしは有効期限が切れたか、削除されました。",
     "fetchError": "書き起こしの読み込みに失敗しました。再度お試しください。",
     "transcriptExpired": "{filename} の書き起こしは有効期限が切れました。プライバシー保護のため、書き起こしは {days} 日後に自動で削除されます。",
-    "expirationWarning": "{filename} の書き起こしはあと {days} 日で有効期限が切れます。必要な場合は内容をコピーしてください。"
+    "expirationWarning": "{filename} の書き起こしはあと {days} 日で有効期限が切れます。必要な場合は内容をコピーしてください。",
+    "elapsedTime": "経過時間：{time}"
   },
   "searchMode": {
     "backToChat": "チャットに戻る",
