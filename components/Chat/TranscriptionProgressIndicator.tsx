@@ -1,7 +1,7 @@
 'use client';
 
 import { IconLoader2 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -37,18 +37,67 @@ export function TranscriptionProgressIndicator({
     Math.ceil((maxDurationMs - (Date.now() - startedAt)) / 1000),
   );
 
+  // Snapshot of the last estimate to enable linear countdown between chunk completions
+  const lastEstimateRef = useRef<{
+    completedChunks: number;
+    estimateMs: number;
+    timestamp: number;
+  } | null>(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      const elapsed = Date.now() - startedAt;
-      const remaining = Math.max(
-        0,
-        Math.ceil((maxDurationMs - elapsed) / 1000),
-      );
-      setRemainingSeconds(remaining);
+      const now = Date.now();
+
+      // No progress data yet - use static countdown
+      if (!progress || progress.total === 0 || progress.completed === 0) {
+        const elapsed = now - startedAt;
+        const remaining = Math.max(
+          0,
+          Math.ceil((maxDurationMs - elapsed) / 1000),
+        );
+        setRemainingSeconds(remaining);
+        return;
+      }
+
+      // Check if a new chunk has completed since last estimate
+      const needsRecalculation =
+        !lastEstimateRef.current ||
+        lastEstimateRef.current.completedChunks !== progress.completed;
+
+      if (needsRecalculation) {
+        // Calculate new estimate based on chunk completion data
+        const elapsedMs = now - startedAt;
+        const avgTimePerChunk = elapsedMs / progress.completed;
+        const remainingChunks = progress.total - progress.completed;
+        const baseEstimateMs = remainingChunks * avgTimePerChunk;
+
+        // Apply buffer based on progress percentage
+        const progressPercent = progress.completed / progress.total;
+        const buffer = progressPercent <= 0.5 ? 1.4 : 1.2;
+        const estimatedRemainingMs = baseEstimateMs * buffer;
+
+        // Cap at maxDuration
+        const cappedEstimateMs = Math.min(estimatedRemainingMs, maxDurationMs);
+
+        // Store the snapshot
+        lastEstimateRef.current = {
+          completedChunks: progress.completed,
+          estimateMs: cappedEstimateMs,
+          timestamp: now,
+        };
+
+        setRemainingSeconds(Math.max(0, Math.ceil(cappedEstimateMs / 1000)));
+      } else if (lastEstimateRef.current) {
+        // Count down linearly from the last snapshot
+        const elapsedSinceSnapshot = now - lastEstimateRef.current.timestamp;
+        const remainingMs =
+          lastEstimateRef.current.estimateMs - elapsedSinceSnapshot;
+        setRemainingSeconds(Math.max(0, Math.ceil(remainingMs / 1000)));
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startedAt, maxDurationMs]);
+  }, [startedAt, maxDurationMs, progress]);
 
   // Format as MM:SS
   const minutes = Math.floor(remainingSeconds / 60);
