@@ -189,6 +189,7 @@ export class StandardChatHandler extends BasePipelineStage {
                 e.message.includes('transcribe') ||
                 e.message.includes('Audio extraction') ||
                 e.message.includes('Cannot transcribe') ||
+                e.message.includes('does not contain an audio track') ||
                 e.message.includes('file'),
             );
 
@@ -204,9 +205,21 @@ export class StandardChatHandler extends BasePipelineStage {
             );
 
             const encoder = new TextEncoder();
-            // User-friendly message without technical details
-            const errorMessage =
-              'I was unable to process the uploaded file. Please try uploading the file again or use a different file format.';
+            // Map known error patterns to user-friendly messages
+            let errorMessage: string;
+            if (
+              fileError?.message.includes('does not contain an audio track')
+            ) {
+              errorMessage =
+                'We were unable to detect an audio track in the provided video file. You can try uploading a video with audio or an audio file directly.';
+            } else if (fileError?.message.includes('FFmpeg is not available')) {
+              errorMessage =
+                "We're currently unable to process video files. You can try uploading an audio file instead.";
+            } else {
+              // Default generic message for unknown errors
+              errorMessage =
+                'We were unable to process the uploaded file. You can try uploading the file again or using a different file format.';
+            }
 
             const stream = new ReadableStream({
               start(controller) {
