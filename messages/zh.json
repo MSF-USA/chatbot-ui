@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "专门从事研究任务的代理...",
     "baseModel": "基础模型",
     "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
-    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
+    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。",
+    "defunctWarning": "此代理的基础模型已不可用。请编辑代理以选择新的基础模型，或删除该代理。"
   },
   "Quick Actions": "快速操作",
   "Type / in chat to access your prompts": "在聊天中输入 / 以访问您的提示",
@@ -1651,5 +1652,14 @@
     "expires": "可用{days}天",
     "learnMore": "了解更多",
     "advancedOptions": "高级选项"
+  },
+  "terms": {
+    "officialLanguages": "官方版本：",
+    "translateForUnderstanding": "翻译以便理解",
+    "aiTranslationNotice": "这是AI翻译，仅供您理解条款。具有法律效力的条款仅提供英文和法文版。",
+    "viewOfficialVersion": "查看官方版本",
+    "translating": "正在翻译...",
+    "translationError": "翻译失败。请重试。",
+    "selectLanguage": "选择语言"
   }
 }

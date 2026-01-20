@@ -264,7 +264,8 @@
     "descriptionPlaceholder": "Wakala aliye na ujuzi wa kazi za utafiti...",
     "baseModel": "Modeli ya msingi",
     "formatDescription": "Muundo: asst_xxxxx (kutoka MSF AI Assistant Foundry)",
-    "importantInfo": "Wakala huyu atakuwa na ufikiaji wa muktadha wa mazungumzo na ataweza kutumia zana sawa na miundo ya kawaida. Hakikisha kitambulisho cha wakala ni sahihi kwa sababu hakiwezi kubadilishwa baadaye."
+    "importantInfo": "Wakala huyu atakuwa na ufikiaji wa muktadha wa mazungumzo na ataweza kutumia zana sawa na miundo ya kawaida. Hakikisha kitambulisho cha wakala ni sahihi kwa sababu hakiwezi kubadilishwa baadaye.",
+    "defunctWarning": "Mfano wa msingi wa wakala huyu haupatikani tena. Hariri wakala kuchagua mfano mpya wa msingi, au futa."
   },
   "Quick Actions": "Vitendo vya Haraka",
   "Type / in chat to access your prompts": "Andika / katika mazungumzo ili kufikia vidokezo vyako",
@@ -1651,5 +1652,14 @@
     "expires": "Inapatikana kwa siku {days}",
     "learnMore": "Jifunze zaidi",
     "advancedOptions": "Chaguo za juu"
+  },
+  "terms": {
+    "officialLanguages": "Toleo rasmi:",
+    "translateForUnderstanding": "Tafsiri ili kusaidia kuelewa",
+    "aiTranslationNotice": "Hii ni tafsiri ya AI iliyotolewa ili kusaidia kuelewa masharti. Masharti rasmi ya kisheria yanapatikana kwa Kiingereza na Kifaransa pekee.",
+    "viewOfficialVersion": "Tazama toleo rasmi",
+    "translating": "Inatafsiri...",
+    "translationError": "Imeshindwa kutafsiri. Tafadhali jaribu tena.",
+    "selectLanguage": "Chagua lugha"
   }
 }

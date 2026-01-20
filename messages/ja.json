@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "研究タスクに特化したエージェント...",
     "baseModel": "ベースモデル",
     "formatDescription": "形式：asst_xxxxx（MSF AI Assistant Foundryより）",
-    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。"
+    "importantInfo": "このエージェントは会話のコンテキストにアクセスでき、標準モデルと同じツールを使用できます。エージェントIDが正しいことを確認してください。後で変更することはできません。",
+    "defunctWarning": "このエージェントのベースモデルは利用できなくなりました。新しいベースモデルを選択するか、エージェントを削除してください。"
   },
   "Quick Actions": "クイックアクション",
   "Type / in chat to access your prompts": "チャットで / を入力してプロンプトにアクセス",
@@ -1651,5 +1652,14 @@
     "expires": "{days}日間利用可能",
     "learnMore": "詳細はこちら",
     "advancedOptions": "詳細オプション"
+  },
+  "terms": {
+    "officialLanguages": "公式版：",
+    "translateForUnderstanding": "理解のために翻訳する",
+    "aiTranslationNotice": "これは、用語の理解を助けるためのAI翻訳です。法的に有効な用語は英語とフランス語のみで提供されています。",
+    "viewOfficialVersion": "公式版を表示",
+    "translating": "翻訳中...",
+    "translationError": "翻訳に失敗しました。再度お試しください。",
+    "selectLanguage": "言語を選択"
   }
 }

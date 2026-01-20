@@ -314,7 +314,8 @@
     "descriptionPlaceholder": "Agen khusus untuk tugas riset...",
     "baseModel": "Model Dasar",
     "formatDescription": "Format: asst_xxxxx (dari MSF AI Assistant Foundry)",
-    "importantInfo": "Agen ini akan memiliki akses ke konteks percakapan dan dapat menggunakan alat yang sama dengan model standar. Pastikan ID Agen benar karena tidak dapat diubah nanti."
+    "importantInfo": "Agen ini akan memiliki akses ke konteks percakapan dan dapat menggunakan alat yang sama dengan model standar. Pastikan ID Agen benar karena tidak dapat diubah nanti.",
+    "defunctWarning": "Model dasar agen ini sudah tidak tersedia. Edit agen untuk memilih model dasar baru, atau hapus agen ini."
   },
   "Quick Actions": "Tindakan Cepat",
   "Type / in chat to access your prompts": "Ketik / dalam obrolan untuk mengakses prompt Anda",
@@ -1651,5 +1652,14 @@
     "expires": "Tersedia selama {days} hari",
     "learnMore": "Pelajari lebih lanjut",
     "advancedOptions": "Opsi lanjutan"
+  },
+  "terms": {
+    "officialLanguages": "Versi resmi:",
+    "translateForUnderstanding": "Terjemahkan untuk membantu memahami",
+    "aiTranslationNotice": "Ini adalah terjemahan AI yang disediakan untuk membantu Anda memahami persyaratan. Persyaratan yang mengikat secara hukum hanya tersedia dalam bahasa Inggris dan Prancis.",
+    "viewOfficialVersion": "Lihat versi resmi",
+    "translating": "Sedang menerjemahkan...",
+    "translationError": "Gagal menerjemahkan. Silakan coba lagi.",
+    "selectLanguage": "Pilih bahasa"
   }
 }

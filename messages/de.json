@@ -347,7 +347,8 @@
     "descriptionPlaceholder": "Spezialisierter Agent für Forschungsaufgaben...",
     "baseModel": "Basismodell",
     "formatDescription": "Format: asst_xxxxx (von MSF AI Assistant Foundry)",
-    "importantInfo": "Dieser Agent hat Zugriff auf den Konversationskontext und kann die gleichen Tools wie Standardmodelle verwenden. Stellen Sie sicher, dass die Agenten-ID korrekt ist, da sie später nicht geändert werden kann."
+    "importantInfo": "Dieser Agent hat Zugriff auf den Konversationskontext und kann die gleichen Tools wie Standardmodelle verwenden. Stellen Sie sicher, dass die Agenten-ID korrekt ist, da sie später nicht geändert werden kann.",
+    "defunctWarning": "Das Basismodell dieses Agents ist nicht mehr verfügbar. Bearbeiten Sie den Agent, um ein neues Basismodell auszuwählen, oder löschen Sie ihn."
   },
   "Quick Actions": "Schnellaktionen",
   "Type / in chat to access your prompts": "Geben Sie / im Chat ein, um auf Ihre Eingabeaufforderungen zuzugreifen",
@@ -1651,5 +1652,14 @@
     "expires": "Verfügbar für {days} Tag(e)",
     "learnMore": "Mehr erfahren",
     "advancedOptions": "Erweiterte Optionen"
+  },
+  "terms": {
+    "officialLanguages": "Offizielle Version:",
+    "translateForUnderstanding": "Zur besseren Verständlichkeit übersetzen",
+    "aiTranslationNotice": "Dies ist eine KI-Übersetzung, die das Verständnis der Bedingungen erleichtern soll. Die rechtlich verbindlichen Bedingungen sind nur auf Englisch und Französisch verfügbar.",
+    "viewOfficialVersion": "Offizielle Version anzeigen",
+    "translating": "Übersetze...",
+    "translationError": "Übersetzung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "selectLanguage": "Sprache auswählen"
   }
 }

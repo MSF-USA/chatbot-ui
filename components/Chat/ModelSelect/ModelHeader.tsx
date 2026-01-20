@@ -27,6 +27,11 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
   const t = useTranslations();
   const locale = useLocale();
 
+  // Defensive check - should not happen if parent guards correctly
+  if (!selectedModel) {
+    return null;
+  }
+
   // Get localized model data if available
   const localeKey = modelIdToLocaleKey(selectedModel.id);
   const localizedName = t.has(`models.${localeKey}.name`)

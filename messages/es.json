@@ -346,7 +346,8 @@
     "descriptionPlaceholder": "Agente especializado para tareas de investigación...",
     "baseModel": "Modelo base",
     "formatDescription": "Formato: asst_xxxxx (de MSF AI Assistant Foundry)",
-    "importantInfo": "Este agente tendrá acceso al contexto de la conversación y puede usar las mismas herramientas que los modelos estándar. Asegúrate de que el ID del agente sea correcto, ya que no se puede cambiar más tarde."
+    "importantInfo": "Este agente tendrá acceso al contexto de la conversación y puede usar las mismas herramientas que los modelos estándar. Asegúrate de que el ID del agente sea correcto, ya que no se puede cambiar más tarde.",
+    "defunctWarning": "El modelo base de este agente ya no está disponible. Edite el agente para seleccionar un nuevo modelo base o elimínelo."
   },
   "Quick Actions": "Acciones rápidas",
   "Type / in chat to access your prompts": "Escribe / en el chat para acceder a tus instrucciones",
@@ -1651,5 +1652,14 @@
     "expires": "Disponible por {days} día(s)",
     "learnMore": "Más información",
     "advancedOptions": "Opciones avanzadas"
+  },
+  "terms": {
+    "officialLanguages": "Versión oficial:",
+    "translateForUnderstanding": "Traducir para facilitar la comprensión",
+    "aiTranslationNotice": "Esta es una traducción automática proporcionada para ayudarle a entender los términos. Los términos legalmente vinculantes están disponibles solo en inglés y francés.",
+    "viewOfficialVersion": "Ver versión oficial",
+    "translating": "Traduciendo...",
+    "translationError": "No se pudo traducir. Por favor, inténtelo de nuevo.",
+    "selectLanguage": "Seleccionar idioma"
   }
 }

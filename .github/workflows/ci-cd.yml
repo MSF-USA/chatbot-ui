@@ -64,11 +64,59 @@ jobs:
       - name: Run TypeScript type check
         run: npx tsc --noEmit
 
-  # JOB 1: Handles the PR lifecycle: Build, Test, Push, and Deploy to a SHARED Preview Environment
-  build_and_preview_pr:
-    # Only run when a PR is opened or updated
+  # JOB 1: Test PR (runs for ALL PRs including forks - no secrets required)
+  test_pr:
     if: github.event_name == 'pull_request'
     needs: lint_and_typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (verify build works)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          build-args: |
+            BUILD=${{ github.run_number }}
+            ENV=dev
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # JOB 2: Deploy Preview (only for internal PRs against main - requires secrets)
+  deploy_preview:
+    # Only run for internal PRs (not forks) targeting main branch
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.fork == false &&
+      github.event.pull_request.base.ref == 'main'
+    needs: test_pr
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -102,7 +150,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: 🚀 Deploy Container App
+      - name: Deploy Container App
         id: deploy
         run: |
           az containerapp update \
@@ -150,8 +198,6 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
             }
-
-  # JOB 2: This job has been removed as the preview environment is now permanent and should not be cleaned up.
 
   # JOB 3: Build and Deploy to BETA after a merge to main
   build_and_deploy_beta:

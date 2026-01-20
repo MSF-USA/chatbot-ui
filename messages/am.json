@@ -343,7 +343,8 @@
     "descriptionPlaceholder": "ለምርምር ስራዎች ልዩ ወኪል...",
     "baseModel": "መሰረታዊ ሞዴል",
     "formatDescription": "ቅርጸት፡ asst_xxxxx (ከMSF AI Assistant Foundry)",
-    "importantInfo": "ይህ ወኪል የውይይት አውድ መዳረሻ ይኖረዋል እና እንደ መደበኛ ሞዴሎች ተመሳሳይ መሳሪያዎችን መጠቀም ይችላል። የወኪል መታወቂያው ትክክል መሆኑን ያረጋግጡ፣ ምክንያቱም ከዚያ በኋላ መቀየር አይቻልም።"
+    "importantInfo": "ይህ ወኪል የውይይት አውድ መዳረሻ ይኖረዋል እና እንደ መደበኛ ሞዴሎች ተመሳሳይ መሳሪያዎችን መጠቀም ይችላል። የወኪል መታወቂያው ትክክል መሆኑን ያረጋግጡ፣ ምክንያቱም ከዚያ በኋላ መቀየር አይቻልም።",
+    "defunctWarning": "የዚህ ጀብዱ መሠረታዊ ሞዴል አልተገኘም። አዲስ መሠረታዊ ሞዴል ለመምረጥ ጀብዱን ያስተካክሉ፣ ወይም ያስወግዱት።"
   },
   "Quick Actions": "ፈጣን ድርጊቶች",
   "Type / in chat to access your prompts": "ጥያቄዎችዎን ለማግኘት በውይይት ውስጥ / ይተይቡ",
@@ -1651,5 +1652,14 @@
     "expires": "ለ{days} ቀናት ይገኛል",
     "learnMore": "ተጨማሪ ያስሱ",
     "advancedOptions": "የቀላል አማራጮች"
+  },
+  "terms": {
+    "officialLanguages": "አካባቢ ትክክለኛ ቅጽ:",
+    "translateForUnderstanding": "ለግንዛቤ ትርጉም አድርግ",
+    "aiTranslationNotice": "ይህ የሚረዳዎ ዘንድ የሰጠ AI ትርጉም ነው። በሕግ የሚገባው የቃላት ቅጽ በእንግሊዝኛ እና በፈረንሳይኛ ብቻ ይገኛል።",
+    "viewOfficialVersion": "አካቢ ትክክለኛውን ቅጽ ይመልከቱ",
+    "translating": "ትርጉም በማድረግ ላይ...",
+    "translationError": "ትርጉም ማድረግ አልተቻለም። እባክዎን እንደገና ይሞክሩ።",
+    "selectLanguage": "ቋንቋ ይምረጡ"
   }
 }

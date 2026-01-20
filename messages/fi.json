@@ -322,7 +322,8 @@
     "descriptionPlaceholder": "Tutkimustehtäviin erikoistunut agentti...",
     "baseModel": "Perusmalli",
     "formatDescription": "Muoto: asst_xxxxx (MSF AI Assistant Foundrysta)",
-    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin."
+    "importantInfo": "Tällä agentilla on pääsy keskustelukontekstiin ja se voi käyttää samoja työkaluja kuin vakiomallit. Varmista, että Agentti-ID on oikein, koska sitä ei voi muuttaa myöhemmin.",
+    "defunctWarning": "Tämän agentin perusmalli ei ole enää saatavilla. Muokkaa agenttia valitaksesi uuden perusmallin tai poista agentti."
   },
   "Quick Actions": "Pikatoiminnot",
   "Type / in chat to access your prompts": "Kirjoita / keskustelussa päästäksesi kehotteisiisi",
@@ -1651,5 +1652,14 @@
     "expires": "Saatavilla {days} päivän ajan",
     "learnMore": "Lue lisää",
     "advancedOptions": "Lisäasetukset"
+  },
+  "terms": {
+    "officialLanguages": "Virallinen versio:",
+    "translateForUnderstanding": "Käännä ymmärtämisen helpottamiseksi",
+    "aiTranslationNotice": "Tämä on tekoälyn tuottama käännös, joka auttaa ymmärtämään ehtoja. Oikeudellisesti sitovat ehdot ovat saatavilla vain englanniksi ja ranskaksi.",
+    "viewOfficialVersion": "Näytä virallinen versio",
+    "translating": "Käännetään...",
+    "translationError": "Käännös epäonnistui. Yritä uudelleen.",
+    "selectLanguage": "Valitse kieli"
   }
 }

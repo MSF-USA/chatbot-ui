@@ -1,9 +1,17 @@
-import { IconLanguage } from '@tabler/icons-react';
-import React, { FC, useEffect, useState } from 'react';
+import {
+  IconAlertTriangle,
+  IconLanguage,
+  IconLoader2,
+  IconWorld,
+} from '@tabler/icons-react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
 
+import { translateText } from '@/lib/services/translation/translationService';
+
+import { getAutonym, getSupportedLocales } from '@/lib/utils/app/locales';
 import {
   TermsData,
   fetchTermsData,
@@ -29,6 +37,27 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
   const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
+
+  // Translation state
+  const [translatedContent, setTranslatedContent] = useState<string | null>(
+    null,
+  );
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translationLocale, setTranslationLocale] = useState<string | null>(
+    null,
+  );
+  const [translationError, setTranslationError] = useState<string | null>(null);
+  const [showTranslationDropdown, setShowTranslationDropdown] =
+    useState<boolean>(false);
+
+  // Get all supported locales for translation (excluding official ones)
+  const translationLocales = useMemo(() => {
+    const allLocales = getSupportedLocales();
+    // Filter out official locales (en, fr) and sort alphabetically by autonym
+    return allLocales
+      .filter((locale) => !availableLocales.includes(locale))
+      .sort((a, b) => getAutonym(a).localeCompare(getAutonym(b)));
+  }, [availableLocales]);
 
   // Use email (mail) as the primary identifier for terms acceptance
   // This ensures consistency with checkUserTermsAcceptance
@@ -104,10 +133,56 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     }
   };
 
-  // Handle locale change
+  // Handle official locale change (clears any AI translation)
   const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentLocale(e.target.value);
+    // Clear AI translation when switching to official language
+    setTranslatedContent(null);
+    setTranslationLocale(null);
+    setTranslationError(null);
   };
+
+  // Handle translation to a non-official language
+  const handleTranslate = useCallback(
+    async (targetLocale: string) => {
+      if (!termsData?.platformTerms) return;
+
+      setIsTranslating(true);
+      setTranslationError(null);
+      setShowTranslationDropdown(false);
+
+      try {
+        // Get the English content as source (most complete/accurate)
+        const sourceContent =
+          termsData.platformTerms.localized['en']?.content || '';
+
+        const response = await translateText({
+          sourceText: sourceContent,
+          targetLocale: targetLocale,
+        });
+
+        if (response.success && response.data?.translatedText) {
+          setTranslatedContent(response.data.translatedText);
+          setTranslationLocale(targetLocale);
+        } else {
+          setTranslationError(t('terms.translationError'));
+        }
+      } catch (err) {
+        console.error('Translation error:', err);
+        setTranslationError(t('terms.translationError'));
+      } finally {
+        setIsTranslating(false);
+      }
+    },
+    [termsData, t],
+  );
+
+  // Clear AI translation and return to official version
+  const handleViewOfficialVersion = useCallback(() => {
+    setTranslatedContent(null);
+    setTranslationLocale(null);
+    setTranslationError(null);
+  }, []);
 
   // Get localized name for a language
   const getLanguageName = (locale: string): string => {
@@ -118,6 +193,10 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     };
     return localeNames[locale] || locale;
   };
+
+  // Determine if we're showing AI translation
+  const isShowingTranslation =
+    translatedContent !== null && translationLocale !== null;
 
   if (loading) {
     return (
@@ -185,66 +264,162 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-2xl max-w-xl w-full max-h-[80vh] flex flex-col overflow-hidden border border-gray-300 dark:border-gray-600">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-300 dark:border-gray-600 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-              {t('Terms and Conditions')}
-            </h2>
-            <span className="text-[10px] text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
-              v{versions}
-            </span>
-          </div>
-          {/* Language selector */}
-          <div className="flex items-center gap-2 text-sm">
-            <IconLanguage
-              size={16}
-              className="text-gray-600 dark:text-gray-300"
-            />
-            <select
-              id="language-select"
-              value={currentLocale}
-              onChange={handleLocaleChange}
-              className="bg-transparent text-gray-800 dark:text-white text-xs font-medium cursor-pointer focus:outline-none border-0"
-            >
-              {availableLocales.map((locale) => (
-                <option
-                  key={locale}
-                  value={locale}
-                  className="bg-white dark:bg-gray-800"
+        <div className="px-5 py-4 border-b border-gray-300 dark:border-gray-600">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                {t('Terms and Conditions')}
+              </h2>
+              <span className="text-[10px] text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
+                v{versions}
+              </span>
+            </div>
+            {/* Official language selector */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-sm">
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                  {t('terms.officialLanguages')}
+                </span>
+                <IconLanguage
+                  size={14}
+                  className="text-gray-600 dark:text-gray-300"
+                />
+                <select
+                  id="language-select"
+                  value={currentLocale}
+                  onChange={handleLocaleChange}
+                  disabled={isShowingTranslation}
+                  className="bg-transparent text-gray-800 dark:text-white text-xs font-medium cursor-pointer focus:outline-none border-0 disabled:opacity-50"
                 >
-                  {getLanguageName(locale)}
-                </option>
-              ))}
-            </select>
+                  {availableLocales.map((locale) => (
+                    <option
+                      key={locale}
+                      value={locale}
+                      className="bg-white dark:bg-gray-800"
+                    >
+                      {getLanguageName(locale)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
+
+          {/* Translation option row */}
+          <div className="mt-3 flex items-center justify-between">
+            <div className="relative">
+              <button
+                onClick={() =>
+                  setShowTranslationDropdown(!showTranslationDropdown)
+                }
+                disabled={isTranslating}
+                className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
+              >
+                <IconWorld size={14} />
+                <span>{t('terms.translateForUnderstanding')}</span>
+                {isTranslating && (
+                  <IconLoader2 size={12} className="animate-spin ml-1" />
+                )}
+              </button>
+
+              {/* Translation language dropdown */}
+              {showTranslationDropdown && (
+                <div className="absolute top-full left-0 mt-1 w-48 max-h-48 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                  {translationLocales.map((locale) => (
+                    <button
+                      key={locale}
+                      onClick={() => handleTranslate(locale)}
+                      className="w-full px-3 py-2 text-left text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {getAutonym(locale)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* View official version link (shown when viewing translation) */}
+            {isShowingTranslation && (
+              <button
+                onClick={handleViewOfficialVersion}
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t('terms.viewOfficialVersion')}
+              </button>
+            )}
+          </div>
+
+          {/* Translation error */}
+          {translationError && (
+            <div className="mt-2 text-xs text-red-600 dark:text-red-400">
+              {translationError}
+            </div>
+          )}
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {Object.entries(termsData).map(([docType, doc]) => {
-            if (!doc) return null;
-
-            let documentContent =
-              doc.localized[currentLocale]?.content ||
-              doc.localized['en']?.content ||
-              '';
-
-            // Remove the main title from the markdown content
-            // This removes lines like "# ai.msf.org Terms of Use"
-            documentContent = documentContent.replace(
-              /^#\s+.*?Terms.*?\n+/i,
-              '',
-            );
-
-            return (
-              <div
-                key={docType}
-                className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200"
-              >
-                <Streamdown>{documentContent}</Streamdown>
+          {/* AI Translation disclaimer */}
+          {isShowingTranslation && (
+            <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <div className="flex items-start gap-2">
+                <IconAlertTriangle
+                  size={16}
+                  className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0"
+                />
+                <p className="text-xs text-amber-800 dark:text-amber-200">
+                  {t('terms.aiTranslationNotice')}
+                </p>
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {/* Translating indicator */}
+          {isTranslating && (
+            <div className="flex items-center justify-center py-8">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <IconLoader2 size={20} className="animate-spin" />
+                <span className="text-sm">{t('terms.translating')}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Show translated content or official content */}
+          {!isTranslating && (
+            <>
+              {isShowingTranslation && translatedContent ? (
+                <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200">
+                  <Streamdown>
+                    {translatedContent.replace(/^#\s+.*?Terms.*?\n+/i, '')}
+                  </Streamdown>
+                </div>
+              ) : (
+                Object.entries(termsData).map(([docType, doc]) => {
+                  if (!doc) return null;
+
+                  let documentContent =
+                    doc.localized[currentLocale]?.content ||
+                    doc.localized['en']?.content ||
+                    '';
+
+                  // Remove the main title from the markdown content
+                  documentContent = documentContent.replace(
+                    /^#\s+.*?Terms.*?\n+/i,
+                    '',
+                  );
+
+                  return (
+                    <div
+                      key={docType}
+                      className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-200 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:text-gray-700 dark:prose-ul:text-gray-200 prose-li:text-gray-700 dark:prose-li:text-gray-200"
+                    >
+                      <Streamdown>{documentContent}</Streamdown>
+                    </div>
+                  );
+                })
+              )}
+            </>
+          )}
         </div>
 
         {/* Footer */}
