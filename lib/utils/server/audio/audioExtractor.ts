@@ -140,7 +140,11 @@ export async function extractAudioFromVideo(
   const { outputFormat = 'mp3', audioBitrate = 128 } = options;
 
   // Generate output path by replacing extension
-  const outputPath = inputPath.replace(/\.[^.]+$/, `_audio.${outputFormat}`);
+  // Handle paths with or without extension (e.g., /tmp/abc123 vs /tmp/abc123.mp4)
+  const hasExtension = /\.[^.]+$/.test(inputPath);
+  const outputPath = hasExtension
+    ? inputPath.replace(/\.[^.]+$/, `_audio.${outputFormat}`)
+    : `${inputPath}_audio.${outputFormat}`;
 
   return new Promise((resolve, reject) => {
     const command = ffmpeg(inputPath)
