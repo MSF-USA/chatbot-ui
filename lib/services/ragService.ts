@@ -3,10 +3,11 @@ import { Session } from 'next-auth';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
-import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
+import { OrganizationAgent } from '@/types/organizationAgent';
 import { Citation, SearchResult } from '@/types/rag';
 
+import { getOrganizationAgentById } from '@/lib/organizationAgents';
 import { DefaultAzureCredential } from '@azure/identity';
 import { SearchClient } from '@azure/search-documents';
 import { AzureOpenAI } from 'openai';
@@ -59,19 +60,17 @@ export class RAGService {
    * Supports both streaming and non-streaming responses.
    *
    * @param {Message[]} messages - The conversation messages to augment.
-   * @param {string} botId - The ID of the bot to use for the completion.
-   * @param {Bot[]} bots - Available bots configuration.
+   * @param {string} agentId - The ID of the organization agent to use for the completion.
    * @param {string} modelId - The ID of the model to use for completion.
    * @param {boolean} [stream=false] - Whether to stream the response.
    * @param {Session['user']} user - User information for logging.
    * @returns {Promise<ReadableStream | ChatCompletion>}
    *          Returns either a streaming response or chat completion depending on the stream parameter.
-   * @throws {Error} If the specified bot is not found.
+   * @throws {Error} If the specified agent is not found.
    */
   async augmentMessages(
     messages: Message[],
-    botId: string,
-    bots: Bot[],
+    agentId: string,
     modelId: string,
     stream: boolean = false,
     user: Session['user'],
@@ -84,19 +83,20 @@ export class RAGService {
 
       const { searchDocs, searchMetadata } = await this.performSearch(
         messages,
-        botId,
-        bots,
+        agentId,
         user,
       );
       this.searchDocs = searchDocs;
 
-      const bot = bots.find((b) => b.id === botId);
-      if (!bot) throw new Error('Bot not found');
+      const agent = getOrganizationAgentById(agentId);
+      if (!agent) throw new Error(`Organization agent ${agentId} not found`);
+
+      const systemPrompt = agent.systemPrompt || '';
 
       const enhancedMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
         {
           role: 'system',
-          content: `${bot.prompt}\n\nWhen citing sources:
+          content: `${systemPrompt}\n\nWhen citing sources:
             1. ONLY cite source numbers that are actually provided in the search results
             2. Do not make up or reference source numbers that don't exist in the provided sources
             3. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
@@ -109,7 +109,7 @@ export class RAGService {
 
             The frontend system will handle the formatting and display of sources. Only cite sources that actually exist in the provided search results.`,
         },
-        ...this.getCompletionMessages(messages, bot, searchDocs),
+        ...this.getCompletionMessages(messages, agent, searchDocs),
       ];
 
       if (stream) {
@@ -131,7 +131,7 @@ export class RAGService {
           duration: Date.now() - startTime,
           modelId,
           messageCount: messages.length,
-          botId,
+          agentId,
           userId: user?.id,
         });
 
@@ -169,7 +169,7 @@ export class RAGService {
           duration: Date.now() - startTime,
           modelId,
           messageCount: messages.length,
-          botId,
+          agentId,
           userId: user?.id,
         });
 
@@ -258,24 +258,22 @@ export class RAGService {
    * Uses query reformulation for follow-up questions to capture conversation context.
    *
    * @param {Message[]} messages - The conversation messages to extract query from.
-   * @param {string} botId - The ID of the bot making the search request.
-   * @param {Bot[]} bots - Available bots configuration.
+   * @param {string} agentId - The ID of the organization agent making the search request.
    * @param {Session['user']} user - User information for logging.
    * @returns {Promise<{searchDocs: SearchResult[], searchMetadata: {dateRange: DateRange, resultCount: number}}>}
    *          Returns search results and metadata including date range of results.
-   * @throws {Error} If the specified bot is not found.
+   * @throws {Error} If the specified agent is not found.
    */
   public async performSearch(
     messages: Message[],
-    botId: string,
-    bots: Bot[],
+    agentId: string,
     user: Session['user'],
   ) {
     const startTime = Date.now();
 
     try {
-      const bot = bots.find((b) => b.id === botId);
-      if (!bot) throw new Error(`Bot ${botId} not found`);
+      const agent = getOrganizationAgentById(agentId);
+      if (!agent) throw new Error(`Organization agent ${agentId} not found`);
 
       // Use query reformulation for follow-up questions
       const isFollowUpQuestion =
@@ -290,12 +288,17 @@ export class RAGService {
         query = this.extractQuery(messages);
       }
 
-      const semanticConfigName = `${this.searchIndex}-semantic-configuration`;
+      // Get ragConfig from agent (if available)
+      const ragConfig = agent.ragConfig || {};
+      const topK = ragConfig.topK || 10;
+      const semanticConfigName =
+        ragConfig.semanticConfig ||
+        `${this.searchIndex}-semantic-configuration`;
 
       // Perform the search
       const searchResults = await this.searchClient.search(query, {
         select: ['chunk', 'title', 'date', 'url'],
-        top: 10,
+        top: topK,
         queryType: 'semantic' as any,
         semanticSearchOptions: {
           configurationName: semanticConfigName,
@@ -305,7 +308,7 @@ export class RAGService {
           },
           answers: {
             answerType: 'extractive',
-            count: 10,
+            count: topK,
             threshold: 0.7,
           },
         },
@@ -315,7 +318,7 @@ export class RAGService {
               kind: 'text',
               text: query,
               fields: ['text_vector'] as any,
-              kNearestNeighborsCount: 10,
+              kNearestNeighborsCount: topK,
             },
           ],
         },
@@ -344,7 +347,7 @@ export class RAGService {
       // Log successful search
       console.log('[RAGService] Search completed:', {
         duration: Date.now() - startTime,
-        botId,
+        agentId,
         resultsCount: searchDocs.length,
         dateRange: searchMetadata.dateRange,
         userId: user?.id,
@@ -359,7 +362,7 @@ export class RAGService {
       console.error('[RAGService] Search error:', {
         duration: Date.now() - startTime,
         error: error instanceof Error ? error.message : String(error),
-        botId,
+        agentId,
         userId: user?.id,
       });
       throw error;
@@ -427,13 +430,13 @@ export class RAGService {
    * Now all sources are consolidated and given unique numbers.
    *
    * @param {Message[]} messages - The original conversation messages.
-   * @param {Bot} bot - The bot configuration to use.
+   * @param {OrganizationAgent} agent - The organization agent configuration to use.
    * @param {SearchResult[]} searchDocs - The search results to incorporate.
    * @returns {OpenAI.Chat.ChatCompletionMessageParam[]} Messages formatted for the chat completion API.
    */
   public getCompletionMessages(
     messages: Message[],
-    bot: Bot,
+    agent: OrganizationAgent,
     searchDocs: SearchResult[],
   ): OpenAI.Chat.ChatCompletionMessageParam[] {
     const query = this.extractQuery(messages);

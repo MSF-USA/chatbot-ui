@@ -5,6 +5,7 @@ import { Message, MessageType } from '@/types/chat';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 
+import { getOrganizationAgentById } from '@/lib/organizationAgents';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 /**
@@ -14,9 +15,11 @@ import { SpanStatusCode, trace } from '@opentelemetry/api';
  * - Adds Azure AI Search data sources to chat requests
  * - Works with ANY content type (text, images, files, audio)
  * - Enriches messages with knowledge base context
+ * - Gets organization agent configuration for custom system prompts and RAG settings
  *
  * Modifies context:
  * - context.enrichedMessages (adds RAG configuration)
+ * - context.systemPrompt (overrides with organization agent's system prompt)
  *
  * Note: RAG is orthogonal to content type - you can use RAG with:
  * - Text only
@@ -38,6 +41,7 @@ export class RAGEnricher extends BasePipelineStage {
   }
 
   shouldRun(context: ChatContext): boolean {
+    // botId is used for organization agent ID (e.g., "msf_communications")
     return !!context.botId;
   }
 
@@ -79,7 +83,7 @@ export class RAGEnricher extends BasePipelineStage {
       'rag.enrich',
       {
         attributes: {
-          'bot.id': context.botId || 'none',
+          'organization_agent.id': context.botId || 'none',
           'search.endpoint': this.searchEndpoint,
           'search.index': this.searchIndex,
           'message.count': context.messages.length,
@@ -87,7 +91,20 @@ export class RAGEnricher extends BasePipelineStage {
       },
       async (span) => {
         try {
-          console.log(`[RAGEnricher] Adding RAG with botId: ${context.botId}`);
+          console.log(
+            `[RAGEnricher] Adding RAG with organization agent: ${context.botId}`,
+          );
+
+          // Get organization agent configuration
+          const agent = context.botId
+            ? getOrganizationAgentById(context.botId)
+            : undefined;
+
+          if (agent) {
+            console.log(
+              `[RAGEnricher] Found organization agent: ${agent.name}`,
+            );
+          }
 
           // Start with processed content if available, otherwise original messages
           const baseMessages = context.enrichedMessages || context.messages;
@@ -135,20 +152,31 @@ export class RAGEnricher extends BasePipelineStage {
             }
           }
 
+          // Get agent-specific ragConfig (topK, semanticConfig, etc.)
+          const agentRagConfig = agent?.ragConfig || {};
+
           // RAG configuration will be added at execution time
-          // We just mark that RAG should be used
+          // We just mark that RAG should be used and pass along the config
           const result = {
             ...context,
             enrichedMessages,
+            // Override system prompt with organization agent's system prompt if available
+            systemPrompt: agent?.systemPrompt || context.systemPrompt,
             // Store RAG config for later use (no API key - using managed identity)
             processedContent: {
               ...context.processedContent,
               metadata: {
                 ...context.processedContent?.metadata,
                 ragConfig: {
-                  searchEndpoint: this.searchEndpoint,
-                  searchIndex: this.searchIndex,
-                  botId: context.botId,
+                  searchEndpoint:
+                    agentRagConfig.searchEndpoint || this.searchEndpoint,
+                  searchIndex: agentRagConfig.searchIndex || this.searchIndex,
+                  semanticConfig: agentRagConfig.semanticConfig,
+                  topK: agentRagConfig.topK,
+                  organizationAgentId: context.botId,
+                  // Include agent info for downstream processing
+                  agentName: agent?.name,
+                  agentSources: agent?.sources,
                 },
               },
             },
@@ -166,6 +194,7 @@ export class RAGEnricher extends BasePipelineStage {
             'rag.enriched_messages_count',
             enrichedMessages.length,
           );
+          span.setAttribute('rag.agent_name', agent?.name || 'unknown');
           span.setStatus({ code: SpanStatusCode.OK });
 
           // Log RAG configuration (the actual search is performed by Azure OpenAI)

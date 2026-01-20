@@ -24,6 +24,7 @@ import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
 import { ModelTypeIcon } from './ModelSelect/ModelTypeIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
+import { getOrganizationAgents } from '@/lib/organizationAgents';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -132,8 +133,33 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       });
   }, [customAgents, defunctAgentIds]);
 
-  // Combine base models and custom agents
-  const availableModels = [...baseModels, ...customAgentModels];
+  // Convert organization agents to OpenAIModel format
+  const organizationAgentModels: OpenAIModel[] = useMemo(() => {
+    const orgAgents = getOrganizationAgents();
+    return orgAgents.map((agent) => {
+      // Use gpt-4.1 as default base model for RAG agents, or specified baseModelId
+      const baseModelId =
+        (agent.baseModelId as OpenAIModelID) || OpenAIModelID.GPT_4_1;
+      const baseModel =
+        OpenAIModels[baseModelId] || OpenAIModels[OpenAIModelID.GPT_4_1];
+      return {
+        ...baseModel,
+        id: `org-${agent.id}`,
+        name: agent.name,
+        description: agent.description,
+        modelType: agent.type === 'foundry' ? ('agent' as const) : undefined,
+        agentId: agent.agentId, // For foundry agents
+        isOrganizationAgent: true,
+      };
+    });
+  }, []);
+
+  // Combine base models, custom agents, and organization agents
+  const availableModels = [
+    ...baseModels,
+    ...customAgentModels,
+    ...organizationAgentModels,
+  ];
 
   const selectedModel =
     availableModels.find((m) => m.id === selectedModelId) || availableModels[0];
@@ -449,6 +475,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           handleImportAgents={handleImportAgents}
           handleModelSelect={handleModelSelect}
           customAgentModels={customAgentModels}
+          organizationAgentModels={organizationAgentModels}
           selectedModelId={selectedModelId}
           defunctAgentIds={defunctAgentIds}
         />
