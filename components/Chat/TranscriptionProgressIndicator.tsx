@@ -33,9 +33,8 @@ export function TranscriptionProgressIndicator({
   progress,
 }: Props) {
   const t = useTranslations('transcription');
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(
-    Math.ceil((maxDurationMs - (Date.now() - startedAt)) / 1000),
-  );
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
 
   // Snapshot of the last estimate to enable linear countdown between chunk completions
   const lastEstimateRef = useRef<{
@@ -48,14 +47,13 @@ export function TranscriptionProgressIndicator({
     const interval = setInterval(() => {
       const now = Date.now();
 
-      // No progress data yet - use static countdown
+      // Always update elapsed time (counts up constantly)
+      const elapsed = now - startedAt;
+      setElapsedSeconds(Math.floor(elapsed / 1000));
+
+      // No progress data yet - show "??" for remaining time
       if (!progress || progress.total === 0 || progress.completed === 0) {
-        const elapsed = now - startedAt;
-        const remaining = Math.max(
-          0,
-          Math.ceil((maxDurationMs - elapsed) / 1000),
-        );
-        setRemainingSeconds(remaining);
+        setRemainingSeconds(null);
         return;
       }
 
@@ -71,10 +69,8 @@ export function TranscriptionProgressIndicator({
         const remainingChunks = progress.total - progress.completed;
         const baseEstimateMs = remainingChunks * avgTimePerChunk;
 
-        // Apply buffer based on progress percentage
-        const progressPercent = progress.completed / progress.total;
-        const buffer = progressPercent <= 0.5 ? 1.4 : 1.2;
-        const estimatedRemainingMs = baseEstimateMs * buffer;
+        // Apply constant 60% buffer
+        const estimatedRemainingMs = baseEstimateMs * 1.6;
 
         // Cap at maxDuration
         const cappedEstimateMs = Math.min(estimatedRemainingMs, maxDurationMs);
@@ -99,10 +95,16 @@ export function TranscriptionProgressIndicator({
     return () => clearInterval(interval);
   }, [startedAt, maxDurationMs, progress]);
 
-  // Format as MM:SS
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
-  const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  // Format elapsed time as MM:SS
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const elapsedSecs = elapsedSeconds % 60;
+  const elapsedDisplay = `${elapsedMinutes}:${elapsedSecs.toString().padStart(2, '0')}`;
+
+  // Format remaining time as MM:SS or "??"
+  const remainingDisplay =
+    remainingSeconds !== null
+      ? `${Math.floor(remainingSeconds / 60)}:${(remainingSeconds % 60).toString().padStart(2, '0')}`
+      : '??';
 
   // Calculate progress percentage
   const progressPercent =
@@ -139,7 +141,8 @@ export function TranscriptionProgressIndicator({
       )}
 
       <div className="text-lg font-mono font-semibold text-blue-700 dark:text-blue-300">
-        {t('timeRemaining', { time: timeDisplay })}
+        {t('elapsedTime', { time: elapsedDisplay })} |{' '}
+        {t('timeRemaining', { time: remainingDisplay })}
       </div>
       <div className="text-xs text-gray-500 dark:text-gray-500">
         {t('maxDurationNote', { minutes: Math.ceil(maxDurationMs / 60000) })}
