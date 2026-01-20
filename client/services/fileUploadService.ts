@@ -2,7 +2,14 @@ import toast from 'react-hot-toast';
 
 import { cacheImageBase64 } from '@/lib/services/imageService';
 
-import { uploadFileAction } from '@/lib/actions/fileUpload';
+import type { ChunkedUploadSession } from '@/lib/types/chunkedUpload';
+
+import {
+  finalizeChunkedUploadAction,
+  initChunkedUploadAction,
+  uploadChunkAction,
+  uploadFileAction,
+} from '@/lib/actions/fileUpload';
 import {
   getMaxSizeForFile,
   validateFileSize,
@@ -10,6 +17,10 @@ import {
 
 // Threshold for using Server Action (files larger than 10MB use Server Action)
 const SERVER_ACTION_THRESHOLD = 10 * 1024 * 1024; // 10MB
+
+// Chunked upload configuration
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB per chunk
+const MAX_CHUNK_RETRIES = 3; // Maximum retries for a single chunk
 
 export interface UploadProgress {
   [fileName: string]: number;
@@ -185,36 +196,134 @@ export class FileUploadService {
 
   /**
    * Upload file via Server Action (supports up to 1.6GB).
-   * Used for large files that exceed Route Handler body size limits.
+   * Uses chunked upload for better progress tracking on large files.
    */
   private static async uploadFileViaServerAction(
     file: File,
     onProgress?: (progress: number) => void,
   ): Promise<UploadResult> {
-    // Show indeterminate progress for Server Action uploads
-    if (onProgress) onProgress(10);
+    // Use chunked upload for large files to get real progress
+    return this.uploadFileChunked(file, onProgress);
+  }
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('filename', file.name);
-    formData.append('filetype', this.getFileType(file));
-    formData.append('mime', file.type);
+  /**
+   * Upload a file using chunked upload for real progress tracking.
+   * Splits the file into chunks, uploads each via Server Action,
+   * and reports progress after each chunk completes.
+   *
+   * @param file - The file to upload
+   * @param onProgress - Optional progress callback (0-100)
+   * @returns Upload result with URL and metadata
+   */
+  private static async uploadFileChunked(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<UploadResult> {
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
-    if (onProgress) onProgress(30);
+    // 1. Initialize chunked upload session
+    if (onProgress) onProgress(2);
 
-    const result = await uploadFileAction(formData);
+    const initResult = await initChunkedUploadAction({
+      filename: file.name,
+      filetype: this.getFileType(file),
+      mimeType: file.type,
+      totalSize: file.size,
+      chunkSize: CHUNK_SIZE,
+    });
 
-    if (!result.success || !result.uri) {
-      throw new Error(result.error || `Failed to upload ${file.name}`);
+    if (!initResult.success || !initResult.session) {
+      throw new Error(
+        initResult.error || `Failed to initialize upload for ${file.name}`,
+      );
+    }
+
+    const session = initResult.session;
+    if (onProgress) onProgress(5);
+
+    // 2. Upload each chunk with retry logic
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+
+      const chunkResult = await this.uploadChunkWithRetry(chunk, session, i);
+
+      if (!chunkResult.success) {
+        throw new Error(
+          chunkResult.error ||
+            `Failed to upload chunk ${i + 1} of ${totalChunks}`,
+        );
+      }
+
+      // Report progress after each chunk (5% - 95% range)
+      if (onProgress) {
+        const progressPercent = 5 + Math.round(((i + 1) / totalChunks) * 90);
+        onProgress(progressPercent);
+      }
+    }
+
+    // 3. Finalize the upload (commit all blocks)
+    const finalResult = await finalizeChunkedUploadAction(session);
+
+    if (!finalResult.success || !finalResult.uri) {
+      throw new Error(
+        finalResult.error || `Failed to finalize upload for ${file.name}`,
+      );
     }
 
     if (onProgress) onProgress(100);
 
     return {
-      url: result.uri,
+      url: finalResult.uri,
       originalFilename: file.name,
       type: this.getFileType(file),
     };
+  }
+
+  /**
+   * Upload a single chunk with retry logic.
+   * Retries up to MAX_CHUNK_RETRIES times with exponential backoff.
+   *
+   * @param chunk - The chunk blob to upload
+   * @param session - The chunked upload session
+   * @param chunkIndex - Zero-based index of this chunk
+   * @returns Chunk upload result
+   */
+  private static async uploadChunkWithRetry(
+    chunk: Blob,
+    session: ChunkedUploadSession,
+    chunkIndex: number,
+  ): Promise<{ success: boolean; error?: string }> {
+    let lastError: string | undefined;
+
+    for (let attempt = 0; attempt < MAX_CHUNK_RETRIES; attempt++) {
+      const chunkData = new FormData();
+      chunkData.append('chunk', chunk);
+
+      const result = await uploadChunkAction(session, chunkIndex, chunkData);
+
+      if (result.success) {
+        return { success: true };
+      }
+
+      lastError = result.error;
+
+      // Exponential backoff: 1s, 2s, 4s
+      if (attempt < MAX_CHUNK_RETRIES - 1) {
+        const delayMs = Math.pow(2, attempt) * 1000;
+        await this.delay(delayMs);
+      }
+    }
+
+    return { success: false, error: lastError || 'Max retries exceeded' };
+  }
+
+  /**
+   * Helper to delay execution for retry logic.
+   */
+  private static delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
