@@ -78,6 +78,7 @@ describe('useChatActions', () => {
       );
       expect(mockUpdateConversation).toHaveBeenCalledWith('conv-1', {
         messages: [],
+        name: '',
       });
     });
 
