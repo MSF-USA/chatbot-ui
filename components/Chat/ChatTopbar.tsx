@@ -10,6 +10,8 @@ import { useTranslations } from 'next-intl';
 
 import { SearchMode } from '@/types/searchMode';
 
+import { ClaudeIcon } from '@/components/Icons/providers/ClaudeIcon';
+
 import {
   AzureAIIcon,
   ClaudeAIIcon,
@@ -87,7 +89,7 @@ export const ChatTopbar = ({
       case 'meta':
         return <MetaIcon {...iconProps} />;
       case 'anthropic':
-        return <ClaudeAIIcon {...iconProps} />;
+        return <ClaudeIcon {...iconProps} />;
       default:
         return null;
     }
