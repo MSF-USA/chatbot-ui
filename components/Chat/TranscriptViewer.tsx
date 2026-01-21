@@ -19,6 +19,7 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 import { translateText } from '@/lib/services/translation/translationService';
 
 import { getAutonym } from '@/lib/utils/app/locales';
+import { generateAudioFilename } from '@/lib/utils/shared/string/slugify';
 
 import { TRANSCRIPT_EXPIRY_DAYS } from '@/types/transcription';
 import { MessageTranslationState } from '@/types/translation';
@@ -257,6 +258,11 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
   const cachedLocales = useMemo(() => {
     return new Set(Object.keys(translationState.translations));
   }, [translationState.translations]);
+
+  // Generate contextual filename for audio downloads
+  const audioDownloadFilename = useMemo(() => {
+    return generateAudioFilename(filename, 'audio', 'mp3');
+  }, [filename]);
 
   // Handle translation request (consistent with AssistantMessage pattern)
   const handleTranslate = useCallback(
@@ -680,7 +686,11 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
             </div>
           )}
           <div className="mt-2">
-            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+            <AudioPlayer
+              audioUrl={audioUrl}
+              onClose={handleCloseAudio}
+              downloadFilename={audioDownloadFilename}
+            />
           </div>
         </>
       )}
