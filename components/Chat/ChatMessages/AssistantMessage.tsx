@@ -744,7 +744,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   </span>
                 </div>
               )}
-              <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+              <AudioPlayer
+                audioUrl={audioUrl}
+                onClose={handleCloseAudio}
+                downloadFilename={audioDownloadFilename}
+              />
             </>
           )}
 
