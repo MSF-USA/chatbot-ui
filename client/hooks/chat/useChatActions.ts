@@ -29,30 +29,17 @@ interface UseChatActionsProps {
 }
 
 /**
- * Custom hook to handle all chat message and conversation actions
- * Manages sending, editing, clearing, and regenerating messages
+ * Custom hook to handle chat message actions.
+ * Manages sending, editing, and regenerating messages.
+ *
+ * @param props.updateConversation - Function to update conversation data
+ * @param props.sendMessage - Optional function to send messages to the chat service
+ * @returns Object containing message action handlers
  */
 export function useChatActions({
   updateConversation,
   sendMessage,
 }: UseChatActionsProps) {
-  const handleClearAll = useCallback(() => {
-    const state = useConversationStore.getState();
-    const currentConversation = state.conversations.find(
-      (c) => c.id === state.selectedConversationId,
-    );
-
-    if (
-      currentConversation &&
-      window.confirm('Are you sure you want to clear this conversation?')
-    ) {
-      updateConversation(currentConversation.id, {
-        messages: [],
-        name: '',
-      });
-    }
-  }, [updateConversation]);
-
   const handleEditMessage = useCallback(
     (editedMessage: Message) => {
       const state = useConversationStore.getState();
@@ -239,7 +226,6 @@ export function useChatActions({
   );
 
   return {
-    handleClearAll,
     handleEditMessage,
     handleSend,
     handleSelectPrompt,
