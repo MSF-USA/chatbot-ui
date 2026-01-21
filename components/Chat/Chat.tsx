@@ -11,6 +11,7 @@ import { useChatActions } from '@/client/hooks/chat/useChatActions';
 import { useChatScrolling } from '@/client/hooks/chat/useChatScrolling';
 import { useConversationInitialization } from '@/client/hooks/chat/useConversationInitialization';
 import { usePromptSaving } from '@/client/hooks/chat/usePromptSaving';
+import { useClearConversation } from '@/client/hooks/conversation/useClearConversation';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
@@ -185,7 +186,6 @@ export function Chat({
   });
 
   const {
-    handleClearAll,
     handleEditMessage,
     handleSend,
     handleSelectPrompt,
@@ -194,6 +194,8 @@ export function Chat({
     updateConversation,
     sendMessage,
   });
+
+  const { clearConversation } = useClearConversation();
 
   // Version navigation callback for message versioning
   const handleNavigateVersion = useCallback(
@@ -297,7 +299,7 @@ export function Chat({
             showSettings={isSettingsOpen}
             onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
             onModelClick={() => setIsModelSelectOpen(true)}
-            onClearAll={handleClearAll}
+            onClearAll={clearConversation}
             hasMessages={hasMessages}
             searchMode={selectedConversation?.defaultSearchMode}
             showChatbar={showChatbar}
