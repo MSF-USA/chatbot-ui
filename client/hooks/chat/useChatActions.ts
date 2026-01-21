@@ -48,6 +48,7 @@ export function useChatActions({
     ) {
       updateConversation(currentConversation.id, {
         messages: [],
+        name: '',
       });
     }
   }, [updateConversation]);
