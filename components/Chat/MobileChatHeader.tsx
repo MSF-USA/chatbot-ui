@@ -74,6 +74,7 @@ export function MobileChatHeader({
       updateConversation(selectedConversation.id, {
         ...selectedConversation,
         messages: [],
+        name: '',
       });
     }
   };
