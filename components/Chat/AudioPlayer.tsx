@@ -11,9 +11,14 @@ import { SpeedControl } from './Audio/SpeedControl';
 interface AudioPlayerProps {
   audioUrl: string;
   onClose: () => void;
+  downloadFilename?: string;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  audioUrl,
+  onClose,
+  downloadFilename = 'audio.mp3',
+}) => {
   const t = useTranslations();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioDuration, setAudioDuration] = useState<number>(0);
@@ -215,7 +220,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   const handleDownload = () => {
     const a = document.createElement('a');
     a.href = audioUrl;
-    a.download = 'assistant-audio.mp3';
+    a.download = downloadFilename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
