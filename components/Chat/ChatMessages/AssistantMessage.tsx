@@ -558,7 +558,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                       isAnimating={messageIsStreaming}
                       controls={true}
                       shikiTheme={['github-light', 'github-dark']}
-                      mermaidConfig={mermaidConfig}
+                      mermaid={{ config: mermaidConfig }}
                     >
                       {displayedContent}
                     </CitationStreamdown>
