@@ -123,6 +123,7 @@
   },
   "overrides": {
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2"
+    "@types/react-dom": "19.2.2",
+    "lodash-es": "4.17.23"
   }
 }
