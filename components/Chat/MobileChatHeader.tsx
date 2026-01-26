@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { useClearConversation } from '@/client/hooks/conversation/useClearConversation';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useUI } from '@/client/hooks/ui/useUI';
 
@@ -38,8 +39,8 @@ export function MobileChatHeader({
 }: MobileHeaderProps) {
   const t = useTranslations();
   const { toggleChatbar } = useUI();
-  const { selectedConversation, updateConversation, isLoaded } =
-    useConversations();
+  const { selectedConversation, isLoaded } = useConversations();
+  const { clearConversation } = useClearConversation();
 
   const displayModelName = selectedConversation?.model?.name || '';
   const hasMessages = (selectedConversation?.messages?.length || 0) > 0;
@@ -63,18 +64,6 @@ export function MobileChatHeader({
         return <ClaudeAIIcon {...iconProps} />;
       default:
         return null;
-    }
-  };
-
-  const handleClearAll = () => {
-    if (
-      selectedConversation &&
-      window.confirm(t('chat.clearConversationConfirm'))
-    ) {
-      updateConversation(selectedConversation.id, {
-        ...selectedConversation,
-        messages: [],
-      });
     }
   };
 
@@ -120,7 +109,7 @@ export function MobileChatHeader({
       {/* Clear button */}
       {hasMessages && (
         <button
-          onClick={handleClearAll}
+          onClick={clearConversation}
           className="p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors shrink-0"
           aria-label={t('chat.clearConversation')}
           title={t('chat.clearConversation')}

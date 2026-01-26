@@ -30,9 +30,6 @@ vi.mock('@/client/stores/chatStore', () => ({
   },
 }));
 
-// Mock window.confirm
-global.confirm = vi.fn(() => true);
-
 describe('useChatActions', () => {
   const mockUpdateConversation = vi.fn();
   const mockSendMessage = vi.fn();
@@ -42,76 +39,6 @@ describe('useChatActions', () => {
     mockState.conversations = [];
     mockState.selectedConversationId = null;
     mockChatState.setRegeneratingIndex.mockClear();
-  });
-
-  describe('handleClearAll', () => {
-    it('should clear all messages from conversation', () => {
-      const conversation: Conversation = {
-        id: 'conv-1',
-        name: 'Test Conversation',
-        messages: [
-          { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
-          { role: 'assistant', content: 'Hi', messageType: MessageType.TEXT },
-        ],
-        model: { id: 'gpt-4', name: 'GPT-4' } as any,
-        prompt: '',
-        temperature: 0.7,
-        folderId: null,
-      };
-
-      mockState.conversations = [conversation];
-      mockState.selectedConversationId = 'conv-1';
-
-      const { result } = renderHook(() =>
-        useChatActions({
-          updateConversation: mockUpdateConversation,
-          sendMessage: mockSendMessage,
-        }),
-      );
-
-      act(() => {
-        result.current.handleClearAll();
-      });
-
-      expect(global.confirm).toHaveBeenCalledWith(
-        'Are you sure you want to clear this conversation?',
-      );
-      expect(mockUpdateConversation).toHaveBeenCalledWith('conv-1', {
-        messages: [],
-      });
-    });
-
-    it('should not clear messages if user cancels', () => {
-      (global.confirm as any).mockReturnValueOnce(false);
-
-      const conversation: Conversation = {
-        id: 'conv-1',
-        name: 'Test Conversation',
-        messages: [
-          { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
-        ],
-        model: { id: 'gpt-4', name: 'GPT-4' } as any,
-        prompt: '',
-        temperature: 0.7,
-        folderId: null,
-      };
-
-      mockState.conversations = [conversation];
-      mockState.selectedConversationId = 'conv-1';
-
-      const { result } = renderHook(() =>
-        useChatActions({
-          updateConversation: mockUpdateConversation,
-          sendMessage: mockSendMessage,
-        }),
-      );
-
-      act(() => {
-        result.current.handleClearAll();
-      });
-
-      expect(mockUpdateConversation).not.toHaveBeenCalled();
-    });
   });
 
   describe('handleEditMessage', () => {

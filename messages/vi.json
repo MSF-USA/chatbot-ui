@@ -1003,7 +1003,8 @@
     "expiredOrDeleted": "Bản ghi này đã hết hạn hoặc bị xóa.",
     "fetchError": "Tải bản ghi không thành công. Vui lòng thử lại.",
     "transcriptExpired": "Bản ghi cho {filename} đã hết hạn. Bản ghi sẽ tự động bị xóa sau {days} ngày để đảm bảo quyền riêng tư.",
-    "expirationWarning": "Bản ghi cho {filename} sẽ hết hạn trong {days} ngày nữa. Hãy sao chép nội dung nếu bạn muốn lưu lại."
+    "expirationWarning": "Bản ghi cho {filename} sẽ hết hạn trong {days} ngày nữa. Hãy sao chép nội dung nếu bạn muốn lưu lại.",
+    "elapsedTime": "Đã trôi qua: {time}"
   },
   "transcriptionComplete": "Phiên âm hoàn tất! Văn bản đã được thêm vào ô nhập trò chuyện.",
   "importBackupParseError": "Không thể phân tích tệp sao lưu. Vui lòng đảm bảo tệp ở định dạng JSON hợp lệ.",

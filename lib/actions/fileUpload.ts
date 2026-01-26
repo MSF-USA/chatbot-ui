@@ -6,15 +6,23 @@ import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
-import { BlobStorage } from '@/lib/utils/server/blob/blob';
+import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob/blob';
 import {
   getContentType,
   validateBufferSignature,
   validateFileNotExecutable,
 } from '@/lib/utils/server/file/mimeTypes';
 
+import type {
+  ChunkUploadResult,
+  ChunkedUploadSession,
+  FinalizeUploadResult,
+  InitChunkedUploadParams,
+} from '@/lib/types/chunkedUpload';
+
 import { auth } from '@/auth';
 import { validateFileSizeRaw } from '@/lib/constants/fileLimits';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Result of a file upload operation.
@@ -160,4 +168,211 @@ async function uploadFileToBlobStorage(
       },
     },
   );
+}
+
+/**
+ * Initialize a chunked upload session.
+ *
+ * Validates the file and creates a session with upload metadata.
+ * The session is used for subsequent chunk uploads and finalization.
+ *
+ * @param params - Upload initialization parameters
+ * @returns Chunked upload session or error
+ */
+export async function initChunkedUploadAction(
+  params: InitChunkedUploadParams,
+): Promise<{
+  success: boolean;
+  session?: ChunkedUploadSession;
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const { filename, filetype, mimeType, totalSize, chunkSize } = params;
+
+    // Validate file is not executable
+    const executableValidation = validateFileNotExecutable(filename, mimeType);
+    if (!executableValidation.isValid) {
+      return { success: false, error: executableValidation.error };
+    }
+
+    // Validate file size using category-based limits
+    const sizeValidation = validateFileSizeRaw(filename, totalSize, mimeType);
+    if (!sizeValidation.valid) {
+      return { success: false, error: sizeValidation.error };
+    }
+
+    const userId = getUserIdFromSession(session);
+    const uploadId = uuidv4();
+    const extension = filename.split('.').pop() || '';
+    const uploadLocation = filetype === 'image' ? 'images' : 'files';
+
+    // Generate a unique blob path using uploadId (content hash not available until all chunks received)
+    const blobPath = `${userId}/uploads/${uploadLocation}/${uploadId}.${extension}`;
+
+    const totalChunks = Math.ceil(totalSize / chunkSize);
+
+    const uploadSession: ChunkedUploadSession = {
+      uploadId,
+      filename,
+      filetype,
+      mimeType,
+      totalSize,
+      totalChunks,
+      chunkSize,
+      blobPath,
+    };
+
+    return { success: true, session: uploadSession };
+  } catch (error) {
+    console.error('[initChunkedUploadAction] Error:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to initialize upload',
+    };
+  }
+}
+
+/**
+ * Generate a base64-encoded block ID from a chunk index.
+ * Block IDs must be consistent length and base64 encoded.
+ *
+ * @param chunkIndex - Zero-based chunk index
+ * @returns Base64-encoded block ID
+ */
+function generateBlockId(chunkIndex: number): string {
+  // Pad index to 6 digits for consistent length (supports up to 999,999 chunks)
+  const paddedIndex = chunkIndex.toString().padStart(6, '0');
+  return Buffer.from(paddedIndex).toString('base64');
+}
+
+/**
+ * Upload a single chunk of a file.
+ *
+ * Stages the chunk using Azure Block Blob API. The chunk is identified
+ * by a block ID derived from its index.
+ *
+ * @param session - The chunked upload session
+ * @param chunkIndex - Zero-based index of this chunk
+ * @param chunkData - FormData containing the chunk in a 'chunk' field
+ * @returns Result indicating success or failure
+ */
+export async function uploadChunkAction(
+  session: ChunkedUploadSession,
+  chunkIndex: number,
+  chunkData: FormData,
+): Promise<ChunkUploadResult> {
+  try {
+    const authSession = await auth();
+    if (!authSession) {
+      return { success: false, chunkIndex, error: 'Unauthorized' };
+    }
+
+    const chunk = chunkData.get('chunk') as Blob | null;
+    if (!chunk) {
+      return { success: false, chunkIndex, error: 'No chunk data provided' };
+    }
+
+    // Convert chunk to buffer
+    const arrayBuffer = await chunk.arrayBuffer();
+    const chunkBuffer = Buffer.from(arrayBuffer);
+
+    // Get blob storage client
+    const blobStorageClient = createBlobStorageClient(authSession);
+
+    // Ensure we have the AzureBlobStorage methods
+    if (!(blobStorageClient instanceof AzureBlobStorage)) {
+      return {
+        success: false,
+        chunkIndex,
+        error: 'Chunked upload requires Azure Blob Storage',
+      };
+    }
+
+    // Generate block ID for this chunk
+    const blockId = generateBlockId(chunkIndex);
+
+    // Stage the block
+    await blobStorageClient.stageBlock(session.blobPath, blockId, chunkBuffer);
+
+    return { success: true, chunkIndex, blockId };
+  } catch (error) {
+    console.error(
+      `[uploadChunkAction] Error uploading chunk ${chunkIndex}:`,
+      error,
+    );
+    return {
+      success: false,
+      chunkIndex,
+      error: error instanceof Error ? error.message : 'Failed to upload chunk',
+    };
+  }
+}
+
+/**
+ * Finalize a chunked upload by committing all staged blocks.
+ *
+ * Calls Azure Block Blob API to commit the block list, forming the final blob.
+ *
+ * @param session - The chunked upload session
+ * @returns Result with final blob URI or error
+ */
+export async function finalizeChunkedUploadAction(
+  session: ChunkedUploadSession,
+): Promise<FinalizeUploadResult> {
+  try {
+    const authSession = await auth();
+    if (!authSession) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Get blob storage client
+    const blobStorageClient = createBlobStorageClient(authSession);
+
+    // Ensure we have the AzureBlobStorage methods
+    if (!(blobStorageClient instanceof AzureBlobStorage)) {
+      return {
+        success: false,
+        error: 'Chunked upload requires Azure Blob Storage',
+      };
+    }
+
+    // Generate block IDs in order
+    const blockIds: string[] = [];
+    for (let i = 0; i < session.totalChunks; i++) {
+      blockIds.push(generateBlockId(i));
+    }
+
+    // Determine content type
+    let contentType = session.mimeType;
+    if (!contentType) {
+      const extension = session.filename.split('.').pop() || '';
+      contentType = getContentType(extension);
+    }
+
+    // Commit the block list
+    const uri = await blobStorageClient.commitBlockList(
+      session.blobPath,
+      blockIds,
+      {
+        blobHTTPHeaders: {
+          blobContentType: contentType,
+        },
+      },
+    );
+
+    return { success: true, uri };
+  } catch (error) {
+    console.error('[finalizeChunkedUploadAction] Error:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to finalize upload',
+    };
+  }
 }

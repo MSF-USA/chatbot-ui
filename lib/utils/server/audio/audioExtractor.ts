@@ -102,10 +102,81 @@ function getFfmpegPath(): string | null {
   return null;
 }
 
+// Cache the resolved ffprobe path to avoid repeated lookups
+let resolvedFfprobePath: string | null | undefined = undefined;
+
+/**
+ * Resolves the FFprobe binary path using multiple fallback strategies.
+ *
+ * Similar to getFfmpegPath, but for ffprobe which is needed to inspect
+ * media file metadata (e.g., checking if a file has audio streams).
+ *
+ * @returns The path to ffprobe binary, or null if not found
+ */
+function getFfprobePath(): string | null {
+  // Return cached result if available
+  if (resolvedFfprobePath !== undefined) {
+    return resolvedFfprobePath;
+  }
+
+  // Strategy 1: Check environment variable (highest priority)
+  if (process.env.FFPROBE_BIN) {
+    const envPath = process.env.FFPROBE_BIN;
+    if (fs.existsSync(envPath)) {
+      console.log(
+        `[AudioExtractor] Using FFprobe from FFPROBE_BIN: ${envPath}`,
+      );
+      resolvedFfprobePath = envPath;
+      return envPath;
+    } else {
+      console.warn(
+        `[AudioExtractor] FFPROBE_BIN set but file not found: ${envPath}`,
+      );
+    }
+  }
+
+  // Strategy 2: Derive from FFmpeg path (ffprobe is typically in same directory)
+  const ffmpegBinPath = getFfmpegPath();
+  if (ffmpegBinPath) {
+    const ffprobeFromFfmpeg = ffmpegBinPath.replace(/ffmpeg$/, 'ffprobe');
+    if (fs.existsSync(ffprobeFromFfmpeg)) {
+      console.log(
+        `[AudioExtractor] Using FFprobe derived from FFmpeg path: ${ffprobeFromFfmpeg}`,
+      );
+      resolvedFfprobePath = ffprobeFromFfmpeg;
+      return ffprobeFromFfmpeg;
+    }
+  }
+
+  // Strategy 3: Fall back to system ffprobe in PATH
+  try {
+    const whichResult = execSync('which ffprobe', { encoding: 'utf8' }).trim();
+    if (whichResult) {
+      console.log(`[AudioExtractor] Using system FFprobe: ${whichResult}`);
+      resolvedFfprobePath = whichResult;
+      return whichResult;
+    }
+  } catch {
+    // which command failed (ffprobe not in PATH)
+  }
+
+  console.warn(
+    '[AudioExtractor] FFprobe not found. Audio stream detection will be skipped.',
+  );
+  resolvedFfprobePath = null;
+  return null;
+}
+
 // Initialize FFmpeg path
 const ffmpegPath = getFfmpegPath();
 if (ffmpegPath) {
   ffmpeg.setFfmpegPath(ffmpegPath);
+}
+
+// Initialize FFprobe path
+const ffprobePath = getFfprobePath();
+if (ffprobePath) {
+  ffmpeg.setFfprobePath(ffprobePath);
 }
 
 export interface AudioExtractionResult {
@@ -116,6 +187,62 @@ export interface AudioExtractionResult {
 export interface AudioExtractionOptions {
   outputFormat?: 'mp3' | 'wav' | 'm4a';
   audioBitrate?: number;
+}
+
+/**
+ * Returns the appropriate audio codec for the given output format.
+ *
+ * @param format - The output audio format
+ * @returns The codec name for FFmpeg
+ */
+function getAudioCodec(format: 'mp3' | 'wav' | 'm4a'): string {
+  switch (format) {
+    case 'mp3':
+      return 'libmp3lame';
+    case 'wav':
+      return 'pcm_s16le';
+    case 'm4a':
+      return 'aac';
+  }
+}
+
+/**
+ * Checks if an input file contains an audio stream using ffprobe.
+ *
+ * @param inputPath - Path to the media file
+ * @returns Promise resolving to true if the file has an audio stream
+ */
+async function hasAudioStream(inputPath: string): Promise<boolean> {
+  // If ffprobe isn't available, assume audio exists and let ffmpeg handle it
+  if (!ffprobePath) {
+    console.warn(
+      '[AudioExtractor] ffprobe not available, skipping audio stream check',
+    );
+    return true;
+  }
+
+  return new Promise((resolve) => {
+    ffmpeg.ffprobe(inputPath, (err, metadata) => {
+      if (err) {
+        console.warn(
+          '[AudioExtractor] ffprobe failed, assuming audio exists:',
+          err.message,
+        );
+        resolve(true);
+        return;
+      }
+
+      const audioStream = metadata.streams?.find(
+        (stream) => stream.codec_type === 'audio',
+      );
+
+      const hasAudio = !!audioStream;
+      console.log(
+        `[AudioExtractor] Audio stream check: ${hasAudio ? 'found' : 'not found'}`,
+      );
+      resolve(hasAudio);
+    });
+  });
 }
 
 /**
@@ -139,29 +266,39 @@ export async function extractAudioFromVideo(
 
   const { outputFormat = 'mp3', audioBitrate = 128 } = options;
 
+  // Check if input file has an audio stream before attempting extraction
+  const hasAudio = await hasAudioStream(inputPath);
+  if (!hasAudio) {
+    throw new Error(
+      'The video file does not contain an audio track. Cannot extract audio from a video-only file.',
+    );
+  }
+
   // Generate output path by replacing extension
-  const outputPath = inputPath.replace(/\.[^.]+$/, `_audio.${outputFormat}`);
+  // Handle paths with or without extension (e.g., /tmp/abc123 vs /tmp/abc123.mp4)
+  const hasExtension = /\.[^.]+$/.test(inputPath);
+  const outputPath = hasExtension
+    ? inputPath.replace(/\.[^.]+$/, `_audio.${outputFormat}`)
+    : `${inputPath}_audio.${outputFormat}`;
+
+  console.log(`[AudioExtractor] Input: ${inputPath}`);
+  console.log(`[AudioExtractor] Output: ${outputPath}`);
 
   return new Promise((resolve, reject) => {
-    const command = ffmpeg(inputPath)
-      .noVideo()
-      .audioBitrate(audioBitrate)
-      .output(outputPath);
+    // Match the working pattern from audioSplitter.ts:
+    // 1. Create command with input
+    // 2. Set .output()
+    // 3. Apply codec/bitrate settings after
+    const command = ffmpeg(inputPath).noVideo().output(outputPath);
 
-    // Set audio codec based on format
-    switch (outputFormat) {
-      case 'mp3':
-        command.audioCodec('libmp3lame');
-        break;
-      case 'wav':
-        command.audioCodec('pcm_s16le');
-        break;
-      case 'm4a':
-        command.audioCodec('aac');
-        break;
-    }
+    // Apply audio settings (after .output(), matching audioSplitter pattern)
+    command.audioCodec(getAudioCodec(outputFormat));
+    command.audioBitrate(audioBitrate);
 
     command
+      .on('start', (cmdLine) => {
+        console.log(`[AudioExtractor] Running: ${cmdLine}`);
+      })
       .on('end', () => {
         console.log(
           `[AudioExtractor] Successfully extracted audio to: ${outputPath}`,

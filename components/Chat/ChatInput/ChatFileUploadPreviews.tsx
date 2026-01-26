@@ -537,8 +537,14 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                 {badgeText}
               </div>
               {status === 'uploading' && progress !== undefined && (
-                <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 flex-shrink-0">
-                  {Math.round(progress)}%
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <IconLoader2
+                    size={14}
+                    className="animate-spin text-blue-500"
+                  />
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                    {Math.round(progress)}%
+                  </span>
                 </div>
               )}
             </div>
@@ -549,6 +555,15 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
               >
                 {filename}
               </div>
+              {/* Upload progress bar */}
+              {status === 'uploading' && progress !== undefined && (
+                <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-1.5">
+                  <div
+                    className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out bg-[length:1rem_1rem] bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 animate-progress-bar-stripes"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
             </div>
             <div className="mt-1.5">
               {/* Extraction status for video files */}

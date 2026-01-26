@@ -1004,7 +1004,8 @@
     "expiredOrDeleted": "Ta transkrypcja wygasła lub została usunięta.",
     "fetchError": "Nie udało się załadować transkrypcji. Spróbuj ponownie.",
     "transcriptExpired": "Transkrypcja dla pliku {filename} wygasła. Transkrypcje są automatycznie usuwane po {days} dniach w celu ochrony prywatności.",
-    "expirationWarning": "Transkrypcja dla pliku {filename} wygaśnie za {days} dni. Skopiuj treść, jeśli chcesz ją zachować."
+    "expirationWarning": "Transkrypcja dla pliku {filename} wygaśnie za {days} dni. Skopiuj treść, jeśli chcesz ją zachować.",
+    "elapsedTime": "Upłynęło: {time}"
   },
   "importBackupParseError": "Nie udało się przetworzyć pliku kopii zapasowej. Upewnij się, że jest to poprawny plik JSON.",
   "emptyState": {

@@ -1000,7 +1000,8 @@
     "expiredOrDeleted": "Tämä transkriptio on vanhentunut tai poistettu.",
     "fetchError": "Transkription lataaminen epäonnistui. Yritä uudelleen.",
     "transcriptExpired": "Tiedoston {filename} transkriptio on vanhentunut. Transkriptiot poistetaan automaattisesti {days} päivän kuluttua yksityisyyden suojaamiseksi.",
-    "expirationWarning": "Tiedoston {filename} transkriptio vanhenee {days} päivän kuluttua. Kopioi sisältö, jos tarvitset sitä jatkossa."
+    "expirationWarning": "Tiedoston {filename} transkriptio vanhenee {days} päivän kuluttua. Kopioi sisältö, jos tarvitset sitä jatkossa.",
+    "elapsedTime": "Kulunut aika: {time}"
   },
   "transcriptionComplete": "Puhtaaksikirjoitus valmis! Teksti lisätty keskusteluun.",
   "No prompts found": "Kehotteita ei löytynyt",

@@ -26,6 +26,7 @@ import { translateText } from '@/lib/services/translation';
 
 import { getAutonym } from '@/lib/utils/app/locales';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
+import { generateAudioFilename } from '@/lib/utils/shared/string/slugify';
 
 import {
   Conversation,
@@ -269,6 +270,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
     return processedContent;
   }, [translationState, processedContent]);
+
+  // Generate contextual filename for audio downloads (1-indexed for human readability)
+  const audioDownloadFilename = useMemo(() => {
+    return generateAudioFilename(
+      selectedConversation?.name || '',
+      messageIndex + 1,
+      'mp3',
+      'assistant-audio',
+    );
+  }, [selectedConversation?.name, messageIndex]);
 
   // Copy handler - uses displayed content (original or translated)
   const handleCopy = useCallback(() => {
@@ -547,7 +558,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                       isAnimating={messageIsStreaming}
                       controls={true}
                       shikiTheme={['github-light', 'github-dark']}
-                      mermaidConfig={mermaidConfig}
+                      mermaid={{ config: mermaidConfig }}
                     >
                       {displayedContent}
                     </CitationStreamdown>
@@ -733,7 +744,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   </span>
                 </div>
               )}
-              <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+              <AudioPlayer
+                audioUrl={audioUrl}
+                onClose={handleCloseAudio}
+                downloadFilename={audioDownloadFilename}
+              />
             </>
           )}
 

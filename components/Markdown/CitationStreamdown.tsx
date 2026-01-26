@@ -1,6 +1,12 @@
 // components/Markdown/CitationStreamdown.tsx
-import React, { FC, memo, useCallback, useRef, useState } from 'react';
-import type { Components } from 'react-markdown';
+import React, {
+  ComponentType,
+  FC,
+  memo,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 
 import { Citation } from '@/types/rag';
 
@@ -8,6 +14,9 @@ import { CitationItem } from '../Chat/Citations/CitationItem';
 
 import { Streamdown } from 'streamdown';
 import type { StreamdownProps } from 'streamdown';
+
+// Type definition for markdown component overrides (compatible with streamdown)
+type Components = Record<string, ComponentType<any>>;
 
 interface CitationStreamdownProps extends Omit<StreamdownProps, 'components'> {
   citations?: Citation[];

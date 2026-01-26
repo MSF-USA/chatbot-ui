@@ -1254,7 +1254,8 @@
     "expiredOrDeleted": "Denna transkription har gått ut eller raderats.",
     "fetchError": "Kunde inte ladda transkriptionen. Försök igen.",
     "transcriptExpired": "Transkriptionen för {filename} har gått ut. Transkriptioner tas automatiskt bort efter {days} dagar av integritetsskäl.",
-    "expirationWarning": "Transkriptionen för {filename} går ut om {days} dag(ar). Kopiera innehållet om du behöver spara det."
+    "expirationWarning": "Transkriptionen för {filename} går ut om {days} dag(ar). Kopiera innehållet om du behöver spara det.",
+    "elapsedTime": "Förfluten tid: {time}"
   },
   "migration": {
     "status": {

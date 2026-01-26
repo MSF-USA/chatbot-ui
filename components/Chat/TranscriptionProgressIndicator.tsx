@@ -1,7 +1,7 @@
 'use client';
 
 import { IconLoader2 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -33,27 +33,78 @@ export function TranscriptionProgressIndicator({
   progress,
 }: Props) {
   const t = useTranslations('transcription');
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(
-    Math.ceil((maxDurationMs - (Date.now() - startedAt)) / 1000),
-  );
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
+
+  // Snapshot of the last estimate to enable linear countdown between chunk completions
+  const lastEstimateRef = useRef<{
+    completedChunks: number;
+    estimateMs: number;
+    timestamp: number;
+  } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const elapsed = Date.now() - startedAt;
-      const remaining = Math.max(
-        0,
-        Math.ceil((maxDurationMs - elapsed) / 1000),
-      );
-      setRemainingSeconds(remaining);
+      const now = Date.now();
+
+      // Always update elapsed time (counts up constantly)
+      const elapsed = now - startedAt;
+      setElapsedSeconds(Math.floor(elapsed / 1000));
+
+      // No progress data yet - show "??" for remaining time
+      if (!progress || progress.total === 0 || progress.completed === 0) {
+        setRemainingSeconds(null);
+        return;
+      }
+
+      // Check if a new chunk has completed since last estimate
+      const needsRecalculation =
+        !lastEstimateRef.current ||
+        lastEstimateRef.current.completedChunks !== progress.completed;
+
+      if (needsRecalculation) {
+        // Calculate new estimate based on chunk completion data
+        const elapsedMs = now - startedAt;
+        const avgTimePerChunk = elapsedMs / progress.completed;
+        const remainingChunks = progress.total - progress.completed;
+        const baseEstimateMs = remainingChunks * avgTimePerChunk;
+
+        // Apply constant 60% buffer
+        const estimatedRemainingMs = baseEstimateMs * 1.6;
+
+        // Cap at maxDuration
+        const cappedEstimateMs = Math.min(estimatedRemainingMs, maxDurationMs);
+
+        // Store the snapshot
+        lastEstimateRef.current = {
+          completedChunks: progress.completed,
+          estimateMs: cappedEstimateMs,
+          timestamp: now,
+        };
+
+        setRemainingSeconds(Math.max(0, Math.ceil(cappedEstimateMs / 1000)));
+      } else if (lastEstimateRef.current) {
+        // Count down linearly from the last snapshot
+        const elapsedSinceSnapshot = now - lastEstimateRef.current.timestamp;
+        const remainingMs =
+          lastEstimateRef.current.estimateMs - elapsedSinceSnapshot;
+        setRemainingSeconds(Math.max(0, Math.ceil(remainingMs / 1000)));
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startedAt, maxDurationMs]);
+  }, [startedAt, maxDurationMs, progress]);
 
-  // Format as MM:SS
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
-  const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  // Format elapsed time as MM:SS
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const elapsedSecs = elapsedSeconds % 60;
+  const elapsedDisplay = `${elapsedMinutes}:${elapsedSecs.toString().padStart(2, '0')}`;
+
+  // Format remaining time as MM:SS or "??"
+  const remainingDisplay =
+    remainingSeconds !== null
+      ? `${Math.floor(remainingSeconds / 60)}:${(remainingSeconds % 60).toString().padStart(2, '0')}`
+      : '??';
 
   // Calculate progress percentage
   const progressPercent =
@@ -90,7 +141,8 @@ export function TranscriptionProgressIndicator({
       )}
 
       <div className="text-lg font-mono font-semibold text-blue-700 dark:text-blue-300">
-        {t('timeRemaining', { time: timeDisplay })}
+        {t('elapsedTime', { time: elapsedDisplay })} |{' '}
+        {t('timeRemaining', { time: remainingDisplay })}
       </div>
       <div className="text-xs text-gray-500 dark:text-gray-500">
         {t('maxDurationNote', { minutes: Math.ceil(maxDurationMs / 60000) })}

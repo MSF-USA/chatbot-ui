@@ -175,6 +175,71 @@ export class StandardChatHandler extends BasePipelineStage {
             }
           }
 
+          // Check if file processing failed and we should return an error response
+          const fileProcessingFailed =
+            context.processedContent?.metadata?.fileProcessingFailed;
+          if (
+            fileProcessingFailed &&
+            context.errors &&
+            context.errors.length > 0
+          ) {
+            // Log the actual error for debugging (server-side only)
+            const fileError = context.errors.find(
+              (e) =>
+                e.message.includes('transcribe') ||
+                e.message.includes('Audio extraction') ||
+                e.message.includes('Cannot transcribe') ||
+                e.message.includes('does not contain an audio track') ||
+                e.message.includes('file'),
+            );
+
+            if (fileError) {
+              console.error(
+                '[StandardChatHandler] File processing failed:',
+                fileError.message,
+              );
+            }
+
+            console.log(
+              '[StandardChatHandler] File processing failed, returning error response',
+            );
+
+            const encoder = new TextEncoder();
+            // Map known error patterns to user-friendly messages
+            let errorMessage: string;
+            if (
+              fileError?.message.includes('does not contain an audio track')
+            ) {
+              errorMessage =
+                'We were unable to detect an audio track in the provided video file. You can try uploading a video with audio or an audio file directly.';
+            } else if (fileError?.message.includes('FFmpeg is not available')) {
+              errorMessage =
+                "We're currently unable to process video files. You can try uploading an audio file instead.";
+            } else {
+              // Default generic message for unknown errors
+              errorMessage =
+                'We were unable to process the uploaded file. You can try uploading the file again or using a different file format.';
+            }
+
+            const stream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(encoder.encode(errorMessage));
+                controller.close();
+              },
+            });
+
+            return {
+              ...context,
+              response: new Response(stream, {
+                headers: {
+                  'Content-Type': 'text/plain; charset=utf-8',
+                  'Cache-Control': 'no-cache',
+                  Connection: 'keep-alive',
+                },
+              }),
+            };
+          }
+
           // Build final messages from enriched messages or processed content
           const messagesToSend = this.buildFinalMessages(context);
 

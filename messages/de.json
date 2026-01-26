@@ -1251,7 +1251,8 @@
     "expiredOrDeleted": "Dieses Transkript ist abgelaufen oder wurde gelöscht.",
     "fetchError": "Transkript konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
     "transcriptExpired": "Das Transkript für {filename} ist abgelaufen. Transkripte werden aus Datenschutzgründen nach {days} Tagen automatisch gelöscht.",
-    "expirationWarning": "Das Transkript für {filename} läuft in {days} Tag(en) ab. Kopieren Sie den Inhalt, falls Sie ihn behalten möchten."
+    "expirationWarning": "Das Transkript für {filename} läuft in {days} Tag(en) ab. Kopieren Sie den Inhalt, falls Sie ihn behalten möchten.",
+    "elapsedTime": "Vergangen: {time}"
   },
   "notFound": {
     "lostDog": "Verlorener Hund"

@@ -1254,7 +1254,8 @@
     "expiredOrDeleted": "Bu transkriptin süresi dolmuş veya silinmiş.",
     "fetchError": "Transkript yüklenemedi. Lütfen tekrar deneyin.",
     "transcriptExpired": "{filename} dosyasının transkriptinin süresi doldu. Gizlilik nedeniyle transkriptler {days} gün sonra otomatik olarak silinir.",
-    "expirationWarning": "{filename} dosyasının transkripti {days} gün içinde silinecek. Saklamak istiyorsanız içeriği kopyalayın."
+    "expirationWarning": "{filename} dosyasının transkripti {days} gün içinde silinecek. Saklamak istiyorsanız içeriği kopyalayın.",
+    "elapsedTime": "Geçen süre: {time}"
   },
   "migration": {
     "status": {

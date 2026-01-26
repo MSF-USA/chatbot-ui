@@ -1004,7 +1004,8 @@
     "expiredOrDeleted": "Această transcriere a expirat sau a fost ștearsă.",
     "fetchError": "Nu s-a putut încărca transcrierea. Vă rugăm să încercați din nou.",
     "transcriptExpired": "Transcrierea pentru {filename} a expirat. Transcrierile sunt șterse automat după {days} zile pentru confidențialitate.",
-    "expirationWarning": "Transcrierea pentru {filename} va expira în {days} zi(le). Salvați conținutul dacă aveți nevoie de el."
+    "expirationWarning": "Transcrierea pentru {filename} va expira în {days} zi(le). Salvați conținutul dacă aveți nevoie de el.",
+    "elapsedTime": "Timp scurs: {time}"
   },
   "importBackupParseError": "Nu s-a putut analiza fișierul de backup. Asigurați-vă că este un fișier JSON valid.",
   "emptyState": {

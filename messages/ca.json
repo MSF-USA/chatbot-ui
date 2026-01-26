@@ -1000,7 +1000,8 @@
     "expiredOrDeleted": "Aquesta transcripció ha caducat o ha estat eliminada.",
     "fetchError": "No s'ha pogut carregar la transcripció. Torna-ho a intentar.",
     "transcriptExpired": "La transcripció de {filename} ha caducat. Les transcripcions s'eliminen automàticament després de {days} dies per motius de privadesa.",
-    "expirationWarning": "La transcripció de {filename} caducarà en {days} dia(es). Copia el contingut si el vols conservar."
+    "expirationWarning": "La transcripció de {filename} caducarà en {days} dia(es). Copia el contingut si el vols conservar.",
+    "elapsedTime": "Temps transcorregut: {time}"
   },
   "transcriptionComplete": "Transcripció completa! Text afegit a l'entrada del xat.",
   "No prompts found": "No s'ha trobat cap prompt",
