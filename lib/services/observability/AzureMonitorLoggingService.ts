@@ -19,6 +19,7 @@ import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 import {
   AgentErrorLogEntry,
   AgentExecutionLogEntry,
+  BaseLogEntry,
   ChatCompletionLogEntry,
   CustomMetricLogEntry,
   DocumentExportErrorLogEntry,
@@ -149,10 +150,7 @@ export class AzureMonitorLoggingService {
       correlationId?: string;
       requestId?: string;
     },
-  ): Omit<
-    LogEntry,
-    keyof Omit<LogEntry, keyof import('@/lib/types/logging').BaseLogEntry>
-  > {
+  ): BaseLogEntry {
     return {
       Timestamp: new Date().toISOString(),
       EventType: eventType,
