@@ -40,6 +40,7 @@ import {
   ToneAnalysisErrorLogEntry,
   ToneAnalysisSuccessLogEntry,
   TranscriptionErrorLogEntry,
+  TranscriptionQueuedLogEntry,
   TranscriptionSuccessLogEntry,
   TranslationErrorLogEntry,
   TranslationSuccessLogEntry,
@@ -581,6 +582,38 @@ export class AzureMonitorLoggingService {
       TranscriptionType: params.transcriptionType,
       ErrorCode: params.errorCode,
       ErrorMessage: sanitizeForLog(params.errorMessage),
+    };
+
+    await this.uploadLogs([entry], shouldAwait);
+  }
+
+  /**
+   * Logs a transcription queued event.
+   * Used when a chunked transcription job is submitted for async processing.
+   *
+   * @param params - Transcription queued parameters
+   * @param shouldAwait - If true, waits for the log to be uploaded
+   */
+  async logTranscriptionQueued(
+    params: {
+      user: Session['user'];
+      filename: string;
+      fileSize: number;
+      jobId: string;
+      totalChunks: number;
+      language?: string;
+    },
+    shouldAwait: boolean = false,
+  ): Promise<void> {
+    const userContext = this.extractUserContext(params.user);
+    const entry: TranscriptionQueuedLogEntry = {
+      ...this.createBaseEntry(LogEventType.TranscriptionQueued, userContext),
+      EventType: LogEventType.TranscriptionQueued,
+      Filename: sanitizeForLog(params.filename),
+      FileSize: params.fileSize,
+      JobId: params.jobId,
+      TotalChunks: params.totalChunks,
+      Language: params.language,
     };
 
     await this.uploadLogs([entry], shouldAwait);
