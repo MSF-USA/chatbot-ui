@@ -51,6 +51,28 @@ export interface ApiLoggingContext {
    * @see getErrorDetails
    */
   readonly getErrorDetails: typeof getErrorDetails;
+
+  /**
+   * Sets the session and returns the user for narrowing convenience.
+   *
+   * TypeScript cannot narrow getter properties because they could return
+   * different values on each access. This method sets the session and returns
+   * the user, allowing you to store it in a local variable for type-safe access.
+   *
+   * @param session - The NextAuth session from `auth()`
+   * @returns The user from the session, or undefined if session is null/has no user
+   *
+   * @example
+   * ```typescript
+   * const ctx = createApiLoggingContext();
+   * const user = ctx.setSession(await auth());
+   * if (!user) return unauthorizedResponse();
+   *
+   * // `user` is now narrowed and can be used safely
+   * void ctx.logger.logSuccess({ user, duration: ctx.timer.elapsed() });
+   * ```
+   */
+  setSession(session: Session | null): Session['user'] | undefined;
 }
 
 /**
@@ -70,19 +92,20 @@ export interface ApiLoggingContext {
  * ```typescript
  * export async function POST(req: NextRequest) {
  *   const ctx = createApiLoggingContext();
+ *   let user: Session['user'] | undefined;
  *
  *   try {
- *     ctx.session = await auth();
- *     if (!ctx.user) return unauthorizedResponse();
+ *     user = ctx.setSession(await auth());
+ *     if (!user) return unauthorizedResponse();
  *
  *     // ... perform work ...
  *
- *     void ctx.logger.logSuccess({ user: ctx.user, duration: ctx.timer.elapsed() });
+ *     void ctx.logger.logSuccess({ user, duration: ctx.timer.elapsed() });
  *     return successResponse(data);
  *   } catch (error) {
- *     if (ctx.user) {
+ *     if (user) {
  *       void ctx.logger.logError({
- *         user: ctx.user,
+ *         user,
  *         errorMessage: ctx.getErrorMessage(error),
  *       });
  *     }
@@ -99,6 +122,10 @@ export function createApiLoggingContext(): ApiLoggingContext {
     session: null,
     get user() {
       return this.session?.user;
+    },
+    setSession(session: Session | null) {
+      this.session = session;
+      return session?.user;
     },
     logger,
     timer,
