@@ -78,6 +78,11 @@ const serverEnvSchema = z.object({
   // Application Insights (OpenTelemetry)
   APPLICATIONINSIGHTS_CONNECTION_STRING: z.string().optional(),
 
+  // Azure Monitor Log Ingestion
+  LOGS_INGESTION_ENDPOINT: z.string().url().optional(),
+  DATA_COLLECTION_RULE_ID: z.string().optional(),
+  STREAM_NAME: z.string().default('Custom-ChatBotLogs_CL'),
+
   // LaunchDarkly
   LAUNCHDARKLY_SDK_KEY: z.string().optional(),
   LAUNCHDARKLY_CLIENT_ID: z.string().optional(),
