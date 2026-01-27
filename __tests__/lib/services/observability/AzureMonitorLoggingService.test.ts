@@ -551,6 +551,356 @@ describe('AzureMonitorLoggingService', () => {
     });
   });
 
+  describe('logTTSSuccess', () => {
+    it('should create TTS success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logTTSSuccess(
+        {
+          user: mockUser,
+          textLength: 500,
+          targetLanguage: 'en-US',
+          voiceName: 'en-US-JennyNeural',
+          audioFormat: 'Audio24Khz48KBitRateMonoMp3',
+          duration: 2000,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) => typeof call[0] === 'string' && call[0].includes('TTSSuccess'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.TTSSuccess);
+      expect(loggedEntry.TextLength).toBe(500);
+      expect(loggedEntry.TargetLanguage).toBe('en-US');
+      expect(loggedEntry.VoiceName).toBe('en-US-JennyNeural');
+      expect(loggedEntry.AudioFormat).toBe('Audio24Khz48KBitRateMonoMp3');
+      expect(loggedEntry.Duration).toBe(2000);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logTTSError', () => {
+    it('should create TTS error log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logTTSError(
+        {
+          user: mockUser,
+          textLength: 100,
+          targetLanguage: 'en-US',
+          voiceName: 'en-US-JennyNeural',
+          errorCode: 'TTS_SYNTHESIS_FAILED',
+          errorMessage: 'Voice synthesis failed',
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) => typeof call[0] === 'string' && call[0].includes('TTSError'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.TTSError);
+      expect(loggedEntry.ErrorCode).toBe('TTS_SYNTHESIS_FAILED');
+      expect(loggedEntry.ErrorMessage).toBe('Voice synthesis failed');
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logTranslationSuccess', () => {
+    it('should create translation success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logTranslationSuccess(
+        {
+          user: mockUser,
+          sourceLanguage: 'en',
+          targetLanguage: 'es',
+          contentLength: 1000,
+          isDocumentTranslation: false,
+          duration: 3000,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('TranslationSuccess'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.TranslationSuccess);
+      expect(loggedEntry.SourceLanguage).toBe('en');
+      expect(loggedEntry.TargetLanguage).toBe('es');
+      expect(loggedEntry.ContentLength).toBe(1000);
+      expect(loggedEntry.IsDocumentTranslation).toBe(false);
+      expect(loggedEntry.Duration).toBe(3000);
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should create document translation success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logTranslationSuccess(
+        {
+          user: mockUser,
+          targetLanguage: 'fr',
+          contentLength: 50000,
+          isDocumentTranslation: true,
+          duration: 15000,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('TranslationSuccess'),
+      );
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.IsDocumentTranslation).toBe(true);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logTranslationError', () => {
+    it('should create translation error log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logTranslationError(
+        {
+          user: mockUser,
+          targetLanguage: 'de',
+          isDocumentTranslation: true,
+          errorCode: 'TRANSLATION_FAILED',
+          errorMessage: 'Service unavailable',
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('TranslationError'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.TranslationError);
+      expect(loggedEntry.ErrorCode).toBe('TRANSLATION_FAILED');
+      expect(loggedEntry.IsDocumentTranslation).toBe(true);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logDocumentExportSuccess', () => {
+    it('should create document export success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logDocumentExportSuccess(
+        {
+          user: mockUser,
+          format: 'docx',
+          contentLength: 25000,
+          messageCount: 15,
+          duration: 1500,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' &&
+          call[0].includes('DocumentExportSuccess'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.DocumentExportSuccess);
+      expect(loggedEntry.Format).toBe('docx');
+      expect(loggedEntry.ContentLength).toBe(25000);
+      expect(loggedEntry.MessageCount).toBe(15);
+      expect(loggedEntry.Duration).toBe(1500);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logDocumentExportError', () => {
+    it('should create document export error log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logDocumentExportError(
+        {
+          user: mockUser,
+          format: 'docx',
+          contentLength: 10000,
+          errorCode: 'DOCX_CONVERSION_ERROR',
+          errorMessage: 'Failed to generate document',
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' &&
+          call[0].includes('DocumentExportError'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.DocumentExportError);
+      expect(loggedEntry.ErrorCode).toBe('DOCX_CONVERSION_ERROR');
+      expect(loggedEntry.Format).toBe('docx');
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logToneAnalysisSuccess', () => {
+    it('should create tone analysis success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logToneAnalysisSuccess(
+        {
+          user: mockUser,
+          inputLength: 5000,
+          toneName: 'Professional',
+          tagCount: 4,
+          duration: 8000,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' &&
+          call[0].includes('ToneAnalysisSuccess'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.ToneAnalysisSuccess);
+      expect(loggedEntry.InputLength).toBe(5000);
+      expect(loggedEntry.ToneName).toBe('Professional');
+      expect(loggedEntry.TagCount).toBe(4);
+      expect(loggedEntry.Duration).toBe(8000);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logToneAnalysisError', () => {
+    it('should create tone analysis error log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logToneAnalysisError(
+        {
+          user: mockUser,
+          inputLength: 2000,
+          errorCode: 'TONE_ANALYSIS_ERROR',
+          errorMessage: 'AI refused to analyze',
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('ToneAnalysisError'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.ToneAnalysisError);
+      expect(loggedEntry.ErrorCode).toBe('TONE_ANALYSIS_ERROR');
+      expect(loggedEntry.InputLength).toBe(2000);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logFileRetrievalSuccess', () => {
+    it('should create file retrieval success log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logFileRetrievalSuccess(
+        {
+          user: mockUser,
+          fileId: 'abc123def456',
+          fileType: 'image',
+          duration: 300,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' &&
+          call[0].includes('FileRetrievalSuccess'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.FileRetrievalSuccess);
+      expect(loggedEntry.FileId).toBe('abc123def456');
+      expect(loggedEntry.FileType).toBe('image');
+      expect(loggedEntry.Duration).toBe(300);
+
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('logFileRetrievalError', () => {
+    it('should create file retrieval error log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logFileRetrievalError(
+        {
+          user: mockUser,
+          fileId: 'xyz789',
+          fileType: 'file',
+          errorCode: 'FILE_NOT_FOUND',
+          errorMessage: 'The requested file does not exist',
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('FileRetrievalError'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      expect(loggedEntry.EventType).toBe(LogEventType.FileRetrievalError);
+      expect(loggedEntry.ErrorCode).toBe('FILE_NOT_FOUND');
+      expect(loggedEntry.FileId).toBe('xyz789');
+      expect(loggedEntry.FileType).toBe('file');
+
+      consoleSpy.mockRestore();
+    });
+  });
+
   describe('fire-and-forget behavior', () => {
     it('should not block when shouldAwait is false', async () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
