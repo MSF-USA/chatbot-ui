@@ -419,7 +419,7 @@ export interface ToneAnalysisErrorLogEntry extends BaseLogEntry {
  */
 export interface FileRetrievalSuccessLogEntry extends BaseLogEntry {
   EventType: LogEventType.FileRetrievalSuccess;
-  /** File identifier (SHA256 hash) */
+  /** File identifier (SHA256 hash, optionally with file extension e.g., "abc123.pdf") */
   FileId: string;
   /** Type of file (image or file) */
   FileType: 'image' | 'file';
@@ -430,7 +430,7 @@ export interface FileRetrievalSuccessLogEntry extends BaseLogEntry {
  */
 export interface FileRetrievalErrorLogEntry extends BaseLogEntry {
   EventType: LogEventType.FileRetrievalError;
-  /** File identifier (SHA256 hash) */
+  /** File identifier (SHA256 hash, optionally with file extension e.g., "abc123.pdf") */
   FileId?: string;
   /** Type of file (image or file) */
   FileType?: 'image' | 'file';
