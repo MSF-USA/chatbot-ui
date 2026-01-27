@@ -62,7 +62,7 @@ export class AzureMonitorLoggingService {
   private readonly isEnabled: boolean;
 
   private constructor() {
-    this.endpoint = env.LOGS_INGESTION_ENDPOINT;
+    this.endpoint = env.LOGS_INJESTION_ENDPOINT;
     this.ruleId = env.DATA_COLLECTION_RULE_ID;
     this.streamName = env.STREAM_NAME || 'Custom-ChatBotLogs_CL';
     this.environment = env.NEXT_PUBLIC_ENV || 'localhost';
@@ -87,7 +87,7 @@ export class AzureMonitorLoggingService {
       }
     } else {
       console.log(
-        '[AzureMonitorLoggingService] Disabled - missing LOGS_INGESTION_ENDPOINT or DATA_COLLECTION_RULE_ID',
+        '[AzureMonitorLoggingService] Disabled - missing LOGS_INJESTION_ENDPOINT or DATA_COLLECTION_RULE_ID',
       );
     }
   }
@@ -119,6 +119,9 @@ export class AzureMonitorLoggingService {
     return {
       id: user.id || 'unknown',
       email: user.mail || 'unknown',
+      givenName: user.givenName,
+      surName: user.surname,
+      displayName: user.displayName,
       jobTitle: user.jobTitle,
       department: user.department,
       companyName: user.companyName,
@@ -143,6 +146,8 @@ export class AzureMonitorLoggingService {
       messageCount?: number;
       temperature?: number;
       duration?: number;
+      correlationId?: string;
+      requestId?: string;
     },
   ): Omit<
     LogEntry,
@@ -153,9 +158,12 @@ export class AzureMonitorLoggingService {
       EventType: eventType,
       UserId: user.id,
       UserEmail: user.email,
+      UserGivenName: user.givenName,
+      UserSurName: user.surName,
+      UserDisplayName: user.displayName,
       UserJobTitle: user.jobTitle,
       UserDepartment: user.department,
-      UserCompany: user.companyName,
+      UserCompanyName: user.companyName,
       BotId: options?.botId,
       Env: this.environment,
       Duration: options?.duration,
@@ -164,6 +172,8 @@ export class AzureMonitorLoggingService {
       ModelUsed: options?.modelUsed,
       MessageCount: options?.messageCount,
       Temperature: options?.temperature,
+      CorrelationId: options?.correlationId,
+      RequestId: options?.requestId,
     };
   }
 

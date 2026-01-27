@@ -79,7 +79,7 @@ const serverEnvSchema = z.object({
   APPLICATIONINSIGHTS_CONNECTION_STRING: z.string().optional(),
 
   // Azure Monitor Log Ingestion
-  LOGS_INGESTION_ENDPOINT: z.string().url().optional(),
+  LOGS_INJESTION_ENDPOINT: z.string().url().optional(),
   DATA_COLLECTION_RULE_ID: z.string().optional(),
   STREAM_NAME: z.string().default('Custom-ChatBotLogs_CL'),
 

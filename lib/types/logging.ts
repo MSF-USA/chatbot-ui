@@ -56,12 +56,18 @@ export interface BaseLogEntry {
   UserId: string;
   /** User's email address */
   UserEmail: string;
+  /** User's first/given name */
+  UserGivenName?: string;
+  /** User's last/surname */
+  UserSurName?: string;
+  /** User's display name */
+  UserDisplayName?: string;
   /** User's job title */
   UserJobTitle?: string;
   /** User's department */
   UserDepartment?: string;
   /** User's company/organization name */
-  UserCompany?: string;
+  UserCompanyName?: string;
   /** Bot/assistant identifier if applicable */
   BotId?: string;
   /** Environment (localhost, dev, staging, beta, prod) */
@@ -78,6 +84,10 @@ export interface BaseLogEntry {
   MessageCount?: number;
   /** Temperature setting for the model */
   Temperature?: number;
+  /** Request correlation ID for distributed tracing */
+  CorrelationId?: string;
+  /** Unique request identifier */
+  RequestId?: string;
 }
 
 /**
@@ -443,6 +453,9 @@ export type LogEntry =
 export interface LoggingUserContext {
   id: string;
   email: string;
+  givenName?: string;
+  surName?: string;
+  displayName?: string;
   jobTitle?: string;
   department?: string;
   companyName?: string;
