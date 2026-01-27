@@ -31,7 +31,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session: Session | null = await auth();
-  if (!session) throw new Error('Failed to pull session!');
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   const { id } = await params;
 
