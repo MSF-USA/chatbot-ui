@@ -44,6 +44,9 @@ export class RAGEnricher extends BasePipelineStage {
   /**
    * Extracts the user's query from the last user message.
    * Used for logging the search query.
+   *
+   * @deprecated This method is unused and will be removed when switching to the new logging system.
+   * Query content is intentionally omitted from logs for user privacy.
    */
   private extractQueryFromMessages(messages: Message[]): string {
     // Find the last user message
