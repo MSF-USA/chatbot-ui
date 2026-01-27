@@ -309,12 +309,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Debug: Log the full response structure
-    console.log(
-      '[Tone Analysis] Full response:',
-      JSON.stringify(response, null, 2),
-    );
-
     // Better error handling and logging
     if (!response.choices || response.choices.length === 0) {
       console.error('[Tone Analysis] No choices in response');
@@ -322,10 +316,6 @@ export async function POST(req: NextRequest) {
     }
 
     const choice = response.choices[0];
-    console.log(
-      '[Tone Analysis] Choice object:',
-      JSON.stringify(choice, null, 2),
-    );
 
     // Check for refusal
     if (choice.message?.refusal) {
