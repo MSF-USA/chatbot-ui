@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { detectLanguage } from '@/lib/services/languageDetection';
 
 import { cleanMarkdown } from '@/lib/utils/app/clean';
+import { unauthorizedResponse } from '@/lib/utils/server/api/apiResponse';
 import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
@@ -118,7 +119,7 @@ function buildSSML(
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session: Session | null = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const ctx = createApiLoggingContext();

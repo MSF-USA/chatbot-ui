@@ -15,6 +15,7 @@ import { BatchTranscriptionService } from '@/lib/services/transcription/batchTra
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
+import { unauthorizedResponse } from '@/lib/utils/server/api/apiResponse';
 
 import { TranscriptionResponse } from '@/types/transcription';
 
@@ -32,7 +33,7 @@ export async function GET(
 ) {
   const session: Session | null = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   const { id } = await params;

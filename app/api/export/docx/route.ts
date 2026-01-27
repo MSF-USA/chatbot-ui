@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { unauthorizedResponse } from '@/lib/utils/server/api/apiResponse';
 import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import { auth } from '@/auth';
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
   // Check authentication
   const session = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return unauthorizedResponse();
   }
 
   try {
