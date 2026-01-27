@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
@@ -140,11 +141,12 @@ interface AnalysisResponse {
 
 export async function POST(req: NextRequest) {
   const ctx = createApiLoggingContext();
+  let user: Session['user'] | undefined;
 
   try {
     // Check authentication
-    ctx.session = await auth();
-    if (!ctx.user) {
+    user = ctx.setSession(await auth());
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -348,7 +350,7 @@ export async function POST(req: NextRequest) {
 
     // Log success
     void ctx.logger.logToneAnalysisSuccess({
-      user: ctx.user,
+      user,
       inputLength: combinedContent.length,
       toneName,
       tagCount: result.suggestedTags.length,
@@ -359,10 +361,10 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('[Tone Analysis API] Error:', error);
 
-    // Log error using hoisted session (no redundant auth() call)
-    if (ctx.user) {
+    // Log error using hoisted user (no redundant auth() call)
+    if (user) {
       void ctx.logger.logToneAnalysisError({
-        user: ctx.user,
+        user,
         errorCode: 'TONE_ANALYSIS_ERROR',
         errorMessage: ctx.getErrorMessage(error),
       });

@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import {
@@ -52,11 +53,12 @@ Guidelines:
  */
 export async function POST(req: NextRequest) {
   const ctx = createApiLoggingContext();
+  let user: Session['user'] | undefined;
 
   try {
     // Check authentication
-    ctx.session = await auth();
-    if (!ctx.user) {
+    user = ctx.setSession(await auth());
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -159,7 +161,7 @@ ${sourceText}
 
     // Log success
     void ctx.logger.logTranslationSuccess({
-      user: ctx.user,
+      user,
       targetLanguage: targetLocale,
       contentLength: sourceText.length,
       isDocumentTranslation: false,
@@ -176,10 +178,10 @@ ${sourceText}
   } catch (error) {
     console.error('[Translation API] Error:', error);
 
-    // Log error using hoisted session (no redundant auth() call)
-    if (ctx.user) {
+    // Log error using hoisted user (no redundant auth() call)
+    if (user) {
       void ctx.logger.logTranslationError({
-        user: ctx.user,
+        user,
         isDocumentTranslation: false,
         errorCode: 'TRANSLATION_ERROR',
         errorMessage: ctx.getErrorMessage(error),
