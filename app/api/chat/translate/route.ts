@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getAzureMonitorLogger } from '@/lib/services/observability';
@@ -54,10 +55,11 @@ Guidelines:
 export async function POST(req: NextRequest) {
   const logger = getAzureMonitorLogger();
   const startTime = Date.now();
+  let session: Session | null = null;
 
   try {
     // Check authentication
-    const session = await auth();
+    session = await auth();
     if (!session?.user) {
       return unauthorizedResponse();
     }
@@ -179,8 +181,7 @@ ${sourceText}
   } catch (error) {
     console.error('[Translation API] Error:', error);
 
-    // Log error (session may not be available if auth failed)
-    const session = await auth();
+    // Log error using hoisted session (no redundant auth() call)
     if (session?.user) {
       void logger.logTranslationError({
         user: session.user,
