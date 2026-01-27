@@ -22,6 +22,7 @@ export enum LogEventType {
   AgentError = 'AgentError',
   TranscriptionSuccess = 'TranscriptionSuccess',
   TranscriptionError = 'TranscriptionError',
+  TranscriptionQueued = 'TranscriptionQueued',
   TTSSuccess = 'TTSSuccess',
   TTSError = 'TTSError',
   TranslationSuccess = 'TranslationSuccess',
@@ -261,6 +262,24 @@ export interface TranscriptionErrorLogEntry extends BaseLogEntry {
 }
 
 /**
+ * Transcription queued log entry.
+ * Logged when a chunked transcription job is submitted for async processing.
+ */
+export interface TranscriptionQueuedLogEntry extends BaseLogEntry {
+  EventType: LogEventType.TranscriptionQueued;
+  /** Original filename */
+  Filename: string;
+  /** File size in bytes */
+  FileSize: number;
+  /** Job ID for tracking */
+  JobId: string;
+  /** Number of chunks to process */
+  TotalChunks: number;
+  /** Language detected or specified */
+  Language?: string;
+}
+
+/**
  * Custom metric log entry for ad-hoc measurements.
  */
 export interface CustomMetricLogEntry extends BaseLogEntry {
@@ -437,6 +456,7 @@ export type LogEntry =
   | AgentErrorLogEntry
   | TranscriptionSuccessLogEntry
   | TranscriptionErrorLogEntry
+  | TranscriptionQueuedLogEntry
   | TTSSuccessLogEntry
   | TTSErrorLogEntry
   | TranslationSuccessLogEntry
