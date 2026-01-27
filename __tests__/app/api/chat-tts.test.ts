@@ -153,12 +153,16 @@ describe('/api/chat/tts', () => {
   };
 
   describe('Authentication', () => {
-    it('throws error when session is not found', async () => {
+    it('returns 401 when session is not found', async () => {
       mockAuth.mockResolvedValue(null);
 
       const request = createTTSRequest({});
 
-      await expect(POST(request)).rejects.toThrow('Failed to pull session!');
+      const response = await POST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Unauthorized');
     });
   });
 

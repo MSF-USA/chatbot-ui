@@ -109,24 +109,32 @@ describe('/api/file/[id]/transcribe', () => {
   };
 
   describe('Authentication', () => {
-    it('throws error when not authenticated', async () => {
+    it('returns 401 when not authenticated', async () => {
       (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest(fileId);
 
-      await expect(
-        GET(request, { params: Promise.resolve({ id: fileId }) }),
-      ).rejects.toThrow('Failed to pull session!');
+      const response = await GET(request, {
+        params: Promise.resolve({ id: fileId }),
+      });
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Unauthorized');
     });
 
-    it('requires valid session', async () => {
-      (vi.mocked(auth) as any).mockResolvedValue(null);
+    it('returns 401 when session has no user', async () => {
+      (vi.mocked(auth) as any).mockResolvedValue({ user: null });
 
       const request = createRequest(fileId);
 
-      await expect(
-        GET(request, { params: Promise.resolve({ id: fileId }) }),
-      ).rejects.toThrow();
+      const response = await GET(request, {
+        params: Promise.resolve({ id: fileId }),
+      });
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Unauthorized');
     });
   });
 
