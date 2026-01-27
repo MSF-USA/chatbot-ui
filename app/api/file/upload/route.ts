@@ -109,8 +109,12 @@ export async function POST(request: NextRequest) {
     );
   };
 
+  // Hoist session to outer scope so catch block can reuse it
+  // (avoids redundant auth() call on error)
+  let session: Session | null = null;
+
   try {
-    const session: Session | null = await auth();
+    session = await auth();
     if (!session) {
       return errorResponse('Unauthorized', 401);
     }
@@ -186,12 +190,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error uploading file:', error);
 
-    // Log file upload error (fire-and-forget) if we have a session
-    const errorSession = await auth();
-    if (errorSession) {
+    // Log file upload error (fire-and-forget) using hoisted session
+    // Note: If error occurred before auth() completed, session will be null
+    // and we skip logging (pre-auth errors are rare validation failures)
+    if (session) {
       const logger = getAzureMonitorLogger();
       void logger.logFileError({
-        user: errorSession.user,
+        user: session.user,
         filename: filename,
         fileType: mimeType || filetype,
         errorCode: 'FILE_UPLOAD_FAILED',
