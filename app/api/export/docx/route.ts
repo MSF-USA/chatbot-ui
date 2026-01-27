@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getAzureMonitorLogger } from '@/lib/services/observability';
+
+import { auth } from '@/auth';
 import HTMLtoDOCX from 'html-to-docx';
 
 /**
@@ -7,6 +10,15 @@ import HTMLtoDOCX from 'html-to-docx';
  * Converts HTML to DOCX on the server-side
  */
 export async function POST(request: NextRequest) {
+  const logger = getAzureMonitorLogger();
+  const startTime = Date.now();
+
+  // Check authentication
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { html } = await request.json();
 
@@ -24,6 +36,15 @@ export async function POST(request: NextRequest) {
       pageNumber: true,
     });
 
+    // Log success
+    const duration = Date.now() - startTime;
+    void logger.logDocumentExportSuccess({
+      user: session.user,
+      format: 'docx',
+      contentLength: html.length,
+      duration,
+    });
+
     // Return DOCX file as response
     return new NextResponse(docxBlob, {
       status: 200,
@@ -35,6 +56,15 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error converting HTML to DOCX:', error);
+
+    // Log error
+    void logger.logDocumentExportError({
+      user: session.user,
+      format: 'docx',
+      errorCode: 'DOCX_CONVERSION_ERROR',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    });
+
     return NextResponse.json(
       { error: 'Failed to convert to DOCX' },
       { status: 500 },
