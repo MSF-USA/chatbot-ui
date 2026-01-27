@@ -2,9 +2,9 @@ import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { detectLanguage } from '@/lib/services/languageDetection';
-import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import { cleanMarkdown } from '@/lib/utils/app/clean';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
   DEFAULT_TTS_SETTINGS,
@@ -117,10 +117,11 @@ function buildSSML(
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session: Session | null = await auth();
-  if (!session) throw new Error('Failed to pull session!');
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  const logger = getAzureMonitorLogger();
-  const startTime = Date.now();
+  const ctx = createApiLoggingContext();
 
   try {
     const body: TTSRequest = await request.json();
@@ -253,14 +254,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const handleResult = (result: sdk.SpeechSynthesisResult) => {
         if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
           // Log success
-          const duration = Date.now() - startTime;
-          void logger.logTTSSuccess({
+          void ctx.logger.logTTSSuccess({
             user: session.user,
             textLength: cleanedText.length,
             targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
             voiceName: effectiveVoiceName,
             audioFormat: effectiveOutputFormat,
-            duration,
+            duration: ctx.timer.elapsed(),
           });
 
           // Stream the audio file back to the user
@@ -289,7 +289,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           console.error(errorDetails);
 
           // Log error
-          void logger.logTTSError({
+          void ctx.logger.logTTSError({
             user: session.user,
             textLength: cleanedText.length,
             targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
@@ -307,7 +307,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         console.error('TTS error callback:', error);
 
         // Log error
-        void logger.logTTSError({
+        void ctx.logger.logTTSError({
           user: session.user,
           textLength: cleanedText.length,
           targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
@@ -338,10 +338,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.error('Error in text-to-speech conversion:', error);
 
     // Log error
-    void logger.logTTSError({
+    void ctx.logger.logTTSError({
       user: session.user,
       errorCode: 'TTS_INTERNAL_ERROR',
-      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      errorMessage: ctx.getErrorMessage(error),
     });
 
     return NextResponse.json(

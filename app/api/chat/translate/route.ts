@@ -1,7 +1,4 @@
-import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-
-import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import {
   DEFAULT_ANALYSIS_MAX_TOKENS,
@@ -13,6 +10,7 @@ import {
   handleApiError,
   unauthorizedResponse,
 } from '@/lib/utils/server/api/apiResponse';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
   TranslationRequest,
@@ -53,14 +51,12 @@ Guidelines:
  * Translates text to a target language using Azure OpenAI
  */
 export async function POST(req: NextRequest) {
-  const logger = getAzureMonitorLogger();
-  const startTime = Date.now();
-  let session: Session | null = null;
+  const ctx = createApiLoggingContext();
 
   try {
     // Check authentication
-    session = await auth();
-    if (!session?.user) {
+    ctx.session = await auth();
+    if (!ctx.user) {
       return unauthorizedResponse();
     }
 
@@ -162,13 +158,12 @@ ${sourceText}
     }
 
     // Log success
-    const duration = Date.now() - startTime;
-    void logger.logTranslationSuccess({
-      user: session.user,
+    void ctx.logger.logTranslationSuccess({
+      user: ctx.user,
       targetLanguage: targetLocale,
       contentLength: sourceText.length,
       isDocumentTranslation: false,
-      duration,
+      duration: ctx.timer.elapsed(),
     });
 
     return NextResponse.json({
@@ -182,12 +177,12 @@ ${sourceText}
     console.error('[Translation API] Error:', error);
 
     // Log error using hoisted session (no redundant auth() call)
-    if (session?.user) {
-      void logger.logTranslationError({
-        user: session.user,
+    if (ctx.user) {
+      void ctx.logger.logTranslationError({
+        user: ctx.user,
         isDocumentTranslation: false,
         errorCode: 'TRANSLATION_ERROR',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: ctx.getErrorMessage(error),
       });
     }
 

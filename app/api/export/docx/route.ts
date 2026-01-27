@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getAzureMonitorLogger } from '@/lib/services/observability';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import { auth } from '@/auth';
 import HTMLtoDOCX from 'html-to-docx';
@@ -10,8 +10,7 @@ import HTMLtoDOCX from 'html-to-docx';
  * Converts HTML to DOCX on the server-side
  */
 export async function POST(request: NextRequest) {
-  const logger = getAzureMonitorLogger();
-  const startTime = Date.now();
+  const ctx = createApiLoggingContext();
 
   // Check authentication
   const session = await auth();
@@ -37,12 +36,11 @@ export async function POST(request: NextRequest) {
     });
 
     // Log success
-    const duration = Date.now() - startTime;
-    void logger.logDocumentExportSuccess({
+    void ctx.logger.logDocumentExportSuccess({
       user: session.user,
       format: 'docx',
       contentLength: html.length,
-      duration,
+      duration: ctx.timer.elapsed(),
     });
 
     // Return DOCX file as response
@@ -58,11 +56,11 @@ export async function POST(request: NextRequest) {
     console.error('Error converting HTML to DOCX:', error);
 
     // Log error
-    void logger.logDocumentExportError({
+    void ctx.logger.logDocumentExportError({
       user: session.user,
       format: 'docx',
       errorCode: 'DOCX_CONVERSION_ERROR',
-      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      errorMessage: ctx.getErrorMessage(error),
     });
 
     return NextResponse.json(

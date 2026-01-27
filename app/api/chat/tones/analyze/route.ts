@@ -1,8 +1,6 @@
-import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
-import { getAzureMonitorLogger } from '@/lib/services/observability';
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
 import {
@@ -19,6 +17,7 @@ import {
 import { loadDocument } from '@/lib/utils/server/file/fileHandling';
 import { getContentType } from '@/lib/utils/server/file/mimeTypes';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import { auth } from '@/auth';
 import {
@@ -140,14 +139,12 @@ interface AnalysisResponse {
 }
 
 export async function POST(req: NextRequest) {
-  const logger = getAzureMonitorLogger();
-  const startTime = Date.now();
-  let session: Session | null = null;
+  const ctx = createApiLoggingContext();
 
   try {
     // Check authentication
-    session = await auth();
-    if (!session?.user) {
+    ctx.session = await auth();
+    if (!ctx.user) {
       return unauthorizedResponse();
     }
 
@@ -159,8 +156,8 @@ export async function POST(req: NextRequest) {
     //Process uploaded files server-side
     let fileContent = '';
     if (fileUrls && fileUrls.length > 0) {
-      const userId = getUserIdFromSession(session);
-      const blobStorageClient = createBlobStorageClient(session);
+      const userId = getUserIdFromSession(ctx.session!);
+      const blobStorageClient = createBlobStorageClient(ctx.session!);
 
       for (const fileUrl of fileUrls) {
         try {
@@ -350,13 +347,12 @@ export async function POST(req: NextRequest) {
     };
 
     // Log success
-    const duration = Date.now() - startTime;
-    void logger.logToneAnalysisSuccess({
-      user: session.user,
+    void ctx.logger.logToneAnalysisSuccess({
+      user: ctx.user,
       inputLength: combinedContent.length,
       toneName,
       tagCount: result.suggestedTags.length,
-      duration,
+      duration: ctx.timer.elapsed(),
     });
 
     return NextResponse.json(result);
@@ -364,11 +360,11 @@ export async function POST(req: NextRequest) {
     console.error('[Tone Analysis API] Error:', error);
 
     // Log error using hoisted session (no redundant auth() call)
-    if (session?.user) {
-      void logger.logToneAnalysisError({
-        user: session.user,
+    if (ctx.user) {
+      void ctx.logger.logToneAnalysisError({
+        user: ctx.user,
         errorCode: 'TONE_ANALYSIS_ERROR',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: ctx.getErrorMessage(error),
       });
     }
 
