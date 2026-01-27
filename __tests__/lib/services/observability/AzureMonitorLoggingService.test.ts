@@ -34,7 +34,7 @@ vi.mock('@azure/monitor-ingestion', () => ({
 // Mock the environment
 vi.mock('@/config/environment', () => ({
   env: {
-    LOGS_INGESTION_ENDPOINT: undefined,
+    LOGS_INJESTION_ENDPOINT: undefined,
     DATA_COLLECTION_RULE_ID: undefined,
     STREAM_NAME: 'Custom-ChatBotLogs_CL',
     NEXT_PUBLIC_ENV: 'localhost',
@@ -46,6 +46,9 @@ describe('AzureMonitorLoggingService', () => {
     id: 'user-123',
     email: 'test@example.com',
     mail: 'test@example.com',
+    givenName: 'Test',
+    surname: 'User',
+    displayName: 'Test User',
     jobTitle: 'Engineer',
     department: 'Engineering',
     companyName: 'TestCorp',
@@ -153,6 +156,43 @@ describe('AzureMonitorLoggingService', () => {
       expect(loggedEntry.PromptTokens).toBe(100);
       expect(loggedEntry.CompletionTokens).toBe(200);
       expect(loggedEntry.TotalTokens).toBe(300);
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should include all user context fields in log entry', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const logger = AzureMonitorLoggingService.getInstance();
+
+      await logger.logChatCompletion(
+        {
+          user: mockUser,
+          model: 'gpt-4',
+          messageCount: 1,
+          duration: 100,
+          hasFiles: false,
+          hasImages: false,
+          hasRAG: false,
+        },
+        true,
+      );
+
+      const logCall = consoleSpy.mock.calls.find(
+        (call) =>
+          typeof call[0] === 'string' && call[0].includes('ChatCompletion'),
+      );
+      expect(logCall).toBeDefined();
+
+      const loggedEntry = JSON.parse(logCall![1]);
+      // Verify all user context fields including new ones
+      expect(loggedEntry.UserId).toBe('user-123');
+      expect(loggedEntry.UserEmail).toBe('test@example.com');
+      expect(loggedEntry.UserGivenName).toBe('Test');
+      expect(loggedEntry.UserSurName).toBe('User');
+      expect(loggedEntry.UserDisplayName).toBe('Test User');
+      expect(loggedEntry.UserJobTitle).toBe('Engineer');
+      expect(loggedEntry.UserDepartment).toBe('Engineering');
+      expect(loggedEntry.UserCompanyName).toBe('TestCorp');
 
       consoleSpy.mockRestore();
     });
