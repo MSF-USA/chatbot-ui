@@ -388,14 +388,15 @@ export class FileProcessor extends BasePipelineStage {
                       transcript: `[Transcription in progress: ${filename}]`,
                     });
 
-                    // Log chunked transcription job start (fire-and-forget)
+                    // Log chunked transcription job queued (fire-and-forget)
                     // Note: Final success/error will be logged when the job completes
                     const chunkedLogger = getAzureMonitorLogger();
-                    void chunkedLogger.logTranscriptionSuccess({
+                    void chunkedLogger.logTranscriptionQueued({
                       user: context.user,
                       filename,
                       fileSize: audioSize,
-                      transcriptionType: 'chunked_started',
+                      jobId,
+                      totalChunks,
                       language: file.transcriptionLanguage,
                     });
 
