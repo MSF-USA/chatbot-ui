@@ -128,4 +128,80 @@ describe('apiLoggingContext', () => {
       vi.useRealTimers();
     });
   });
+
+  describe('setSession', () => {
+    it('sets the session and returns the user', () => {
+      const ctx = createApiLoggingContext();
+      const mockUser = {
+        id: 'user-123',
+        mail: 'test@example.com',
+        givenName: 'Test',
+        surname: 'User',
+      };
+      const mockSession = {
+        user: mockUser,
+        expires: '2024-01-01',
+      };
+
+      const user = ctx.setSession(mockSession);
+
+      expect(user).toBe(mockUser);
+      expect(ctx.session).toBe(mockSession);
+      expect(ctx.user).toBe(mockUser);
+    });
+
+    it('returns undefined when session is null', () => {
+      const ctx = createApiLoggingContext();
+
+      const user = ctx.setSession(null);
+
+      expect(user).toBeUndefined();
+      expect(ctx.session).toBeNull();
+    });
+
+    it('returns undefined when session has no user', () => {
+      const ctx = createApiLoggingContext();
+      // @ts-expect-error Testing edge case with session without user
+      const user = ctx.setSession({ expires: '2024-01-01' });
+
+      expect(user).toBeUndefined();
+    });
+
+    it('allows TypeScript narrowing with local variable pattern', () => {
+      const ctx = createApiLoggingContext();
+      const mockUser = {
+        id: 'user-123',
+        mail: 'test@example.com',
+        givenName: 'Test',
+        surname: 'User',
+      };
+      const mockSession = {
+        user: mockUser,
+        expires: '2024-01-01',
+      };
+
+      // This pattern allows TypeScript to narrow `user`
+      const user = ctx.setSession(mockSession);
+      if (!user) {
+        throw new Error('Expected user to be defined');
+      }
+
+      // After narrowing, `user` is typed as Session['user']
+      // This test verifies the pattern works as intended
+      expect(user.id).toBe('user-123');
+      expect(user.mail).toBe('test@example.com');
+    });
+
+    it('can be called multiple times to update session', () => {
+      const ctx = createApiLoggingContext();
+      const mockUser1 = { id: 'user-1', mail: 'user1@example.com' };
+      const mockUser2 = { id: 'user-2', mail: 'user2@example.com' };
+
+      ctx.setSession({ user: mockUser1, expires: '2024-01-01' });
+      expect(ctx.user?.id).toBe('user-1');
+
+      ctx.setSession({ user: mockUser2, expires: '2024-01-01' });
+      expect(ctx.user?.id).toBe('user-2');
+    });
+  });
 });
