@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
 import {
@@ -138,6 +139,9 @@ interface AnalysisResponse {
 }
 
 export async function POST(req: NextRequest) {
+  const logger = getAzureMonitorLogger();
+  const startTime = Date.now();
+
   try {
     // Check authentication
     const session = await auth();
@@ -353,9 +357,30 @@ export async function POST(req: NextRequest) {
       characteristics: analysis.characteristics || [],
     };
 
+    // Log success
+    const duration = Date.now() - startTime;
+    void logger.logToneAnalysisSuccess({
+      user: session.user,
+      inputLength: combinedContent.length,
+      toneName,
+      tagCount: result.suggestedTags.length,
+      duration,
+    });
+
     return NextResponse.json(result);
   } catch (error) {
     console.error('[Tone Analysis API] Error:', error);
+
+    // Log error (session may not be available if auth failed)
+    const session = await auth();
+    if (session?.user) {
+      void logger.logToneAnalysisError({
+        user: session.user,
+        errorCode: 'TONE_ANALYSIS_ERROR',
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+
     return handleApiError(error, 'Failed to analyze tone');
   }
 }

@@ -18,6 +18,7 @@
 import { NextRequest } from 'next/server';
 
 import { DocumentTranslationService } from '@/lib/services/documentTranslation/documentTranslationService';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import { getEnvVariable } from '@/lib/utils/app/env';
 import {
@@ -50,6 +51,9 @@ import { v4 as uuidv4 } from 'uuid';
 export const maxDuration = 60; // Allow up to 60 seconds for translation
 
 export async function POST(request: NextRequest) {
+  const logger = getAzureMonitorLogger();
+  const startTime = Date.now();
+
   // Verify authentication
   const session = await auth();
   if (!session?.user?.id) {
@@ -216,6 +220,17 @@ export async function POST(request: NextRequest) {
       `[DocumentTranslation] Stored translation for job ${jobId}: original=${originalBlobPath}, translated=${blobPath}`,
     );
 
+    // Log success
+    const duration = Date.now() - startTime;
+    void logger.logTranslationSuccess({
+      user: session.user,
+      sourceLanguage: sourceLanguage || undefined,
+      targetLanguage,
+      contentLength: document.size,
+      isDocumentTranslation: true,
+      duration,
+    });
+
     // Build original file URL
     const originalFileUrl = `/api/document-translation/content/${jobId}?filename=${encodeURIComponent(document.name)}&ext=${fileExtension}&original=true`;
 
@@ -236,6 +251,19 @@ export async function POST(request: NextRequest) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('[DocumentTranslation] Translation failed:', errorMessage);
+
+    // Log error (targetLanguage and sourceLanguage are available from outer scope)
+    void logger.logTranslationError({
+      user: session.user,
+      sourceLanguage: sourceLanguage || undefined,
+      targetLanguage: targetLanguage || undefined,
+      contentLength: document?.size,
+      isDocumentTranslation: true,
+      errorCode: errorMessage.includes('AZURE_TRANSLATOR_ENDPOINT')
+        ? 'SERVICE_NOT_CONFIGURED'
+        : 'TRANSLATION_FAILED',
+      errorMessage,
+    });
 
     // Check for specific error types
     if (errorMessage.includes('AZURE_TRANSLATOR_ENDPOINT')) {

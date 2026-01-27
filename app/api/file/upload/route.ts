@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 import { NextRequest } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
@@ -162,7 +163,20 @@ export async function POST(request: NextRequest) {
       return payloadTooLargeResponse(sizeValidation.error ?? 'File too large');
     }
 
+    const startTime = Date.now();
     const fileURI: string = await uploadFileToBlobStorage(fileData, session);
+    const duration = Date.now() - startTime;
+
+    // Log successful file upload (fire-and-forget)
+    const logger = getAzureMonitorLogger();
+    void logger.logFileSuccess({
+      user: session.user,
+      filename: filename,
+      fileSize: fileSize,
+      fileType: mimeType || filetype,
+      duration,
+    });
+
     // Return a reference path instead of the full blob URL
     const blobFilename = fileURI.split('/').pop();
     return successResponse(
@@ -171,6 +185,20 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Error uploading file:', error);
+
+    // Log file upload error (fire-and-forget) if we have a session
+    const errorSession = await auth();
+    if (errorSession) {
+      const logger = getAzureMonitorLogger();
+      void logger.logFileError({
+        user: errorSession.user,
+        filename: filename,
+        fileType: mimeType || filetype,
+        errorCode: 'FILE_UPLOAD_FAILED',
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     return errorResponse(
       'Failed to upload file',
       500,

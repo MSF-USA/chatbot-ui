@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getAzureMonitorLogger } from '@/lib/services/observability';
+
 import {
   DEFAULT_ANALYSIS_MAX_TOKENS,
   DEFAULT_ANALYSIS_MODEL,
@@ -50,6 +52,9 @@ Guidelines:
  * Translates text to a target language using Azure OpenAI
  */
 export async function POST(req: NextRequest) {
+  const logger = getAzureMonitorLogger();
+  const startTime = Date.now();
+
   try {
     // Check authentication
     const session = await auth();
@@ -154,6 +159,16 @@ ${sourceText}
       throw new Error('Invalid response: missing translatedText');
     }
 
+    // Log success
+    const duration = Date.now() - startTime;
+    void logger.logTranslationSuccess({
+      user: session.user,
+      targetLanguage: targetLocale,
+      contentLength: sourceText.length,
+      isDocumentTranslation: false,
+      duration,
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -163,6 +178,18 @@ ${sourceText}
     });
   } catch (error) {
     console.error('[Translation API] Error:', error);
+
+    // Log error (session may not be available if auth failed)
+    const session = await auth();
+    if (session?.user) {
+      void logger.logTranslationError({
+        user: session.user,
+        isDocumentTranslation: false,
+        errorCode: 'TRANSLATION_ERROR',
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+
     return handleApiError(error, 'Failed to translate text');
   }
 }
