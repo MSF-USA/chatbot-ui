@@ -57,6 +57,14 @@ export class RAGEnricher extends BasePipelineStage {
           if (textContent && 'text' in textContent) {
             return textContent.text.slice(0, 500);
           }
+        } else if (
+          typeof message.content === 'object' &&
+          message.content !== null &&
+          'type' in message.content &&
+          message.content.type === 'text'
+        ) {
+          // Handle single TextMessageContent object
+          return message.content.text.slice(0, 500);
         }
       }
     }
