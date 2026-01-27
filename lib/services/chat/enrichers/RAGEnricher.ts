@@ -167,10 +167,11 @@ export class RAGEnricher extends BasePipelineStage {
 
           // Log RAG configuration (the actual search is performed by Azure OpenAI)
           // This gives us visibility into RAG usage patterns
+          // Note: Query content intentionally omitted for user privacy
           const logger = getAzureMonitorLogger();
           void logger.logSearch({
             user: context.user,
-            query: this.extractQueryFromMessages(enrichedMessages),
+            query: '', // Privacy: user query content not logged
             resultCount: 0, // Results come from Azure OpenAI, we don't have visibility
             searchType: 'semantic',
             indexName: this.searchIndex,
