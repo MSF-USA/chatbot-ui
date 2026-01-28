@@ -10,7 +10,6 @@ import { Citation, SearchResult } from '@/types/rag';
 import { getOrganizationAgentById } from '@/lib/organizationAgents';
 import { DefaultAzureCredential } from '@azure/identity';
 import { SearchClient } from '@azure/search-documents';
-import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
 import { ChatCompletion } from 'openai/resources';
 
@@ -20,7 +19,7 @@ import { ChatCompletion } from 'openai/resources';
  */
 export class RAGService {
   private searchClient: SearchClient<SearchResult>;
-  private openAIClient: AzureOpenAI;
+  private openAIClient: OpenAI;
   private searchIndex: string;
   public searchDocs: SearchResult[] = [];
 
@@ -38,12 +37,12 @@ export class RAGService {
    * Creates a new instance of RAGService.
    * @param {string} searchEndpoint - The endpoint URL for the Azure Search service.
    * @param {string} searchIndex - The name of the search index to query.
-   * @param {AzureOpenAI} openAIClient - Client for making OpenAI API calls.
+   * @param {OpenAI} openAIClient - Client for making OpenAI API calls (Foundry endpoint).
    */
   constructor(
     searchEndpoint: string,
     searchIndex: string,
-    openAIClient: AzureOpenAI,
+    openAIClient: OpenAI,
   ) {
     // Use DefaultAzureCredential for managed identity authentication
     this.searchClient = new SearchClient<SearchResult>(
@@ -227,8 +226,9 @@ export class RAGService {
         Return ONLY the reformulated search query with no additional text.`;
 
       // Ask the model to generate an improved search query
+      // Note: gpt-5-mini only supports default temperature (1), custom values not allowed
       const completion = await this.openAIClient.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           {
@@ -236,7 +236,6 @@ export class RAGService {
             content: `Conversation history:\n${conversationHistory}\n\nOriginal query: ${originalQuery}\n\nGenerate an improved Azure AI Search query that captures the key concepts and appropriately handles recency.`,
           },
         ],
-        temperature: 0.2,
       });
 
       const expandedQuery =

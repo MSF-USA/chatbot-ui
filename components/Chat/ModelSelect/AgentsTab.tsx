@@ -4,7 +4,7 @@ import {
   IconChevronRight,
   IconInfoCircle,
   IconPlus,
-  IconRobotFace,
+  IconTools,
 } from '@tabler/icons-react';
 import React, { FC, useState } from 'react';
 
@@ -113,7 +113,7 @@ export const AgentsTab: FC<AgentsTabProps> = ({
                 className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
               />
             )}
-            <IconRobotFace
+            <IconTools
               size={20}
               className="text-purple-600 dark:text-purple-400"
             />

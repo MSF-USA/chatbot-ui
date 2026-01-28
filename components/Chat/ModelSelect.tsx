@@ -24,7 +24,10 @@ import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
 import { ModelTypeIcon } from './ModelSelect/ModelTypeIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
-import { getOrganizationAgents } from '@/lib/organizationAgents';
+import {
+  getOrganizationAgentIdFromModelId,
+  getOrganizationAgents,
+} from '@/lib/organizationAgents';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -250,6 +253,19 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     const updates: Partial<Conversation> = {
       model: model,
     };
+
+    // Set bot ID for organization agents (enables RAG)
+    const orgAgentId = getOrganizationAgentIdFromModelId(model.id);
+    if (orgAgentId) {
+      updates.bot = orgAgentId;
+      console.log(
+        `[ModelSelect] Setting bot to organization agent: ${orgAgentId}`,
+      );
+    } else if (selectedConversation.bot) {
+      // Clear bot if switching away from an organization agent
+      updates.bot = undefined;
+      console.log(`[ModelSelect] Clearing bot (switched to non-org agent)`);
+    }
 
     // Custom agents always have search mode OFF
     if (model.isCustomAgent) {
