@@ -15,6 +15,7 @@ import { BatchTranscriptionService } from '@/lib/services/transcription/batchTra
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
+import { unauthorizedResponse } from '@/lib/utils/server/api/apiResponse';
 
 import { TranscriptionResponse } from '@/types/transcription';
 
@@ -31,7 +32,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session: Session | null = await auth();
-  if (!session) throw new Error('Failed to pull session!');
+  if (!session?.user) {
+    return unauthorizedResponse();
+  }
 
   const { id } = await params;
 

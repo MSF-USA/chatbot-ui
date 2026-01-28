@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { detectLanguage } from '@/lib/services/languageDetection';
 
 import { cleanMarkdown } from '@/lib/utils/app/clean';
+import { unauthorizedResponse } from '@/lib/utils/server/api/apiResponse';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
   DEFAULT_TTS_SETTINGS,
@@ -116,7 +118,11 @@ function buildSSML(
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session: Session | null = await auth();
-  if (!session) throw new Error('Failed to pull session!');
+  if (!session?.user) {
+    return unauthorizedResponse();
+  }
+
+  const ctx = createApiLoggingContext();
 
   try {
     const body: TTSRequest = await request.json();
@@ -248,6 +254,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return new Promise((resolve, reject) => {
       const handleResult = (result: sdk.SpeechSynthesisResult) => {
         if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
+          // Log success
+          void ctx.logger.logTTSSuccess({
+            user: session.user,
+            textLength: cleanedText.length,
+            targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
+            voiceName: effectiveVoiceName,
+            audioFormat: effectiveOutputFormat,
+            duration: ctx.timer.elapsed(),
+          });
+
           // Stream the audio file back to the user
           const audioData = result.audioData;
           const stream = new Readable();
@@ -272,6 +288,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             sdk.CancellationDetails.fromResult(result);
           const errorDetails = `Speech synthesis canceled. Reason: ${cancellationDetails.reason}, ErrorCode: ${cancellationDetails.ErrorCode}, ErrorDetails: ${cancellationDetails.errorDetails}`;
           console.error(errorDetails);
+
+          // Log error
+          void ctx.logger.logTTSError({
+            user: session.user,
+            textLength: cleanedText.length,
+            targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
+            voiceName: effectiveVoiceName,
+            errorCode: String(cancellationDetails.ErrorCode),
+            errorMessage: errorDetails,
+          });
+
           reject(new Error(errorDetails));
         }
         synthesizer.close();
@@ -279,6 +306,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const handleError = (error: string) => {
         console.error('TTS error callback:', error);
+
+        // Log error
+        void ctx.logger.logTTSError({
+          user: session.user,
+          textLength: cleanedText.length,
+          targetLanguage: effectiveVoiceName.split('-').slice(0, 2).join('-'),
+          voiceName: effectiveVoiceName,
+          errorCode: 'TTS_CALLBACK_ERROR',
+          errorMessage: error,
+        });
+
         synthesizer.close();
         reject(new Error(error));
       };
@@ -299,6 +337,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     console.error('Error in text-to-speech conversion:', error);
+
+    // Log error
+    void ctx.logger.logTTSError({
+      user: session.user,
+      errorCode: 'TTS_INTERNAL_ERROR',
+      errorMessage: ctx.getErrorMessage(error),
+    });
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

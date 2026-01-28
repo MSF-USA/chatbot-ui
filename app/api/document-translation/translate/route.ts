@@ -28,6 +28,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/server/api/apiResponse';
 import { AzureBlobStorage } from '@/lib/utils/server/blob/blob';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
   DocumentTranslationReference,
@@ -50,6 +51,8 @@ import { v4 as uuidv4 } from 'uuid';
 export const maxDuration = 60; // Allow up to 60 seconds for translation
 
 export async function POST(request: NextRequest) {
+  const ctx = createApiLoggingContext();
+
   // Verify authentication
   const session = await auth();
   if (!session?.user?.id) {
@@ -216,6 +219,16 @@ export async function POST(request: NextRequest) {
       `[DocumentTranslation] Stored translation for job ${jobId}: original=${originalBlobPath}, translated=${blobPath}`,
     );
 
+    // Log success
+    void ctx.logger.logTranslationSuccess({
+      user: session.user,
+      sourceLanguage: sourceLanguage || undefined,
+      targetLanguage,
+      contentLength: document.size,
+      isDocumentTranslation: true,
+      duration: ctx.timer.elapsed(),
+    });
+
     // Build original file URL
     const originalFileUrl = `/api/document-translation/content/${jobId}?filename=${encodeURIComponent(document.name)}&ext=${fileExtension}&original=true`;
 
@@ -233,9 +246,21 @@ export async function POST(request: NextRequest) {
 
     return successResponse(reference);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorMessage = ctx.getErrorMessage(error);
     console.error('[DocumentTranslation] Translation failed:', errorMessage);
+
+    // Log error (targetLanguage and sourceLanguage are available from outer scope)
+    void ctx.logger.logTranslationError({
+      user: session.user,
+      sourceLanguage: sourceLanguage || undefined,
+      targetLanguage: targetLanguage || undefined,
+      contentLength: document?.size,
+      isDocumentTranslation: true,
+      errorCode: errorMessage.includes('AZURE_TRANSLATOR_ENDPOINT')
+        ? 'SERVICE_NOT_CONFIGURED'
+        : 'TRANSLATION_FAILED',
+      errorMessage,
+    });
 
     // Check for specific error types
     if (errorMessage.includes('AZURE_TRANSLATOR_ENDPOINT')) {

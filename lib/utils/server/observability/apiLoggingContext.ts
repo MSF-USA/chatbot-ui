@@ -1,0 +1,135 @@
+/**
+ * API Logging Context
+ *
+ * Provides a combined context object for API route handlers that bundles
+ * session tracking, logger instance, timing, and error utilities. Reduces
+ * boilerplate at logging call sites while maintaining full flexibility.
+ */
+import { Session } from 'next-auth';
+
+import {
+  AzureMonitorLoggingService,
+  getAzureMonitorLogger,
+} from '@/lib/services/observability/AzureMonitorLoggingService';
+
+import { getErrorDetails, getErrorMessage } from './errorUtils';
+import { Timer, createTimer } from './timing';
+
+/**
+ * Combined context for API route logging.
+ *
+ * Provides convenient access to session, logger, timer, and error utilities
+ * in a single object that can be created at the start of a route handler.
+ */
+export interface ApiLoggingContext {
+  /**
+   * The NextAuth session. Set this after calling `auth()`.
+   * Initialize as `null` and assign after authentication check.
+   */
+  session: Session | null;
+
+  /**
+   * Convenience getter for `session?.user`.
+   * Returns undefined if session is null or has no user.
+   */
+  readonly user: Session['user'] | undefined;
+
+  /** The Azure Monitor logging service instance */
+  readonly logger: AzureMonitorLoggingService;
+
+  /** Timer started when the context was created */
+  readonly timer: Timer;
+
+  /**
+   * Extracts an error message from an unknown error value.
+   * @see getErrorMessage
+   */
+  readonly getErrorMessage: typeof getErrorMessage;
+
+  /**
+   * Extracts detailed error information including stack trace.
+   * @see getErrorDetails
+   */
+  readonly getErrorDetails: typeof getErrorDetails;
+
+  /**
+   * Sets the session and returns the user for narrowing convenience.
+   *
+   * TypeScript cannot narrow getter properties because they could return
+   * different values on each access. This method sets the session and returns
+   * the user, allowing you to store it in a local variable for type-safe access.
+   *
+   * @param session - The NextAuth session from `auth()`
+   * @returns The user from the session, or undefined if session is null/has no user
+   *
+   * @example
+   * ```typescript
+   * const ctx = createApiLoggingContext();
+   * const user = ctx.setSession(await auth());
+   * if (!user) return unauthorizedResponse();
+   *
+   * // `user` is now narrowed and can be used safely
+   * void ctx.logger.logSuccess({ user, duration: ctx.timer.elapsed() });
+   * ```
+   */
+  setSession(session: Session | null): Session['user'] | undefined;
+}
+
+/**
+ * Creates a logging context for an API route handler.
+ *
+ * The returned context provides:
+ * - `session`: Mutable field to store the authenticated session
+ * - `user`: Getter that returns `session?.user`
+ * - `logger`: The Azure Monitor logging service singleton
+ * - `timer`: A timer started at context creation
+ * - `getErrorMessage`: Utility to extract error messages
+ * - `getErrorDetails`: Utility to extract error details with stack trace
+ *
+ * @returns An ApiLoggingContext instance
+ *
+ * @example
+ * ```typescript
+ * export async function POST(req: NextRequest) {
+ *   const ctx = createApiLoggingContext();
+ *   let user: Session['user'] | undefined;
+ *
+ *   try {
+ *     user = ctx.setSession(await auth());
+ *     if (!user) return unauthorizedResponse();
+ *
+ *     // ... perform work ...
+ *
+ *     void ctx.logger.logSuccess({ user, duration: ctx.timer.elapsed() });
+ *     return successResponse(data);
+ *   } catch (error) {
+ *     if (user) {
+ *       void ctx.logger.logError({
+ *         user,
+ *         errorMessage: ctx.getErrorMessage(error),
+ *       });
+ *     }
+ *     return handleApiError(error);
+ *   }
+ * }
+ * ```
+ */
+export function createApiLoggingContext(): ApiLoggingContext {
+  const logger = getAzureMonitorLogger();
+  const timer = createTimer();
+
+  return {
+    session: null,
+    get user() {
+      return this.session?.user;
+    },
+    setSession(session: Session | null) {
+      this.session = session;
+      return session?.user;
+    },
+    logger,
+    timer,
+    getErrorMessage,
+    getErrorDetails,
+  };
+}

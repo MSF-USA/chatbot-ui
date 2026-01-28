@@ -1,3 +1,5 @@
+import { getAzureMonitorLogger } from '@/lib/services/observability';
+
 import { Message, MessageType } from '@/types/chat';
 
 import { ChatContext } from '../pipeline/ChatContext';
@@ -37,6 +39,39 @@ export class RAGEnricher extends BasePipelineStage {
 
   shouldRun(context: ChatContext): boolean {
     return !!context.botId;
+  }
+
+  /**
+   * Extracts the user's query from the last user message.
+   * Used for logging the search query.
+   *
+   * @deprecated This method is unused and will be removed when switching to the new logging system.
+   * Query content is intentionally omitted from logs for user privacy.
+   */
+  private extractQueryFromMessages(messages: Message[]): string {
+    // Find the last user message
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const message = messages[i];
+      if (message.role === 'user') {
+        if (typeof message.content === 'string') {
+          return message.content.slice(0, 500);
+        } else if (Array.isArray(message.content)) {
+          const textContent = message.content.find((c) => c.type === 'text');
+          if (textContent && 'text' in textContent) {
+            return textContent.text.slice(0, 500);
+          }
+        } else if (
+          typeof message.content === 'object' &&
+          message.content !== null &&
+          'type' in message.content &&
+          message.content.type === 'text'
+        ) {
+          // Handle single TextMessageContent object
+          return message.content.text.slice(0, 500);
+        }
+      }
+    }
+    return '';
   }
 
   protected async executeStage(context: ChatContext): Promise<ChatContext> {
@@ -133,8 +168,32 @@ export class RAGEnricher extends BasePipelineStage {
           );
           span.setStatus({ code: SpanStatusCode.OK });
 
+          // Log RAG configuration (the actual search is performed by Azure OpenAI)
+          // This gives us visibility into RAG usage patterns
+          // Note: Query content intentionally omitted for user privacy
+          const logger = getAzureMonitorLogger();
+          void logger.logSearch({
+            user: context.user,
+            query: '', // Privacy: user query content not logged
+            resultCount: 0, // Results come from Azure OpenAI, we don't have visibility
+            searchType: 'semantic',
+            indexName: this.searchIndex,
+            botId: context.botId,
+          });
+
           return result;
         } catch (error) {
+          // Log RAG error
+          const logger = getAzureMonitorLogger();
+          void logger.logSearchError({
+            user: context.user,
+            indexName: this.searchIndex,
+            errorCode: 'RAG_ENRICHMENT_FAILED',
+            errorMessage:
+              error instanceof Error ? error.message : 'Unknown error',
+            botId: context.botId,
+          });
+
           span.recordException(error as Error);
           span.setStatus({
             code: SpanStatusCode.ERROR,

@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
@@ -17,6 +18,7 @@ import {
 import { loadDocument } from '@/lib/utils/server/file/fileHandling';
 import { getContentType } from '@/lib/utils/server/file/mimeTypes';
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import { auth } from '@/auth';
 import {
@@ -138,10 +140,13 @@ interface AnalysisResponse {
 }
 
 export async function POST(req: NextRequest) {
+  const ctx = createApiLoggingContext();
+  let user: Session['user'] | undefined;
+
   try {
     // Check authentication
-    const session = await auth();
-    if (!session?.user) {
+    user = ctx.setSession(await auth());
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -153,8 +158,8 @@ export async function POST(req: NextRequest) {
     //Process uploaded files server-side
     let fileContent = '';
     if (fileUrls && fileUrls.length > 0) {
-      const userId = getUserIdFromSession(session);
-      const blobStorageClient = createBlobStorageClient(session);
+      const userId = getUserIdFromSession(ctx.session!);
+      const blobStorageClient = createBlobStorageClient(ctx.session!);
 
       for (const fileUrl of fileUrls) {
         try {
@@ -303,12 +308,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Debug: Log the full response structure
-    console.log(
-      '[Tone Analysis] Full response:',
-      JSON.stringify(response, null, 2),
-    );
-
     // Better error handling and logging
     if (!response.choices || response.choices.length === 0) {
       console.error('[Tone Analysis] No choices in response');
@@ -316,10 +315,6 @@ export async function POST(req: NextRequest) {
     }
 
     const choice = response.choices[0];
-    console.log(
-      '[Tone Analysis] Choice object:',
-      JSON.stringify(choice, null, 2),
-    );
 
     // Check for refusal
     if (choice.message?.refusal) {
@@ -353,9 +348,28 @@ export async function POST(req: NextRequest) {
       characteristics: analysis.characteristics || [],
     };
 
+    // Log success
+    void ctx.logger.logToneAnalysisSuccess({
+      user,
+      inputLength: combinedContent.length,
+      toneName,
+      tagCount: result.suggestedTags.length,
+      duration: ctx.timer.elapsed(),
+    });
+
     return NextResponse.json(result);
   } catch (error) {
     console.error('[Tone Analysis API] Error:', error);
+
+    // Log error using hoisted user (no redundant auth() call)
+    if (user) {
+      void ctx.logger.logToneAnalysisError({
+        user,
+        errorCode: 'TONE_ANALYSIS_ERROR',
+        errorMessage: ctx.getErrorMessage(error),
+      });
+    }
+
     return handleApiError(error, 'Failed to analyze tone');
   }
 }

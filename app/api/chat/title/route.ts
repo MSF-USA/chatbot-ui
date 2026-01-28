@@ -21,6 +21,7 @@ import {
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
+import { auth } from '@/auth';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -83,6 +84,11 @@ function filterMessagesForTitleGeneration(messages: Message[]): Message[] {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { messages, modelId } = body as {

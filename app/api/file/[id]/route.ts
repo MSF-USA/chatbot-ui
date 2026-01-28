@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import {
@@ -34,6 +35,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const logger = getAzureMonitorLogger();
+  const startTime = Date.now();
+
   const { id } = await params;
   const { searchParams } = new URL(request.url);
   const requestedFileType = searchParams.get('filetype');
@@ -66,6 +70,16 @@ export async function GET(
         undefined,
         session.user,
       );
+
+      // Log success
+      const duration = Date.now() - startTime;
+      void logger.logFileRetrievalSuccess({
+        user: session.user,
+        fileId: id,
+        fileType,
+        duration,
+      });
+
       return NextResponse.json({ base64Url: base64String });
     } else if (fileType === 'file') {
       const blobStorage = createBlobStorageClient(session);
@@ -73,12 +87,32 @@ export async function GET(
         `${remoteFilepath}/${id}`,
         BlobProperty.BLOB,
       ) as Promise<Buffer>);
+
+      // Log success
+      const duration = Date.now() - startTime;
+      void logger.logFileRetrievalSuccess({
+        user: session.user,
+        fileId: id,
+        fileType,
+        duration,
+      });
+
       return new NextResponse(new Uint8Array(blob));
     } else {
       throw new Error(`Invalid fileType requested: ${fileType}`);
     }
   } catch (error) {
     console.error('Error retrieving blob:', error);
+
+    // Log error
+    void logger.logFileRetrievalError({
+      user: session.user,
+      fileId: id,
+      fileType,
+      errorCode: 'FILE_RETRIEVAL_ERROR',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    });
+
     return NextResponse.json(
       { error: 'Failed to retrieve file' },
       {

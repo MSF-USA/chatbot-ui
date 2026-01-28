@@ -1,3 +1,4 @@
+import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 import {
@@ -10,6 +11,7 @@ import {
   handleApiError,
   unauthorizedResponse,
 } from '@/lib/utils/server/api/apiResponse';
+import { createApiLoggingContext } from '@/lib/utils/server/observability';
 
 import {
   TranslationRequest,
@@ -50,10 +52,13 @@ Guidelines:
  * Translates text to a target language using Azure OpenAI
  */
 export async function POST(req: NextRequest) {
+  const ctx = createApiLoggingContext();
+  let user: Session['user'] | undefined;
+
   try {
     // Check authentication
-    const session = await auth();
-    if (!session?.user) {
+    user = ctx.setSession(await auth());
+    if (!user) {
       return unauthorizedResponse();
     }
 
@@ -154,6 +159,15 @@ ${sourceText}
       throw new Error('Invalid response: missing translatedText');
     }
 
+    // Log success
+    void ctx.logger.logTranslationSuccess({
+      user,
+      targetLanguage: targetLocale,
+      contentLength: sourceText.length,
+      isDocumentTranslation: false,
+      duration: ctx.timer.elapsed(),
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -163,6 +177,17 @@ ${sourceText}
     });
   } catch (error) {
     console.error('[Translation API] Error:', error);
+
+    // Log error using hoisted user (no redundant auth() call)
+    if (user) {
+      void ctx.logger.logTranslationError({
+        user,
+        isDocumentTranslation: false,
+        errorCode: 'TRANSLATION_ERROR',
+        errorMessage: ctx.getErrorMessage(error),
+      });
+    }
+
     return handleApiError(error, 'Failed to translate text');
   }
 }

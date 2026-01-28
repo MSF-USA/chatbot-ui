@@ -1,4 +1,5 @@
 import { FileProcessingService } from '@/lib/services/chat';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
@@ -319,6 +320,16 @@ export class FileProcessor extends BasePipelineStage {
                       transcript,
                     });
 
+                    // Log successful transcription (fire-and-forget)
+                    const logger = getAzureMonitorLogger();
+                    void logger.logTranscriptionSuccess({
+                      user: context.user,
+                      filename,
+                      fileSize: audioSize,
+                      transcriptionType: 'whisper',
+                      language: file.transcriptionLanguage,
+                    });
+
                     console.log(
                       `[FileProcessor] Transcription complete: ${transcript.length} chars`,
                     );
@@ -375,6 +386,18 @@ export class FileProcessor extends BasePipelineStage {
                     transcripts.push({
                       filename,
                       transcript: `[Transcription in progress: ${filename}]`,
+                    });
+
+                    // Log chunked transcription job queued (fire-and-forget)
+                    // Note: Final success/error will be logged when the job completes
+                    const chunkedLogger = getAzureMonitorLogger();
+                    void chunkedLogger.logTranscriptionQueued({
+                      user: context.user,
+                      filename,
+                      fileSize: audioSize,
+                      jobId,
+                      totalChunks,
+                      language: file.transcriptionLanguage,
                     });
 
                     console.log(
@@ -448,6 +471,29 @@ export class FileProcessor extends BasePipelineStage {
                 `[FileProcessor] Error processing ${sanitizeForLog(filename)}:`,
                 error,
               );
+
+              // Log transcription/file processing error (fire-and-forget)
+              const errorLogger = getAzureMonitorLogger();
+              const isTranscriptionError = isAudioVideoFile(filename);
+              if (isTranscriptionError) {
+                void errorLogger.logTranscriptionError({
+                  user: context.user,
+                  filename,
+                  transcriptionType: 'unknown',
+                  errorCode: 'TRANSCRIPTION_FAILED',
+                  errorMessage:
+                    error instanceof Error ? error.message : String(error),
+                });
+              } else {
+                void errorLogger.logFileError({
+                  user: context.user,
+                  filename,
+                  errorCode: 'FILE_PROCESSING_FAILED',
+                  errorMessage:
+                    error instanceof Error ? error.message : String(error),
+                });
+              }
+
               // Re-throw to be caught by BasePipelineStage error handling
               throw error;
             }

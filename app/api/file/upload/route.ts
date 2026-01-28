@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 import { NextRequest } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+import { getAzureMonitorLogger } from '@/lib/services/observability';
 
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
@@ -108,8 +109,12 @@ export async function POST(request: NextRequest) {
     );
   };
 
+  // Hoist session to outer scope so catch block can reuse it
+  // (avoids redundant auth() call on error)
+  let session: Session | null = null;
+
   try {
-    const session: Session | null = await auth();
+    session = await auth();
     if (!session) {
       return errorResponse('Unauthorized', 401);
     }
@@ -162,7 +167,20 @@ export async function POST(request: NextRequest) {
       return payloadTooLargeResponse(sizeValidation.error ?? 'File too large');
     }
 
+    const startTime = Date.now();
     const fileURI: string = await uploadFileToBlobStorage(fileData, session);
+    const duration = Date.now() - startTime;
+
+    // Log successful file upload (fire-and-forget)
+    const logger = getAzureMonitorLogger();
+    void logger.logFileSuccess({
+      user: session.user,
+      filename: filename,
+      fileSize: fileSize,
+      fileType: mimeType || filetype,
+      duration,
+    });
+
     // Return a reference path instead of the full blob URL
     const blobFilename = fileURI.split('/').pop();
     return successResponse(
@@ -171,6 +189,21 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Error uploading file:', error);
+
+    // Log file upload error (fire-and-forget) using hoisted session
+    // Note: If error occurred before auth() completed, session will be null
+    // and we skip logging (pre-auth errors are rare validation failures)
+    if (session) {
+      const logger = getAzureMonitorLogger();
+      void logger.logFileError({
+        user: session.user,
+        filename: filename,
+        fileType: mimeType || filetype,
+        errorCode: 'FILE_UPLOAD_FAILED',
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     return errorResponse(
       'Failed to upload file',
       500,

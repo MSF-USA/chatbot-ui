@@ -1,4 +1,7 @@
-import { MetricsService } from '@/lib/services/observability/MetricsService';
+import {
+  MetricsService,
+  getAzureMonitorLogger,
+} from '@/lib/services/observability';
 
 import { sanitizeForLog } from '@/lib/utils/server/log/logSanitization';
 
@@ -317,6 +320,21 @@ export class StandardChatHandler extends BasePipelineStage {
             botId: context.botId,
           });
 
+          // Log to Azure Monitor (fire-and-forget)
+          const logger = getAzureMonitorLogger();
+          void logger.logChatCompletion({
+            user: context.user,
+            model: context.modelId,
+            messageCount: messagesToSend.length,
+            temperature: context.temperature,
+            duration,
+            hasFiles: context.hasFiles || false,
+            hasImages: context.hasImages || false,
+            hasRAG: !!ragConfig,
+            botId: context.botId,
+            reasoningEffort: context.reasoningEffort,
+          });
+
           // TODO: Extract token usage from response headers/metadata and record
           // MetricsService.recordTokenUsage({ total: tokens }, { user, model, operation: 'chat' });
 
@@ -335,6 +353,19 @@ export class StandardChatHandler extends BasePipelineStage {
             operation: 'chat',
             model: context.modelId,
             message: error instanceof Error ? error.message : 'Unknown error',
+          });
+
+          // Log error to Azure Monitor (fire-and-forget)
+          const logger = getAzureMonitorLogger();
+          void logger.logError({
+            user: context.user,
+            errorCode: 'CHAT_EXECUTION_FAILED',
+            errorMessage:
+              error instanceof Error ? error.message : 'Unknown error',
+            stackTrace: error instanceof Error ? error.stack : undefined,
+            operation: 'chat',
+            model: context.modelId,
+            botId: context.botId,
           });
 
           // Check if RAG was being used (need to redeclare since it's outside span scope)
