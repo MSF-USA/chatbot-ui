@@ -1,4 +1,5 @@
 import { IconX } from '@tabler/icons-react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -24,6 +25,10 @@ import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
 import { ModelTypeIcon } from './ModelSelect/ModelTypeIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
+import {
+  getOrganizationAgentIdFromModelId,
+  getOrganizationAgents,
+} from '@/lib/organizationAgents';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -31,10 +36,15 @@ interface ModelSelectProps {
 
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
+  const { exploreBots } = useFlags();
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
   const { models, defaultModelId, setDefaultModelId, setDefaultSearchMode } =
     useSettings();
+
+  // Feature flag: Control organization bots visibility via LaunchDarkly
+  // Default to true if LaunchDarkly is not configured (for local development)
+  const isBotsEnabled = exploreBots !== false;
 
   const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
@@ -132,8 +142,39 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       });
   }, [customAgents, defunctAgentIds]);
 
-  // Combine base models and custom agents
-  const availableModels = [...baseModels, ...customAgentModels];
+  // Convert organization agents to OpenAIModel format
+  // Only include organization agents if the exploreBots feature flag is enabled
+  const organizationAgentModels: OpenAIModel[] = useMemo(() => {
+    // Feature flag check: Skip organization agents if disabled in LaunchDarkly
+    if (!isBotsEnabled) {
+      return [];
+    }
+
+    const orgAgents = getOrganizationAgents();
+    return orgAgents.map((agent) => {
+      // Use gpt-4.1 as default base model for RAG agents, or specified baseModelId
+      const baseModelId =
+        (agent.baseModelId as OpenAIModelID) || OpenAIModelID.GPT_4_1;
+      const baseModel =
+        OpenAIModels[baseModelId] || OpenAIModels[OpenAIModelID.GPT_4_1];
+      return {
+        ...baseModel,
+        id: `org-${agent.id}`,
+        name: agent.name,
+        description: agent.description,
+        modelType: agent.type === 'foundry' ? ('agent' as const) : undefined,
+        agentId: agent.agentId, // For foundry agents
+        isOrganizationAgent: true,
+      };
+    });
+  }, [isBotsEnabled]);
+
+  // Combine base models, custom agents, and organization agents
+  const availableModels = [
+    ...baseModels,
+    ...customAgentModels,
+    ...organizationAgentModels,
+  ];
 
   const selectedModel =
     availableModels.find((m) => m.id === selectedModelId) || availableModels[0];
@@ -225,6 +266,19 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       model: model,
     };
 
+    // Set bot ID for organization agents (enables RAG)
+    const orgAgentId = getOrganizationAgentIdFromModelId(model.id);
+    if (orgAgentId) {
+      updates.bot = orgAgentId;
+      console.log(
+        `[ModelSelect] Setting bot to organization agent: ${orgAgentId}`,
+      );
+    } else if (selectedConversation.bot) {
+      // Clear bot if switching away from an organization agent
+      updates.bot = undefined;
+      console.log(`[ModelSelect] Clearing bot (switched to non-org agent)`);
+    }
+
     // Custom agents always have search mode OFF
     if (model.isCustomAgent) {
       updates.defaultSearchMode = SearchMode.OFF;
@@ -260,6 +314,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       `[ModelSelect] Updating conversation ${selectedConversation.id} with model: ${model.id}`,
     );
     updateConversation(selectedConversation.id, updates);
+
+    // Close the modal after selecting a model
+    onClose?.();
   };
 
   const handleToggleSearchMode = () => {
@@ -449,6 +506,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           handleImportAgents={handleImportAgents}
           handleModelSelect={handleModelSelect}
           customAgentModels={customAgentModels}
+          organizationAgentModels={organizationAgentModels}
           selectedModelId={selectedModelId}
           defunctAgentIds={defunctAgentIds}
         />

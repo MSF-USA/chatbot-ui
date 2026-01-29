@@ -36,6 +36,7 @@ import { ModelSwitchPrompt } from './ModelSwitchPrompt';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import { useConversationStore } from '@/client/stores/conversationStore';
+import { getOrganizationAgentById } from '@/lib/organizationAgents';
 
 const CodeArtifact = dynamic(
   () => import('@/components/CodeEditor/CodeArtifact'),
@@ -282,28 +283,48 @@ export function Chat({
       >
         {/* Header - Hidden on mobile, shown on desktop */}
         <div className="hidden md:block">
-          <ChatTopbar
-            botInfo={null}
-            selectedModelName={
-              selectedConversation?.model?.name ||
-              models.find((m) => m.id === defaultModelId)?.name ||
-              'GPT-4o'
-            }
-            selectedModelProvider={
-              OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]
-                ?.provider ||
-              models.find((m) => m.id === defaultModelId)?.provider
-            }
-            selectedModelId={selectedConversation?.model?.id}
-            isCustomAgent={selectedConversation?.model?.isCustomAgent}
-            showSettings={isSettingsOpen}
-            onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
-            onModelClick={() => setIsModelSelectOpen(true)}
-            onClearAll={clearConversation}
-            hasMessages={hasMessages}
-            searchMode={selectedConversation?.defaultSearchMode}
-            showChatbar={showChatbar}
-          />
+          {(() => {
+            // Get organization agent info - check both bot field and model ID prefix
+            const modelId = selectedConversation?.model?.id;
+            const orgAgentId =
+              selectedConversation?.bot ||
+              (modelId?.startsWith('org-')
+                ? modelId.replace('org-', '')
+                : undefined);
+            const orgAgent = orgAgentId
+              ? getOrganizationAgentById(orgAgentId)
+              : undefined;
+            const isOrgAgent =
+              !!orgAgent || selectedConversation?.model?.isOrganizationAgent;
+
+            return (
+              <ChatTopbar
+                botInfo={null}
+                selectedModelName={
+                  selectedConversation?.model?.name ||
+                  models.find((m) => m.id === defaultModelId)?.name ||
+                  'GPT-4o'
+                }
+                selectedModelProvider={
+                  OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]
+                    ?.provider ||
+                  models.find((m) => m.id === defaultModelId)?.provider
+                }
+                selectedModelId={selectedConversation?.model?.id}
+                isCustomAgent={selectedConversation?.model?.isCustomAgent}
+                isOrganizationAgent={isOrgAgent}
+                organizationAgentIcon={orgAgent?.icon}
+                organizationAgentColor={orgAgent?.color}
+                showSettings={isSettingsOpen}
+                onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                onModelClick={() => setIsModelSelectOpen(true)}
+                onClearAll={clearConversation}
+                hasMessages={hasMessages}
+                searchMode={selectedConversation?.defaultSearchMode}
+                showChatbar={showChatbar}
+              />
+            );
+          })()}
         </div>
 
         {/* Messages container - always mounted to prevent scroll reset */}
