@@ -201,6 +201,14 @@ export class RAGEnricher extends BasePipelineStage {
             ];
           }
 
+          // Convert search results to citations format for downstream handlers
+          const citations = searchDocs.map((doc, index) => ({
+            title: doc.title,
+            date: doc.date,
+            url: doc.url,
+            number: index + 1,
+          }));
+
           // Store metadata for downstream processing (citations, etc.)
           const result = {
             ...context,
@@ -211,6 +219,8 @@ export class RAGEnricher extends BasePipelineStage {
               ...context.processedContent,
               metadata: {
                 ...context.processedContent?.metadata,
+                // Citations in format expected by StandardChatHandler
+                citations,
                 ragConfig: {
                   searchEndpoint: this.searchEndpoint,
                   searchIndex: this.searchIndex,

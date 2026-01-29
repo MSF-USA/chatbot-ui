@@ -52,25 +52,36 @@ describe('RAGService', () => {
   };
 
   // Helper to create async generator for search results
-  const createMockSearchResults = (docs: any[]) => ({
+  // Each result includes document, score, and rerankerScore (rerankerScore defaults to 3.0 for relevance)
+  const createMockSearchResults = (
+    docs: any[],
+    defaultRerankerScore: number = 3.0,
+  ) => ({
     results: (async function* () {
       for (const doc of docs) {
-        yield { document: doc };
+        yield {
+          document: doc,
+          score: doc.score ?? 0.8,
+          rerankerScore: doc.rerankerScore ?? defaultRerankerScore,
+        };
       }
     })(),
   });
 
+  // Use recent dates (within 1 year) to avoid date filtering
   const defaultSearchDocs = [
     {
       chunk: 'Document 1 content about communications policy.',
+      chunk_id: 'doc1-chunk-1',
       title: 'Communications Policy Guide',
-      date: '2025-01-15',
+      date: '2025-12-15',
       url: 'https://example.com/doc1',
     },
     {
       chunk: 'Document 2 content about internal procedures.',
+      chunk_id: 'doc2-chunk-1',
       title: 'Internal Procedures Manual',
-      date: '2025-01-10',
+      date: '2025-12-10',
       url: 'https://example.com/doc2',
     },
   ];
@@ -124,13 +135,14 @@ describe('RAGService', () => {
     it('should perform search with correct parameters', async () => {
       const messages = createTestMessages('What is the communications policy?');
 
-      // Reset mock to return fresh async generator
+      // Reset mock to return fresh async generator with recent dates
       mockSearch.mockReturnValue(
         createMockSearchResults([
           {
             chunk: 'Test content',
+            chunk_id: 'test-chunk',
             title: 'Test Title',
-            date: '2025-01-15',
+            date: '2025-12-15',
             url: 'https://example.com/test',
           },
         ]),
@@ -147,7 +159,7 @@ describe('RAGService', () => {
       expect(result.searchMetadata).toBeDefined();
     });
 
-    it('should use agent ragConfig for topK', async () => {
+    it('should fetch 30 results for quality filtering and deduplication', async () => {
       const messages = createTestMessages('Test query');
 
       mockSearch.mockReturnValue(createMockSearchResults([]));
@@ -158,16 +170,16 @@ describe('RAGService', () => {
         mockUser as any,
       );
 
-      // Verify search was called with agent's topK (5)
+      // Upstream implementation always fetches 30 results for quality filtering
       expect(mockSearch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          top: 5, // From mockOrganizationAgent.ragConfig.topK
+          top: 30,
         }),
       );
     });
 
-    it('should use agent semanticConfig', async () => {
+    it('should use semantic search with reranking', async () => {
       const messages = createTestMessages('Test query');
 
       mockSearch.mockReturnValue(createMockSearchResults([]));
@@ -178,37 +190,57 @@ describe('RAGService', () => {
         mockUser as any,
       );
 
-      // Verify search was called with agent's semantic config
+      // Verify search was called with semantic search options
       expect(mockSearch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
+          queryType: 'semantic',
           semanticSearchOptions: expect.objectContaining({
             configurationName: 'custom-semantic-config',
+            captions: { captionType: 'extractive' },
+            answers: { answerType: 'extractive', count: 3 },
           }),
         }),
       );
     });
 
-    it('should deduplicate results by URL', async () => {
+    it('should deduplicate results by chunk_id and limit chunks per article', async () => {
       mockSearch.mockReturnValue(
         createMockSearchResults([
           {
             chunk: 'Content 1',
+            chunk_id: 'chunk-1',
             title: 'Doc 1',
-            date: '2025-01-15',
-            url: 'https://example.com/same-url',
+            date: '2025-12-15',
+            url: 'https://example.com/article-1',
           },
           {
-            chunk: 'Content 2 (duplicate URL)',
+            chunk: 'Content 1 duplicate chunk',
+            chunk_id: 'chunk-1', // Duplicate chunk_id
+            title: 'Doc 1',
+            date: '2025-12-15',
+            url: 'https://example.com/article-1',
+          },
+          {
+            chunk: 'Content 2 from same article',
+            chunk_id: 'chunk-2',
+            title: 'Doc 1',
+            date: '2025-12-15',
+            url: 'https://example.com/article-1', // Same URL, different chunk
+          },
+          {
+            chunk: 'Content 3 from same article',
+            chunk_id: 'chunk-3',
+            title: 'Doc 1',
+            date: '2025-12-15',
+            url: 'https://example.com/article-1', // Same URL, third chunk (should be filtered)
+          },
+          {
+            chunk: 'Content 4 from different article',
+            chunk_id: 'chunk-4',
             title: 'Doc 2',
-            date: '2025-01-14',
-            url: 'https://example.com/same-url', // Duplicate
-          },
-          {
-            chunk: 'Content 3',
-            title: 'Doc 3',
-            date: '2025-01-13',
-            url: 'https://example.com/different-url',
+            date: '2025-12-14',
+            url: 'https://example.com/article-2',
           },
         ]),
       );
@@ -220,8 +252,12 @@ describe('RAGService', () => {
         mockUser as any,
       );
 
-      // Should only have 2 results (deduped by URL)
-      expect(result.searchDocs).toHaveLength(2);
+      // Should have 3 results:
+      // - chunk-1 from article-1 (first chunk)
+      // - chunk-2 from article-1 (second chunk, within MAX_CHUNKS_PER_ARTICLE=2)
+      // - chunk-4 from article-2 (first chunk from different article)
+      // chunk-1 duplicate is removed, chunk-3 is filtered by MAX_CHUNKS_PER_ARTICLE
+      expect(result.searchDocs).toHaveLength(3);
     });
 
     it('should calculate date range from results', async () => {
@@ -229,20 +265,23 @@ describe('RAGService', () => {
         createMockSearchResults([
           {
             chunk: 'Content',
+            chunk_id: 'oldest-chunk',
             title: 'Oldest',
-            date: '2025-01-01',
+            date: '2025-12-01',
             url: 'https://example.com/1',
           },
           {
             chunk: 'Content',
+            chunk_id: 'newest-chunk',
             title: 'Newest',
-            date: '2025-01-20',
+            date: '2025-12-20',
             url: 'https://example.com/2',
           },
           {
             chunk: 'Content',
+            chunk_id: 'middle-chunk',
             title: 'Middle',
-            date: '2025-01-10',
+            date: '2025-12-10',
             url: 'https://example.com/3',
           },
         ]),
@@ -255,8 +294,8 @@ describe('RAGService', () => {
         mockUser as any,
       );
 
-      expect(result.searchMetadata.dateRange.oldest).toBe('2025-01-01');
-      expect(result.searchMetadata.dateRange.newest).toBe('2025-01-20');
+      expect(result.searchMetadata.dateRange.oldest).toBe('2025-12-01');
+      expect(result.searchMetadata.dateRange.newest).toBe('2025-12-20');
     });
 
     it('should throw error when agent not found', async () => {
@@ -362,16 +401,15 @@ describe('RAGService', () => {
       expect(result).toBe('Original query');
     });
 
-    it('should not specify custom temperature for gpt-5-mini', async () => {
+    it('should use low temperature for focused query generation', async () => {
       const messages: Message[] = [{ role: 'user', content: 'Test query' }];
 
       await ragService.reformulateQuery(messages);
 
       const call = mockOpenAIClient.chat.completions.create.mock.calls[0][0];
 
-      // gpt-5-mini only supports default temperature (1)
-      // So we should NOT be setting a custom temperature
-      expect(call.temperature).toBeUndefined();
+      // Use low temperature for focused, deterministic query generation
+      expect(call.temperature).toBe(0.2);
     });
   });
 

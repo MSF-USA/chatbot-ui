@@ -95,18 +95,25 @@ export class RAGService {
       const enhancedMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
         {
           role: 'system',
-          content: `${systemPrompt}\n\nWhen citing sources:
-            1. ONLY cite source numbers that are actually provided in the search results
-            2. Do not make up or reference source numbers that don't exist in the provided sources
-            3. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
-            4. Each source should only be cited once
-            5. Place source numbers immediately after the relevant information
-            6. DO NOT include numbered source lists at the beginning or end of your response
-            7. DO NOT include "Sources:" or "References:" sections
-            8. DO NOT create hyperlinked source titles
-            9. Remember that the frontend will automatically display all source information based on your citation numbers
+          content: `${systemPrompt}
 
-            The frontend system will handle the formatting and display of sources. Only cite sources that actually exist in the provided search results.`,
+CRITICAL CITATION RULES - YOU MUST FOLLOW THESE:
+- Cite sources inline using [#] notation immediately after the relevant information
+- NEVER include a "Sources:", "References:", or similar section listing sources
+- NEVER list sources at the end of your response - the frontend handles this automatically
+- NEVER create bullet points or numbered lists of sources with titles/dates
+- Only use citation numbers that exist in the provided sources (e.g., [1], [2])
+- The user interface will display clickable source cards - your job is ONLY to cite inline with [#]
+
+Example of CORRECT formatting:
+"The outbreak affected thousands of people [1]. Vaccination rates remain low [2]."
+
+Example of WRONG formatting (DO NOT DO THIS):
+"Sources:
+[1] Article Title, Date
+[2] Another Article, Date"
+
+The frontend automatically shows source information. Just cite inline and end your response naturally.`,
         },
         ...this.getCompletionMessages(messages, agent, searchDocs),
       ];
@@ -226,7 +233,7 @@ export class RAGService {
         Return ONLY the reformulated search query with no additional text.`;
 
       // Ask the model to generate an improved search query
-      // Note: gpt-5-mini only supports default temperature (1), custom values not allowed
+      // Use low temperature for focused, deterministic query generation
       const completion = await this.openAIClient.chat.completions.create({
         model: 'gpt-5-mini',
         messages: [
@@ -236,6 +243,7 @@ export class RAGService {
             content: `Conversation history:\n${conversationHistory}\n\nOriginal query: ${originalQuery}\n\nGenerate an improved Azure AI Search query that captures the key concepts and appropriately handles recency.`,
           },
         ],
+        temperature: 0.2,
       });
 
       const expandedQuery =
@@ -290,26 +298,22 @@ export class RAGService {
       // Get ragConfig from agent (if available)
       const ragConfig = agent.ragConfig || {};
       const topK = ragConfig.topK || 10;
-      const semanticConfigName =
+
+      // Get semantic config from agent ragConfig if available, otherwise use index default
+      const semanticConfig =
         ragConfig.semanticConfig ||
         `${this.searchIndex}-semantic-configuration`;
 
-      // Perform the search
+      // Perform hybrid search: vector + semantic with reranking
+      // Fetch more results (30) to allow for quality filtering and deduplication
       const searchResults = await this.searchClient.search(query, {
-        select: ['chunk', 'title', 'date', 'url'],
-        top: topK,
-        queryType: 'semantic' as any,
+        select: ['chunk', 'title', 'date', 'url', 'chunk_id'],
+        top: 30,
+        queryType: 'semantic',
         semanticSearchOptions: {
-          configurationName: semanticConfigName,
-          captions: {
-            captionType: 'extractive',
-            highlight: true,
-          },
-          answers: {
-            answerType: 'extractive',
-            count: topK,
-            threshold: 0.7,
-          },
+          configurationName: semanticConfig,
+          captions: { captionType: 'extractive' },
+          answers: { answerType: 'extractive', count: 3 },
         },
         vectorSearchOptions: {
           queries: [
@@ -317,19 +321,91 @@ export class RAGService {
               kind: 'text',
               text: query,
               fields: ['text_vector'] as any,
-              kNearestNeighborsCount: topK,
+              kNearestNeighborsCount: 30,
             },
           ],
         },
       });
 
-      const searchDocs: SearchResult[] = [];
-      let newestDate: Date | null = null;
-      let oldestDate: Date | null = null;
+      const allDocs: Array<{
+        doc: SearchResult;
+        rerankerScore: number;
+        combinedScore: number;
+      }> = [];
 
+      const TWO_YEARS_AGO = new Date();
+      TWO_YEARS_AGO.setFullYear(TWO_YEARS_AGO.getFullYear() - 2);
+      const NOW = Date.now();
+      const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+      // Collect all results from semantic search with scores
       for await (const result of searchResults.results) {
         const doc = result.document;
-        searchDocs.push(doc);
+        const docDate = new Date(doc.date);
+        const rerankerScore = result.rerankerScore ?? 0;
+
+        // Filter out very old documents with low reranker scores
+        if (docDate < TWO_YEARS_AGO && rerankerScore < 2.0) {
+          console.log(
+            `[RAGService] Filtering old low-relevance doc: ${doc.title} (date: ${doc.date}, rerankerScore: ${rerankerScore})`,
+          );
+          continue;
+        }
+
+        // Calculate recency boost (0-1 scale, 1 = today, 0 = 1+ year old)
+        const ageMs = NOW - docDate.getTime();
+        const recencyScore = Math.max(0, 1 - ageMs / ONE_YEAR_MS);
+
+        // Combined score: 70% semantic relevance + 30% recency
+        // Normalize rerankerScore (typically 0-4) to 0-1 scale
+        const normalizedRerankerScore = Math.min(rerankerScore / 4, 1);
+        const combinedScore =
+          normalizedRerankerScore * 0.7 + recencyScore * 0.3;
+
+        console.log(
+          `[RAGService] Result: ${doc.title} (date: ${doc.date}, rerankerScore: ${rerankerScore.toFixed(2)}, combinedScore: ${combinedScore.toFixed(2)})`,
+        );
+
+        allDocs.push({ doc, rerankerScore, combinedScore });
+      }
+
+      // Deduplicate by chunk_id and limit chunks per article for source diversity
+      const seenChunkIds = new Set<string>();
+      const chunksPerUrl = new Map<string, number>();
+      const MAX_CHUNKS_PER_ARTICLE = 2; // Ensure diverse sources
+
+      const deduplicatedDocs = allDocs.filter(({ doc }) => {
+        const chunkId = doc.chunk_id || '';
+        const url = doc.url || '';
+
+        // Skip duplicate chunks
+        if (chunkId && seenChunkIds.has(chunkId)) {
+          return false;
+        }
+
+        // Limit chunks per article to ensure source diversity
+        const currentCount = chunksPerUrl.get(url) || 0;
+        if (currentCount >= MAX_CHUNKS_PER_ARTICLE) {
+          return false;
+        }
+
+        if (chunkId) seenChunkIds.add(chunkId);
+        chunksPerUrl.set(url, currentCount + 1);
+        return true;
+      });
+
+      // Sort by combined score (relevance + recency)
+      const sortedDocs = deduplicatedDocs.sort(
+        (a, b) => b.combinedScore - a.combinedScore,
+      );
+
+      // Take top results based on agent config
+      const searchDocs = sortedDocs.slice(0, topK).map((item) => item.doc);
+
+      // Calculate date range from final results
+      let newestDate: Date | null = null;
+      let oldestDate: Date | null = null;
+      for (const doc of searchDocs) {
         const docDate = new Date(doc.date);
         if (!newestDate || docDate > newestDate) newestDate = docDate;
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
@@ -343,6 +419,10 @@ export class RAGService {
         resultCount: searchDocs.length,
       };
 
+      console.log(
+        `[RAGService] After filtering and deduplication: ${allDocs.length} -> ${deduplicatedDocs.length} -> ${searchDocs.length} results`,
+      );
+
       // Log successful search
       console.log('[RAGService] Search completed:', {
         duration: Date.now() - startTime,
@@ -353,7 +433,7 @@ export class RAGService {
       });
 
       return {
-        searchDocs: this.deduplicateResults(searchDocs), // Still deduplicate results from the current search
+        searchDocs, // Already deduplicated above
         searchMetadata,
       };
     } catch (error) {
@@ -369,29 +449,28 @@ export class RAGService {
   }
 
   /**
-   * Deduplication of search results.
+   * Deduplication of search results by chunk_id.
+   * This allows multiple chunks from the same article (same URL/title) while
+   * preventing duplicate chunks from appearing.
    *
    * @param {SearchResult[]} results - The search results to deduplicate.
    * @returns {SearchResult[]} Deduplicated search results.
    */
   private deduplicateResults(results: SearchResult[]): SearchResult[] {
     const uniqueResults: SearchResult[] = [];
-    const seenUrls = new Set<string>();
-    const seenTitles = new Set<string>();
+    const seenChunkIds = new Set<string>();
 
     for (const result of results) {
-      const url = result.url || '';
-      const title = result.title || '';
+      const chunkId = result.chunk_id || '';
 
-      // Check if we've seen either the URL or the title before
-      if ((url && seenUrls.has(url)) || (title && seenTitles.has(title))) {
-        // Skip this duplicate
-        continue;
+      // If we have a chunk_id, use it for deduplication
+      if (chunkId) {
+        if (seenChunkIds.has(chunkId)) {
+          continue;
+        }
+        seenChunkIds.add(chunkId);
       }
 
-      // Add to our seen sets and unique results
-      if (url) seenUrls.add(url);
-      if (title) seenTitles.add(title);
       uniqueResults.push(result);
     }
 

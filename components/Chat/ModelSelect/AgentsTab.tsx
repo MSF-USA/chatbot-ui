@@ -6,6 +6,7 @@ import {
   IconPlus,
   IconTools,
 } from '@tabler/icons-react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import React, { FC, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -48,8 +49,13 @@ export const AgentsTab: FC<AgentsTabProps> = ({
   defunctAgentIds,
 }) => {
   const t = useTranslations();
+  const { exploreBots } = useFlags();
+
   const organizationAgents = getOrganizationAgents();
-  const hasOrganizationAgents = organizationAgents.length > 0;
+  // Only show organization agents if the exploreBots feature flag is enabled
+  // Default to true if LaunchDarkly is not configured (for local development)
+  const isBotsEnabled = exploreBots !== false;
+  const hasOrganizationAgents = isBotsEnabled && organizationAgents.length > 0;
   const hasCustomAgents = customAgents.length > 0;
 
   // Custom Agents section is expanded by default only if user has custom agents
@@ -189,54 +195,12 @@ export const AgentsTab: FC<AgentsTabProps> = ({
                     }
                   }}
                   selectedModelId={selectedModelId ?? undefined}
+                  defunctAgentIds={defunctAgentIds}
                 />
               )}
             </div>
           )}
-        </div>
-      </div>
-
-      <div className="mb-6 px-4 md:px-0">
-        <button
-          onClick={() => openAgentForm()}
-          className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all flex items-center justify-center gap-2"
-        >
-          <IconPlus size={18} />
-          {t('modelSelect.agents.createNewAgent')}
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 md:px-0">
-        {customAgents.length > 0 ? (
-          <CustomAgentList
-            agents={customAgents}
-            onEdit={handleEditAgent}
-            onDelete={handleDeleteAgent}
-            onImport={handleImportAgents}
-            onSelect={(agent) => {
-              const agentModel = customAgentModels.find(
-                (m) => m.id === `custom-${agent.id}`,
-              );
-              if (agentModel) {
-                handleModelSelect(agentModel);
-              }
-            }}
-            selectedModelId={selectedModelId ?? undefined}
-            defunctAgentIds={defunctAgentIds}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <AzureAIIcon className="w-8 h-8" />
-            </div>
-            <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              {t('modelSelect.agents.noAgentsTitle')}
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md">
-              {t('modelSelect.agents.noAgentsDescription')}
-            </p>
-          </div>
-        )}
+        </section>
       </div>
     </div>
   );

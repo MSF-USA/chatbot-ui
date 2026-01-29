@@ -1,4 +1,5 @@
 import { IconX } from '@tabler/icons-react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -35,10 +36,15 @@ interface ModelSelectProps {
 
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
+  const { exploreBots } = useFlags();
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
   const { models, defaultModelId, setDefaultModelId, setDefaultSearchMode } =
     useSettings();
+
+  // Feature flag: Control organization bots visibility via LaunchDarkly
+  // Default to true if LaunchDarkly is not configured (for local development)
+  const isBotsEnabled = exploreBots !== false;
 
   const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
@@ -137,7 +143,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   }, [customAgents, defunctAgentIds]);
 
   // Convert organization agents to OpenAIModel format
+  // Only include organization agents if the exploreBots feature flag is enabled
   const organizationAgentModels: OpenAIModel[] = useMemo(() => {
+    // Feature flag check: Skip organization agents if disabled in LaunchDarkly
+    if (!isBotsEnabled) {
+      return [];
+    }
+
     const orgAgents = getOrganizationAgents();
     return orgAgents.map((agent) => {
       // Use gpt-4.1 as default base model for RAG agents, or specified baseModelId
@@ -155,7 +167,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         isOrganizationAgent: true,
       };
     });
-  }, []);
+  }, [isBotsEnabled]);
 
   // Combine base models, custom agents, and organization agents
   const availableModels = [
@@ -302,6 +314,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       `[ModelSelect] Updating conversation ${selectedConversation.id} with model: ${model.id}`,
     );
     updateConversation(selectedConversation.id, updates);
+
+    // Close the modal after selecting a model
+    onClose?.();
   };
 
   const handleToggleSearchMode = () => {
