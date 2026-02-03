@@ -44,6 +44,10 @@ export interface OrganizationAgent {
   icon: string;
   /** Theme color (hex) */
   color: string;
+  /** Optional cover image path (relative to public folder, e.g., "/images/agents/comms.jpg") */
+  image?: string;
+  /** Organization or team that maintains this agent */
+  maintainedBy?: string;
   /** Agent type: 'rag' for knowledge base, 'foundry' for AI Foundry agent */
   type: OrganizationAgentType;
   /** Whether the agent is enabled */
@@ -64,6 +68,8 @@ export interface OrganizationAgent {
   }>;
   /** RAG configuration (RAG agents only) */
   ragConfig?: RAGConfig;
+  /** Allow web search alongside RAG (RAG agents only) */
+  allowWebSearch?: boolean;
 
   // ========================================
   // Foundry Agent Fields (type: 'foundry')
@@ -89,8 +95,9 @@ export interface OrganizationAgentConfig {
 /**
  * Tabler icon props interface (matching @tabler/icons-react)
  */
-export interface TablerIconProps
-  extends Partial<Omit<SVGProps<SVGSVGElement>, 'stroke'>> {
+export interface TablerIconProps extends Partial<
+  Omit<SVGProps<SVGSVGElement>, 'stroke'>
+> {
   size?: string | number;
   stroke?: string | number;
   title?: string;

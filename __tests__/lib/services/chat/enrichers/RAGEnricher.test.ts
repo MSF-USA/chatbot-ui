@@ -382,7 +382,7 @@ describe('RAGEnricher', () => {
       const content = ragContextMessage.content as string;
 
       // Should include citation instructions
-      expect(content).toContain('source numbers in brackets');
+      expect(content).toContain('source numbers in SEPARATE brackets');
       expect(content).toContain('[1]');
       expect(content).toContain('[2]');
 

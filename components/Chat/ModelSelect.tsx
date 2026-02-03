@@ -197,23 +197,11 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       : currentSearchMode;
 
   // Automatically fix invalid state when conversation loads with AGENT mode on non-agent model
-  // Also ensure custom agents always have search mode OFF
   // NOTE: This should ONLY run when conversation or model changes, NOT when search mode changes
   useEffect(() => {
     if (!selectedConversation) return;
 
     const searchMode = selectedConversation.defaultSearchMode;
-
-    // Custom agents should always have search mode OFF
-    if (isCustomAgent && searchMode !== SearchMode.OFF) {
-      console.log(
-        '[ModelSelect] Auto-fixing custom agent to have search mode OFF',
-      );
-      updateConversation(selectedConversation.id, {
-        defaultSearchMode: SearchMode.OFF,
-      });
-      return;
-    }
 
     // Fix invalid AGENT mode on non-agent models
     if (!isCustomAgent && searchMode === SearchMode.AGENT && !agentAvailable) {
@@ -279,35 +267,27 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       console.log(`[ModelSelect] Clearing bot (switched to non-org agent)`);
     }
 
-    // Custom agents always have search mode OFF
-    if (model.isCustomAgent) {
-      updates.defaultSearchMode = SearchMode.OFF;
+    // Check if the new model supports agents
+    const newModelConfig = OpenAIModels[model.id as OpenAIModelID];
+    const newModelHasAgent = newModelConfig?.agentId !== undefined;
+
+    // If switching to a model without agent support and current mode is AGENT, reset to INTELLIGENT
+    if (
+      !newModelHasAgent &&
+      selectedConversation.defaultSearchMode === SearchMode.AGENT
+    ) {
+      updates.defaultSearchMode = SearchMode.INTELLIGENT;
       console.log(
-        `[ModelSelect] Setting search mode to OFF for custom agent: ${model.id}`,
+        `[ModelSelect] Resetting AGENT mode to INTELLIGENT for non-agent model`,
       );
-    } else {
-      // Check if the new model supports agents
-      const newModelConfig = OpenAIModels[model.id as OpenAIModelID];
-      const newModelHasAgent = newModelConfig?.agentId !== undefined;
+    }
 
-      // If switching to a model without agent support and current mode is AGENT, reset to INTELLIGENT
-      if (
-        !newModelHasAgent &&
-        selectedConversation.defaultSearchMode === SearchMode.AGENT
-      ) {
-        updates.defaultSearchMode = SearchMode.INTELLIGENT;
-        console.log(
-          `[ModelSelect] Resetting AGENT mode to INTELLIGENT for non-agent model`,
-        );
-      }
-
-      // Only set defaultSearchMode if it's not already set on the conversation
-      if (selectedConversation.defaultSearchMode === undefined) {
-        updates.defaultSearchMode = SearchMode.INTELLIGENT;
-        console.log(
-          `[ModelSelect] Initializing defaultSearchMode to INTELLIGENT`,
-        );
-      }
+    // Only set defaultSearchMode if it's not already set on the conversation
+    if (selectedConversation.defaultSearchMode === undefined) {
+      updates.defaultSearchMode = SearchMode.INTELLIGENT;
+      console.log(
+        `[ModelSelect] Initializing defaultSearchMode to INTELLIGENT`,
+      );
     }
 
     console.log(
@@ -315,8 +295,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     );
     updateConversation(selectedConversation.id, updates);
 
-    // Close the modal after selecting a model
-    onClose?.();
+    // Don't auto-close - let user review settings and close manually
   };
 
   const handleToggleSearchMode = () => {
@@ -497,18 +476,30 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
       {activeTab === 'agents' && (
         <AgentsTab
-          showAgentWarning={showAgentWarning}
-          setShowAgentWarning={setShowAgentWarning}
           openAgentForm={openAgentForm}
           customAgents={customAgents}
           handleEditAgent={handleEditAgent}
           handleDeleteAgent={handleDeleteAgent}
-          handleImportAgents={handleImportAgents}
           handleModelSelect={handleModelSelect}
           customAgentModels={customAgentModels}
           organizationAgentModels={organizationAgentModels}
           selectedModelId={selectedModelId}
           defunctAgentIds={defunctAgentIds}
+          // Props for details panel
+          selectedModel={selectedModel}
+          modelConfig={modelConfig}
+          isCustomAgent={isCustomAgent}
+          searchModeEnabled={searchModeEnabled}
+          displaySearchMode={displaySearchMode}
+          agentAvailable={agentAvailable}
+          showModelAdvanced={showModelAdvanced}
+          selectedConversation={selectedConversation}
+          mobileView={mobileView}
+          setMobileView={setMobileView}
+          handleToggleSearchMode={handleToggleSearchMode}
+          handleSetSearchMode={handleSetSearchMode}
+          setShowModelAdvanced={setShowModelAdvanced}
+          updateConversation={updateConversation}
         />
       )}
 

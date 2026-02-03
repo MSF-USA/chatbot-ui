@@ -99,6 +99,7 @@ export class RAGService {
 
 CRITICAL CITATION RULES - YOU MUST FOLLOW THESE:
 - Cite sources inline using [#] notation immediately after the relevant information
+- Use SEPARATE brackets for each source like [1][2][3] - NEVER group them like [1,2,3]
 - NEVER include a "Sources:", "References:", or similar section listing sources
 - NEVER list sources at the end of your response - the frontend handles this automatically
 - NEVER create bullet points or numbered lists of sources with titles/dates
@@ -106,7 +107,10 @@ CRITICAL CITATION RULES - YOU MUST FOLLOW THESE:
 - The user interface will display clickable source cards - your job is ONLY to cite inline with [#]
 
 Example of CORRECT formatting:
-"The outbreak affected thousands of people [1]. Vaccination rates remain low [2]."
+"The outbreak affected thousands of people [1][2]. Vaccination rates remain low [3]."
+
+Example of WRONG formatting (DO NOT DO THIS):
+"The outbreak affected thousands of people [1,2]."
 
 Example of WRONG formatting (DO NOT DO THIS):
 "Sources:

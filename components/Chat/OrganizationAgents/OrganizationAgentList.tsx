@@ -1,6 +1,6 @@
 'use client';
 
-import { IconDatabase, IconRobot } from '@tabler/icons-react';
+import { IconCheck, IconRobot } from '@tabler/icons-react';
 import { FC } from 'react';
 
 import { OrganizationAgent } from '@/types/organizationAgent';
@@ -15,6 +15,11 @@ interface OrganizationAgentListProps {
   selectedAgentId?: string;
 }
 
+/**
+ * Simple list of organization agents for the left sidebar.
+ * Shows just the agent name and icon (like ModelCard).
+ * Full details are shown in the details panel on the right.
+ */
 export const OrganizationAgentList: FC<OrganizationAgentListProps> = ({
   onSelect,
   selectedAgentId,
@@ -42,61 +47,37 @@ export const OrganizationAgentList: FC<OrganizationAgentListProps> = ({
         const isSelected = selectedAgentId === `org-${agent.id}`;
 
         return (
-          <div
+          <button
             key={agent.id}
+            type="button"
             onClick={() => onSelect(agent)}
-            className={`p-4 bg-white dark:bg-[#2A2A2A] border-2 rounded-lg transition-colors cursor-pointer ${
-              isSelected
-                ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/10'
-                : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
-            }`}
+            className={`
+              w-full text-left p-3 rounded-lg transition-all duration-150 flex items-center justify-between gap-2
+              ${
+                isSelected
+                  ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
+                  : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+              }
+            `}
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-2">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: agent.color + '20' }}
               >
-                <IconComp size={24} style={{ color: agent.color }} />
+                <IconComp size={16} style={{ color: agent.color }} />
               </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-gray-900 dark:text-white truncate">
-                    {agent.name}
-                  </h4>
-                  {agent.type === 'rag' && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-                      <IconDatabase size={12} />
-                      Knowledge Base
-                    </span>
-                  )}
-                  {agent.type === 'foundry' && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                      <IconRobot size={12} />
-                      AI Agent
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                  {agent.description}
-                </p>
-
-                {agent.sources && agent.sources.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {agent.sources.map((source) => (
-                      <span
-                        key={source.url}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                      >
-                        {source.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <span className="font-medium text-sm text-gray-900 dark:text-white">
+                {agent.name}
+              </span>
             </div>
-          </div>
+            {isSelected && (
+              <IconCheck
+                size={16}
+                className="text-blue-600 dark:text-blue-400"
+              />
+            )}
+          </button>
         );
       })}
     </div>

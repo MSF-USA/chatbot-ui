@@ -194,7 +194,7 @@ export class RAGEnricher extends BasePipelineStage {
             enrichedMessages = [
               {
                 role: 'system',
-                content: `You have access to the following knowledge base sources. When citing information, use source numbers in brackets like [1], [2], etc.\n\nAvailable sources:\n\n${contextString}`,
+                content: `You have access to the following knowledge base sources. When citing information, use source numbers in SEPARATE brackets like [1][2][3] - never group them like [1,2,3].\n\nAvailable sources:\n\n${contextString}`,
                 messageType: MessageType.TEXT,
               },
               ...enrichedMessages,
