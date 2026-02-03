@@ -281,7 +281,11 @@ export class RAGEnricher extends BasePipelineStage {
             code: SpanStatusCode.ERROR,
             message: error instanceof Error ? error.message : 'Unknown error',
           });
-          throw error;
+          // Gracefully degrade - continue without RAG results instead of failing the request
+          console.warn(
+            '[RAGEnricher] Continuing without RAG results due to error',
+          );
+          return context;
         } finally {
           span.end();
         }

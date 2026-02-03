@@ -143,8 +143,8 @@ export function Chat({
       // Calculate editor width as percentage of container
       const newEditorWidth = ((containerWidth - mouseX) / containerWidth) * 100;
 
-      // Constrain between 30% and 70%
-      const constrainedWidth = Math.max(30, Math.min(70, newEditorWidth));
+      // Constrain between 20% and 80% for more flexibility
+      const constrainedWidth = Math.max(20, Math.min(80, newEditorWidth));
       setEditorWidth(constrainedWidth);
     },
     [isResizing],
@@ -274,11 +274,11 @@ export function Chat({
     <div className="chat-split-container relative flex h-full w-full overflow-hidden bg-white dark:bg-[#212121]">
       {/* Main chat area */}
       <div
-        className="flex flex-col h-full overflow-hidden"
+        className="flex flex-col h-full overflow-hidden min-w-0"
         style={{
           width: isArtifactOpen ? `${100 - editorWidth}%` : '100%',
-          minWidth: isArtifactOpen ? '30%' : undefined,
-          maxWidth: isArtifactOpen ? '70%' : undefined,
+          minWidth: isArtifactOpen ? '20%' : undefined,
+          maxWidth: isArtifactOpen ? '80%' : undefined,
         }}
       >
         {/* Header - Hidden on mobile, shown on desktop */}
@@ -328,7 +328,10 @@ export function Chat({
         </div>
 
         {/* Messages container - always mounted to prevent scroll reset */}
-        <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden min-w-0"
+        >
           {!hasMessages ? (
             /* Empty state with centered input */
             <div className="h-full flex flex-col items-center justify-center px-4 py-8">
@@ -366,7 +369,9 @@ export function Chat({
             /* Messages */
             <div
               className={
-                isArtifactOpen ? 'w-full px-4 pb-4' : 'mx-auto max-w-3xl pb-4'
+                isArtifactOpen
+                  ? 'w-full px-4 pb-4 min-w-0'
+                  : 'mx-auto max-w-3xl pb-4'
               }
             >
               <ChatMessages
@@ -473,11 +478,11 @@ export function Chat({
 
           {/* Code/Document Editor Panel */}
           <div
-            className="flex flex-col bg-white dark:bg-neutral-900 h-full overflow-hidden animate-slide-in-right"
+            className="flex flex-col bg-white dark:bg-neutral-900 h-full overflow-hidden animate-slide-in-right min-w-0"
             style={{
               width: `${editorWidth}%`,
-              minWidth: '30%',
-              maxWidth: '70%',
+              minWidth: '20%',
+              maxWidth: '80%',
             }}
           >
             {editorMode === 'code' ? (
