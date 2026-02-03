@@ -85,11 +85,12 @@ export const ModelDetailsPanel: FC<ModelDetailsPanelProps> = ({
                 src={organizationAgent.image!}
                 alt=""
                 fill
-                className="object-cover"
+                className="object-cover object-right"
                 priority={false}
               />
               {/* Gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/55 to-black/35" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-black/75 to-black/60" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
             </div>
             {/* Header content */}
             <div className="relative z-10 p-8 flex flex-col justify-end h-full">
