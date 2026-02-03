@@ -14,9 +14,16 @@ vi.mock('@/lib/utils/shared/document/domPurify', () => ({
   getDOMPurify: vi.fn().mockResolvedValue({
     sanitize: (html: string, config?: object) => {
       // Simple mock sanitization - remove script tags and event handlers
-      return html
-        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-        .replace(/\s*on\w+="[^"]*"/gi, '');
+      // Loop until no more matches to handle nested/split bypass attempts
+      let result = html;
+      let prev;
+      do {
+        prev = result;
+        result = result
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+          .replace(/\s*on\w+=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+      } while (result !== prev);
+      return result;
     },
   }),
 }));
