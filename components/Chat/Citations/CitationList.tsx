@@ -265,14 +265,14 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
       </div>
 
       <div
-        className={`transition-all duration-300 ease-in-out ${
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
           isExpanded
             ? viewMode === 'cards'
               ? 'max-h-[200px] opacity-100'
               : 'max-h-[400px] opacity-100'
             : 'max-h-0 opacity-0'
         }`}
-        style={{ overflow: 'hidden', width: '100%' }}
+        style={{ width: '100%' }}
       >
         {viewMode === 'cards' ? (
           <div
