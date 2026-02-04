@@ -37,7 +37,7 @@ export async function createOrUpdateIndex(
         console.log('Index configuration being sent:', rawJson);
 
         const response = await fetch(
-          `${endpoint}/indexes/${indexName}?api-version=2024-07-01`,
+          `${endpoint}/indexes/${indexName}?api-version=2025-09-01`,
           {
             method: 'PUT',
             headers: {

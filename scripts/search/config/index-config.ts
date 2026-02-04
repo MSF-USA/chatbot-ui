@@ -217,6 +217,9 @@ export function getIndexConfig(
       configurations: [
         {
           name: `${indexName}-semantic-configuration`,
+          // Apply freshness scoring profile boost to semantically ranked results
+          // This enables the dateScore profile to influence final ordering
+          rankingOrder: 'BoostedRerankerScore',
           prioritizedFields: {
             titleField: {
               fieldName: 'title',
