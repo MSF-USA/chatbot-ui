@@ -2,6 +2,7 @@ import {
   IconBrandBing,
   IconLink,
   IconSearch,
+  IconSettings,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -10,23 +11,20 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
-import { useTranslation } from 'next-i18next';
-
+import { useTranslations } from 'next-intl';
 
 import { AgentType } from '@/types/agent';
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
   Message,
   MessageType,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
-
-import BetaBadge from '@/components/Beta/Badge';
-import Modal from '@/components/UI/Modal';
 
 import crypto from 'crypto';
 
@@ -37,45 +35,20 @@ interface ChatInputSearchProps {
     event: React.ChangeEvent<any> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   initialMode?: 'search' | 'url';
   // New props for agent-based web search
   onSend?: (
     message: Message,
-    plugin: Plugin | null,
     forceStandardChat?: boolean,
     forcedAgentType?: AgentType,
   ) => void;
@@ -83,7 +56,6 @@ interface ChatInputSearchProps {
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };
   apiKey?: string;
-  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
   systemPrompt?: string;
   temperature?: number;
 }
@@ -104,11 +76,10 @@ const ChatInputSearch = ({
   setProgress,
   stopConversationRef,
   apiKey,
-  pluginKeys,
   systemPrompt,
   temperature,
 }: ChatInputSearchProps) => {
-  const { t } = useTranslation(['chat', 'agents']);
+  const t = useTranslations();
 
   const [mode, setMode] = useState<'search' | 'url'>(initialMode);
 
@@ -127,7 +98,6 @@ const ChatInputSearch = ({
   );
   const [isSearchSubmitting, setIsSearchSubmitting] = useState<boolean>(false);
 
-
   const urlInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -144,27 +114,21 @@ const ChatInputSearch = ({
         setUrlQuestionInput(t('defaultWebPullerQuestion'));
       }
     }
-  }, [
-    urlInput,
-    mode,
-    t,
-    urlQuestionInput,
-    isOpen,
-  ]);
+  }, [urlInput, mode, t, urlQuestionInput, isOpen]);
 
   // Focus input when modal opens or mode changes
   useEffect(() => {
     if (isOpen) {
-      if (mode === 'url' && urlInputRef.current) {
-        urlInputRef.current.focus();
-      } else if (mode === 'search' && searchInputRef.current) {
-        searchInputRef.current.focus();
-      }
+      // Small delay to ensure the overlay is rendered
+      setTimeout(() => {
+        if (mode === 'url' && urlInputRef.current) {
+          urlInputRef.current.focus();
+        } else if (mode === 'search' && searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }, 50);
     }
   }, [isOpen, mode]);
-
-
-
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -212,11 +176,7 @@ const ChatInputSearch = ({
       setUrlQuestionInput('');
     } catch (error: any) {
       console.error(error);
-      setUrlError(
-        error.message ||
-          t('errorOccurredFetchingUrl') ||
-          'An error occurred while fetching the URL content',
-      );
+      setUrlError(error.message || t('chat.errorFetchingUrl'));
     } finally {
       setUrlStatusMessage(null);
       setIsUrlSubmitting(false);
@@ -245,7 +205,7 @@ const ChatInputSearch = ({
           messageType: MessageType.TEXT,
         };
         // Pass AgentType.WEB_SEARCH as forced agent to ensure web search is used
-        onSend(userMessage, null, undefined, AgentType.WEB_SEARCH);
+        onSend(userMessage, undefined, AgentType.WEB_SEARCH);
       }
 
       // Close modal and reset state
@@ -253,11 +213,7 @@ const ChatInputSearch = ({
       setSearchInput('');
     } catch (error: any) {
       console.error(error);
-      setSearchError(
-        error.message ||
-          t('errorOccurredFetchingSearchResults') ||
-          'An error occurred while initiating web search',
-      );
+      setSearchError(error.message || t('chat.errorInitiatingSearch'));
     } finally {
       setSearchStatusMessage(null);
       setIsSearchSubmitting(false);
@@ -266,203 +222,245 @@ const ChatInputSearch = ({
 
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
-  const renderTabs = () => {
-    return (
-      <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
-        <button
-          onClick={() => setMode('search')}
-          disabled={isSubmitting}
-          className={`px-4 py-2 font-medium ${
-            mode === 'search'
-              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-          }`}
-          aria-pressed={mode === 'search'}
-        >
-          {t('webSearchModalTitle')}
-        </button>
-        <button
-          onClick={() => setMode('url')}
-          disabled={isSubmitting}
-          className={`px-4 py-2 font-medium ${
-            mode === 'url'
-              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-          }`}
-          aria-pressed={mode === 'url'}
-        >
-          {t('chatUrlInputTitle')}
-        </button>
-      </div>
-    );
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isSubmitting) {
+      e.preventDefault();
+      if (mode === 'search') {
+        if (searchInput.trim()) {
+          handleSearchSubmit(e as any);
+        }
+      } else {
+        if (urlInput.trim()) {
+          handleUrlSubmit(e as any);
+        }
+      }
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
   };
 
-  const renderUrlForm = () => (
-    <form onSubmit={handleUrlSubmit} className={'mt-1'}>
-      <div className="space-y-4 py-4">
-        <div className="flex flex-col">
-          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
-            {t('webUrlInputDescription')}
-          </em>
-          <div className="flex items-center gap-4">
-            <input
-              ref={urlInputRef}
-              id="url-input"
-              type="url"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="https://example.com"
-              required
-              disabled={isSubmitting}
-              className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <em className="text-sm text-gray-500 dark:text-gray-400 mb-1 ml-1">
-            {t('webUrlQuestionDescription')}
-          </em>
-          <div className="flex items-center gap-4">
-            <input
-              id="url-question-input"
-              type="text"
-              value={urlQuestionInput}
-              onChange={(e) => setUrlQuestionInput(e.target.value)}
-              placeholder={t('defaultWebPullerQuestion')}
-              disabled={isSubmitting}
-              className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-            />
-          </div>
-        </div>
-        {urlError && (
-          <p className="text-red-500 text-sm mt-2 col-span-4 text-center">
-            {urlError}
-          </p>
-        )}
-        {urlStatusMessage && !isUrlSubmitting && (
-          <p className="text-gray-500 text-sm mt-2 col-span-4 text-center animate-pulse">
-            {urlStatusMessage}
-          </p>
-        )}
-      </div>
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
-      >
-        <IconLink className="mr-2 h-4 w-4" />
-        {t('submitButton')}
-      </button>
-    </form>
-  );
+  const handleSubmit = () => {
+    if (isSubmitting) return;
 
-  const renderSearchForm = () => (
-    <form onSubmit={handleSearchSubmit} className={'mt-1'}>
-      <div className="space-y-4 py-4">
-        <div className="flex flex-col">
-          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
-            {t('webSearchInputDescription')}
-          </em>
-          <div className="relative w-full">
-            <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+    if (mode === 'search' && searchInput.trim()) {
+      const fakeEvent = { preventDefault: () => {} } as any;
+      handleSearchSubmit(fakeEvent);
+    } else if (mode === 'url' && urlInput.trim()) {
+      const fakeEvent = { preventDefault: () => {} } as any;
+      handleUrlSubmit(fakeEvent);
+    }
+  };
+
+  const content = (
+    <div className="w-full bg-white dark:bg-gray-900 rounded-xl shadow-2xl overflow-hidden">
+      {/* Header with Close Button */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          {mode === 'search' ? 'Search the Web' : 'Analyze URL'}
+        </h2>
+        <button
+          onClick={onClose}
+          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          aria-label="Close"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mode Toggle */}
+      <div className="px-6 pt-4 pb-2">
+        <div className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          <button
+            onClick={() => setMode('search')}
+            disabled={isSubmitting}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              mode === 'search'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <IconSearch className="w-4 h-4" />
+              <span>Search</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setMode('url')}
+            disabled={isSubmitting}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              mode === 'url'
+                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <IconLink className="w-4 h-4" />
+              <span>URL</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Input Area */}
+      <div className="px-6 py-4 space-y-3">
+        {mode === 'search' ? (
+          <div>
+            <label
+              htmlFor="search-term"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              What would you like to search for?
+            </label>
             <input
+              ref={searchInputRef}
               id="search-term"
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t('searchQueryPlaceholder')}
-              required
+              onKeyDown={handleKeyDown}
+              placeholder={t('chat.enterSearchQueryPlaceholder')}
               disabled={isSubmitting}
-              title={t('searchQueryPlaceholder')}
-              ref={searchInputRef}
-              className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
-        </div>
-        {searchError && (
-          <p className="text-red-500 text-sm mt-2 text-center" role="alert">
-            {searchError}
+        ) : (
+          <>
+            <div>
+              <label
+                htmlFor="url-input"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                Enter URL to analyze
+              </label>
+              <input
+                ref={urlInputRef}
+                id="url-input"
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="https://example.com"
+                disabled={isSubmitting}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="url-question-input"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                What would you like to know? (optional)
+              </label>
+              <input
+                id="url-question-input"
+                type="text"
+                value={urlQuestionInput}
+                onChange={(e) => setUrlQuestionInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={t('defaultWebPullerQuestion')}
+                disabled={isSubmitting}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+          </>
+        )}
+
+        {/* Error Messages */}
+        {(searchError || urlError) && (
+          <p className="text-red-500 text-sm" role="alert">
+            {searchError || urlError}
           </p>
         )}
-        {searchStatusMessage && !isSearchSubmitting && (
-          <p
-            className="text-gray-500 text-sm mt-2 animate-pulse text-center"
-            aria-live="polite"
-          >
-            {searchStatusMessage}
+        {(searchStatusMessage || urlStatusMessage) && !isSubmitting && (
+          <p className="text-gray-500 text-sm animate-pulse" aria-live="polite">
+            {searchStatusMessage || urlStatusMessage}
           </p>
         )}
       </div>
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
-      >
-        <IconSearch className="mr-2 h-4 w-4" />
-        {t('submitButton')}
-      </button>
-    </form>
-  );
 
-  const modalContent = (
-    <div className="relative">
-      {renderTabs()}
-      {mode === 'search' && renderSearchForm()}
-      {mode === 'url' && renderUrlForm()}
-
-      {isSubmitting && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75"
-          aria-live="assertive"
+      {/* Footer with Action Button */}
+      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Press Enter or click the button to{' '}
+          {mode === 'search' ? 'search' : 'analyze'}
+        </p>
+        <button
+          onClick={handleSubmit}
+          disabled={
+            isSubmitting ||
+            (mode === 'search' ? !searchInput.trim() : !urlInput.trim())
+          }
+          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center gap-2"
         >
-          <svg
-            className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            role="img"
-            aria-label={t('loadingAriaLabel') || 'Loading'}
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-            />
-          </svg>
-          {(mode === 'url' ? urlStatusMessage : searchStatusMessage) && (
-            <p className="mt-2 text-gray-700 dark:text-gray-200">
-              {mode === 'url' ? urlStatusMessage : searchStatusMessage}
-            </p>
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
+              </svg>
+              <span>Processing...</span>
+            </>
+          ) : (
+            <>
+              {mode === 'search' ? (
+                <IconSearch className="w-4 h-4" />
+              ) : (
+                <IconLink className="w-4 h-4" />
+              )}
+              <span>{mode === 'search' ? 'Search' : 'Analyze'}</span>
+            </>
           )}
-        </div>
-      )}
+        </button>
+      </div>
     </div>
   );
 
-  if (!isOpen) {
-    return null; // Don't render anything if not open
+  if (!isOpen || typeof document === 'undefined') {
+    return null; // Don't render anything if not open or on server
   }
 
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="md"
-      className="mx-2"
-      betaBadge={<BetaBadge />}
-      closeWithButton={true}
-      initialFocusRef={mode === 'url' ? urlInputRef : searchInputRef}
+  return createPortal(
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-lg z-[99999] flex items-center justify-center p-4 animate-fade-in-fast"
+      onClick={onClose}
+      style={{ isolation: 'isolate' }}
     >
-      {modalContent}
-    </Modal>
+      {/* Search Container */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-3xl animate-modal-in"
+      >
+        {content}
+      </div>
+    </div>,
+    document.body,
   );
 };
 

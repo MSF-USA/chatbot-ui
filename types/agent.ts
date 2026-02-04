@@ -1,11 +1,55 @@
 import { Session } from 'next-auth';
 
 import { Message } from './chat';
-import { CodeInterpreterConfig } from './codeInterpreter';
-import { KnowledgeBaseConfig } from './localKnowledge';
 import { OpenAIModel } from './openai';
-import { UrlPullConfig } from './urlPull';
-import { WebSearchConfig } from './webSearch';
+
+/**
+ * Configuration for web search agents
+ */
+export interface WebSearchConfig {
+  /** Search provider settings */
+  provider?: string;
+  /** API key or credentials */
+  credentials?: Record<string, any>;
+  /** Additional search parameters */
+  [key: string]: any;
+}
+
+/**
+ * Configuration for URL pull agents
+ */
+export interface UrlPullConfig {
+  /** URL fetching settings */
+  fetchOptions?: Record<string, any>;
+  /** Content extraction settings */
+  extractionOptions?: Record<string, any>;
+  /** Additional parameters */
+  [key: string]: any;
+}
+
+/**
+ * Configuration for code interpreter agents
+ */
+export interface CodeInterpreterConfig {
+  /** Execution environment settings */
+  runtime?: string;
+  /** Security settings */
+  securityOptions?: Record<string, any>;
+  /** Additional parameters */
+  [key: string]: any;
+}
+
+/**
+ * Configuration for knowledge base agents
+ */
+export interface KnowledgeBaseConfig {
+  /** Knowledge base connection settings */
+  connection?: Record<string, any>;
+  /** Search settings */
+  searchOptions?: Record<string, any>;
+  /** Additional parameters */
+  [key: string]: any;
+}
 
 /**
  * Enumeration of all supported agent types

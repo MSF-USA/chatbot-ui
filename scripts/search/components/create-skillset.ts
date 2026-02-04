@@ -1,14 +1,16 @@
 import { getSkillsetConfig } from '../config/skillset-config';
 
+import { DefaultAzureCredential } from '@azure/identity';
+
 export async function createOrUpdateSkillset(
   skillsetName: string,
   indexName: string,
   endpoint: string,
-  apiKey: string,
   openaiEndpoint: string,
   openaiEmbeddingDeployment: string,
 ) {
   console.log(`Creating/updating skillset: ${skillsetName}`);
+  console.log('Using managed identity for authentication');
 
   const skillsetConfig = getSkillsetConfig(
     skillsetName,
@@ -18,6 +20,12 @@ export async function createOrUpdateSkillset(
   );
 
   try {
+    // Use managed identity for authentication
+    const credential = new DefaultAzureCredential();
+    const token = await credential.getToken(
+      'https://search.azure.com/.default',
+    );
+
     const rawJson = JSON.stringify(skillsetConfig);
     console.log('Skillset configuration being sent:', rawJson);
 
@@ -27,7 +35,7 @@ export async function createOrUpdateSkillset(
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': apiKey,
+          Authorization: `Bearer ${token.token}`,
         },
         body: rawJson,
       },

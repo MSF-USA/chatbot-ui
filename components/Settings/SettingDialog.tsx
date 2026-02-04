@@ -1,82 +1,97 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react';
-import { useSwipeable } from 'react-swipeable';
+'use client';
 
-import { Session } from 'next-auth';
-import { useTranslation } from 'next-i18next';
+import { useSession } from 'next-auth/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useCreateReducer } from '@/hooks/useCreateReducer';
+import { useTranslations } from 'next-intl';
 
-import { getSettings, saveSettings } from '@/utils/app/settings';
-import { getStorageUsage } from '@/utils/app/storageMonitor';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useCreateReducer } from '@/client/hooks/ui/useCreateReducer';
+import { useUI } from '@/client/hooks/ui/useUI';
 
-import { Settings } from '@/types/settings';
+import { exportData, importData } from '@/lib/utils/app/export/importExport';
+import { getSettings, saveSettings } from '@/lib/utils/app/settings';
+import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
-import HomeContext from '@/context/HomeContext';
+import { SearchMode } from '@/types/searchMode';
+import { DEFAULT_STREAMING_SPEED, Settings } from '@/types/settings';
 
-import ChatbarContext from '../Chatbar/Chatbar.context';
-import { MobileHeader } from './MobileHeader';
-import { MobileNavigation } from './MobileNavigation';
-import { AccountSection } from './Sections/AccountSection';
-// import { AgentFeaturesSection } from './Sections/AgentFeaturesSection';
+import packageJson from '../../package.json';
+import { MigrationDialog } from '../Migration/MigrationDialog';
+import { MobileSettingsHeader } from './MobileSettingsHeader';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
 import { HelpSupportSection } from './Sections/HelpSupportSection';
-import { PrivacyControlSection } from './Sections/PrivacyControlSection';
-import { SettingsFooter } from './SettingsFooter';
+import { MobileAppSection } from './Sections/MobileAppSection';
 import { SettingsSidebar } from './SettingsSidebar';
-import faqData from './faq.json';
 import { SettingsSection } from './types';
 
-import { useStorageMonitor } from '@/context/StorageMonitorContext';
-
-const version = process.env.NEXT_PUBLIC_VERSION;
-const build = process.env.NEXT_PUBLIC_BUILD;
-const env = process.env.NEXT_PUBLIC_ENV;
+const version = packageJson.version;
+const build = process.env.NEXT_PUBLIC_BUILD || 'Unknown';
+const env = process.env.NEXT_PUBLIC_ENV || 'development';
 
 /**
- * Props for the SettingDialog component
+ * SettingDialog component adapted for Zustand stores
  */
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  user?: Session['user'];
-  initialSection?: SettingsSection;
-}
+export function SettingDialog() {
+  const t = useTranslations();
+  const { data: session } = useSession();
+  const { isSettingsOpen, setIsSettingsOpen, theme, setTheme } = useUI();
+  const {
+    temperature,
+    setTemperature,
+    systemPrompt,
+    setSystemPrompt,
+    prompts,
+  } = useSettings();
+  const { conversations, clearAll: clearAllConversations } = useConversations();
 
-/**
- * SettingDialog component
- * Renders a modal dialog with settings for the application
- */
-export const SettingDialog: FC<Props> = ({
-  open,
-  onClose,
-  user,
-  initialSection,
-}) => {
-  const { t } = useTranslation('settings');
-  const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
-    initialState: settings,
+    initialState: {
+      theme: 'light',
+      temperature: 0.5,
+      systemPrompt: '',
+      advancedMode: false,
+      defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false,
+      preferredName: '',
+      userContext: '',
+    },
   });
 
-  const {
-    handleImportConversations,
-    handleExportData,
-    handleClearConversations,
-  } = useContext(ChatbarContext);
-
-  const { state: homeState, dispatch: homeDispatch } = useContext(HomeContext);
-  const { storagePercentage, checkStorage } = useStorageMonitor();
-  const [storageData, setStorageData] = useState(() => getStorageUsage());
+  const [storageData, setStorageData] = useState<any>(null);
+  const [fullProfile, setFullProfile] = useState<any>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<SettingsSection>(
-    initialSection || SettingsSection.GENERAL,
+    SettingsSection.GENERAL,
   );
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
+  const [showMigrationDialog, setShowMigrationDialog] = useState(false);
 
+  // Load settings and storage on client side only
+  useEffect(() => {
+    const loadedSettings = getSettings();
+    Object.keys(loadedSettings).forEach((key) => {
+      dispatch({
+        field: key as keyof Settings,
+        value: loadedSettings[key as keyof Settings],
+      });
+    });
+    setStorageData(getStorageUsage());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Close on click outside
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
+      // Don't close if MigrationDialog is open - it's rendered outside modalRef
+      if (showMigrationDialog) return;
+
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
         window.addEventListener('mouseup', handleMouseUp);
       }
@@ -84,94 +99,97 @@ export const SettingDialog: FC<Props> = ({
 
     const handleMouseUp = (e: MouseEvent) => {
       window.removeEventListener('mouseup', handleMouseUp);
-      onClose();
+      setIsSettingsOpen(false);
     };
 
-    window.addEventListener('mousedown', handleMouseDown);
+    if (isSettingsOpen) {
+      window.addEventListener('mousedown', handleMouseDown);
+    }
 
     return () => {
       window.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [onClose]);
+  }, [isSettingsOpen, setIsSettingsOpen, showMigrationDialog]);
 
   // Update storage data when dialog opens
   useEffect(() => {
-    if (open) {
+    if (isSettingsOpen) {
       setStorageData(getStorageUsage());
-      checkStorage();
     }
-  }, [open, checkStorage]);
+  }, [isSettingsOpen]);
 
-  // Check screen size to determine if it's in mobile view
+  // Prefetch user profile when settings opens (with localStorage caching)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!isSettingsOpen || !session?.user?.id) return;
+
+      // Check if we have a cached profile for this user
+      const cacheKey = `user_profile_${session.user.id}`;
+      const cachedProfile = localStorage.getItem(cacheKey);
+
+      if (cachedProfile) {
+        try {
+          setFullProfile(JSON.parse(cachedProfile));
+          return;
+        } catch (e) {
+          // Invalid cache, fetch fresh
+          localStorage.removeItem(cacheKey);
+        }
+      }
+
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const profile = await response.json();
+          setFullProfile(profile);
+          // Cache the full profile in localStorage
+          localStorage.setItem(cacheKey, JSON.stringify(profile));
+        }
+      } catch (error) {
+        console.error('Failed to prefetch user profile:', error);
+      }
+    };
+
+    if (isSettingsOpen) {
+      fetchProfile();
+    }
+  }, [isSettingsOpen, session?.user?.id]);
+
+  // Check for mobile view
   useEffect(() => {
     const checkMobileView = () => {
       setIsMobileView(window.innerWidth < 768);
     };
 
-    // Initial check
     checkMobileView();
-
-    // Add event listener for window resize
     window.addEventListener('resize', checkMobileView);
 
-    // Clean up event listener
     return () => {
       window.removeEventListener('resize', checkMobileView);
     };
   }, []);
 
-  // Update active section when initialSection changes
-  useEffect(() => {
-    if (initialSection) {
-      setActiveSection(initialSection);
-    }
-  }, [initialSection]);
-
-  // Handle ESC key to close dialog
+  // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        setIsSettingsOpen(false);
       }
     };
 
-    // Only add listener when dialog is open
-    if (open) {
+    if (isSettingsOpen) {
       window.addEventListener('keydown', handleKeyDown);
     }
 
-    // Clean up event listener
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, onClose]);
-
-  // Configure swipe handlers for mobile navigation
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      // Navigate to next section if available
-      const sections = Object.values(SettingsSection);
-      const currentIndex = sections.indexOf(activeSection);
-      if (currentIndex < sections.length - 1) {
-        setActiveSection(sections[currentIndex + 1]);
-      }
-    },
-    onSwipedRight: () => {
-      // Navigate to previous section if available
-      const sections = Object.values(SettingsSection);
-      const currentIndex = sections.indexOf(activeSection);
-      if (currentIndex > 0) {
-        setActiveSection(sections[currentIndex - 1]);
-      }
-    },
-    preventScrollOnSwipe: true,
-    trackMouse: false,
-  });
+  }, [isSettingsOpen, setIsSettingsOpen]);
 
   const handleSave = () => {
-    homeDispatch({ field: 'lightMode', value: state.theme });
-    homeDispatch({ field: 'temperature', value: state.temperature });
-    homeDispatch({ field: 'systemPrompt', value: state.systemPrompt });
+    setTheme(state.theme);
+    setTemperature(state.temperature);
+    setSystemPrompt(state.systemPrompt);
     saveSettings(state);
   };
 
@@ -186,33 +204,64 @@ export const SettingDialog: FC<Props> = ({
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       advancedMode: false,
+      defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      displayNamePreference: 'firstName',
+      customDisplayName: '',
+      streamingSpeed: DEFAULT_STREAMING_SPEED,
+      includeUserInfoInPrompt: false,
+      preferredName: '',
+      userContext: '',
     };
-    homeDispatch({ field: 'lightMode', value: defaultTheme });
-    homeDispatch({ field: 'temperature', value: 0.5 });
-    homeDispatch({
-      field: 'systemPrompt',
-      value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
-    });
+    setTheme(defaultTheme);
+    setTemperature(0.5);
+    setSystemPrompt(process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '');
     saveSettings(defaultSettings);
   };
 
-  // Format bytes to more readable format
-  const formatBytes = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    const kb = bytes / 1024;
-    if (kb < 1024) return `${kb.toFixed(2)} KB`;
-    const mb = kb / 1024;
-    return `${mb.toFixed(2)} MB`;
+  const handleClearConversations = () => {
+    clearAllConversations();
   };
 
-  // Render nothing if the dialog is not open.
-  if (!open) {
-    return <></>;
+  const handleExportData = () => {
+    // Use the proper exportData function which includes all data:
+    // conversations, folders, prompts, tones, and custom agents
+    exportData();
+  };
+
+  const handleImportConversations = (data: any) => {
+    try {
+      // Use the proper importData function which handles all data types:
+      // conversations, folders, prompts, tones, and custom agents
+      const result = importData(data);
+
+      // The importData function automatically updates localStorage
+      // Force a page reload to ensure all stores pick up the new data
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to import data:', error);
+      alert(
+        `Failed to import data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
+  };
+
+  const checkStorage = useCallback(() => {
+    setStorageData(getStorageUsage());
+  }, []);
+
+  // Render nothing if not open
+  if (!isSettingsOpen) {
+    return null;
   }
 
-  // Render the dialog.
+  // Create homeState object for compatibility with sections
+  const homeState = {
+    conversations,
+    prompts,
+  };
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50 animate-fade-in-fast">
       <div className="fixed inset-0 z-10 overflow-hidden">
         <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
           <div
@@ -222,37 +271,40 @@ export const SettingDialog: FC<Props> = ({
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block transform rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full md:max-w-[700px] lg:max-w-[800px] xl:max-w-[900px] sm:align-middle"
+            className="dark:border-netural-400 inline-block transform rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full md:max-w-[800px] lg:max-w-[900px] xl:max-w-[1000px] sm:align-middle animate-modal-in"
             role="dialog"
           >
-            <div className="flex flex-col md:flex-row h-[500px] md:h-[600px]">
+            <div className="flex flex-col md:flex-row h-[550px] md:h-[700px]">
               {/* Navigation sidebar - hidden on mobile */}
               <SettingsSidebar
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
                 handleReset={handleReset}
-                onClose={onClose}
-                user={user}
+                onClose={() => setIsSettingsOpen(false)}
+                user={session?.user}
                 state={state}
                 dispatch={dispatch}
               />
 
               {/* Content area */}
-              <div
-                className="flex-grow overflow-y-auto relative"
-                {...swipeHandlers}
-              >
-                {/* Mobile header - only visible on mobile */}
-                {isMobileView && <MobileHeader activeSection={activeSection} />}
+              <div className="flex-grow overflow-y-auto relative">
+                {/* Mobile header */}
+                {isMobileView && (
+                  <MobileSettingsHeader
+                    activeSection={activeSection}
+                    setActiveSection={setActiveSection}
+                  />
+                )}
 
                 {/* Section content */}
                 {activeSection === SettingsSection.GENERAL && (
                   <GeneralSection
                     state={state}
                     dispatch={dispatch}
-                    user={user}
+                    user={session?.user}
                     onSave={handleSave}
-                    onClose={onClose}
+                    onClose={() => setIsSettingsOpen(false)}
+                    prefetchedProfile={fullProfile}
                   />
                 )}
 
@@ -261,62 +313,42 @@ export const SettingDialog: FC<Props> = ({
                     state={state}
                     dispatch={dispatch}
                     homeState={homeState}
-                    user={user}
+                    user={session?.user}
                     onSave={handleSave}
-                    onClose={onClose}
+                    onClose={() => setIsSettingsOpen(false)}
                   />
-                )}
-
-                {/* activeSection === SettingsSection.AGENT_FEATURES && (
-                  <AgentFeaturesSection onClose={onClose} />
-                ) */}
-
-                {activeSection === SettingsSection.PRIVACY_CONTROL && (
-                  <PrivacyControlSection onClose={onClose} />
                 )}
 
                 {activeSection === SettingsSection.DATA_MANAGEMENT && (
                   <DataManagementSection
-                    homeState={homeState}
                     handleClearConversations={handleClearConversations}
                     handleImportConversations={handleImportConversations}
                     handleExportData={handleExportData}
                     handleReset={handleReset}
-                    onClose={onClose}
+                    onClose={() => setIsSettingsOpen(false)}
                     checkStorage={checkStorage}
+                    onOpenMigration={() => setShowMigrationDialog(true)}
                   />
                 )}
 
-                {activeSection === SettingsSection.ACCOUNT && (
-                  <AccountSection user={user} />
+                {activeSection === SettingsSection.MOBILE_APP && (
+                  <MobileAppSection />
                 )}
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (
-                  <HelpSupportSection faqData={faqData} />
+                  <HelpSupportSection />
                 )}
-
-                {/* Mobile navigation */}
-                {isMobileView && (
-                  <MobileNavigation
-                    activeSection={activeSection}
-                    setActiveSection={setActiveSection}
-                  />
-                )}
-
-                {/* Footer */}
-                <SettingsFooter
-                  version={version || ''}
-                  build={build || ''}
-                  env={env || ''}
-                  user={user}
-                  handleReset={handleReset}
-                  onClose={onClose}
-                />
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Migration Dialog - opened from Data Management section */}
+      <MigrationDialog
+        isOpen={showMigrationDialog}
+        onComplete={() => setShowMigrationDialog(false)}
+      />
     </div>
   );
-};
+}

@@ -21,7 +21,6 @@ async function main() {
   // Get all configuration from environment variables
   const config: SearchConfig = {
     endpoint: process.env.SEARCH_ENDPOINT || '',
-    apiKey: process.env.SEARCH_ENDPOINT_API_KEY || '',
     indexName: process.env.SEARCH_INDEX || '',
     skillsetName: process.env.SEARCH_SKILLSET || 'rag-skillset',
     dataSourceName: process.env.SEARCH_DATASOURCE || '',
@@ -32,7 +31,7 @@ async function main() {
     openaiEndpoint: process.env.AZURE_OPENAI_ENDPOINT || '',
     openaiApiKey: process.env.OPENAI_API_KEY || '',
     openaiEmbeddingDeployment:
-      process.env.OPENAI_EMBEDDING_DEPLOYMENT || 'text-embedding',
+      process.env.OPENAI_EMBEDDING_DEPLOYMENT || 'text-embedding-3-small',
   };
 
   // Validate required config

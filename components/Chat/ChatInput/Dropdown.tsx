@@ -1,145 +1,110 @@
 import {
   IconCamera,
   IconCirclePlus,
+  IconFile,
   IconFileMusic,
+  IconFileText,
   IconLanguage,
   IconLink,
+  IconPaperclip,
   IconSearch,
-  IconX,
+  IconVolume,
+  IconWorld,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import useEnhancedOutsideClick from '@/hooks/useEnhancedOutsideClick';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
+import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
 import {
-  ChatInputSubmitTypes,
+  AssistantMessageGroup,
   FileMessageContent,
-  FilePreview,
-  ImageMessageContent,
   Message,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
+import { DocumentTranslationReference } from '@/types/documentTranslation';
+import { SearchMode } from '@/types/searchMode';
+import { Tone } from '@/types/tone';
 
+import ChatInputDocumentTranslate from '@/components/Chat/ChatInput/ChatInputDocumentTranslate';
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import { formatTranslationReference } from '@/components/Chat/DocumentTranslationViewer';
 import ImageIcon from '@/components/Icons/image';
 
-interface DropdownProps {
-  onFileUpload: (
-    event: React.ChangeEvent<any> | File[] | FileList,
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
-    setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
-  ) => Promise<void>;
-  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
-  setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
-  setTextFieldValue: Dispatch<SetStateAction<string>>;
-  handleSend: () => void;
-  textFieldValue: string;
-  onCameraClick: () => void;
-  // New props for agent-based web search
-  onSend?: (
-    message: Message,
-    plugin: Plugin | null,
-    forceStandardChat?: boolean,
-  ) => void;
-  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
-  setProgress?: Dispatch<SetStateAction<number | null>>;
-  stopConversationRef?: { current: boolean };
-  apiKey?: string;
-  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
-  systemPrompt?: string;
-  temperature?: number;
-}
+import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
-// Define the menu item structure
-interface MenuItem {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-  tooltip: string;
-  onClick: () => void;
-  category: 'web' | 'media' | 'transform';
+import { useChatInputStore } from '@/client/stores/chatInputStore';
+import {
+  DOCUMENT_TRANSLATION_ACCEPT_TYPES,
+  TRANSCRIPTION_ACCEPT_TYPES,
+} from '@/lib/constants/fileTypes';
+
+interface DropdownProps {
+  onCameraClick: () => void;
+  openDownward?: boolean;
+  tones: Tone[];
+  handleSend: () => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
-  setFileFieldValue,
-  onFileUpload,
-  setFilePreviews,
-  setTextFieldValue,
-  setImageFieldValue,
-  setUploadProgress,
-  setSubmitType,
-  handleSend,
-  textFieldValue,
   onCameraClick,
-  onSend,
-  setRequestStatusMessage,
-  setProgress,
-  stopConversationRef,
-  apiKey,
-  pluginKeys,
-  systemPrompt,
-  temperature,
+  openDownward = false,
+  tones,
+  handleSend,
 }) => {
+  const setFileFieldValue = useChatInputStore(
+    (state) => state.setFileFieldValue,
+  );
+  const handleFileUpload = useChatInputStore((state) => state.handleFileUpload);
+  const setFilePreviews = useChatInputStore((state) => state.setFilePreviews);
+  const setTextFieldValue = useChatInputStore(
+    (state) => state.setTextFieldValue,
+  );
+  const setImageFieldValue = useChatInputStore(
+    (state) => state.setImageFieldValue,
+  );
+  const setUploadProgress = useChatInputStore(
+    (state) => state.setUploadProgress,
+  );
+  const setSubmitType = useChatInputStore((state) => state.setSubmitType);
+  const textFieldValue = useChatInputStore((state) => state.textFieldValue);
+  const searchMode = useChatInputStore((state) => state.searchMode);
+  const setSearchMode = useChatInputStore((state) => state.setSearchMode);
+  const setTranscriptionStatus = useChatInputStore(
+    (state) => state.setTranscriptionStatus,
+  );
+  const selectedToneId = useChatInputStore((state) => state.selectedToneId);
+  const setSelectedToneId = useChatInputStore(
+    (state) => state.setSelectedToneId,
+  );
+  const filePreviews = useChatInputStore((state) => state.filePreviews);
+  const { selectedConversation, updateConversation } = useConversations();
+
   const [isOpen, setIsOpen] = useState(false);
-
-  const [SearchConfig, setSearchConfig] = useState<{
-    isOpen: boolean;
-    mode: 'search' | 'url';
-  }>({
-    isOpen: false,
-    mode: 'search',
-  });
-
-  const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
+  const [isDocumentTranslateOpen, setIsDocumentTranslateOpen] = useState(false);
+  const [documentToTranslate, setDocumentToTranslate] = useState<File | null>(
+    null,
+  );
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [filterQuery, setFilterQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isToneOpen, setIsToneOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [hasCameraSupport, setHasCameraSupport] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const filterInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkCameraSupport = async () => {
@@ -150,185 +115,280 @@ const Dropdown: React.FC<DropdownProps> = ({
             (device) => device.kind === 'videoinput',
           );
           // console.log('Camera support detected:', hasCamera, devices);
-          setHasCameraSupport(hasCamera);
+          setTimeout(() => {
+            setHasCameraSupport(hasCamera);
+          }, 0);
         } else {
           console.error('MediaDevices API not supported');
-          setHasCameraSupport(false);
+          setTimeout(() => {
+            setHasCameraSupport(false);
+          }, 0);
         }
       } catch (error) {
         console.error('Error checking camera support:', error);
-        setHasCameraSupport(false);
+        setTimeout(() => {
+          setHasCameraSupport(false);
+        }, 0);
       }
     };
 
     checkCameraSupport();
   }, []);
 
-  const closeDropdown = () => {
-    // Use a short timeout to prevent immediate reopening
+  const closeDropdown = useCallback(() => {
+    setIsClosing(true);
+    // Wait for slide-down animation to complete before removing from DOM
     setTimeout(() => {
       setIsOpen(false);
-      setFilterQuery('');
-      setSelectedIndex(0);
-    }, 10);
-  };
+      setIsClosing(false);
+      setSelectedIndex(-1);
+    }, 200); // Match animation duration
+  }, []);
 
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const transcribeInputRef = useRef<HTMLInputElement>(null);
+  const documentTranslateInputRef = useRef<HTMLInputElement>(null);
 
-  // Define menu items
-  const menuItems: MenuItem[] = [
-    {
-      id: 'search',
-      icon: <IconSearch size={18} className="mr-3 text-blue-500" />,
-      label: t('chatFeaturesDropdownSearchModal'),
-      tooltip: 'Web Search',
-      onClick: () => {
-        setSearchConfig((prev) => ({ ...prev, isOpen: true }));
-        closeDropdown();
-      },
-      category: 'web',
-    },
-    {
-      id: 'transcribe',
-      icon: <IconFileMusic size={18} className="mr-3 text-purple-500" />,
-      label: t('chatFeaturesDropdownTranscribeModal'),
-      tooltip: 'Transcribe Audio',
-      onClick: () => {
-        setIsTranscribeOpen(true);
-        closeDropdown();
-      },
-      category: 'media',
-    },
-    {
-      id: 'image',
-      icon: <ImageIcon size={18} className="mr-3 text-amber-500" />,
-      label: t('chatFeaturesDropdownImageModal'),
-      tooltip: 'Upload Image',
-      onClick: () => {
-        closeDropdown();
-        chatInputImageRef.current?.openFilePicker();
-      },
-      category: 'media',
-    },
-    {
-      id: 'translate',
-      icon: <IconLanguage size={18} className="mr-3 text-teal-500" />,
-      label: t('chatFeaturesDropdownTranslateModal'),
-      tooltip: 'Translate Text',
-      onClick: () => {
-        setIsTranslateOpen(true);
-        closeDropdown();
-      },
-      category: 'transform',
-    },
-    ...(hasCameraSupport
-      ? [
+  // Handler for file attach that doesn't access ref during render
+  const handleAttachClick = useCallback(() => {
+    closeDropdown();
+    fileInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handler for transcribe audio/video file selection
+  const handleTranscribeClick = useCallback(() => {
+    closeDropdown();
+    transcribeInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handler for document translation file selection
+  const handleDocumentTranslateClick = useCallback(() => {
+    closeDropdown();
+    documentTranslateInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handle document translation completion - add user message with file + assistant message
+  const handleDocumentTranslationComplete = useCallback(
+    (reference: DocumentTranslationReference) => {
+      if (!selectedConversation) {
+        console.error('[DocumentTranslation] No conversation selected');
+        setIsDocumentTranslateOpen(false);
+        setDocumentToTranslate(null);
+        return;
+      }
+
+      // 1. Create user message showing the original uploaded file
+      const fileContent: FileMessageContent = {
+        type: 'file_url',
+        url: reference.originalFileUrl,
+        originalFilename: reference.originalFilename,
+      };
+
+      const userMessage: Message = {
+        role: 'user',
+        content: [fileContent],
+        messageType: 'FILE',
+      };
+
+      // 2. Create assistant message with the translation reference
+      const referenceText = formatTranslationReference(
+        reference.translatedFilename,
+        reference.targetLanguage,
+        reference.jobId,
+        reference.fileExtension,
+        reference.expiresAt,
+      );
+
+      const assistantMessage: AssistantMessageGroup = {
+        type: 'assistant_group',
+        versions: [
           {
-            id: 'camera',
-            icon: <IconCamera size={18} className="mr-3 text-red-500" />,
-            label: t('Camera'),
-            tooltip: 'Capture Image',
-            onClick: () => {
-              onCameraClick();
-              closeDropdown();
-            },
-            category: 'media' as 'web' | 'media' | 'transform',
+            content: referenceText,
+            messageType: 'TEXT',
+            createdAt: new Date().toISOString(),
           },
-        ]
-      : []),
-  ];
+        ],
+        activeIndex: 0,
+      };
 
-  // Filter menu items based on search query
-  const filteredItems = filterQuery
-    ? menuItems.filter(
-        (item) =>
-          item.label.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.tooltip.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(filterQuery.toLowerCase()),
-      )
-    : menuItems;
+      // 3. Add both messages to the conversation
+      const updatedMessages = [
+        ...selectedConversation.messages,
+        userMessage,
+        assistantMessage,
+      ];
 
-  const flattenedItems = filteredItems;
+      // 4. Build updates object - include title if conversation is untitled
+      const updates: { messages: typeof updatedMessages; name?: string } = {
+        messages: updatedMessages,
+      };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (!isOpen) return;
+      // Auto-title empty conversations
+      if (
+        !selectedConversation.name ||
+        selectedConversation.name === 'New Conversation'
+      ) {
+        updates.name = `Translation: ${reference.originalFilename}`;
+      }
 
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0,
-        );
-        break;
+      updateConversation(selectedConversation.id, updates);
 
-      case 'ArrowUp':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1,
-        );
-        break;
+      // Close modal
+      setIsDocumentTranslateOpen(false);
+      setDocumentToTranslate(null);
+    },
+    [selectedConversation, updateConversation],
+  );
 
-      case 'Enter':
-        event.preventDefault();
-        if (flattenedItems[selectedIndex]) {
-          flattenedItems[selectedIndex].onClick();
-        }
-        break;
+  // Helper function to toggle search mode (always sets to ALWAYS when enabled)
+  const toggleSearchMode = useCallback(() => {
+    if (searchMode === SearchMode.ALWAYS) {
+      // If ALWAYS is active, turn it off (return to conversation's default or OFF)
+      setSearchMode(selectedConversation?.defaultSearchMode ?? SearchMode.OFF);
+    } else {
+      // If OFF or INTELLIGENT, enable ALWAYS mode
+      setSearchMode(SearchMode.ALWAYS);
+    }
+  }, [searchMode, setSearchMode, selectedConversation?.defaultSearchMode]);
 
-      case 'Escape':
-        event.preventDefault();
-        if (filterQuery) {
-          setFilterQuery('');
-          setSelectedIndex(0);
-        } else {
+  // Define menu items - memoized to avoid ref access issues during render
+  const menuItems: MenuItem[] = useMemo(
+    () => [
+      {
+        id: 'search',
+        icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
+        label:
+          searchMode === SearchMode.ALWAYS
+            ? `✓ ${t('webSearchDropdown')}`
+            : t('webSearchDropdown'),
+        infoTooltip: t('dropdown.searchTooltip'),
+        onClick: () => {
+          toggleSearchMode();
           closeDropdown();
-          setSearchConfig((prev) => ({ ...prev, isOpen: false }));
-          setIsTranscribeOpen(false);
-          setIsTranslateOpen(false);
-          setIsImageOpen(false);
-        }
-        break;
+        },
+        category: 'web',
+      },
+      {
+        id: 'tone',
+        icon: (
+          <IconVolume
+            size={18}
+            className={`flex-shrink-0 ${tones.length === 0 ? 'text-gray-400' : 'text-purple-500'}`}
+          />
+        ),
+        label: selectedToneId
+          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || t('dropdown.selected')}`
+          : t('toneDropdown'),
+        infoTooltip:
+          tones.length === 0
+            ? t('noTonesAvailable')
+            : t('applyCustomVoiceProfile'),
+        onClick: () => {
+          setIsToneOpen(true);
+          closeDropdown();
+        },
+        category: 'web',
+        disabled: tones.length === 0,
+      },
+      {
+        id: 'attach',
+        icon: (
+          <IconPaperclip
+            size={18}
+            className="flex-shrink-0 text-gray-700 dark:text-gray-300"
+          />
+        ),
+        label: t('attachFilesDropdown'),
+        infoTooltip: t('dropdown.attachTooltip'),
+        onClick: handleAttachClick,
+        category: 'media',
+      },
+      {
+        id: 'transcribe',
+        icon: (
+          <IconFileMusic size={18} className="text-orange-500 flex-shrink-0" />
+        ),
+        label: t('transcribeAudioVideoDropdown'),
+        infoTooltip: t('dropdown.transcribeTooltip'),
+        onClick: handleTranscribeClick,
+        category: 'media',
+      },
+      {
+        id: 'translate',
+        icon: (
+          <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />
+        ),
+        label: t('translateTextDropdown'),
+        onClick: () => {
+          setIsTranslateOpen(true);
+          closeDropdown();
+        },
+        category: 'transform',
+      },
+      {
+        id: 'translateDocument',
+        icon: (
+          <IconFileText size={18} className="text-indigo-500 flex-shrink-0" />
+        ),
+        label: t('translateDocumentDropdown'),
+        infoTooltip: t('dropdown.translateDocumentTooltip'),
+        onClick: handleDocumentTranslateClick,
+        category: 'transform',
+      },
+      ...(hasCameraSupport
+        ? [
+            {
+              id: 'camera',
+              icon: (
+                <IconCamera size={18} className="text-red-500 flex-shrink-0" />
+              ),
+              label: t('cameraDropdown'),
+              onClick: () => {
+                onCameraClick();
+                closeDropdown();
+              },
+              category: 'media' as 'web' | 'media' | 'transform',
+            },
+          ]
+        : []),
+    ],
+    [
+      t,
+      searchMode,
+      selectedToneId,
+      tones,
+      hasCameraSupport,
+      closeDropdown,
+      setIsToneOpen,
+      setIsTranslateOpen,
+      onCameraClick,
+      handleAttachClick,
+      handleTranscribeClick,
+      handleDocumentTranslateClick,
+      toggleSearchMode,
+    ],
+  );
 
-      default:
-        if (
-          event.key.length === 1 &&
-          !event.ctrlKey &&
-          !event.altKey &&
-          !event.metaKey
-        ) {
-          filterInputRef.current?.focus();
-        }
-        break;
-    }
-  };
-
-  // Group menu items by category
-  const groupedItems = filteredItems.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {} as Record<string, MenuItem[]>);
+  // Use keyboard navigation hook
+  const { handleKeyDown } = useDropdownKeyboardNav({
+    isOpen,
+    items: menuItems,
+    selectedIndex,
+    setSelectedIndex,
+    closeDropdown,
+    onCloseModals: () => {
+      setIsTranslateOpen(false);
+      setIsDocumentTranslateOpen(false);
+      setIsImageOpen(false);
+      setIsToneOpen(false);
+    },
+  });
 
   // Logic to handle clicks outside the Dropdown Menu
   useEnhancedOutsideClick(dropdownRef, closeDropdown, isOpen, true);
-
-  // Reset selected index when filtered items change
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [filterQuery]);
-
-  // Focus on search input when dropdown opens
-  useEffect(() => {
-    if (isOpen && filterInputRef.current) {
-      setTimeout(() => {
-        filterInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isOpen]);
 
   return (
     <div className="relative">
@@ -336,6 +396,8 @@ const Dropdown: React.FC<DropdownProps> = ({
       <div className="group">
         <button
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            event.stopPropagation();
             if (isOpen) {
               closeDropdown();
             } else {
@@ -344,126 +406,39 @@ const Dropdown: React.FC<DropdownProps> = ({
           }}
           aria-haspopup="true"
           aria-expanded={isOpen}
-          aria-label="Toggle dropdown menu"
+          aria-label={t('common.toggleDropdownMenu')}
           className="focus:outline-none flex"
         >
-          <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
+          <IconCirclePlus className="w-7 h-7 md:w-6 md:h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-            Expand Actions
+            {t('dropdown.expandActions')}
           </div>
         </button>
       </div>
 
       {/* Enhanced Dropdown Menu */}
-      {isOpen && (
+      {isOpen && !isClosing && (
         <div
           ref={dropdownRef}
-          className="absolute ml-12 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
+          className={`absolute ${openDownward ? 'top-full mt-2 z-[10000]' : 'bottom-full mb-2 z-[9999]'} left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-64 outline-none overflow-hidden ${
+            openDownward ? 'animate-slide-down-reverse' : 'animate-slide-up'
+          }`}
           tabIndex={-1}
           role="menu"
           onKeyDown={handleKeyDown}
         >
-          {/* Search/Filter Input */}
-          <div className="sticky top-0 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <div className="relative">
-              <input
-                ref={filterInputRef}
-                type="text"
-                placeholder="Search features..."
-                value={filterQuery}
-                onChange={(e) => setFilterQuery(e.target.value)}
-                className="w-full px-3 py-2 pl-10 pr-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Search features"
-                role="searchbox"
+          <div className="max-h-80 overflow-y-auto custom-scrollbar p-1">
+            {/* eslint-disable-next-line react-hooks/refs */}
+            {menuItems.map((item, index) => (
+              <DropdownMenuItem
+                key={item.id}
+                item={item}
+                isSelected={index === selectedIndex}
               />
-              <IconSearch
-                className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500"
-                size={16}
-              />
-              {filterQuery && (
-                <button
-                  onClick={() => setFilterQuery('')}
-                  className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label="Clear search"
-                >
-                  <IconX size={16} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="max-h-80 overflow-y-auto custom-scrollbar">
-            {Object.entries(groupedItems).length > 0 ? (
-              Object.entries(groupedItems).map(([category, items]) => (
-                <div
-                  key={category}
-                  className="px-1 py-1"
-                  role="group"
-                  aria-label={category}
-                >
-                  <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </h3>
-                  {items.map((item) => {
-                    const itemIndex = flattenedItems.findIndex(
-                      (i) => i.id === item.id,
-                    );
-                    const isSelected = itemIndex === selectedIndex;
-
-                    return (
-                      <div key={item.id} className="group relative">
-                        <button
-                          className={`flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 transition-colors duration-150 ${
-                            isSelected
-                              ? 'bg-gray-100 dark:bg-gray-700'
-                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                          }`}
-                          onClick={item.onClick}
-                          role="menuitem"
-                          aria-selected={isSelected}
-                          tabIndex={isSelected ? 0 : -1}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </button>
-                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
-                          {item.tooltip}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
-                No features match your search
-              </div>
-            )}
+            ))}
           </div>
         </div>
       )}
-
-      {/* Search/URL Modal */}
-      <ChatInputSearch
-        isOpen={SearchConfig.isOpen}
-        onClose={() => setSearchConfig((prev) => ({ ...prev, isOpen: false }))}
-        initialMode={SearchConfig.mode}
-        onFileUpload={onFileUpload}
-        setSubmitType={setSubmitType}
-        setFilePreviews={setFilePreviews}
-        setFileFieldValue={setFileFieldValue}
-        setImageFieldValue={setImageFieldValue}
-        setUploadProgress={setUploadProgress}
-        setTextFieldValue={setTextFieldValue}
-        onSend={onSend}
-        setRequestStatusMessage={setRequestStatusMessage}
-        setProgress={setProgress}
-        stopConversationRef={stopConversationRef}
-        apiKey={apiKey}
-        pluginKeys={pluginKeys}
-        systemPrompt={systemPrompt}
-        temperature={temperature}
-      />
 
       {/* Chat Input Image Capture Modal */}
       {isImageOpen && (
@@ -471,24 +446,10 @@ const Dropdown: React.FC<DropdownProps> = ({
           setFilePreviews={setFilePreviews}
           setSubmitType={setSubmitType}
           prompt={textFieldValue}
-          setImageFieldValue={setFileFieldValue}
-          setUploadProgress={setUploadProgress}
-          hasCameraSupport={hasCameraSupport}
-        />
-      )}
-
-      {/* Chat Input Transcribe Modal */}
-      {isTranscribeOpen && (
-        <ChatInputTranscribe
-          setTextFieldValue={setTextFieldValue}
           setFileFieldValue={setFileFieldValue}
           setImageFieldValue={setImageFieldValue}
           setUploadProgress={setUploadProgress}
-          onFileUpload={onFileUpload}
-          setSubmitType={setSubmitType}
-          setFilePreviews={setFilePreviews}
-          setParentModalIsOpen={setIsTranscribeOpen}
-          simulateClick={true}
+          hasCameraSupport={hasCameraSupport}
         />
       )}
 
@@ -503,6 +464,99 @@ const Dropdown: React.FC<DropdownProps> = ({
         />
       )}
 
+      {/* Tone Selector Modal */}
+      {isToneOpen &&
+        typeof window !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setIsToneOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-md bg-white dark:bg-[#212121] rounded-xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {t('dropdown.selectTone')}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {t('dropdown.selectToneDescription')}
+                </p>
+              </div>
+
+              <div className="max-h-96 overflow-y-auto p-4">
+                <button
+                  onClick={() => {
+                    setSelectedToneId(null);
+                    setIsToneOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all mb-2 ${
+                    !selectedToneId
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {t('dropdown.noToneDefault')}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('dropdown.useDefaultStyle')}
+                  </div>
+                </button>
+
+                {tones.map((tone) => (
+                  <button
+                    key={tone.id}
+                    onClick={() => {
+                      setSelectedToneId(tone.id);
+                      setIsToneOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all mb-2 ${
+                      selectedToneId === tone.id
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                      <IconVolume size={16} className="text-purple-500" />
+                      {tone.name}
+                    </div>
+                    {tone.description && (
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {tone.description}
+                      </div>
+                    )}
+                    {tone.tags && tone.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {tone.tags.slice(0, 3).map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                ))}
+
+                {tones.length === 0 && (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <IconVolume size={48} className="mx-auto mb-3 opacity-50" />
+                    <p className="text-sm">{t('dropdown.noTonesCreated')}</p>
+                    <p className="text-xs mt-1">
+                      {t('dropdown.createTonesHint')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+
       {/* Chat Input Image Component (hidden) */}
       <ChatInputImage
         imageInputRef={chatInputImageRef}
@@ -510,10 +564,66 @@ const Dropdown: React.FC<DropdownProps> = ({
         prompt={textFieldValue}
         setFilePreviews={setFilePreviews}
         setFileFieldValue={setFileFieldValue}
+        setImageFieldValue={setImageFieldValue}
         setUploadProgress={setUploadProgress}
         setParentModalIsOpen={setIsImageOpen}
         simulateClick={false}
         labelText=""
+      />
+
+      {/* Hidden file input for all file types: images, documents, data, code, audio, and video */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.json,.xml,.yaml,.yml,.py,.js,.ts,.jsx,.tsx,.java,.c,.cpp,.cs,.go,.rb,.php,.sql,.sh,.bash,.ps1,.r,.swift,.kt,.rs,.scala,.env,.config,.ini,.toml,.mp3,.mp4,.wav,.webm,.m4a,.mpeg,.mpga"
+        onChange={async (e) => {
+          if (e.target.files) {
+            await handleFileUpload(Array.from(e.target.files));
+          }
+        }}
+        className="hidden"
+        multiple
+      />
+
+      {/* Hidden file input for audio/video files only (for transcription) */}
+      <input
+        ref={transcribeInputRef}
+        type="file"
+        accept={TRANSCRIPTION_ACCEPT_TYPES}
+        onChange={async (e) => {
+          if (e.target.files) {
+            await handleFileUpload(Array.from(e.target.files));
+          }
+        }}
+        className="hidden"
+      />
+
+      {/* Hidden file input for documents (for translation) */}
+      <input
+        ref={documentTranslateInputRef}
+        type="file"
+        accept={DOCUMENT_TRANSLATION_ACCEPT_TYPES}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setDocumentToTranslate(file);
+            setIsDocumentTranslateOpen(true);
+          }
+          // Reset input so the same file can be selected again
+          e.target.value = '';
+        }}
+        className="hidden"
+      />
+
+      {/* Document Translation Modal */}
+      <ChatInputDocumentTranslate
+        isOpen={isDocumentTranslateOpen}
+        onClose={() => {
+          setIsDocumentTranslateOpen(false);
+          setDocumentToTranslate(null);
+        }}
+        documentFile={documentToTranslate}
+        onTranslationComplete={handleDocumentTranslationComplete}
       />
     </div>
   );

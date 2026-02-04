@@ -1,100 +1,158 @@
 import {
+  IconCheck,
+  IconCopy,
+  IconFileText,
   IconLanguage,
   IconLoader2,
-  IconRobot,
-  IconSearch,
-  IconSettings,
+  IconRefresh,
+  IconVolume,
+  IconVolumeOff,
 } from '@tabler/icons-react';
-import {
+import React, {
   FC,
-  KeyboardEvent,
-  MouseEvent,
+  ReactNode,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
-import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
+import { useTranslations } from 'next-intl';
 
-import { getAutonym } from '@/utils/app/locales';
+import { useSettings } from '@/client/hooks/settings/useSettings';
 
-import { Conversation, Message } from '@/types/chat';
+import { translateText } from '@/lib/services/translation';
+
+import { getAutonym } from '@/lib/utils/app/locales';
+import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
+import { generateAudioFilename } from '@/lib/utils/shared/string/slugify';
+
+import {
+  Conversation,
+  Message,
+  VersionInfo,
+  isAssistantMessageGroup,
+} from '@/types/chat';
 import { Citation } from '@/types/rag';
+import { MessageTranslationState } from '@/types/translation';
+import { TTSSettings } from '@/types/tts';
 
-import { AgentResponsePanel } from '@/components/Chat/AgentResponsePanel';
 import AudioPlayer from '@/components/Chat/AudioPlayer';
-import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
+import { DocumentTranslationContent } from '@/components/Chat/ChatMessages/DocumentTranslationContent';
+import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
+import { TranscriptContent } from '@/components/Chat/ChatMessages/TranscriptContent';
+import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
+import { VersionNavigation } from '@/components/Chat/ChatMessages/VersionNavigation';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
-import { CodeBlock } from '@/components/Markdown/CodeBlock';
-import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { TTSContextMenu } from '@/components/Chat/TTS/TTSContextMenu';
+import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
+import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
-import rehypeMathjax from 'rehype-mathjax';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import { useArtifactStore } from '@/client/stores/artifactStore';
+import type { MermaidConfig } from 'mermaid';
+
+/**
+ * Checks if content is a blob transcript reference that should be loaded from storage.
+ * Format: [Transcript: filename | blob:jobId | expires:ISO_TIMESTAMP]
+ */
+function isBlobTranscriptReference(content: string): boolean {
+  return /^\[Transcript:\s*.+?\s*\|\s*blob:[a-fA-F0-9-]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
+    content.trim(),
+  );
+}
+
+/**
+ * Checks if content is a document translation reference.
+ * Format: [Translation: filename | lang:code | blob:jobId | ext:extension | expires:ISO_TIMESTAMP]
+ */
+function isDocumentTranslationReference(content: string): boolean {
+  return /^\[Translation:\s*.+?\s*\|\s*lang:[a-zA-Z-]+\s*\|\s*blob:[a-fA-F0-9-]+\s*\|\s*ext:[a-zA-Z0-9]+\s*\|\s*expires:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z\]$/.test(
+    content.trim(),
+  );
+}
 
 interface AssistantMessageProps {
   content: string;
-  copyOnClick: (content: string) => void;
+  message?: Message;
   messageIsStreaming: boolean;
   messageIndex: number;
-  selectedConversation: Conversation;
-  messageCopied: boolean;
-  message?: Message;
+  selectedConversation: Conversation | null;
+  onRegenerate?: () => void;
+  children?: ReactNode; // Allow custom content (images, files, etc.)
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
-  copyOnClick,
+  message,
   messageIsStreaming,
   messageIndex,
   selectedConversation,
-  messageCopied,
-  message,
+  onRegenerate,
+  children,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
 }) => {
-  const [displayContent, setDisplayContent] = useState('');
+  const t = useTranslations();
+  const { openDocument } = useArtifactStore();
+  const { ttsSettings } = useSettings();
+  const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
+  const [thinking, setThinking] = useState<string>('');
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioSourceLocale, setAudioSourceLocale] = useState<string | null>(
+    null,
+  ); // Tracks which locale audio was generated for (null = original)
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
-  const [showStreamingSettings, setShowStreamingSettings] =
-    useState<boolean>(false);
-  const [isTranslating, setIsTranslating] = useState<boolean>(false);
-  const [translations, setTranslations] = useState<Record<string, string>>({});
-  const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
-  const [showTranslationDropdown, setShowTranslationDropdown] =
-    useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  const translationDropdownRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [messageCopied, setMessageCopied] = useState(false);
 
-  // Extensible action states for future actions
-  // This can be expanded by adding new action types and their corresponding states
-  const [actionStates] = useState<
-    Record<string, { active: boolean; message: string }>
-  >({
-    // Example for future actions:
-    // 'summarize': { active: false, message: 'Summarizing...' },
-    // 'explain': { active: false, message: 'Explaining...' },
-  });
+  // TTS context menu state
+  const [ttsContextMenu, setTTSContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
-  // Get streaming settings from context
-  const { settings, updateSettings } = useStreamingSettings();
+  // Translation state
+  const [translationState, setTranslationState] =
+    useState<MessageTranslationState>({
+      currentLocale: null,
+      isTranslating: false,
+      translations: {},
+      error: null,
+    });
+  const [showTranslationDropdown, setShowTranslationDropdown] = useState(false);
+  const translateButtonRef = useRef<HTMLButtonElement>(null);
 
-  const citationsProcessed = useRef(false);
-  const processingAttempts = useRef(0);
+  // Detect if embedded content is present (e.g., TranscriptViewer)
+  // When children is provided, content-specific actions should be disabled
+  // since the child component handles its own actions
+  const hasEmbeddedContent = !!children;
 
-  // Use smooth streaming hook for animated text display
-  const smoothContent = useSmoothStreaming({
-    isStreaming: messageIsStreaming,
-    content: displayContent,
-    charsPerFrame: settings.charsPerFrame,
-    frameDelay: settings.frameDelay,
-    enabled: settings.smoothStreamingEnabled,
-  });
+  // Detect dark mode
+  useEffect(() => {
+    const updateTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setIsDarkMode(isDark);
+    };
+
+    updateTheme();
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -105,162 +163,187 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     };
   }, [audioUrl]);
 
+  // Reset audio state when conversation changes
   useEffect(() => {
-    const processContent = () => {
-      let mainContent = content;
-      let citationsData: Citation[] = [];
-      let extractionMethod = 'none';
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    setAudioSourceLocale(null);
+    setIsGeneratingAudio(false);
+    setLoadingMessage(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation?.id]);
 
-      // First check for the newer citation marker format
-      const citationMarker = content.indexOf('\n\n---CITATIONS_DATA---\n');
-      if (citationMarker !== -1) {
-        extractionMethod = 'marker';
-        mainContent = content.slice(0, citationMarker);
-        const jsonStr = content.slice(citationMarker + 22); // Length of marker
+  // Process content once per change - simplified logic
+  useEffect(() => {
+    // Parse thinking content from the raw content
+    const { thinking: inlineThinking, content: contentWithoutThinking } =
+      parseThinkingContent(content);
+
+    let mainContent = contentWithoutThinking;
+    let citationsData: Citation[] = [];
+    let metadataThinking = '';
+
+    // Priority 1: Citations from message object (already processed)
+    if (message?.citations && message.citations.length > 0) {
+      citationsData = message.citations;
+    }
+    // Priority 2: Parse metadata format (new approach)
+    else {
+      const metadataMatch = contentWithoutThinking.match(
+        /\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
+      );
+      if (metadataMatch) {
+        mainContent = contentWithoutThinking.replace(
+          /\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s,
+          '',
+        );
 
         try {
-          const parsedData = JSON.parse(jsonStr);
+          const parsedData = JSON.parse(metadataMatch[1]);
           if (parsedData.citations) {
-            // Deduplicate citations by URL or title
-            const uniqueCitationsMap = new Map();
-            parsedData.citations.forEach((citation: Citation) => {
-              const key = citation.url || citation.title;
-              if (key && !uniqueCitationsMap.has(key)) {
-                uniqueCitationsMap.set(key, citation);
-              }
-            });
-            citationsData = Array.from(uniqueCitationsMap.values());
+            citationsData = deduplicateCitations(parsedData.citations);
+          }
+          if (parsedData.thinking) {
+            metadataThinking = parsedData.thinking;
           }
         } catch (error) {
-          console.error('Error parsing citations JSON with marker:', error);
+          // Silently ignore parsing errors during streaming
         }
       }
-      // Next try the legacy JSON detection at the end
-      else {
-        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
-        if (jsonMatch) {
-          extractionMethod = 'regex';
-          const jsonStr = jsonMatch[1];
-          mainContent = content.slice(0, -jsonStr.length).trim();
+      // Priority 3: Legacy JSON at end (only when not streaming)
+      else if (!messageIsStreaming) {
+        const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
+        if (jsonMatch && isValidJSON(jsonMatch[1])) {
+          // Don't use .trim() - it removes newlines needed for markdown
+          mainContent = contentWithoutThinking.slice(0, -jsonMatch[1].length);
           try {
-            const parsedData = JSON.parse(jsonStr);
+            const parsedData = JSON.parse(jsonMatch[1].trim());
             if (parsedData.citations) {
-              // Deduplicate citations by URL or title
-              const uniqueCitationsMap = new Map();
-              parsedData.citations.forEach((citation: Citation) => {
-                const key = citation.url || citation.title;
-                if (key && !uniqueCitationsMap.has(key)) {
-                  uniqueCitationsMap.set(key, citation);
-                }
-              });
-              citationsData = Array.from(uniqueCitationsMap.values());
+              citationsData = deduplicateCitations(parsedData.citations);
             }
           } catch (error) {
-            console.error('Error parsing citations JSON:', error);
+            // Silently ignore parsing errors
           }
         }
       }
-
-      // Check for message-stored citations in the conversation
-      if (
-        citationsData.length === 0 &&
-        selectedConversation?.messages?.[messageIndex]?.citations &&
-        selectedConversation.messages[messageIndex].citations!.length > 0
-      ) {
-        extractionMethod = 'message-stored';
-
-        // Deduplicate citations by URL or title
-        const uniqueCitationsMap = new Map();
-        selectedConversation.messages[messageIndex].citations!.forEach(
-          (citation: Citation) => {
-            const key = citation.url || citation.title;
-            if (key && !uniqueCitationsMap.has(key)) {
-              uniqueCitationsMap.set(key, citation);
-            }
-          },
-        );
-        citationsData = Array.from(uniqueCitationsMap.values());
-      }
-
-      // Debug logging
-      console.debug(`[Message ${messageIndex}] Citation extraction:`, {
-        method: extractionMethod,
-        count: citationsData.length,
-        contentLength: content.length,
-        displayContentLength: mainContent.length,
-        processingAttempts: processingAttempts.current,
-        streamingActive: messageIsStreaming,
-      });
-
-      processingAttempts.current++;
-
-      setDisplayContent(mainContent);
-      if (mainContent.includes('```math')) {
-        setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
-      }
-      setCitations(citationsData);
-      citationsProcessed.current = true;
-    };
-
-    processContent();
-
-    // If we're streaming, reprocess when streaming stops to catch final citations
-    if (!messageIsStreaming && processingAttempts.current <= 2) {
-      const timer = setTimeout(processContent, 500);
-      return () => clearTimeout(timer);
     }
+
+    // Priority 4: Fallback to conversation-stored citations
+    // Handle both legacy messages and assistant message groups
+    if (citationsData.length === 0 && selectedConversation?.messages) {
+      const entry = selectedConversation.messages[messageIndex];
+      if (entry) {
+        let storedCitations: Citation[] | undefined;
+        if (isAssistantMessageGroup(entry)) {
+          storedCitations = entry.versions[entry.activeIndex]?.citations;
+        } else if ('citations' in entry) {
+          storedCitations = entry.citations;
+        }
+        if (storedCitations) {
+          citationsData = deduplicateCitations(storedCitations);
+        }
+      }
+    }
+
+    // Determine final thinking content (priority: message > metadata > inline)
+    const finalThinking =
+      message?.thinking || metadataThinking || inlineThinking || '';
+
+    setProcessedContent(mainContent);
+    setThinking(finalThinking);
+    setCitations(citationsData);
   }, [
     content,
+    message,
     messageIsStreaming,
     messageIndex,
     selectedConversation?.messages,
   ]);
 
-  // Determine what to display - when streaming, use the raw content with citations stripped
-  // When not streaming, use the processed content
-  const displayContentWithoutCitations = messageIsStreaming
-    ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
-    : displayContent;
-
-  // Use the smooth content for display when streaming and smooth streaming is enabled
-  // If translated content is available, use that instead of the original content
-  const contentToDisplay =
-    currentLanguage && translations[currentLanguage]
-      ? translations[currentLanguage]
-      : settings.smoothStreamingEnabled && messageIsStreaming
-      ? smoothContent
-      : displayContentWithoutCitations;
-
-  const handleTTS = async () => {
-    try {
-      setIsGeneratingAudio(true);
-      setLoadingMessage('Generating audio...');
-
-      const response = await fetch('/api/v2/tts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: contentToDisplay }),
-      });
-
-      if (!response.ok) {
-        throw new Error('TTS conversion failed');
-      }
-
-      setLoadingMessage('Processing audio...');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setAudioUrl(url);
-      setIsGeneratingAudio(false);
-      setLoadingMessage(null);
-    } catch (error) {
-      console.error('Error in TTS:', error);
-      setIsGeneratingAudio(false);
-      setLoadingMessage('Error generating audio. Please try again.');
-      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
+  // Displayed content (original or translated) - must be declared before handlers that use it
+  const displayedContent = useMemo(() => {
+    const { currentLocale, translations } = translationState;
+    if (currentLocale && translations[currentLocale]) {
+      return translations[currentLocale].translatedText;
     }
-  };
+    return processedContent;
+  }, [translationState, processedContent]);
+
+  // Generate contextual filename for audio downloads (1-indexed for human readability)
+  const audioDownloadFilename = useMemo(() => {
+    return generateAudioFilename(
+      selectedConversation?.name || '',
+      messageIndex + 1,
+      'mp3',
+      'assistant-audio',
+    );
+  }, [selectedConversation?.name, messageIndex]);
+
+  // Copy handler - uses displayed content (original or translated)
+  const handleCopy = useCallback(() => {
+    if (!navigator.clipboard) return;
+
+    navigator.clipboard.writeText(displayedContent).then(() => {
+      setMessageCopied(true);
+      setTimeout(() => {
+        setMessageCopied(false);
+      }, 2000);
+    });
+  }, [displayedContent]);
+
+  const handleTTS = useCallback(
+    async (overrides: Partial<TTSSettings> = {}) => {
+      try {
+        setIsGeneratingAudio(true);
+        setLoadingMessage('Generating audio...');
+
+        // Build request body with user's TTS settings for server-side voice resolution
+        // Send explicit voice override if provided, otherwise send settings for resolution
+        const requestBody = {
+          text: displayedContent,
+          voiceName: overrides.globalVoice || undefined,
+          rate: overrides.rate ?? ttsSettings.rate,
+          pitch: overrides.pitch ?? ttsSettings.pitch,
+          outputFormat: overrides.outputFormat ?? ttsSettings.outputFormat,
+          globalVoice: ttsSettings.globalVoice,
+          languageVoices: ttsSettings.languageVoices,
+        };
+
+        const response = await fetch('/api/chat/tts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'TTS conversion failed');
+        }
+
+        setLoadingMessage('Processing audio...');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+        setAudioSourceLocale(translationState.currentLocale); // Track which locale audio was generated for
+        setIsGeneratingAudio(false);
+        setLoadingMessage(null);
+      } catch (error) {
+        console.error('Error in TTS:', error);
+        setIsGeneratingAudio(false);
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Error generating audio. Please try again.';
+        setLoadingMessage(message);
+        setTimeout(() => setLoadingMessage(null), 3000);
+      }
+    },
+    [displayedContent, ttsSettings, translationState.currentLocale],
+  );
 
   // Close audio player and clean up resources
   const handleCloseAudio = () => {
@@ -270,540 +353,468 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
-  const handleTranslate = async (targetLocale: string) => {
-    try {
-      // If we already have this translation, just switch to it
-      if (translations[targetLocale]) {
-        setCurrentLanguage(targetLocale);
+  // Translation handler
+  const handleTranslate = useCallback(
+    async (targetLocale: string | null) => {
+      // Reset to original
+      if (targetLocale === null) {
+        setTranslationState((prev) => ({
+          ...prev,
+          currentLocale: null,
+          error: null,
+        }));
         return;
       }
 
-      setIsTranslating(true);
-      setLoadingMessage('Translating...');
-
-      const response = await fetch('/api/v2/translation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sourceText: displayContentWithoutCitations,
-          targetLocale,
-          modelId: selectedConversation.model?.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Translation failed');
+      // Check cache first
+      if (translationState.translations[targetLocale]) {
+        setTranslationState((prev) => ({
+          ...prev,
+          currentLocale: targetLocale,
+          error: null,
+        }));
+        return;
       }
 
-      const data = await response.json();
-
-      // Store the translation and set it as current
-      setTranslations((prev) => ({
+      // Call API for new translation
+      setTranslationState((prev) => ({
         ...prev,
-        [targetLocale]: data.translatedText,
+        isTranslating: true,
+        error: null,
       }));
-      setCurrentLanguage(targetLocale);
 
-      setIsTranslating(false);
-      setLoadingMessage(null);
-    } catch (error) {
-      console.error('Error in translation:', error);
-      setIsTranslating(false);
-      setLoadingMessage('Error translating text. Please try again.');
-      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
-    }
-  };
+      try {
+        const response = await translateText({
+          sourceText: processedContent,
+          targetLocale,
+        });
 
-  // Function to switch back to original text
-  const handleResetTranslation = () => {
-    setCurrentLanguage(null);
-    setShowTranslationDropdown(false);
-  };
-
-  // Filter available translations based on search query
-  const getFilteredTranslations = () => {
-    const availableOptions = Object.keys(translations);
-
-    // Add original text option
-    const allOptions = ['original', ...availableOptions];
-
-    return allOptions.filter((option) => {
-      if (option === 'original') {
-        return 'original text'
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-      }
-
-      const autonym = getAutonym(option);
-      return (
-        option.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        autonym.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    });
-  };
-
-  // Handle keyboard events for translation dropdown navigation
-  const handleTranslationKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (!showTranslationDropdown) return;
-
-    const filteredOptions = getFilteredTranslations();
-
-    switch (e.key) {
-      case 'Escape':
-        e.preventDefault();
-        if (searchQuery?.length > 0) {
-          setSearchQuery('');
+        if (response.success && response.data) {
+          setTranslationState((prev) => ({
+            ...prev,
+            currentLocale: targetLocale,
+            isTranslating: false,
+            translations: {
+              ...prev.translations,
+              [targetLocale]: {
+                locale: targetLocale,
+                translatedText: response.data!.translatedText,
+                notes: response.data!.notes,
+                cachedAt: Date.now(),
+              },
+            },
+          }));
         } else {
-          setShowTranslationDropdown(false);
+          throw new Error(response.error || 'Translation failed');
         }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < filteredOptions.length - 1 ? prev + 1 : prev,
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        break;
-      case 'Enter':
-        if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
-          const selected = filteredOptions[selectedIndex];
-          if (selected === 'original') {
-            handleResetTranslation();
-          } else {
-            setCurrentLanguage(selected);
-            setShowTranslationDropdown(false);
-          }
-        }
-        break;
-    }
-  };
-
-  // Focus search input when dropdown opens
-  useEffect(() => {
-    if (showTranslationDropdown && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [showTranslationDropdown]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        translationDropdownRef.current &&
-        !translationDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowTranslationDropdown(false);
+      } catch (error) {
+        console.error('Translation error:', error);
+        setTranslationState((prev) => ({
+          ...prev,
+          isTranslating: false,
+          error: error instanceof Error ? error.message : 'Translation failed',
+        }));
+        // Clear error after 3 seconds
+        setTimeout(() => {
+          setTranslationState((prev) => ({ ...prev, error: null }));
+        }, 3000);
       }
-    };
+    },
+    [processedContent, translationState.translations],
+  );
 
-    if (showTranslationDropdown) {
-      document.addEventListener('mousedown', handleClickOutside as any);
-    }
+  // Set of cached locale codes
+  const cachedLocales = useMemo(() => {
+    return new Set(Object.keys(translationState.translations));
+  }, [translationState.translations]);
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside as any);
-    };
-  }, [showTranslationDropdown]);
+  // Custom components for Streamdown
+  // Note: Streamdown handles code highlighting (Shiki), Mermaid, and math (KaTeX) built-in
+  const customMarkdownComponents = {};
 
-  // Reset search and selection when dropdown closes
-  useEffect(() => {
-    if (!showTranslationDropdown) {
-      setSearchQuery('');
-      setSelectedIndex(-1);
-    }
-  }, [showTranslationDropdown]);
-
-  // Custom components for markdown processing
-  const customMarkdownComponents = {
-    code({
-      node,
-      inline,
-      className,
-      children,
-      ...props
-    }: {
-      node: any;
-      inline?: boolean;
-      className?: string;
-      children: React.ReactNode[];
-      [key: string]: any;
-    }) {
-      if (children.length) {
-        if (children[0] == '▍') {
-          return <span className="animate-pulse cursor-default mt-1">▍</span>;
+  // Mermaid configuration with dark mode support
+  const mermaidConfig: MermaidConfig = {
+    startOnLoad: false,
+    theme: isDarkMode ? 'dark' : 'default',
+    themeVariables: isDarkMode
+      ? {
+          // Dark mode colors - make everything visible on dark background
+          primaryColor: '#3b82f6',
+          primaryTextColor: '#e5e7eb',
+          primaryBorderColor: '#60a5fa',
+          lineColor: '#9ca3af',
+          secondaryColor: '#1e293b',
+          tertiaryColor: '#0f172a',
+          background: '#1f2937',
+          mainBkg: '#1f2937',
+          secondBkg: '#111827',
+          textColor: '#f3f4f6',
+          border1: '#4b5563',
+          border2: '#6b7280',
+          arrowheadColor: '#e5e7eb', // White arrows
+          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontSize: '14px',
+          // Sequence diagram specific
+          actorTextColor: '#f3f4f6',
+          actorLineColor: '#9ca3af',
+          signalColor: '#e5e7eb',
+          signalTextColor: '#f3f4f6',
+          labelBoxBkgColor: '#374151',
+          labelBoxBorderColor: '#6b7280',
+          labelTextColor: '#f3f4f6',
+          loopTextColor: '#f3f4f6',
+          activationBorderColor: '#60a5fa',
+          activationBkgColor: '#1e3a8a',
+          sequenceNumberColor: '#ffffff',
         }
-      }
-
-      const match = /language-(\w+)/.exec(className || '');
-
-      return !inline ? (
-        <CodeBlock
-          key={Math.random()}
-          language={(match && match[1]) || ''}
-          value={String(children).replace(/\n$/, '')}
-          {...props}
-        />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-    table({ children }: { children: React.ReactNode }) {
-      return (
-        <div className="overflow-auto">
-          <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-            {children}
-          </table>
-        </div>
-      );
-    },
-    th({ children }: { children: React.ReactNode }) {
-      return (
-        <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-          {children}
-        </th>
-      );
-    },
-    td({ children }: { children: React.ReactNode }) {
-      return (
-        <td className="break-words border border-black px-3 py-1 dark:border-white">
-          {children}
-        </td>
-      );
-    },
-    p({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: any;
-    }) {
-      return <p {...props}>{children}</p>;
-    },
+      : {
+          // Light mode colors
+          primaryColor: '#3b82f6',
+          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontSize: '14px',
+        },
+    logLevel: 'error', // Only log errors, don't crash
+    securityLevel: 'loose', // More lenient parsing
+    suppressErrorRendering: true, // Hide error messages from UI
   };
 
   return (
-    <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-      <div className="min-w-[40px] text-right font-bold">
-        <IconRobot size={30} />
-      </div>
-
-      <div className="prose mt-[-2px] w-full dark:prose-invert">
+    <div
+      className="relative flex px-4 py-3 text-base lg:px-0"
+      style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}
+    >
+      <div
+        className="mt-[-2px]"
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
+          overflow: 'hidden',
+        }}
+      >
         {loadingMessage && (
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
             {loadingMessage}
           </div>
         )}
 
-        <div className="flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            {selectedConversation?.bot ? (
-              <>
-                <CitationMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  conversation={selectedConversation}
-                  citations={citations}
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </CitationMarkdown>
-              </>
-            ) : (
-              <>
-                <MemoizedReactMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </MemoizedReactMarkdown>
-              </>
-            )}
+        <div
+          className="flex flex-col"
+          style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}
+        >
+          {/* Thinking block - displayed before main content */}
+          {thinking && (
+            <ThinkingBlock
+              thinking={thinking}
+              isStreaming={messageIsStreaming && !processedContent}
+            />
+          )}
 
-            {/* Extensible action indicator - shows when any action is in progress */}
-            {(isTranslating ||
-              isGeneratingAudio ||
-              Object.values(actionStates).some((state) => state.active)) && (
-              <span className="inline-flex items-center ml-2 text-gray-500 dark:text-gray-400 text-sm">
-                <IconLoader2 size={16} className="animate-spin mr-1" />
-                <span className="animate-pulse">
-                  {isTranslating
-                    ? 'Translating...'
-                    : isGeneratingAudio
-                    ? 'Generating audio...'
-                    : Object.entries(actionStates).find(
-                        ([_, state]) => state.active,
-                      )?.[1].message || 'Processing...'}
-                </span>
+          {/* Try Again button for failed messages */}
+          {message?.error && onRegenerate && (
+            <div className="mb-4">
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-colors"
+                onClick={onRegenerate}
+                aria-label={t('common.tryAgain')}
+              >
+                <IconRefresh size={18} />
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Translation indicator - shown when viewing translated content */}
+          {translationState.currentLocale && !messageIsStreaming && (
+            <div className="flex items-center gap-2 mb-2 text-sm text-blue-600 dark:text-blue-400">
+              <IconLanguage size={14} />
+              <span>
+                {t('chat.translatedTo', {
+                  language: getAutonym(translationState.currentLocale),
+                })}
               </span>
+              <button
+                onClick={() => handleTranslate(null)}
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t('chat.showOriginal')}
+              </button>
+            </div>
+          )}
+
+          {/* Translation error */}
+          {translationState.error && (
+            <div className="text-sm text-red-500 dark:text-red-400 mb-2">
+              {translationState.error}
+            </div>
+          )}
+
+          <div className="flex-1 w-full">
+            {children || (
+              <div
+                className="prose dark:prose-invert max-w-none w-full"
+                style={{ maxWidth: 'none' }}
+              >
+                {/* Check for document translation reference */}
+                {isDocumentTranslationReference(displayedContent) ? (
+                  <DocumentTranslationContent content={displayedContent} />
+                ) : /* Check if content is a blob transcript reference that needs lazy loading */
+                isBlobTranscriptReference(displayedContent) ? (
+                  <TranscriptContent
+                    content={displayedContent}
+                    className="whitespace-pre-wrap"
+                  />
+                ) : (
+                  <StreamdownWithCodeButtons>
+                    <CitationStreamdown
+                      citations={citations}
+                      components={customMarkdownComponents}
+                      isAnimating={messageIsStreaming}
+                      controls={true}
+                      shikiTheme={['github-light', 'github-dark']}
+                      mermaid={{ config: mermaidConfig }}
+                    >
+                      {displayedContent}
+                    </CitationStreamdown>
+                  </StreamdownWithCodeButtons>
+                )}
+              </div>
             )}
           </div>
 
-          {/* Action buttons at the bottom of the message */}
-          <AssistantMessageActionButtons
-            messageCopied={messageCopied}
-            copyOnClick={() =>
-              copyOnClick(
-                currentLanguage
-                  ? translations[currentLanguage]
-                  : displayContent,
-              )
-            }
-            isGeneratingAudio={isGeneratingAudio}
-            audioUrl={audioUrl}
-            handleTTS={handleTTS}
-            handleCloseAudio={handleCloseAudio}
-            messageIsStreaming={messageIsStreaming}
-            showStreamingSettings={showStreamingSettings}
-            setShowStreamingSettings={setShowStreamingSettings}
-            onTranslate={handleTranslate}
-            isTranslating={isTranslating}
-          />
+          {/* Citations - shown after content but before action buttons */}
+          {citations.length > 0 && <CitationList citations={citations} />}
 
-          {/* Streaming Settings Modal */}
-          {showStreamingSettings && (
-            <div className="mt-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm shadow-md border border-gray-200 dark:border-gray-700 transition-all">
-              <h4 className="font-medium mb-3 text-gray-700 dark:text-gray-300 flex items-center">
-                <IconSettings size={16} className="mr-2" />
-                Text Streaming Settings
-              </h4>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="cursor-pointer text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Smooth streaming</span>
-                    <div className="relative inline-block w-10 h-5 ml-2">
-                      <input
-                        type="checkbox"
-                        className="opacity-0 w-0 h-0"
-                        checked={settings.smoothStreamingEnabled}
-                        onChange={(e) =>
-                          updateSettings({
-                            smoothStreamingEnabled: e.target.checked,
-                          })
-                        }
-                      />
-                      <span
-                        className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                          settings.smoothStreamingEnabled
-                            ? 'bg-blue-500 dark:bg-blue-600'
-                            : 'bg-gray-300 dark:bg-gray-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                            settings.smoothStreamingEnabled
-                              ? 'translate-x-5'
-                              : 'translate-x-0.5'
-                          } top-0.5 left-0`}
-                        ></span>
-                      </span>
-                    </div>
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Speed (characters per frame)</span>
-                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.charsPerFrame}
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={settings.charsPerFrame}
-                    onChange={(e) =>
-                      updateSettings({
-                        charsPerFrame: parseInt(e.target.value),
-                      })
-                    }
-                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
-                        ? 'bg-gray-300 dark:bg-gray-600'
-                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                    }`}
-                    disabled={!settings.smoothStreamingEnabled}
+          {/* Action buttons at the bottom of the message - only show when not streaming */}
+          {!messageIsStreaming && (
+            <div className="flex items-center gap-2 mt-1">
+              {/* Version navigation - placed before other actions */}
+              {versionInfo?.hasMultiple &&
+                onPreviousVersion &&
+                onNextVersion && (
+                  <VersionNavigation
+                    currentVersion={versionInfo.current}
+                    totalVersions={versionInfo.total}
+                    onPrevious={onPreviousVersion}
+                    onNext={onNextVersion}
                   />
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                    <span>Slower</span>
-                    <span>Faster</span>
-                  </div>
-                </div>
+                )}
 
-                <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Delay between frames (ms)</span>
-                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.frameDelay}ms
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min="5"
-                    max="50"
-                    step="5"
-                    value={settings.frameDelay}
-                    onChange={(e) =>
-                      updateSettings({ frameDelay: parseInt(e.target.value) })
-                    }
-                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
-                        ? 'bg-gray-300 dark:bg-gray-600'
-                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                    }`}
-                    disabled={!settings.smoothStreamingEnabled}
-                  />
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                    <span>Faster</span>
-                    <span>Slower</span>
-                  </div>
-                </div>
-              </div>
+              {/* Copy button */}
+              <button
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={hasEmbeddedContent ? undefined : handleCopy}
+                disabled={hasEmbeddedContent}
+                aria-label={messageCopied ? 'Copied' : 'Copy message'}
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : undefined
+                }
+              >
+                {messageCopied ? (
+                  <IconCheck size={18} />
+                ) : (
+                  <IconCopy size={18} />
+                )}
+              </button>
+
+              {/* Regenerate button */}
+              {onRegenerate && (
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                  onClick={onRegenerate}
+                  aria-label={t('chat.regenerateResponse')}
+                >
+                  <IconRefresh size={18} />
+                </button>
+              )}
+
+              {/* Listen button */}
+              <button
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : isGeneratingAudio
+                      ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : audioUrl
+                      ? handleCloseAudio
+                      : () => handleTTS()
+                }
+                onContextMenu={(e) => {
+                  if (!hasEmbeddedContent && !isGeneratingAudio && !audioUrl) {
+                    e.preventDefault();
+                    setTTSContextMenu({ x: e.clientX, y: e.clientY });
+                  }
+                }}
+                disabled={hasEmbeddedContent || isGeneratingAudio}
+                aria-label={
+                  audioUrl
+                    ? 'Stop audio'
+                    : isGeneratingAudio
+                      ? 'Generating audio...'
+                      : 'Listen'
+                }
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : t('chat.ttsRightClickHint')
+                }
+              >
+                {isGeneratingAudio ? (
+                  <IconLoader2 size={18} className="animate-spin" />
+                ) : audioUrl ? (
+                  <IconVolumeOff size={18} />
+                ) : (
+                  <IconVolume size={18} />
+                )}
+              </button>
+
+              {/* Translate button */}
+              <button
+                ref={translateButtonRef}
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : translationState.isTranslating
+                      ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      : translationState.currentLocale
+                        ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : () => setShowTranslationDropdown(!showTranslationDropdown)
+                }
+                disabled={hasEmbeddedContent || translationState.isTranslating}
+                aria-label={t('chat.translateMessage')}
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : t('chat.translateMessage')
+                }
+              >
+                {translationState.isTranslating ? (
+                  <IconLoader2 size={18} className="animate-spin" />
+                ) : (
+                  <IconLanguage size={18} />
+                )}
+              </button>
+
+              {/* Open as document button */}
+              <button
+                className={`transition-colors ${
+                  hasEmbeddedContent
+                    ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={
+                  hasEmbeddedContent
+                    ? undefined
+                    : () => {
+                        openDocument(
+                          displayedContent,
+                          'md',
+                          'message.md',
+                          'document',
+                        );
+                      }
+                }
+                disabled={hasEmbeddedContent}
+                aria-label="Open as document"
+                title={
+                  hasEmbeddedContent
+                    ? t('chat.actionsDisabledForEmbed')
+                    : 'Open as document'
+                }
+              >
+                <IconFileText size={18} />
+              </button>
             </div>
           )}
 
           {audioUrl && (
-            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+            <>
+              {/* Indicator when audio source doesn't match displayed content */}
+              {audioSourceLocale !== translationState.currentLocale && (
+                <div className="text-xs text-amber-600 dark:text-amber-400 mb-1 flex items-center gap-1">
+                  <IconVolume size={12} />
+                  <span>
+                    {audioSourceLocale
+                      ? t('chat.audioFromTranslation', {
+                          language: getAutonym(audioSourceLocale),
+                        })
+                      : t('chat.audioFromOriginal')}
+                  </span>
+                </div>
+              )}
+              <AudioPlayer
+                audioUrl={audioUrl}
+                onClose={handleCloseAudio}
+                downloadFilename={audioDownloadFilename}
+              />
+            </>
           )}
 
-          {/* Translation indicator */}
-          {(currentLanguage || Object.keys(translations).length > 0) && (
-            <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <IconLanguage size={16} className="mr-1" />
-              <span className="mr-2">
-                {currentLanguage
-                  ? `${getAutonym(currentLanguage)}`
-                  : 'Original text'}
-              </span>
+          {/* Translation dropdown */}
+          <TranslationDropdown
+            triggerRef={translateButtonRef}
+            isOpen={showTranslationDropdown}
+            onClose={() => setShowTranslationDropdown(false)}
+            onSelectLanguage={handleTranslate}
+            currentLocale={translationState.currentLocale}
+            isTranslating={translationState.isTranslating}
+            cachedLocales={cachedLocales}
+          />
 
-              {/* Translation selector dropdown */}
-              <div className="relative inline-block">
-                <button
-                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-xs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowTranslationDropdown(!showTranslationDropdown);
-                  }}
-                >
-                  Change
-                </button>
-
-                {showTranslationDropdown && (
-                  <div
-                    ref={translationDropdownRef}
-                    className="absolute left-0 bottom-full mb-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-80 overflow-hidden flex flex-col"
-                    onKeyDown={handleTranslationKeyDown}
-                  >
-                    {/* Search input */}
-                    <div className="p-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <IconSearch size={16} className="text-gray-400" />
-                        </div>
-                        <input
-                          ref={searchInputRef}
-                          type="text"
-                          className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                          placeholder="Search languages..."
-                          value={searchQuery}
-                          onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            setSelectedIndex(-1);
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Language list */}
-                    <div className="overflow-y-auto">
-                      {getFilteredTranslations().length > 0 ? (
-                        <div className="py-1">
-                          {getFilteredTranslations().map((option, index) => {
-                            if (option === 'original') {
-                              return (
-                                <button
-                                  key="original"
-                                  className={`w-full text-left px-4 py-2 text-sm ${
-                                    index === selectedIndex
-                                      ? 'bg-blue-500 text-white dark:bg-blue-600'
-                                      : currentLanguage === null
-                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                  }`}
-                                  onClick={() => {
-                                    handleResetTranslation();
-                                  }}
-                                  onMouseEnter={() => setSelectedIndex(index)}
-                                >
-                                  Original text
-                                </button>
-                              );
-                            } else {
-                              return (
-                                <button
-                                  key={option}
-                                  className={`w-full text-left px-4 py-2 text-sm ${
-                                    index === selectedIndex
-                                      ? 'bg-blue-500 text-white dark:bg-blue-600'
-                                      : currentLanguage === option
-                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                  }`}
-                                  onClick={() => {
-                                    setCurrentLanguage(option);
-                                    setShowTranslationDropdown(false);
-                                  }}
-                                  onMouseEnter={() => setSelectedIndex(index)}
-                                >
-                                  <span className="font-medium">
-                                    {getAutonym(option)}
-                                  </span>
-                                  <span className="ml-2 text-xs opacity-70">
-                                    {option}
-                                  </span>
-                                </button>
-                              );
-                            }
-                          })}
-                        </div>
-                      ) : (
-                        <div className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-                          No languages found
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+          {/* TTS Context Menu */}
+          {ttsContextMenu && (
+            <TTSContextMenu
+              position={ttsContextMenu}
+              onClose={() => setTTSContextMenu(null)}
+              onTriggerTTS={(overrides) => {
+                setTTSContextMenu(null);
+                handleTTS(overrides);
+              }}
+            />
           )}
         </div>
-
-        {citations.length > 0 && <CitationList citations={citations} />}
-
-        {/* Agent Response Panel - Display agent-specific content if available */}
-        {message?.agentResponse && (
-          <div className="mt-4">
-            <AgentResponsePanel
-              message={message}
-              agentResponse={message.agentResponse}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
 };
+
+// Helper function to deduplicate citations by URL or title
+function deduplicateCitations(citations: Citation[]): Citation[] {
+  const uniqueCitationsMap = new Map();
+  citations.forEach((citation: Citation) => {
+    const key = citation.url || citation.title;
+    if (key && !uniqueCitationsMap.has(key)) {
+      uniqueCitationsMap.set(key, citation);
+    }
+  });
+  return Array.from(uniqueCitationsMap.values());
+}
+
+// Helper function to validate JSON structure
+function isValidJSON(jsonStr: string): boolean {
+  const trimmed = jsonStr.trim();
+  if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) {
+    return false;
+  }
+  const openBraces = (trimmed.match(/{/g) || []).length;
+  const closeBraces = (trimmed.match(/}/g) || []).length;
+  return openBraces === closeBraces;
+}
 
 export default AssistantMessage;

@@ -13,8 +13,38 @@ const __dirname = path.dirname(__filename);
 
 // Supported locales from next-i18next.config.js
 const SUPPORTED_LOCALES = [
-  'am', 'ar', 'bn', 'ca', 'cs', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'he', 'hi', 'id', 'it',
-  'ja', 'ko', 'my', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'sw', 'te', 'th', 'tr', 'uk', 'ur', 'vi', 'zh'
+  'am',
+  'ar',
+  'bn',
+  'ca',
+  'cs',
+  'de',
+  'en',
+  'es',
+  'fa',
+  'fi',
+  'fr',
+  'he',
+  'hi',
+  'id',
+  'it',
+  'ja',
+  'ko',
+  'my',
+  'nl',
+  'pl',
+  'pt',
+  'ro',
+  'ru',
+  'sv',
+  'sw',
+  'te',
+  'th',
+  'tr',
+  'uk',
+  'ur',
+  'vi',
+  'zh',
 ];
 
 /**

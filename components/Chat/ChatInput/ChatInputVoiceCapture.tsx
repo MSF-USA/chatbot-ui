@@ -1,33 +1,33 @@
 import { IconPlayerRecordFilled } from '@tabler/icons-react';
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+
+import { useTranslations } from 'next-intl';
 
 import MicIcon from '@/components/Icons/mic';
 
-interface ChatInputVoiceCaptureProps {
-  setTextFieldValue: Dispatch<SetStateAction<string>>;
-  setIsTranscribing: Dispatch<SetStateAction<boolean>>;
-}
+import { useChatInputStore } from '@/client/stores/chatInputStore';
 
-const SILENCE_THRESHOLD = -50; // in decibels
-const MAX_SILENT_DURATION = 6000; // in milliseconds (Changed to 7000ms for 7 seconds)
+const SILENCE_THRESHOLD = -50;
+const TRANSCRIBE_SILENCE_DURATION = 2000; // 2 seconds of silence triggers transcription
+const MAX_SILENT_DURATION = 6000; // 6 seconds of silence stops recording
 
-const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({
-  setTextFieldValue,
-  setIsTranscribing,
-}) => {
+const ChatInputVoiceCapture: FC = React.memo(() => {
+  const setTextFieldValue = useChatInputStore(
+    (state) => state.setTextFieldValue,
+  );
+  const setIsTranscribing = useChatInputStore(
+    (state) => state.setIsTranscribing,
+  );
+  const t = useTranslations();
   const [hasMicrophone, setHasMicrophone] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribingSegment, setIsTranscribingSegment] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
+  const lastTranscribedChunkIndexRef = useRef<number>(0);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -43,94 +43,134 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({
         setHasMicrophone(hasMic);
       })
       .catch((err) => {
-        console.error('Error accessing media devices.', err);
+        console.error('[VoiceCapture] Error accessing media devices:', err);
         setHasMicrophone(false);
       });
   }, []);
 
-  /*
-        Useful for local debugging, but otherwise just annoying
-     */
-  const testAudioPlayback = (audioBlob: Blob) => {
-    const audioURL = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioURL);
-    audio.play().catch((error) => {
-      console.error('Playback failed:', error);
-    });
-  };
+  const startRecording = async () => {
+    // Check current permission status
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'microphone' as PermissionName,
+      });
 
-  const startRecording = () => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        mediaStreamRef.current = stream;
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
-        mediaRecorder.start();
+      if (permissionStatus.state === 'denied') {
+        alert(t('chat.microphoneAccessDenied'));
+        return;
+      }
+    } catch (permErr) {
+      // Permissions API not supported, continue anyway
+    }
 
-        // Empty the chunks
-        audioChunksRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      mediaStreamRef.current = stream;
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(100); // Capture data every 100ms to prevent audio cutoff
 
-        mediaRecorder.ondataavailable = (event) => {
-          audioChunksRef.current.push(event.data);
-        };
+      // Empty the chunks and reset transcription index
+      audioChunksRef.current = [];
+      lastTranscribedChunkIndexRef.current = 0;
 
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, {
-            type: 'audio/webm',
-          });
-          // Send audioBlob to the API to transcribe
-          transcribeAudio(audioBlob);
-        };
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
 
-        // Set up audio context for silence detection
-        audioContextRef.current = new (window.AudioContext ||
-          (window as any).webkitAudioContext)();
-        const source = audioContextRef.current.createMediaStreamSource(stream);
-        analyserRef.current = audioContextRef.current.createAnalyser();
-        analyserRef.current.minDecibels = -90;
-        analyserRef.current.maxDecibels = -10;
-        analyserRef.current.smoothingTimeConstant = 0.85;
+      mediaRecorder.onstart = () => {
+        console.log(
+          '[VoiceCapture] Recording initialized - audio capture active',
+        );
+      };
 
-        source.connect(analyserRef.current);
+      mediaRecorder.onstop = () => {
+        // Only transcribe remaining chunks that haven't been transcribed yet
+        const remainingChunks = audioChunksRef.current.slice(
+          lastTranscribedChunkIndexRef.current,
+        );
+        if (remainingChunks.length > 0) {
+          const finalBlob = new Blob(remainingChunks, { type: 'audio/webm' });
+          transcribeAudio(finalBlob);
+        }
+      };
 
-        // Start checking for silence
-        silenceStartTimeRef.current = null;
-        checkSilenceIntervalRef.current = window.setInterval(() => {
-          if (analyserRef.current) {
-            const dataArray = new Uint8Array(analyserRef.current.fftSize);
-            analyserRef.current.getByteTimeDomainData(dataArray);
+      // Set up audio context for silence detection
+      audioContextRef.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      analyserRef.current.minDecibels = -90;
+      analyserRef.current.maxDecibels = -10;
+      analyserRef.current.smoothingTimeConstant = 0.85;
 
-            // Calculate RMS (Root Mean Square) to get volume level
-            let sum = 0;
-            for (const amplitude of dataArray) {
-              const normalized = amplitude / 128 - 1;
-              sum += normalized * normalized;
-            }
-            const rms = Math.sqrt(sum / dataArray.length);
-            const db = 20 * Math.log10(rms);
+      source.connect(analyserRef.current);
 
-            if (db < SILENCE_THRESHOLD || isNaN(db)) {
-              if (silenceStartTimeRef.current === null) {
-                silenceStartTimeRef.current = Date.now();
-              } else {
-                const silentDuration = Date.now() - silenceStartTimeRef.current;
-                if (silentDuration > MAX_SILENT_DURATION) {
-                  // Stop recording due to silence
-                  stopRecording();
+      // Show initializing state immediately
+      setIsInitializing(true);
+
+      // Start checking for silence
+      silenceStartTimeRef.current = null;
+      checkSilenceIntervalRef.current = window.setInterval(() => {
+        if (analyserRef.current) {
+          const dataArray = new Uint8Array(analyserRef.current.fftSize);
+          analyserRef.current.getByteTimeDomainData(dataArray);
+
+          // Calculate RMS (Root Mean Square) to get volume level
+          let sum = 0;
+          for (const amplitude of dataArray) {
+            const normalized = amplitude / 128 - 1;
+            sum += normalized * normalized;
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const db = 20 * Math.log10(rms);
+
+          if (db < SILENCE_THRESHOLD || isNaN(db)) {
+            if (silenceStartTimeRef.current === null) {
+              silenceStartTimeRef.current = Date.now();
+            } else {
+              const silentDuration = Date.now() - silenceStartTimeRef.current;
+
+              // Trigger transcription on shorter silence (while continuing to record)
+              if (
+                silentDuration > TRANSCRIBE_SILENCE_DURATION &&
+                !isTranscribingSegment
+              ) {
+                const hasUntranscribedChunks =
+                  audioChunksRef.current.length >
+                  lastTranscribedChunkIndexRef.current;
+
+                if (hasUntranscribedChunks) {
+                  transcribeSegment();
+                  silenceStartTimeRef.current = Date.now(); // Reset timer after triggering
                 }
               }
-            } else {
-              silenceStartTimeRef.current = null;
-            }
-          }
-        }, 100);
 
-        setIsRecording(true);
-      })
-      .catch((err) => {
-        console.error('The following error occurred: ' + err);
-      });
+              // Stop recording on longer silence
+              if (silentDuration > MAX_SILENT_DURATION) {
+                stopRecording();
+              }
+            }
+          } else {
+            silenceStartTimeRef.current = null;
+          }
+        }
+      }, 100);
+
+      // TODO: detect stream readiness rather than using a hardcoded delay
+      // Wait for stream warmup before signaling ready to record
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      setIsInitializing(false);
+      setIsRecording(true);
+    } catch (err: any) {
+      console.error('[VoiceCapture] Error getting user media:', err);
+      console.error('[VoiceCapture] Error name:', err.name);
+      console.error('[VoiceCapture] Error message:', err.message);
+      alert(t('chat.microphoneAccessError', { message: err.message }));
+    }
   };
 
   const stopRecording = () => {
@@ -152,62 +192,93 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({
       audioContextRef.current = null;
     }
     silenceStartTimeRef.current = null;
+    setIsInitializing(false);
     setIsRecording(false);
+  };
+
+  /**
+   * Transcribe a segment of audio while continuing to record.
+   * Takes chunks from lastTranscribedChunkIndex to current length.
+   */
+  const transcribeSegment = async () => {
+    const startIndex = lastTranscribedChunkIndexRef.current;
+    const endIndex = audioChunksRef.current.length;
+
+    // Skip if no new chunks
+    if (endIndex <= startIndex) return;
+
+    // Get pending chunks
+    const pendingChunks = audioChunksRef.current.slice(startIndex, endIndex);
+
+    // Update index before async operation to prevent re-processing
+    lastTranscribedChunkIndexRef.current = endIndex;
+
+    // Create blob from pending chunks
+    const segmentBlob = new Blob(pendingChunks, { type: 'audio/webm' });
+
+    // Transcribe with UI indicator
+    setIsTranscribingSegment(true);
+    try {
+      await transcribeAudio(segmentBlob);
+    } finally {
+      setIsTranscribingSegment(false);
+    }
   };
 
   const transcribeAudio = async (audioBlob: Blob) => {
     setIsTranscribing(true);
     try {
       const filename = 'audio.webm';
-      const mimeType = 'audio/x-matroska';
+      const mimeType = audioBlob.type || 'audio/webm';
 
-      // Encode filename and MIME type
       const encodedFileName = encodeURIComponent(filename);
       const encodedMimeType = encodeURIComponent(mimeType);
 
-      // Convert blob to base64
-      const base64Chunk = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(audioBlob);
-      });
+      // Upload using FormData (binary, not base64)
+      const formData = new FormData();
+      formData.append('file', audioBlob, filename);
 
-      // Remove the data URL prefix (e.g., "data:audio/webm;base64,")
-      const base64Data = base64Chunk.split(',')[1];
-
-      // Upload the audioBlob to the server
       const uploadResponse = await fetch(
-        `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
+        `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
         {
           method: 'POST',
-          body: base64Data,
-          headers: {
-            'x-file-name': encodedFileName,
-          },
+          body: formData,
         },
       );
 
       if (!uploadResponse.ok) {
-        throw new Error('Failed to upload audio');
+        const errorData = await uploadResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to upload audio');
       }
 
       const uploadResult = await uploadResponse.json();
-      const fileURI = uploadResult.uri;
-      const fileID = encodeURIComponent(fileURI.split('/').pop());
+      const fileURI = uploadResult.data?.uri;
+
+      if (!fileURI) {
+        throw new Error('Failed to get file URI from upload response');
+      }
+
+      const fileID = encodeURIComponent(fileURI.split('/').pop()!);
 
       // Call the transcribe endpoint
-      const transcribeResponse = await fetch(
-        `/api/v2/file/${fileID}/transcribe`,
-        {
-          method: 'GET',
-        },
-      );
+      const transcribeResponse = await fetch(`/api/file/${fileID}/transcribe`, {
+        method: 'GET',
+      });
 
       if (!transcribeResponse.ok) {
-        throw new Error('Failed to transcribe audio');
+        const errorData = await transcribeResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to transcribe audio');
       }
 
       const transcribeResult = await transcribeResponse.json();
+
+      // Voice capture audio is always small enough for synchronous transcription
+      if (transcribeResult.async) {
+        throw new Error(
+          'Audio file too large for voice capture. Please use the file upload option for large audio files.',
+        );
+      }
+
       const transcript = transcribeResult.transcript;
 
       setTextFieldValue((prevText) =>
@@ -226,28 +297,60 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({
 
   return (
     <div className="voice-capture">
-      <button
-        className={isRecording ? ' backdrop-blur' : ''}
-        onClick={isRecording ? stopRecording : startRecording}
-        title={
-          isRecording ? 'Click to stop recording' : 'Click to start recording'
-        } // Tooltip added
-      >
-        {isRecording ? (
-          <div className="flex items-center">
-            <IconPlayerRecordFilled className="rounded h-5 w-5 animate-pulse text-red-500" />
-            {/* Optional visible text to indicate stopping */}
-            <span className="ml-2 text-red-500">Click to stop recording</span>
+      {isInitializing ? (
+        <button
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-yellow-50 dark:bg-yellow-900/20 cursor-wait"
+          disabled
+        >
+          <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-yellow-500" />
+          <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400 whitespace-nowrap">
+            {t('chat.voiceInputStarting')}
+          </span>
+        </button>
+      ) : isRecording ? (
+        <button
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            stopRecording();
+          }}
+          title={t('chat.clickToStopRecording')}
+        >
+          <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-red-500" />
+          <div className="flex flex-col items-start">
+            <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
+              {isTranscribingSegment
+                ? t('chat.voiceInputTranscribing')
+                : t('chat.voiceInputRecording')}
+            </span>
+            <span className="text-xs text-red-500 dark:text-red-400/70 whitespace-nowrap">
+              {t('chat.voiceInputTapToStop')}
+            </span>
           </div>
-        ) : (
-          <MicIcon className="text-black dark:text-white rounded h-5 w-5" />
-        )}
-        <span className="sr-only">
-          {isRecording ? 'Click to stop recording' : 'Click to start recording'}
-        </span>
-      </button>
+        </button>
+      ) : (
+        <div className="group relative">
+          <button
+            className="flex items-center justify-center w-11 h-11 md:w-10 md:h-10 rounded-full text-gray-600 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:bg-gray-800/50 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              startRecording();
+            }}
+            aria-label={t('chat.startVoiceRecording')}
+          >
+            <MicIcon className="h-5 w-5 md:h-4 md:w-4" />
+          </button>
+          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md whitespace-nowrap z-50">
+            {t('chat.voiceInput')}
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+});
+
+ChatInputVoiceCapture.displayName = 'ChatInputVoiceCapture';
 
 export default ChatInputVoiceCapture;

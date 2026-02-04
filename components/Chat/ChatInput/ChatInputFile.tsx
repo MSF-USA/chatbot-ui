@@ -3,21 +3,15 @@ import React, {
   Dispatch,
   MutableRefObject,
   SetStateAction,
-  useContext,
   useRef,
 } from 'react';
 import toast from 'react-hot-toast';
 
-import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
-
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
   FilePreview,
-  ImageMessageContent,
+  FileFieldValue,
 } from '@/types/chat';
-
-import HomeContext from '@/context/HomeContext';
 
 import FileIcon from '@/components/Icons/file';
 
@@ -26,38 +20,14 @@ interface ChatInputFileProps {
     event: React.ChangeEvent<any>,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => void;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
 }
 
@@ -70,12 +40,6 @@ const ChatInputFile = ({
   setUploadProgress,
 }: ChatInputFileProps) => {
   const fileInputRef: MutableRefObject<any> = useRef(null);
-
-  const {
-    state: { user },
-    dispatch: homeDispatch,
-  } = useContext(HomeContext);
-  if (!userAuthorizedForFileUploads(user)) return null;
 
   const handleFileButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>,

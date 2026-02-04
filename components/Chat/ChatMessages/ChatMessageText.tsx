@@ -1,11 +1,38 @@
-import { FC } from 'react';
+import React, { Dispatch, FC, KeyboardEvent, SetStateAction } from 'react';
+
+import { Conversation, Message, VersionInfo } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
 
-export const ChatMessageText: FC<any> = ({
+interface ChatMessageTextProps {
+  message: Message;
+  isEditing: boolean;
+  setIsEditing: Dispatch<SetStateAction<boolean>>;
+  setIsTyping: Dispatch<SetStateAction<boolean>>;
+  handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  handlePressEnter: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  handleEditMessage: () => void;
+  messageContent: string;
+  setMessageContent: Dispatch<SetStateAction<Message['content']>>;
+  toggleEditing: (event: React.MouseEvent) => void;
+  handleDeleteMessage: () => void;
+  messageIsStreaming: boolean;
+  messageIndex: number;
+  selectedConversation: Conversation | null;
+  onEdit?: (message: Message) => void;
+  onQuestionClick?: (question: string) => void;
+  onRegenerate?: () => void;
+  onSaveAsPrompt?: () => void;
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
+}
+
+export const ChatMessageText: FC<ChatMessageTextProps> = ({
   message,
-  copyOnClick,
   isEditing,
   setIsEditing,
   setIsTyping,
@@ -20,30 +47,32 @@ export const ChatMessageText: FC<any> = ({
   messageIsStreaming,
   messageIndex,
   selectedConversation,
-  messageCopied,
   onEdit,
   onQuestionClick,
-}: any) => {
+  onRegenerate,
+  onSaveAsPrompt,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
+}) => {
   const { role, content } = message;
 
   return (
     <div
-      className={`group md:px-4 ${
-        role === 'assistant'
-          ? 'border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#2f2f2f] dark:text-gray-100'
-          : 'border-b border-black/10 bg-white text-gray-800 dark:border-gray-900/50 dark:bg-[#212121] dark:text-gray-100'
-      }`}
+      className="group text-gray-800 dark:text-gray-100"
       style={{ overflowWrap: 'anywhere' }}
     >
       {role === 'assistant' ? (
         <AssistantMessage
-          content={content}
-          copyOnClick={copyOnClick}
+          content={content as string}
+          message={message}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
-          messageCopied={messageCopied}
-          message={message}
+          onRegenerate={onRegenerate}
+          versionInfo={versionInfo}
+          onPreviousVersion={onPreviousVersion}
+          onNextVersion={onNextVersion}
         />
       ) : (
         <UserMessage
@@ -58,8 +87,9 @@ export const ChatMessageText: FC<any> = ({
           setIsEditing={setIsEditing}
           toggleEditing={toggleEditing}
           handleDeleteMessage={handleDeleteMessage}
-          onEdit={onEdit}
+          onEdit={onEdit || (() => {})}
           selectedConversation={selectedConversation}
+          onSaveAsPrompt={onSaveAsPrompt}
         />
       )}
     </div>

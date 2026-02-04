@@ -1,201 +1,69 @@
-import { AgentType } from './agent';
-import { OpenAIModel } from './openai';
+import { SearchMode } from './searchMode';
+
+/**
+ * Configuration for smooth streaming speed.
+ * Controls how text is delivered to the UI during AI responses.
+ */
+export interface StreamingSpeedConfig {
+  /** Number of characters to send per batch (default: 3) */
+  charsPerBatch: number;
+  /** Delay between batches in milliseconds (default: 8) */
+  delayMs: number;
+}
+
+/**
+ * Default streaming speed configuration (Normal preset).
+ * ~375 characters per second.
+ */
+export const DEFAULT_STREAMING_SPEED: StreamingSpeedConfig = {
+  charsPerBatch: 3,
+  delayMs: 8,
+};
+
+/**
+ * Options for how the user's name is displayed in the app.
+ * - firstName: Use given name or first part of display name
+ * - lastName: Use surname or last part of display name
+ * - fullName: Use complete display name
+ * - custom: Use a user-provided custom name
+ * - none: Do not display any name (anonymous greeting)
+ */
+export type DisplayNamePreference =
+  | 'firstName'
+  | 'lastName'
+  | 'fullName'
+  | 'custom'
+  | 'none';
+
+/**
+ * Reasoning effort level for reasoning models (GPT-5, o3).
+ * Controls the depth of thinking/analysis the model performs.
+ */
+export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high';
+
+/**
+ * Verbosity level for GPT-5 models.
+ * Controls the detail level of responses.
+ */
+export type Verbosity = 'low' | 'medium' | 'high';
 
 export interface Settings {
   theme: 'light' | 'dark';
   temperature: number;
   systemPrompt: string;
   advancedMode: boolean;
-  agentSettings?: AgentSettings;
-  model?: OpenAIModel;
-}
-
-export interface AgentSettings {
-  enabled: boolean;
-  confidenceThreshold: number;
-  fallbackEnabled: boolean;
-  enabledAgentTypes: AgentType[];
-  agentConfigurations: Record<AgentType, AgentConfiguration>;
-  preferences: AgentPreferences;
-  privacy?: PrivacySettings;
-  security?: SecuritySettings;
-  performance?: PerformanceSettings;
-  ui?: UICustomizationSettings;
-  routing?: RoutingPreferences;
-}
-
-export interface AgentConfiguration {
-  enabled: boolean;
-  priority: number;
-  timeout: number;
-  maxRetries: number;
-  confidenceThreshold?: number; // Agent-specific confidence threshold
-  parameters: Record<string, any>;
-  // Enhanced configuration options
-  securityLevel?: 'strict' | 'normal' | 'permissive';
-  resourceLimits?: {
-    maxMemoryMb?: number;
-    maxExecutionTime?: number;
-    maxConcurrentOperations?: number;
-  };
-  contentFilters?: {
-    allowedDomains?: string[];
-    blockedDomains?: string[];
-    contentTypes?: string[];
-    safeSearch?: 'strict' | 'moderate' | 'off';
-  };
-}
-
-export interface AgentPreferences {
-  preferredAgents: AgentType[];
-  disabledAgents: AgentType[];
-  autoRouting: boolean;
-  showAgentAttribution: boolean;
-  confirmBeforeAgentUse: boolean;
-  // Enhanced preferences
-  routingStrategy?: 'performance' | 'accuracy' | 'cost' | 'balanced';
-  fallbackChain?: AgentType[];
-  maxRetryAttempts?: number;
-  enableCaching?: boolean;
-}
-
-export interface PrivacySettings {
-  dataRetention: {
-    searchHistory: number; // days, 0 = disabled
-    conversationData: number; // days, 0 = disabled
-    agentResults: number; // days, 0 = disabled
-    citations: number; // days, 0 = disabled
-  };
-  dataSharing: {
-    allowAnalytics: boolean;
-    allowPerformanceMetrics: boolean;
-    allowErrorReporting: boolean;
-    shareWithExternalServices: boolean;
-    allowCrossConversationData: boolean;
-  };
-  privacy: {
-    pseudonymizeData: boolean;
-    enableLocalProcessing: boolean;
-    requireExplicitConsent: boolean;
-    allowProfileBuilding: boolean;
-  };
-}
-
-export interface SecuritySettings {
-  permissions: {
-    allowCodeExecution: boolean;
-    allowFileSystemAccess: boolean;
-    allowNetworkAccess: boolean;
-    allowExternalApiCalls: boolean;
-    allowScreenCapture: boolean;
-  };
-  restrictions: {
-    trustedDomains: string[];
-    blockedDomains: string[];
-    allowedFileTypes: string[];
-    maxUploadSize: number; // MB
-    requireSandboxing: boolean;
-  };
-  authentication: {
-    requireReauth: boolean;
-    reauthInterval: number; // minutes
-    enable2FA: boolean;
-    sessionTimeout: number; // minutes
-  };
-  audit: {
-    enableAuditLogging: boolean;
-    logLevel: 'minimal' | 'standard' | 'detailed';
-    retainAuditLogs: number; // days
-  };
-}
-
-export interface PerformanceSettings {
-  resources: {
-    maxConcurrentAgents: number;
-    maxMemoryUsage: number; // MB
-    maxBandwidthUsage: number; // MB/s
-    enableBackgroundProcessing: boolean;
-  };
-  caching: {
-    enableResultCaching: boolean;
-    cacheSize: number; // MB
-    cacheRetention: number; // hours
-    enablePrefetching: boolean;
-  };
-  optimization: {
-    enableCompression: boolean;
-    optimizeForBattery: boolean;
-    preferLocalProcessing: boolean;
-    enableParallelProcessing: boolean;
-  };
-  limits: {
-    requestTimeout: number; // seconds
-    maxRequestsPerMinute: number;
-    maxResultSize: number; // MB
-  };
-}
-
-export interface UICustomizationSettings {
-  display: {
-    showAgentIndicators: boolean;
-    showProcessingTime: boolean;
-    showConfidenceScores: boolean;
-    showTokenUsage: boolean;
-    compactMode: boolean;
-  };
-  animations: {
-    enableLoadingAnimations: boolean;
-    enableTransitions: boolean;
-    animationSpeed: 'slow' | 'normal' | 'fast';
-    reduceMotion: boolean;
-  };
-  citations: {
-    citationStyle: 'inline' | 'footnotes' | 'sidebar';
-    showThumbnails: boolean;
-    showPreview: boolean;
-    enableHover: boolean;
-  };
-  themes: {
-    agentColorCoding: boolean;
-    customColors: Record<AgentType, string>;
-    enableDarkMode: boolean;
-    highContrast: boolean;
-  };
-}
-
-export interface RoutingPreferences {
-  defaultAgent: AgentType | 'auto';
-  routingRules: RoutingRule[];
-  fallbackBehavior: {
-    enableAutoFallback: boolean;
-    fallbackChain: AgentType[];
-    maxFallbackAttempts: number;
-  };
-  performance: {
-    preferFastResponse: boolean;
-    tolerateHigherCosts: boolean;
-    prioritizeAccuracy: boolean;
-  };
-  contextual: {
-    enableSmartRouting: boolean;
-    considerUserHistory: boolean;
-    adaptToDeviceCapabilities: boolean;
-  };
-}
-
-export interface RoutingRule {
-  id: string;
-  name: string;
-  condition: {
-    queryType?: 'question' | 'command' | 'search' | 'analysis';
-    keywords?: string[];
-    language?: string;
-    userRole?: string;
-  };
-  action: {
-    targetAgent: AgentType;
-    priority: number;
-    parameters?: Record<string, any>;
-  };
-  enabled: boolean;
+  defaultSearchMode: SearchMode;
+  displayNamePreference: DisplayNamePreference;
+  customDisplayName: string;
+  streamingSpeed: StreamingSpeedConfig;
+  /** Whether to include user info (name, title, email, dept) in system prompt */
+  includeUserInfoInPrompt: boolean;
+  /** User's preferred name (overrides displayName from profile) */
+  preferredName: string;
+  /** Additional context about the user for the AI */
+  userContext: string;
+  /** Default reasoning effort for reasoning models (GPT-5, o3) */
+  reasoningEffort?: ReasoningEffort;
+  /** Default verbosity for GPT-5 models */
+  verbosity?: Verbosity;
 }

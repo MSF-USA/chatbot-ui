@@ -1,16 +1,16 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import { FC, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import React, { FC } from 'react';
 
-import { Session } from 'next-auth';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import { SupportModal } from '@/components/Support/SupportModal';
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface SettingsFooterProps {
   version: string;
   build: string;
   env: string;
-  user?: Session['user'];
+  userEmail?: string;
   handleReset?: () => void;
   onClose?: () => void;
 }
@@ -19,15 +19,15 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
   version,
   build,
   env,
-  user,
+  userEmail,
   handleReset,
   onClose,
 }) => {
-  const { t } = useTranslation('settings');
-  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  const t = useTranslations();
+  const { data: session } = useSession();
 
   return (
-    <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700">
+    <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700 rounded-b-lg">
       {/* Reset settings button - only visible on mobile */}
       {handleReset && onClose && (
         <button
@@ -42,27 +42,23 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
       )}
 
       {/* Footer content */}
-      <div className="flex flex-col md:flex-row md:justify-between">
+      <div className="flex flex-row justify-between items-center w-full">
         <div className="text-gray-500 text-sm">
           v{version}.{build}.{env}
         </div>
-        <button
-          onClick={() => setIsSupportModalOpen(true)}
-          className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm hover:opacity-80 transition-opacity"
+        <a
+          href={`mailto:${
+            session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
+          }`}
+          className="flex items-center text-black dark:text-white text-sm hover:underline"
         >
           <IconExternalLink
             size={16}
             className={'inline mr-1 text-black dark:text-white'}
           />
           {t('sendFeedback')}
-        </button>
+        </a>
       </div>
-
-      <SupportModal
-        isOpen={isSupportModalOpen}
-        onClose={() => setIsSupportModalOpen(false)}
-        userEmail={user?.mail}
-      />
     </div>
   );
 };

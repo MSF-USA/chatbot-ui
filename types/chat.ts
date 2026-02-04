@@ -1,13 +1,16 @@
-import { AgentResponse, AgentType } from './agent';
+import { TranscriptMetadata } from '@/lib/utils/app/metadata';
+
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
+import { DisplayNamePreference, StreamingSpeedConfig } from './settings';
+import { Tone } from './tone';
 
 export enum MessageType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  AUDIO = 'audio',
-  VIDEO = 'video',
-  FILE = 'file',
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  AUDIO = 'AUDIO',
+  VIDEO = 'VIDEO',
+  FILE = 'FILE',
 }
 
 export interface ImageMessageContent {
@@ -38,6 +41,10 @@ export interface FileMessageContent {
   type: 'file_url';
   url: string;
   originalFilename?: string;
+  /** ISO-639-1 language code for transcription (e.g., 'en', 'es'). Undefined = auto-detect */
+  transcriptionLanguage?: string;
+  /** Optional context/instructions to improve transcription accuracy */
+  transcriptionPrompt?: string;
 }
 
 export interface TextMessageContent {
@@ -45,35 +52,9 @@ export interface TextMessageContent {
   text: string;
 }
 
-export function getChatMessageContent(message: Message): string {
-  if (typeof message.content === 'string') {
-    return message.content;
-  } else if (
-    Array.isArray(message.content) &&
-    message.content.some((contentItem) => contentItem.type !== 'text')
-  ) {
-    // @ts-ignore
-    const imageContent = message.content.find(
-      // @ts-ignore
-      (contentItem) => contentItem.type === 'image_url',
-    ) as ImageMessageContent;
-    if (imageContent) {
-      return imageContent.image_url.url;
-    } else {
-      // @ts-ignore
-      const fileContent = message.content.find(
-        // @ts-ignore
-        (contentItem) => contentItem.type === 'file_url',
-      ) as FileMessageContent;
-      return fileContent.url;
-    }
-  } else if ((message.content as TextMessageContent).type === 'text') {
-    return (message.content as TextMessageContent).text;
-  } else {
-    throw new Error(
-      `Invalid message type or structure: ${JSON.stringify(message)}`,
-    );
-  }
+export interface ThinkingContent {
+  type: 'thinking';
+  thinking: string;
 }
 
 export interface Message {
@@ -82,13 +63,98 @@ export interface Message {
     | string
     | Array<TextMessageContent | FileMessageContent>
     | Array<TextMessageContent | ImageMessageContent>
+    | Array<TextMessageContent | FileMessageContent | ImageMessageContent> // Support mixed content (images + files + text)
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
-  agentResponse?: AgentResponse;
+  thinking?: string;
+  transcript?: TranscriptMetadata;
+  error?: boolean; // Indicates if the message generation failed
+  toneId?: string | null; // Custom tone/voice profile to apply
+  promptId?: string | null; // Saved prompt that was used
+  promptVariables?: { [key: string]: string }; // Variable values used in the prompt
+  artifactContext?: {
+    // Artifact being edited when message was sent
+    fileName: string;
+    language: string;
+    code: string;
+  };
+  /** Pending batch transcription job ID (for async transcription >25MB files) */
+  pendingTranscriptionJobId?: string;
+  /** Filename being transcribed (for UI display during pending state) */
+  pendingTranscriptionFilename?: string;
+  /** Blob path for cleanup after transcription completes */
+  pendingTranscriptionBlobPath?: string;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
+
+export type ChatInputSubmitTypes = 'TEXT' | 'IMAGE' | 'FILE' | 'MULTI_FILE';
+
+/**
+ * Represents a single assistant message version.
+ * Used when the user regenerates responses - each regeneration creates a new version.
+ */
+export interface AssistantMessageVersion {
+  content:
+    | string
+    | Array<TextMessageContent | FileMessageContent>
+    | Array<TextMessageContent | ImageMessageContent>
+    | Array<TextMessageContent | FileMessageContent | ImageMessageContent>
+    | TextMessageContent;
+  messageType: MessageType | ChatInputSubmitTypes | undefined;
+  citations?: Citation[];
+  thinking?: string;
+  transcript?: TranscriptMetadata;
+  error?: boolean;
+  createdAt: string; // ISO timestamp for when this version was generated
+}
+
+/**
+ * Groups multiple assistant response versions for a single user message.
+ * The activeIndex determines which version is currently displayed.
+ */
+export interface AssistantMessageGroup {
+  type: 'assistant_group';
+  activeIndex: number;
+  versions: AssistantMessageVersion[];
+}
+
+/**
+ * Union type for conversation message entries.
+ * Supports both legacy flat Message objects and new grouped assistant responses.
+ */
+export type ConversationEntry = Message | AssistantMessageGroup;
+
+/**
+ * Type guard to check if an entry is an AssistantMessageGroup.
+ */
+export function isAssistantMessageGroup(
+  entry: ConversationEntry,
+): entry is AssistantMessageGroup {
+  return (
+    typeof entry === 'object' &&
+    entry !== null &&
+    'type' in entry &&
+    (entry as AssistantMessageGroup).type === 'assistant_group'
+  );
+}
+
+/**
+ * Type guard to check if an entry is a legacy Message (not a group).
+ */
+export function isLegacyMessage(entry: ConversationEntry): entry is Message {
+  return !isAssistantMessageGroup(entry);
+}
+
+/**
+ * Version info for display in the UI.
+ */
+export interface VersionInfo {
+  current: number; // 1-indexed for display
+  total: number;
+  hasMultiple: boolean;
+}
 
 export interface ChatBody {
   model: OpenAIModel;
@@ -98,16 +164,24 @@ export interface ChatBody {
   temperature: number;
   botId: string | undefined;
   stream?: boolean;
-  agentSettings?: {
-    enabled: boolean;
-    enabledAgentTypes: AgentType[];
-  };
+  threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
+  isEditorOpen?: boolean; // Indicates if code editor is currently open
+  tone?: Tone; // Full tone object (if tone is selected)
+  streamingSpeed?: StreamingSpeedConfig; // Smooth streaming speed configuration
+  includeUserInfoInPrompt?: boolean; // Include user name/title/dept in system prompt
+  preferredName?: string; // User's preferred name (overrides profile displayName)
+  userContext?: string; // Additional user context for the AI
+  displayNamePreference?: DisplayNamePreference; // For deriving name fallback
+  customDisplayName?: string; // Custom display name from General Settings
 }
 
 export interface Conversation {
   id: string;
   name: string;
-  messages: Message[];
+  messages: ConversationEntry[];
   model: OpenAIModel;
   prompt: string;
   temperature: number;
@@ -115,15 +189,75 @@ export interface Conversation {
   bot?: string;
   createdAt?: string;
   updatedAt?: string;
+  threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  defaultSearchMode?: import('./searchMode').SearchMode; // Default search mode for this conversation
 }
 
-export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
+export type FileFieldValue =
+  | FileMessageContent
+  | FileMessageContent[]
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | (FileMessageContent | ImageMessageContent)[]
+  | null;
 
-type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+export type ImageFieldValue =
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | null;
+
+/**
+ * Status of a file during upload/processing workflow
+ */
+export type UploadStatus =
+  | 'pending'
+  | 'uploading'
+  | 'extracting' // Video: extracting audio before upload
+  | 'completed'
+  | 'failed';
+
+/**
+ * Status of async transcription jobs (batch API)
+ */
+export type TranscriptionJobStatus =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed';
 
 export interface FilePreview {
   name: string;
   type: string;
   status: UploadStatus;
   previewUrl: string;
+  file?: File; // Optional: Store the original File object for local operations (e.g., opening in code editor)
+  // Transcription tracking for batch jobs
+  transcriptionJobId?: string;
+  transcriptionStatus?: TranscriptionJobStatus;
+  // Transcription options (for audio/video files)
+  transcriptionLanguage?: string; // ISO-639-1 code (e.g., 'en', 'es', 'fr'). Undefined = auto-detect
+  transcriptionPrompt?: string; // Optional context/instructions for Whisper
+  // Original video info (when audio was extracted)
+  extractedFromVideo?: {
+    originalName: string;
+    originalSize: number;
+    extractedSize: number;
+  };
+}
+
+// Tool Router Types
+export type ToolType = 'web_search';
+
+export interface ToolRouterResponse {
+  tools: ToolType[];
+  searchQuery?: string;
+  reasoning?: string; // Optional reasoning for debugging
+}
+
+export interface ToolRouterRequest {
+  messages: Message[];
+  currentMessage: string;
+  forceWebSearch?: boolean; // When true, always use web search (search mode enabled)
 }

@@ -1,26 +1,25 @@
+'use client';
+
 import { ChangeEvent, FC } from 'react';
 
-import { useRouter } from 'next/router';
+import { useLocale } from 'next-intl';
 
-import { getAutonym } from '@/utils/app/locales';
-
-// import {IconLanguage, IconMessage} from "@tabler/icons-react";
+import { getAutonym, getSupportedLocales } from '@/lib/utils/app/locales';
 
 const LanguageSwitcher: FC = () => {
-  const router = useRouter();
-  const { locale, locales, asPath } = router;
+  const locale = useLocale();
+  const locales = getSupportedLocales();
 
   const handleLocaleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const newLocale = event.target.value;
-    if (locales) {
-      const regex = new RegExp(`^/(${locales.join('|')})`);
-      router.push(asPath, asPath, { locale: newLocale });
-    }
-  };
 
-  if (!locales || locales.length === 0) {
-    return null;
-  }
+    // With localePrefix: 'never', we need to set a cookie and reload
+    // The next-intl middleware will read the cookie and serve the correct locale
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // Force a full page reload to pick up the new locale
+    window.location.reload();
+  };
 
   return (
     <div className={'grid'}>
@@ -32,7 +31,6 @@ const LanguageSwitcher: FC = () => {
         {locales.map((localeOption) => (
           <option
             className={'bg-white dark:bg-black'}
-            data-te-select-init={'true'}
             key={localeOption}
             value={localeOption}
           >

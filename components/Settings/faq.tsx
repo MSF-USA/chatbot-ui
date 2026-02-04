@@ -2,6 +2,8 @@
 import { IconArrowRight } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { FAQData } from '@/types/faq';
 
 type FAQProps = {
@@ -9,6 +11,7 @@ type FAQProps = {
 };
 
 export const FAQ: FC<FAQProps> = ({ faq }) => {
+  const t = useTranslations();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -30,7 +33,7 @@ export const FAQ: FC<FAQProps> = ({ faq }) => {
     <div>
       <input
         type="text"
-        placeholder="Search..."
+        placeholder={t('common.searchEllipsis')}
         value={searchQuery}
         onChange={handleSearch}
         className="w-full mb-10 rounded-lg border bg-transparent border-neutral-200 px-4 py-3 text-neutral-900 dark:text-neutral-100 dark:border-neutral-600"

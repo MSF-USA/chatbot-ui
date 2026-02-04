@@ -8,17 +8,18 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
+  FileFieldValue,
   FilePreview,
-  ImageMessageContent,
+  ImageFieldValue,
 } from '@/types/chat';
 
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import Modal from '@/components/UI/Modal';
+
+import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
 
 const onTakePhotoButtonClick = (
   videoRef: MutableRefObject<HTMLVideoElement | null>,
@@ -27,15 +28,8 @@ const onTakePhotoButtonClick = (
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >,
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
   closeModal: () => void,
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
 ) => {
@@ -49,17 +43,12 @@ const onTakePhotoButtonClick = (
         const file = new File([blob], 'camera_image.png', {
           type: 'image/png',
         });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInputRef.current!.files = dataTransfer.files;
-        const newEvent = new Event('change');
-        fileInputRef.current!.dispatchEvent(newEvent);
+        // Pass the file directly as an array instead of simulating a change event
         onFileUpload(
-          // @ts-ignore
-          newEvent,
+          [file],
           setSubmitType,
           setFilePreviews,
-          setImageFieldValue,
+          setFileFieldValue,
           setImageFieldValue,
           setUploadProgress,
         );
@@ -88,15 +77,8 @@ interface CameraModalProps {
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
@@ -109,14 +91,18 @@ export const CameraModal: FC<CameraModalProps> = ({
   setIsCameraOpen,
   setFilePreviews,
   setSubmitType,
+  setFileFieldValue,
   setImageFieldValue,
   setUploadProgress,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string>('');
 
   useEffect(() => {
+    // Capture the ref value at effect execution time
+    const video = videoRef.current;
+
     const getDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -141,10 +127,11 @@ export const CameraModal: FC<CameraModalProps> = ({
     // Cleanup function to stop media stream when component unmounts or modal closes
     return () => {
       if (isOpen === false) {
-        stopMediaStream(videoRef.current);
+        stopMediaStream(video);
       }
     };
-  }, [isOpen, videoRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const startCamera = async (deviceId: string) => {
     try {
@@ -218,6 +205,7 @@ export const CameraModal: FC<CameraModalProps> = ({
           setIsCameraOpen,
           setFilePreviews,
           setSubmitType,
+          setFileFieldValue,
           setImageFieldValue,
           closeModal,
           setUploadProgress,

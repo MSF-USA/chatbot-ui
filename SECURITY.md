@@ -1,6 +1,5 @@
 # Security Policy
 
-
 This security policy outlines the process for reporting vulnerabilities and secrets found within this GitHub repository. It is essential that all contributors and users adhere to this policy in order to maintain a secure and stable environment.
 
 ## Reporting a Vulnerability
@@ -10,7 +9,6 @@ If you discover a vulnerability within the code, dependencies, or any other comp
 1. **Do not disclose the vulnerability publicly.** Publicly disclosing a vulnerability may put the project at risk and could potentially harm other users.
 
 2. **Contact the repository maintainer(s) privately.** Send a private message or email to the maintainer(s) with a detailed description of the vulnerability. Include the following information:
-
    - The affected component(s)
    - Steps to reproduce the issue
    - Potential impact of the vulnerability

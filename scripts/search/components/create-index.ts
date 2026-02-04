@@ -1,17 +1,18 @@
 import { getIndexConfig } from '../config/index-config';
 
+import { DefaultAzureCredential } from '@azure/identity';
 import { SearchIndexClient } from '@azure/search-documents';
 
 export async function createOrUpdateIndex(
   indexName: string,
   allowIndexDowntime: boolean = false,
   endpoint: string,
-  apiKey: string,
   openaiEndpoint: string,
   openaiEmbeddingDeployment: string,
 ) {
   console.log(`Creating/updating index: ${indexName}`);
   console.log(`Allow index downtime: ${allowIndexDowntime}`);
+  console.log('Using managed identity for authentication');
 
   try {
     // Get the index config with all settings
@@ -24,8 +25,13 @@ export async function createOrUpdateIndex(
       ? { allowIndexDowntime: true }
       : undefined;
 
-    if (endpoint && apiKey) {
-      // Try direct API call if endpoint and apiKey are provided
+    if (endpoint) {
+      // Use managed identity for authentication
+      const credential = new DefaultAzureCredential();
+      const token = await credential.getToken(
+        'https://search.azure.com/.default',
+      );
+
       try {
         const rawJson = JSON.stringify(indexConfig);
         console.log('Index configuration being sent:', rawJson);
@@ -36,7 +42,7 @@ export async function createOrUpdateIndex(
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'api-key': apiKey,
+              Authorization: `Bearer ${token.token}`,
             },
             body: rawJson,
           },

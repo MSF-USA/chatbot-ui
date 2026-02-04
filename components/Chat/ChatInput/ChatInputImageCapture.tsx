@@ -4,28 +4,25 @@ import React, {
   MutableRefObject,
   SetStateAction,
   forwardRef,
-  useContext,
   useImperativeHandle,
   useRef,
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import { isMobile } from '@/utils/app/env';
-import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
+import { isMobile } from '@/lib/utils/app/env';
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
+  FileFieldValue,
   FilePreview,
-  ImageMessageContent,
+  ImageFieldValue,
 } from '@/types/chat';
 
-import HomeContext from '@/context/HomeContext';
-
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
+
+import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement> | MouseEvent,
@@ -53,15 +50,8 @@ export interface ChatInputImageCaptureProps {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   visible?: boolean;
   hasCameraSupport: boolean;
@@ -80,6 +70,7 @@ const ChatInputImageCapture = forwardRef<
       setSubmitType,
       prompt,
       setFilePreviews,
+      setFileFieldValue,
       setImageFieldValue,
       setUploadProgress,
       visible = true,
@@ -87,7 +78,7 @@ const ChatInputImageCapture = forwardRef<
     },
     ref,
   ) => {
-    const { t } = useTranslation('chat');
+    const t = useTranslations();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -127,12 +118,6 @@ const ChatInputImageCapture = forwardRef<
       },
     }));
 
-    const {
-      state: { user },
-    } = useContext(HomeContext);
-
-    if (!userAuthorizedForFileUploads(user)) return null;
-
     return (
       <>
         <canvas ref={canvasRef} style={{ display: 'none' }} />
@@ -146,8 +131,7 @@ const ChatInputImageCapture = forwardRef<
               event,
               setSubmitType,
               setFilePreviews,
-              setImageFieldValue,
-              // @ts-ignore
+              setFileFieldValue,
               setImageFieldValue,
               setUploadProgress,
             );
@@ -177,6 +161,7 @@ const ChatInputImageCapture = forwardRef<
           setIsCameraOpen={setIsCameraOpen}
           setFilePreviews={setFilePreviews}
           setSubmitType={setSubmitType}
+          setFileFieldValue={setFileFieldValue}
           setImageFieldValue={setImageFieldValue}
           setUploadProgress={setUploadProgress}
         />

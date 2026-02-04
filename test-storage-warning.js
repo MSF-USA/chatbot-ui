@@ -11,7 +11,7 @@
  * 4. Use the provided functions to fill storage to desired levels
  */
 
-(function() {
+(function () {
   'use strict';
 
   // Model IDs from the actual codebase
@@ -22,44 +22,44 @@
     { id: 'gpt-4', name: 'GPT-4' },
     { id: 'o1', name: 'o1' },
     { id: 'gpt-o1-mini', name: 'o1 Mini' },
-    { id: 'o3-mini', name: 'o3 Mini' }
+    { id: 'o3-mini', name: 'o3 Mini' },
   ];
 
   // Sample message content for realistic conversations
   const SAMPLE_PROMPTS = [
-    "Can you help me understand how React hooks work?",
+    'Can you help me understand how React hooks work?',
     "What's the difference between let and const in JavaScript?",
-    "How do I implement authentication in Next.js?",
-    "Explain the concept of closures in JavaScript",
-    "What are the best practices for API design?",
+    'How do I implement authentication in Next.js?',
+    'Explain the concept of closures in JavaScript',
+    'What are the best practices for API design?',
     "How can I optimize my React application's performance?",
     "What's the difference between SQL and NoSQL databases?",
-    "Can you help me debug this TypeScript error?",
-    "How do I set up CI/CD with GitHub Actions?",
-    "What are microservices and when should I use them?",
-    "Explain async/await in JavaScript",
-    "How do I handle state management in large React apps?",
+    'Can you help me debug this TypeScript error?',
+    'How do I set up CI/CD with GitHub Actions?',
+    'What are microservices and when should I use them?',
+    'Explain async/await in JavaScript',
+    'How do I handle state management in large React apps?',
     "What's the best way to structure a Node.js project?",
-    "Can you explain Docker containers?",
-    "How do I implement server-side rendering in Next.js?",
-    "What are Web Workers and how do I use them?",
-    "Explain the event loop in Node.js",
-    "How do I secure my REST API?",
+    'Can you explain Docker containers?',
+    'How do I implement server-side rendering in Next.js?',
+    'What are Web Workers and how do I use them?',
+    'Explain the event loop in Node.js',
+    'How do I secure my REST API?',
     "What's the difference between PUT and PATCH?",
-    "How do I implement pagination in my API?"
+    'How do I implement pagination in my API?',
   ];
 
   const SAMPLE_RESPONSES = [
-    "React hooks are functions that let you use state and other React features in functional components. The most common hooks are useState for managing component state and useEffect for handling side effects.",
-    "The main difference between let and const is that const creates a constant reference that cannot be reassigned, while let allows reassignment. Both are block-scoped, unlike var which is function-scoped.",
-    "To implement authentication in Next.js, you can use NextAuth.js which provides a complete authentication solution with support for various providers like OAuth, email/password, and more.",
-    "A closure is a function that has access to variables in its outer (enclosing) lexical scope, even after the outer function has returned. This allows for data privacy and function factories.",
-    "Best practices for API design include using RESTful conventions, proper HTTP status codes, versioning, pagination for large datasets, consistent naming conventions, and comprehensive documentation.",
-    "To optimize React performance, use React.memo for component memoization, useMemo and useCallback hooks, lazy loading with React.lazy, code splitting, and virtual scrolling for long lists.",
-    "SQL databases are relational and use structured schemas with ACID compliance, while NoSQL databases are non-relational, schema-flexible, and designed for horizontal scaling.",
-    "TypeScript errors often relate to type mismatches. Check that your types are correctly defined, use proper generics, and ensure all required properties are present in objects.",
-    "Setting up CI/CD with GitHub Actions involves creating workflow files in .github/workflows that define triggers, jobs, and steps to build, test, and deploy your application.",
-    "Microservices are an architectural style where applications are built as a collection of small, independent services. Use them when you need scalability, technology diversity, and team autonomy."
+    'React hooks are functions that let you use state and other React features in functional components. The most common hooks are useState for managing component state and useEffect for handling side effects.',
+    'The main difference between let and const is that const creates a constant reference that cannot be reassigned, while let allows reassignment. Both are block-scoped, unlike var which is function-scoped.',
+    'To implement authentication in Next.js, you can use NextAuth.js which provides a complete authentication solution with support for various providers like OAuth, email/password, and more.',
+    'A closure is a function that has access to variables in its outer (enclosing) lexical scope, even after the outer function has returned. This allows for data privacy and function factories.',
+    'Best practices for API design include using RESTful conventions, proper HTTP status codes, versioning, pagination for large datasets, consistent naming conventions, and comprehensive documentation.',
+    'To optimize React performance, use React.memo for component memoization, useMemo and useCallback hooks, lazy loading with React.lazy, code splitting, and virtual scrolling for long lists.',
+    'SQL databases are relational and use structured schemas with ACID compliance, while NoSQL databases are non-relational, schema-flexible, and designed for horizontal scaling.',
+    'TypeScript errors often relate to type mismatches. Check that your types are correctly defined, use proper generics, and ensure all required properties are present in objects.',
+    'Setting up CI/CD with GitHub Actions involves creating workflow files in .github/workflows that define triggers, jobs, and steps to build, test, and deploy your application.',
+    'Microservices are an architectural style where applications are built as a collection of small, independent services. Use them when you need scalability, technology diversity, and team autonomy.',
   ];
 
   // Utility function to generate a unique ID
@@ -93,16 +93,18 @@
       'Technical Documentation',
       'Deployment Process',
       'State Management',
-      'Authentication Flow'
+      'Authentication Flow',
     ];
-    return topics[index % topics.length] + ' - ' + new Date().toLocaleDateString();
+    return (
+      topics[index % topics.length] + ' - ' + new Date().toLocaleDateString()
+    );
   }
 
   // Generate a message with realistic content
   function generateMessage(role, index, includeComplexContent = false) {
     const message = {
       role: role,
-      messageType: 'text'
+      messageType: 'text',
     };
 
     if (role === 'user') {
@@ -110,8 +112,11 @@
       const prompt = SAMPLE_PROMPTS[promptIndex];
 
       // Sometimes make the message longer by repeating content
-      const repeatCount = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
-      const fullPrompt = Array(repeatCount).fill(prompt).join(' Additionally, ');
+      const repeatCount =
+        Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
+      const fullPrompt = Array(repeatCount)
+        .fill(prompt)
+        .join(' Additionally, ');
 
       if (includeComplexContent && Math.random() > 0.8) {
         // 20% chance of complex content (image or file)
@@ -123,9 +128,9 @@
               type: 'image_url',
               image_url: {
                 url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
-                detail: 'auto'
-              }
-            }
+                detail: 'auto',
+              },
+            },
           ];
           message.messageType = 'image';
         } else {
@@ -135,8 +140,8 @@
             {
               type: 'file_url',
               url: 'https://example.com/file.pdf',
-              originalFilename: 'document_' + index + '.pdf'
-            }
+              originalFilename: 'document_' + index + '.pdf',
+            },
           ];
           message.messageType = 'file';
         }
@@ -148,15 +153,21 @@
       let response = SAMPLE_RESPONSES[responseIndex];
 
       // Make some responses much longer to increase storage usage
-      const repeatCount = Math.random() > 0.6 ? Math.floor(Math.random() * 10) + 1 : 1;
+      const repeatCount =
+        Math.random() > 0.6 ? Math.floor(Math.random() * 10) + 1 : 1;
       response = Array(repeatCount).fill(response).join('\n\n');
 
       // Sometimes add code blocks to make responses longer
       if (Math.random() > 0.5) {
-        response += '\n\n```javascript\n' +
+        response +=
+          '\n\n```javascript\n' +
           'function example() {\n' +
           '  // This is sample code to increase message size\n' +
-          '  const data = ' + JSON.stringify(Array(50).fill({ key: 'value', nested: { deep: true } })) + ';\n' +
+          '  const data = ' +
+          JSON.stringify(
+            Array(50).fill({ key: 'value', nested: { deep: true } }),
+          ) +
+          ';\n' +
           '  return data;\n' +
           '}\n```';
       }
@@ -171,8 +182,8 @@
             title: 'Technical Documentation',
             url: 'https://docs.example.com/page' + index,
             snippet: 'This is a relevant excerpt from the documentation...',
-            chunks: ['chunk1', 'chunk2']
-          }
+            chunks: ['chunk1', 'chunk2'],
+          },
         ];
       }
     }
@@ -181,7 +192,12 @@
   }
 
   // Generate a conversation with realistic data
-  function generateConversation(index, messageCount = 10, daysAgo = 30, includeDates = true) {
+  function generateConversation(
+    index,
+    messageCount = 10,
+    daysAgo = 30,
+    includeDates = true,
+  ) {
     const conversationId = generateId() + '_' + index;
     const messages = [];
 
@@ -204,11 +220,12 @@
         name: model.name,
         maxLength: 24000,
         tokenLimit: 8000,
-        modelType: 'foundational'
+        modelType: 'foundational',
       },
       prompt: 'You are a helpful AI assistant.',
-      temperature: 0.7 + (Math.random() * 0.3), // Random between 0.7 and 1.0
-      folderId: Math.random() > 0.7 ? 'folder_' + Math.floor(Math.random() * 5) : null
+      temperature: 0.7 + Math.random() * 0.3, // Random between 0.7 and 1.0
+      folderId:
+        Math.random() > 0.7 ? 'folder_' + Math.floor(Math.random() * 5) : null,
     };
 
     // Only add dates if requested (to simulate legacy conversations)
@@ -241,7 +258,7 @@
       maxSize: maxSize,
       percentUsed: percentUsed,
       formattedSize: formatBytes(totalSize),
-      formattedMax: formatBytes(maxSize)
+      formattedMax: formatBytes(maxSize),
     };
   }
 
@@ -273,12 +290,21 @@
 
       // If includeLegacy, make 40% of conversations legacy (without dates)
       const includeDates = includeLegacy ? Math.random() > 0.4 : true;
-      const conversation = generateConversation(conversationIndex, messageCount, daysAgo, includeDates);
+      const conversation = generateConversation(
+        conversationIndex,
+        messageCount,
+        daysAgo,
+        includeDates,
+      );
 
       const conversationSize = JSON.stringify(conversation).length;
 
       // For overfill scenarios (>100%), don't stop early
-      if (targetPercent <= 100 && currentSize + conversationSize > targetSize && conversations.length > 5) {
+      if (
+        targetPercent <= 100 &&
+        currentSize + conversationSize > targetSize &&
+        conversations.length > 5
+      ) {
         // Stop if adding this conversation would exceed target (unless we have very few conversations)
         break;
       }
@@ -299,16 +325,22 @@
       localStorage.setItem('conversations', JSON.stringify(conversations));
 
       // Add some additional data to simulate real usage
-      localStorage.setItem('settings', JSON.stringify({
-        theme: 'dark',
-        language: 'en',
-        defaultModel: MODELS[0].id,
-        temperature: 0.7
-      }));
+      localStorage.setItem(
+        'settings',
+        JSON.stringify({
+          theme: 'dark',
+          language: 'en',
+          defaultModel: MODELS[0].id,
+          temperature: 0.7,
+        }),
+      );
 
       // Set a selected conversation
       if (conversations.length > 0) {
-        localStorage.setItem('selectedConversation', JSON.stringify(conversations[0]));
+        localStorage.setItem(
+          'selectedConversation',
+          JSON.stringify(conversations[0]),
+        );
       }
 
       // Add some folders
@@ -317,22 +349,39 @@
         { id: 'folder_1', name: 'Personal', type: 'chat' },
         { id: 'folder_2', name: 'Learning', type: 'chat' },
         { id: 'folder_3', name: 'Archive', type: 'chat' },
-        { id: 'folder_4', name: 'Drafts', type: 'chat' }
+        { id: 'folder_4', name: 'Drafts', type: 'chat' },
       ];
       localStorage.setItem('folders', JSON.stringify(folders));
 
       // Add some prompts
       const prompts = [
-        { id: 'prompt_1', name: 'Code Review', content: 'Please review this code for best practices and potential improvements.' },
-        { id: 'prompt_2', name: 'Explain Simply', content: 'Explain this concept in simple terms that anyone can understand.' },
-        { id: 'prompt_3', name: 'Debug Helper', content: 'Help me debug this issue. Here is the error message and relevant code.' }
+        {
+          id: 'prompt_1',
+          name: 'Code Review',
+          content:
+            'Please review this code for best practices and potential improvements.',
+        },
+        {
+          id: 'prompt_2',
+          name: 'Explain Simply',
+          content:
+            'Explain this concept in simple terms that anyone can understand.',
+        },
+        {
+          id: 'prompt_3',
+          name: 'Debug Helper',
+          content:
+            'Help me debug this issue. Here is the error message and relevant code.',
+        },
       ];
       localStorage.setItem('prompts', JSON.stringify(prompts));
 
       const info = getStorageInfo();
       console.log(`✅ Storage filled successfully!`);
       console.log(`   - Created ${conversations.length} conversations`);
-      console.log(`   - Current usage: ${info.formattedSize} / ${info.formattedMax} (${info.percentUsed.toFixed(1)}%)`);
+      console.log(
+        `   - Current usage: ${info.formattedSize} / ${info.formattedMax} (${info.percentUsed.toFixed(1)}%)`,
+      );
       console.log(`   - Target was: ${targetPercent}%`);
 
       return true;
@@ -345,8 +394,14 @@
   // Clear test data from localStorage
   function clearTestData() {
     console.log('Clearing existing test data...');
-    const keysToRemove = ['conversations', 'selectedConversation', 'folders', 'prompts', 'settings'];
-    keysToRemove.forEach(key => {
+    const keysToRemove = [
+      'conversations',
+      'selectedConversation',
+      'folders',
+      'prompts',
+      'settings',
+    ];
+    keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
     });
     console.log('Test data cleared.');
@@ -355,22 +410,22 @@
   // Main test functions exposed to global scope
   window.storageTest = {
     // Fill to specific threshold levels
-    fillToWarning: function() {
+    fillToWarning: function () {
       console.log('Filling storage to WARNING level (70%)...');
       return fillStorageToPercentage(72); // Slightly above 70% to ensure warning triggers
     },
 
-    fillToCritical: function() {
+    fillToCritical: function () {
       console.log('Filling storage to CRITICAL level (85%)...');
       return fillStorageToPercentage(87); // Slightly above 85%
     },
 
-    fillToEmergency: function() {
+    fillToEmergency: function () {
       console.log('Filling storage to EMERGENCY level (95%)...');
       return fillStorageToPercentage(96); // Slightly above 95%
     },
 
-    fillToCustom: function(percent) {
+    fillToCustom: function (percent) {
       if (percent < 0) {
         console.error('Percentage must be positive');
         return false;
@@ -380,47 +435,62 @@
     },
 
     // Overfill storage (exceed 100%)
-    overfillStorage: function(percent) {
+    overfillStorage: function (percent) {
       if (!percent) percent = 105; // Default to 105%
       if (percent <= 100) {
-        console.error('Use fillToCustom for percentages <= 100%. This function is for overfilling.');
+        console.error(
+          'Use fillToCustom for percentages <= 100%. This function is for overfilling.',
+        );
         return false;
       }
-      console.log(`⚠️ OVERFILLING storage to ${percent}% (exceeding capacity)...`);
+      console.log(
+        `⚠️ OVERFILLING storage to ${percent}% (exceeding capacity)...`,
+      );
       return fillStorageToPercentage(percent);
     },
 
     // Fill with mixed legacy and modern data
-    fillWithLegacyData: function(percent) {
+    fillWithLegacyData: function (percent) {
       if (!percent) percent = 85; // Default to 85%
-      console.log(`Filling storage to ${percent}% with mixed legacy/modern conversations...`);
+      console.log(
+        `Filling storage to ${percent}% with mixed legacy/modern conversations...`,
+      );
       return fillStorageToPercentage(percent, true);
     },
 
     // Add specific number of legacy conversations
-    addLegacyConversations: function(count) {
+    addLegacyConversations: function (count) {
       if (!count || count < 1) count = 5;
       const conversationsData = localStorage.getItem('conversations');
-      const conversations = conversationsData ? JSON.parse(conversationsData) : [];
+      const conversations = conversationsData
+        ? JSON.parse(conversationsData)
+        : [];
 
       console.log(`Adding ${count} legacy conversations (without dates)...`);
 
       for (let i = 0; i < count; i++) {
         const messageCount = Math.floor(Math.random() * 10) + 2; // 2-12 messages
-        const legacyConv = generateConversation(conversations.length + i, messageCount, 60, false);
+        const legacyConv = generateConversation(
+          conversations.length + i,
+          messageCount,
+          60,
+          false,
+        );
         conversations.push(legacyConv); // Add to end (will be sorted later)
       }
 
       localStorage.setItem('conversations', JSON.stringify(conversations));
       const info = getStorageInfo();
-      console.log(`Added ${count} legacy conversations. Storage now at ${info.percentUsed.toFixed(1)}%`);
+      console.log(
+        `Added ${count} legacy conversations. Storage now at ${info.percentUsed.toFixed(1)}%`,
+      );
       return info;
     },
 
     // Utility functions
     clear: clearTestData,
 
-    info: function() {
+    info: function () {
       const info = getStorageInfo();
       console.log('📊 Current Storage Status:');
       console.log(`   - Usage: ${info.formattedSize} / ${info.formattedMax}`);
@@ -439,7 +509,7 @@
           // Show distribution of conversation ages
           const now = new Date();
           const ageGroups = { recent: 0, week: 0, month: 0, older: 0 };
-          conversations.forEach(conv => {
+          conversations.forEach((conv) => {
             // Check if conversation has dates
             if (conv.updatedAt || conv.createdAt) {
               modernCount++;
@@ -473,7 +543,9 @@
       // Check which threshold level we're at
       const percent = info.percentUsed;
       if (percent > 100) {
-        console.log(`   - 🔴 Status: OVERFILLED! (${(percent - 100).toFixed(1)}% over capacity)`);
+        console.log(
+          `   - 🔴 Status: OVERFILLED! (${(percent - 100).toFixed(1)}% over capacity)`,
+        );
       } else if (percent >= 95) {
         console.log('   - ⚠️ Status: EMERGENCY LEVEL');
       } else if (percent >= 85) {
@@ -488,9 +560,11 @@
     },
 
     // Add a single large conversation
-    addLargeConversation: function() {
+    addLargeConversation: function () {
       const conversationsData = localStorage.getItem('conversations');
-      const conversations = conversationsData ? JSON.parse(conversationsData) : [];
+      const conversations = conversationsData
+        ? JSON.parse(conversationsData)
+        : [];
 
       // Generate a conversation with many messages
       const largeConv = generateConversation(conversations.length, 50, 1);
@@ -498,13 +572,17 @@
 
       localStorage.setItem('conversations', JSON.stringify(conversations));
       const info = getStorageInfo();
-      console.log(`Added large conversation. Storage now at ${info.percentUsed.toFixed(1)}%`);
+      console.log(
+        `Added large conversation. Storage now at ${info.percentUsed.toFixed(1)}%`,
+      );
       return info;
     },
 
     // Simulate realistic growth over time
-    simulateGrowth: function(daysToSimulate = 30, includeLegacy = false) {
-      console.log(`Simulating ${daysToSimulate} days of conversation growth${includeLegacy ? ' (with legacy data)' : ''}...`);
+    simulateGrowth: function (daysToSimulate = 30, includeLegacy = false) {
+      console.log(
+        `Simulating ${daysToSimulate} days of conversation growth${includeLegacy ? ' (with legacy data)' : ''}...`,
+      );
       clearTestData();
 
       const conversations = [];
@@ -514,7 +592,12 @@
         const legacyCount = Math.floor(Math.random() * 10) + 5; // 5-15 legacy conversations
         for (let i = 0; i < legacyCount; i++) {
           const messageCount = Math.floor(Math.random() * 8) + 1; // 1-8 messages
-          const conv = generateConversation(conversations.length, messageCount, 100, false);
+          const conv = generateConversation(
+            conversations.length,
+            messageCount,
+            100,
+            false,
+          );
           conversations.push(conv);
         }
       }
@@ -525,7 +608,11 @@
 
         for (let c = 0; c < conversationsToday; c++) {
           const messageCount = Math.floor(Math.random() * 15) + 2; // 2-17 messages
-          const conv = generateConversation(conversations.length, messageCount, day);
+          const conv = generateConversation(
+            conversations.length,
+            messageCount,
+            day,
+          );
           conversations.push(conv);
         }
       }
@@ -534,30 +621,98 @@
 
       const info = getStorageInfo();
       console.log(`✅ Simulation complete!`);
-      console.log(`   - Created ${conversations.length} conversations over ${daysToSimulate} days`);
-      console.log(`   - Storage: ${info.formattedSize} (${info.percentUsed.toFixed(1)}%)`);
+      console.log(
+        `   - Created ${conversations.length} conversations over ${daysToSimulate} days`,
+      );
+      console.log(
+        `   - Storage: ${info.formattedSize} (${info.percentUsed.toFixed(1)}%)`,
+      );
       return info;
-    }
+    },
   };
 
   // Print usage instructions
-  console.log('%c📦 Storage Test Utility Loaded!', 'color: #4CAF50; font-size: 16px; font-weight: bold');
+  console.log(
+    '%c📦 Storage Test Utility Loaded!',
+    'color: #4CAF50; font-size: 16px; font-weight: bold',
+  );
   console.log('%cAvailable commands:', 'color: #2196F3; font-weight: bold');
-  console.log('%c=== Standard Fill Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
-  console.log('  %cstorageTest.fillToWarning()%c    - Fill to 70% (WARNING level)', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.fillToCritical()%c   - Fill to 85% (CRITICAL level)', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.fillToEmergency()%c  - Fill to 95% (EMERGENCY level)', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.fillToCustom(50)%c   - Fill to custom percentage', 'color: #FF9800', 'color: inherit');
-  console.log('%c=== Special Test Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
-  console.log('  %cstorageTest.overfillStorage(105)%c - OVERFILL storage beyond 100%', 'color: #E91E63', 'color: inherit');
-  console.log('  %cstorageTest.fillWithLegacyData()%c - Fill with mixed legacy/modern data', 'color: #E91E63', 'color: inherit');
-  console.log('  %cstorageTest.addLegacyConversations(5)%c - Add N legacy conversations', 'color: #E91E63', 'color: inherit');
-  console.log('%c=== Utility Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
-  console.log('  %cstorageTest.info()%c             - Show detailed storage status', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.clear()%c            - Clear all test data', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.addLargeConversation()%c - Add a single large conversation', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.simulateGrowth(30, true)%c - Simulate growth (2nd param for legacy)', 'color: #FF9800', 'color: inherit');
-  console.log('\n%cTip: After filling storage, reload the page to trigger the storage warning modal!', 'color: #9C27B0; font-style: italic');
-  console.log('%cNote: Legacy conversations (without dates) will be deleted first when clearing old data.', 'color: #9C27B0; font-style: italic');
-
+  console.log(
+    '%c=== Standard Fill Commands ===%c',
+    'color: #4CAF50; font-weight: bold',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.fillToWarning()%c    - Fill to 70% (WARNING level)',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.fillToCritical()%c   - Fill to 85% (CRITICAL level)',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.fillToEmergency()%c  - Fill to 95% (EMERGENCY level)',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.fillToCustom(50)%c   - Fill to custom percentage',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '%c=== Special Test Commands ===%c',
+    'color: #4CAF50; font-weight: bold',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.overfillStorage(105)%c - OVERFILL storage beyond 100%',
+    'color: #E91E63',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.fillWithLegacyData()%c - Fill with mixed legacy/modern data',
+    'color: #E91E63',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.addLegacyConversations(5)%c - Add N legacy conversations',
+    'color: #E91E63',
+    'color: inherit',
+  );
+  console.log(
+    '%c=== Utility Commands ===%c',
+    'color: #4CAF50; font-weight: bold',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.info()%c             - Show detailed storage status',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.clear()%c            - Clear all test data',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.addLargeConversation()%c - Add a single large conversation',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '  %cstorageTest.simulateGrowth(30, true)%c - Simulate growth (2nd param for legacy)',
+    'color: #FF9800',
+    'color: inherit',
+  );
+  console.log(
+    '\n%cTip: After filling storage, reload the page to trigger the storage warning modal!',
+    'color: #9C27B0; font-style: italic',
+  );
+  console.log(
+    '%cNote: Legacy conversations (without dates) will be deleted first when clearing old data.',
+    'color: #9C27B0; font-style: italic',
+  );
 })();

@@ -1,255 +1,257 @@
-import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
-import React, {
+import {
+  IconArrowDown,
+  IconRepeat,
+  IconSearch,
+  IconVolume,
+  IconWorld,
+} from '@tabler/icons-react';
+import {
   Dispatch,
   KeyboardEvent,
   MutableRefObject,
   SetStateAction,
   useCallback,
-  useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
-import toast from 'react-hot-toast';
+import { useDropzone } from 'react-dropzone';
 
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
+import { useTranslations } from 'next-intl';
 
+import { useChat } from '@/client/hooks/chat/useChat';
+import { useMessageSender } from '@/client/hooks/chat/useMessageSender';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useTones } from '@/client/hooks/settings/useTones';
+import { useTranscriptionPolling } from '@/client/hooks/transcription/useTranscriptionPolling';
+import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
+
+import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import { isMobileDevice } from '@/lib/utils/client/device/detection';
 import {
-  CommandDefinition,
-  CommandExecutionResult,
-  CommandParser,
-  CommandType,
-  ParsedCommand,
-} from '@/services/commandParser';
-import { LocalizedCommandParser } from '@/services/localizedCommandParser';
+  shouldPreventSubmission,
+  validateMessageSubmission,
+} from '@/lib/utils/shared/chat/validation';
+import {
+  parseVariables,
+  replaceVariablesWithMap,
+} from '@/lib/utils/shared/chat/variables';
 
 import { AgentType } from '@/types/agent';
-import { incrementModelUsage, getModelUsageCount } from '@/utils/app/modelUsage';
-import { incrementPromptUsage, getPromptUsageCount } from '@/utils/app/promptUsage';
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
+  ImageFieldValue,
   ImageMessageContent,
   Message,
   MessageType,
   TextMessageContent,
-  getChatMessageContent,
 } from '@/types/chat';
-import { OpenAIModel } from '@/types/openai';
-import { Plugin, PluginID } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
+import { SearchMode } from '@/types/searchMode';
 
-import HomeContext from '@/context/HomeContext';
-
+import { ArtifactContextBar } from '@/components/Chat/ChatInput/ArtifactContextBar';
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
-import { ChatInputAgentToggle } from '@/components/Chat/ChatInput/ChatInputAgentToggle';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
-import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture, {
   ChatInputImageCaptureRef,
 } from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitButton';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
-import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
-import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCapture';
-import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
+import { InputControlsBar } from '@/components/Chat/ChatInput/InputControlsBar';
+import { MessageTextarea } from '@/components/Chat/ChatInput/MessageTextarea';
+import { SearchModeBadge } from '@/components/Chat/ChatInput/SearchModeBadge';
+import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 
-import { ModelList } from './ModelList';
-import { PromptList } from './PromptList';
-import { VariableModal } from './VariableModal';
+import { PromptList } from './ChatInput/PromptList';
+import { VariableModal } from './ChatInput/VariableModal';
+import { TranscriptionProgressIndicator } from './TranscriptionProgressIndicator';
+
+import { useArtifactStore } from '@/client/stores/artifactStore';
+import { useChatInputStore } from '@/client/stores/chatInputStore';
+import { useChatStore } from '@/client/stores/chatStore';
+import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
-  onSend: (
-    message: Message,
-    plugin: Plugin | null,
-    forceStandardChat?: boolean,
-    forcedAgentType?: AgentType,
-  ) => void;
+  onSend: (message: Message, searchMode?: SearchMode) => void;
   onRegenerate: () => void;
-  onNewConversation?: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
   showScrollDownButton: boolean;
-  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  filePreviews: FilePreview[];
-  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
-  setProgress?: Dispatch<SetStateAction<number | null>>;
-  apiKey?: string;
-  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
-  systemPrompt?: string;
-  temperature?: number;
-  onTemperatureChange?: (temperature: number) => void;
-  onAgentToggleChange?: (enabled: boolean) => void;
-  onSettingsOpen?: () => void;
-  onPrivacyPolicyOpen?: () => void;
-  onModelChange?: (model: any) => void;
-  models?: any[];
-  selectedConversation?: any;
-  currentMessage?: Message;
-  onAddChatMessages?: (userMessage: Message, assistantMessage: Message) => void;
+  showDisclaimer?: boolean;
+  onTranscriptionStatusChange?: (status: string | null) => void;
 }
 
 export const ChatInput = ({
   onSend,
   onRegenerate,
-  onNewConversation,
   onScrollDownClick,
   stopConversationRef,
   textareaRef,
   showScrollDownButton,
-  filePreviews,
-  setFilePreviews,
-  setRequestStatusMessage,
-  setProgress,
-  apiKey,
-  pluginKeys,
-  systemPrompt,
-  temperature,
-  onTemperatureChange,
-  onAgentToggleChange,
-  onSettingsOpen,
-  onPrivacyPolicyOpen,
-  onModelChange,
-  models,
-  selectedConversation,
-  currentMessage,
-  onAddChatMessages,
+  showDisclaimer = true,
+  onTranscriptionStatusChange,
 }: Props) => {
-  const { t } = useTranslation('chat');
-  const router = useRouter();
-  const currentLocale = router.locale || 'en';
+  const t = useTranslations();
 
-  const {
-    state: {
-      selectedConversation: contextSelectedConversation,
-      messageIsStreaming,
-      prompts,
-    },
-    handleUpdateConversation: contextHandleUpdateConversation,
-    dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  // Enable transcription status polling for batch jobs (>25MB files)
+  useTranscriptionPolling();
 
-  // Use the passed selectedConversation or fall back to context
-  const currentConversation =
-    selectedConversation || contextSelectedConversation;
+  // Zustand hooks
+  const { selectedConversation, folders } = useConversations();
+  const { isStreaming, requestStop } = useChat();
+  const { prompts } = useSettings();
+  const { tones } = useTones();
+  const { isArtifactOpen, fileName, language, closeArtifact } =
+    useArtifactStore();
 
-  const [textFieldValue, setTextFieldValue] = useState<string>('');
-  const [imageFieldValue, setImageFieldValue] = useState<
-    ImageMessageContent | ImageMessageContent[] | null
-  >();
-  const [fileFieldValue, setFileFieldValue] = useState<
-    | FileMessageContent
-    | FileMessageContent[]
-    | ImageMessageContent
-    | ImageMessageContent[]
-    | null
-  >(null);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [showPromptList, setShowPromptList] = useState<boolean>(false);
-  const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
-  const [promptInputValue, setPromptInputValue] = useState<string>('');
-  const [variables, setVariables] = useState<string[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [promptForVariableModal, setPromptForVariableModal] = useState<Prompt | null>(null);
-  const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
-  const [plugin, setPlugin] = useState<Plugin | null>(null);
-  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
-  const [placeholderText, setPlaceholderText] = useState('');
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
-  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  const [agentToggleEnabled, setAgentToggleEnabled] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('chatAgentsEnabled');
-      return saved !== null ? JSON.parse(saved) : false;
-    }
-    return false;
+  // Pending conversation transcription (for large files >25MB)
+  const pendingConversationTranscription = useChatStore(
+    (state) => state.pendingConversationTranscription,
+  );
+  const isTranscriptionLocked = pendingConversationTranscription !== null;
+
+  // Chat input store
+  const textFieldValue = useChatInputStore((state) => state.textFieldValue);
+  const setTextFieldValue = useChatInputStore(
+    (state) => state.setTextFieldValue,
+  );
+  const placeholderText = useChatInputStore((state) => state.placeholderText);
+  const setPlaceholderText = useChatInputStore(
+    (state) => state.setPlaceholderText,
+  );
+  const isTyping = useChatInputStore((state) => state.isTyping);
+  const setIsTyping = useChatInputStore((state) => state.setIsTyping);
+  const isMultiline = useChatInputStore((state) => state.isMultiline);
+  const setIsMultiline = useChatInputStore((state) => state.setIsMultiline);
+  const isFocused = useChatInputStore((state) => state.isFocused);
+  const setIsFocused = useChatInputStore((state) => state.setIsFocused);
+  const textareaScrollHeight = useChatInputStore(
+    (state) => state.textareaScrollHeight,
+  );
+  const setTextareaScrollHeight = useChatInputStore(
+    (state) => state.setTextareaScrollHeight,
+  );
+  const transcriptionStatus = useChatInputStore(
+    (state) => state.transcriptionStatus,
+  );
+  const setTranscriptionStatus = useChatInputStore(
+    (state) => state.setTranscriptionStatus,
+  );
+  const isTranscribing = useChatInputStore((state) => state.isTranscribing);
+  const setIsTranscribing = useChatInputStore(
+    (state) => state.setIsTranscribing,
+  );
+  const searchMode = useChatInputStore((state) => state.searchMode);
+  const setSearchMode = useChatInputStore((state) => state.setSearchMode);
+  const selectedToneId = useChatInputStore((state) => state.selectedToneId);
+  const setSelectedToneId = useChatInputStore(
+    (state) => state.setSelectedToneId,
+  );
+  const clearInput = useChatInputStore((state) => state.clearInput);
+  const filePreviews = useChatInputStore((state) => state.filePreviews);
+  const setFilePreviews = useChatInputStore((state) => state.setFilePreviews);
+  const fileFieldValue = useChatInputStore((state) => state.fileFieldValue);
+  const setFileFieldValue = useChatInputStore(
+    (state) => state.setFileFieldValue,
+  );
+  const imageFieldValue = useChatInputStore((state) => state.imageFieldValue);
+  const setImageFieldValue = useChatInputStore(
+    (state) => state.setImageFieldValue,
+  );
+  const uploadProgress = useChatInputStore((state) => state.uploadProgress);
+  const setUploadProgress = useChatInputStore(
+    (state) => state.setUploadProgress,
+  );
+  const submitType = useChatInputStore((state) => state.submitType);
+  const setSubmitType = useChatInputStore((state) => state.setSubmitType);
+  const handleFileUpload = useChatInputStore((state) => state.handleFileUpload);
+  const usedPromptId = useChatInputStore((state) => state.usedPromptId);
+  const setUsedPromptId = useChatInputStore((state) => state.setUsedPromptId);
+  const usedPromptVariables = useChatInputStore(
+    (state) => state.usedPromptVariables,
+  );
+  const setUsedPromptVariables = useChatInputStore(
+    (state) => state.setUsedPromptVariables,
+  );
+  const resetForNewConversation = useChatInputStore(
+    (state) => state.resetForNewConversation,
+  );
+
+  // Message sending logic
+  const { handleSend: handleMessageSend } = useMessageSender({
+    textFieldValue,
+    submitType,
+    imageFieldValue,
+    fileFieldValue,
+    filePreviews,
+    uploadProgress,
+    selectedToneId,
+    searchMode,
+    onSend,
+    onClearInput: clearInput,
+    setSubmitType,
+    setImageFieldValue,
+    setFileFieldValue,
+    setFilePreviews,
   });
 
-  // Command system state
-  const [commandParser] = useState(() => LocalizedCommandParser.getInstance());
-  const [availableCommands, setAvailableCommands] = useState<
-    CommandDefinition[]
-  >([]);
-  const [parsedCommand, setParsedCommand] = useState<ParsedCommand | null>(
-    null,
-  );
-  const [forcedAgent, setForcedAgent] = useState<AgentType | null>(null);
-  const [commandMode, setCommandMode] = useState<boolean>(false);
+  const [variables, setVariables] = useState<string[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedPromptForModal, setSelectedPromptForModal] =
+    useState<Prompt | null>(null);
 
-  // Model selection state
-  const [showModelList, setShowModelList] = useState<boolean>(false);
-  const [activeModelIndex, setActiveModelIndex] = useState<number>(0);
-  const [modelInputValue, setModelInputValue] = useState<string>('');
-
-  const promptListRef = useRef<HTMLUListElement | null>(null);
-  const modelListRef = useRef<HTMLUListElement | null>(null);
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
-  const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
-    prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
-  );
+  // Reset input when conversation changes
+  useEffect(() => {
+    resetForNewConversation(selectedConversation?.defaultSearchMode);
+  }, [
+    selectedConversation?.id,
+    selectedConversation?.defaultSearchMode,
+    resetForNewConversation,
+  ]);
 
-  // Filter commands based on current input (match name or description)
-  const filteredCommands: CommandDefinition[] = commandMode
-    ? availableCommands.filter((command) => {
-        const searchTerm = promptInputValue.toLowerCase();
-        return (
-          command.command.toLowerCase().includes(searchTerm) ||
-          command.description.toLowerCase().includes(searchTerm)
-        );
-      })
-    : [];
+  const {
+    showPromptList,
+    setShowPromptList,
+    activePromptIndex,
+    setActivePromptIndex,
+    promptInputValue,
+    filteredPrompts,
+    promptListRef,
+    handlePromptSelect: handlePromptSelectFromHook,
+    handleKeyDownPromptList,
+    handleInitModal,
+    updatePromptListVisibilityCallback,
+    findAndSelectMatchingPrompt,
+  } = usePromptSelection({
+    prompts,
+    onPromptSelect: (prompt, parsedVariables, hasVariables) => {
+      setVariables(parsedVariables);
 
-  // Filter models based on current input
-  const filteredModels: OpenAIModel[] = useMemo(() => {
-    return models
-      ? models.filter((model) => {
-          const searchTerm = modelInputValue.toLowerCase();
-          return (
-            model.id.toLowerCase().includes(searchTerm) ||
-            model.name.toLowerCase().includes(searchTerm)
-          );
-        })
-      : [];
-  }, [models, modelInputValue]);
-
-  // Sort filtered models by usage count and legacy status
-  const sortedFilteredModels: OpenAIModel[] = useMemo(() => {
-    return [...filteredModels].sort((a, b) => {
-      // Primary sort: Non-legacy models first
-      const aIsLegacy = (a as any).isLegacy || false;
-      const bIsLegacy = (b as any).isLegacy || false;
-      if (aIsLegacy && !bIsLegacy) return 1;
-      if (!aIsLegacy && bIsLegacy) return -1;
-
-      // Secondary sort: Higher usage count first (within same legacy status)
-      const aUsage = getModelUsageCount(a.id);
-      const bUsage = getModelUsageCount(b.id);
-      if (aUsage !== bUsage) return bUsage - aUsage;
-
-      // Tertiary sort: Preserve original order for equal usage
-      return 0;
-    });
-  }, [filteredModels]);
-
-  // Sort filtered prompts by usage count
-  const sortedFilteredPrompts: Prompt[] = useMemo(() => {
-    return [...filteredPrompts].sort((a, b) => {
-      const aUsage = getPromptUsageCount(a.id);
-      const bUsage = getPromptUsageCount(b.id);
-      // Higher usage first, preserve original order for equal usage
-      if (aUsage !== bUsage) return bUsage - aUsage;
-      return 0;
-    });
-  }, [filteredPrompts]);
+      if (hasVariables) {
+        setSelectedPromptForModal(prompt);
+        setIsModalVisible(true);
+      } else {
+        setTextFieldValue((prevContent) => {
+          const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
+          return updatedContent;
+        });
+        updatePromptListVisibilityCallback(prompt.content);
+      }
+    },
+    onResetInputState: () => {
+      if (submitType !== 'TEXT') {
+        setSubmitType('TEXT');
+      }
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value: string = e.target.value;
@@ -267,268 +269,33 @@ export const ChatInput = ({
     }
 
     setTextFieldValue(value);
-
-    // If model list is shown, update model filter instead
-    if (showModelList) {
-      setModelInputValue(value);
-      setActiveModelIndex(0); // Reset to first filtered result
-    } else {
-      updatePromptListVisibility(value);
-    }
-  };
-
-  const buildContent = () => {
-    const wrapInArray = (value: any) =>
-      Array.isArray(value) ? value : [value];
-
-    if (submitType === 'text') {
-      return textFieldValue;
-    } else if (submitType === 'image') {
-      const imageContents = imageFieldValue
-        ? [...wrapInArray(imageFieldValue), ...wrapInArray(fileFieldValue)]
-        : fileFieldValue
-        ? [...wrapInArray(fileFieldValue)]
-        : [];
-      return [
-        ...imageContents,
-        { type: 'text', text: textFieldValue } as TextMessageContent,
-      ];
-    } else if (submitType === 'file' || submitType == 'multi-file') {
-      const fileContents = fileFieldValue ? wrapInArray(fileFieldValue) : [];
-      return [
-        ...fileContents,
-        { type: 'text', text: textFieldValue } as TextMessageContent,
-      ];
-    } else {
-      throw new Error(`Invalid submit type for message: ${submitType}`);
-    }
+    updatePromptListVisibilityCallback(value);
   };
 
   const handleSend = () => {
-    if (messageIsStreaming) {
+    if (isStreaming) {
       if (filePreviews.length > 0) {
         setFilePreviews([]);
       }
       return;
     }
 
-    let messageText = textFieldValue;
-    let forceStandardChat = agentToggleEnabled ? undefined : true;
-    let forcedAgentType: AgentType | null = null;
+    handleMessageSend();
 
-    // Check if this is a command
-    const commandMatch = /^\/\w+/.exec(textFieldValue.trim());
-    if (commandMatch) {
-      // Prepare context for command execution
-      const commandContext = {
-        models: models || [],
-        selectedConversation: currentConversation,
-        temperature: temperature,
-        currentMessage: currentMessage,
-      };
-
-      const parsed = commandParser.parseLocalizedInput(textFieldValue, currentLocale);
-      if (parsed && parsed.valid) {
-        const executionResult = commandParser.executeCommand(
-          parsed,
-          commandContext,
-        );
-
-        if (executionResult.success) {
-          // Handle command execution
-          if (executionResult.agentType) {
-            forcedAgentType = executionResult.agentType;
-            // Commands always override the agent toggle - they are explicit user instructions
-            // Set to undefined to allow the command's agent to work regardless of toggle state
-            forceStandardChat = undefined;
-            // Remove command from message text, keeping the rest
-            messageText = textFieldValue.replace(/^\/\w+\s*/, '').trim();
-          }
-
-          // Handle chat responses (commands that should add messages to chat history)
-          if (executionResult.chatResponse && onAddChatMessages) {
-            const userMessage: Message = {
-              role: 'user',
-              content: executionResult.chatResponse.userMessage,
-              messageType: MessageType.TEXT,
-            };
-
-            const assistantMessage: Message = {
-              role: 'assistant',
-              content: executionResult.chatResponse.assistantMessage,
-              messageType: MessageType.TEXT,
-            };
-
-            onAddChatMessages(userMessage, assistantMessage);
-          }
-
-          if (executionResult.settingsChange) {
-            // Handle settings changes
-            console.log('Settings change:', executionResult.settingsChange);
-
-            // Handle temperature changes
-            if (
-              executionResult.settingsChange.temperature !== undefined &&
-              onTemperatureChange
-            ) {
-              onTemperatureChange(executionResult.settingsChange.temperature);
-            }
-
-            // Handle agent toggle changes
-            if (
-              executionResult.settingsChange.agentSettings?.enabled !==
-                undefined &&
-              onAgentToggleChange
-            ) {
-              onAgentToggleChange(
-                executionResult.settingsChange.agentSettings.enabled,
-              );
-              // Also update local state
-              setAgentToggleEnabled(
-                executionResult.settingsChange.agentSettings.enabled,
-              );
-              if (typeof window !== 'undefined') {
-                localStorage.setItem(
-                  'chatAgentsEnabled',
-                  JSON.stringify(
-                    executionResult.settingsChange.agentSettings.enabled,
-                  ),
-                );
-              }
-            }
-
-            // Handle model changes
-            if (executionResult.settingsChange.model && onModelChange) {
-              onModelChange(executionResult.settingsChange.model);
-            }
-          }
-
-          if (executionResult.utilityAction) {
-            // Handle utility actions
-            handleUtilityAction(executionResult.utilityAction);
-          }
-
-          // For commands with chat responses or immediate actions, clear input and return
-          if (executionResult.chatResponse || executionResult.immediateAction) {
-            setTextFieldValue('');
-            setCommandMode(false);
-            setParsedCommand(null);
-            return;
-          }
-
-          // Show success toast only for commands without chat responses
-          if (executionResult.message && !executionResult.chatResponse) {
-            toast.success(executionResult.message);
-          }
-
-          // If it's just a settings command without remaining text, don't send a message
-          if (!messageText) {
-            setTextFieldValue('');
-            setCommandMode(false);
-            setParsedCommand(null);
-            return;
-          }
-        } else {
-          // Command execution failed, return silently
-          // Commands should execute without toast notifications
-          return;
-        }
-      } else {
-        // Invalid command, proceed normally (let it be sent as regular text)
-      }
-    }
-
-    // Apply forced agent if set
-    if (forcedAgent) {
-      forcedAgentType = forcedAgent;
-      // Commands always override the agent toggle - they are explicit user instructions
-      forceStandardChat = undefined;
-      setForcedAgent(null); // Reset after use
-    }
-
-    const content:
-      | string
-      | TextMessageContent
-      | (TextMessageContent | FileMessageContent)[]
-      | (TextMessageContent | ImageMessageContent)[] = buildContent();
-
-    if (!messageText) {
-      alert(t('Please enter a message'));
-      return;
-    }
-
-    onSend(
-      {
-        role: 'user',
-        content: submitType === 'text' ? messageText : content,
-        messageType: submitType ?? 'text',
-      },
-      plugin,
-      forceStandardChat,
-      forcedAgentType || undefined, // Pass the forced agent type
-    );
-    setTextFieldValue('');
-    setImageFieldValue(null);
-    setFileFieldValue(null);
-    setPlugin(null);
-    setSubmitType('text');
-    setCommandMode(false);
-    setParsedCommand(null);
-
-    if (filePreviews.length > 0) {
-      setFilePreviews([]);
-    }
-
-    if (window.innerWidth < 640 && textareaRef?.current) {
+    if (
+      window.innerWidth < UI_CONSTANTS.BREAKPOINTS.MOBILE &&
+      textareaRef?.current
+    ) {
       textareaRef.current.blur();
     }
   };
 
   const handleStopConversation = () => {
-    console.log('Stop button pressed');
     stopConversationRef.current = true;
-    homeDispatch({ field: 'messageIsStreaming', value: false });
+    requestStop();
   };
 
-  const isMobile = () => {
-    const userAgent =
-      typeof window.navigator === 'undefined' ? '' : navigator.userAgent;
-    const mobileRegex =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
-    return mobileRegex.test(userAgent);
-  };
-
-  /**
-   * Unified handler for selecting items from the dropdown (commands or prompts)
-   * @param index - The index of the selected item in the combined list
-   */
-  const handleDropdownItemSelection = (index: number) => {
-    const commandsCount = commandMode ? filteredCommands.length : 0;
-
-    if (index < commandsCount) {
-      // It's a command
-      const command = filteredCommands[index];
-      if (command) {
-        handleCommandSelect(command);
-      }
-    } else {
-      // It's a prompt
-      const promptIndex = index - commandsCount;
-      const prompt = sortedFilteredPrompts[promptIndex];
-      if (prompt) {
-        setTextFieldValue((prevTextFieldValue) => {
-          const newContent = prevTextFieldValue?.replace(
-            /\/\w*$/,
-            prompt.content,
-          );
-          return newContent;
-        });
-        handlePromptSelect(prompt);
-      }
-    }
-
-    setShowPromptList(false);
-  };
+  const isMobile = isMobileDevice;
 
   const handleKeyDownInput = (
     key: string,
@@ -543,438 +310,79 @@ export const ChatInput = ({
     ) {
       event.preventDefault();
       handleSend();
-      if (submitType !== 'text') {
-        setSubmitType('text');
+      if (submitType !== 'TEXT') {
+        setSubmitType('TEXT');
       }
       if (filePreviews.length > 0) {
         setFilePreviews([]);
       }
-    } else if (event.key === '/' && event.metaKey && submitType === 'text') {
-      event.preventDefault();
-      setShowPluginSelect(!showPluginSelect);
-    }
-  };
-
-  const handleKeyDownPromptList = (
-    event: KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    const totalItems = commandMode
-      ? filteredCommands.length + sortedFilteredPrompts.length
-      : sortedFilteredPrompts.length;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < totalItems - 1 ? prevIndex + 1 : prevIndex,
-        );
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : prevIndex,
-        );
-        break;
-      case 'Tab':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < totalItems - 1 ? prevIndex + 1 : 0,
-        );
-        break;
-      case 'Enter':
-        event.preventDefault();
-        handleDropdownItemSelection(activePromptIndex);
-        if (submitType !== 'text') {
-          setSubmitType('text');
-        }
-        if (filePreviews.length > 0) {
-          setFilePreviews([]);
-        }
-        break;
-      case 'Escape':
-        event.preventDefault();
-        setShowPromptList(false);
-        setCommandMode(false);
-        break;
-      default:
-        setActivePromptIndex(0);
-        break;
-    }
-  };
-
-  const handleKeyDownModelList = (
-    event: KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    const availableModels = sortedFilteredModels || [];
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setActiveModelIndex((prevIndex) =>
-          prevIndex < availableModels.length - 1 ? prevIndex + 1 : 0,
-        );
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        setActiveModelIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : availableModels.length - 1,
-        );
-        break;
-      case 'Enter':
-        event.preventDefault();
-        if (availableModels.length > 0) {
-          handleModelSelect(availableModels[activeModelIndex]);
-        }
-        break;
-      case 'Escape':
-        event.preventDefault();
-        setShowModelList(false);
-        setModelInputValue(''); // Clear filter when closing
-        setTextFieldValue(''); // Clear the input
-        setActiveModelIndex(0); // Reset index
-        break;
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (showModelList) {
-      handleKeyDownModelList(e);
-    } else if (showPromptList) {
+    if (showPromptList) {
       handleKeyDownPromptList(e);
     } else {
-      // Handle cases when showPromptList is false
       handleKeyDownInput(e.key, e);
     }
   };
 
-  const parseVariables = (content: string) => {
-    const regex = /{{(.*?)}}/g;
-    const foundVariables = [];
-    let match;
+  const handleSubmit = (
+    updatedVariables: string[],
+    variableMap: { [key: string]: string },
+  ) => {
+    if (!selectedPromptForModal) return;
 
-    while ((match = regex.exec(content)) !== null) {
-      foundVariables.push(match[1]);
-    }
-
-    return foundVariables;
-  };
-
-  const updatePromptListVisibility = useCallback(
-    (text: string) => {
-      const match = /\/\w*$/.exec(text);
-
-      if (match) {
-        const input = match[0];
-        const partialCommand = input.slice(1);
-
-        // Try to parse as command first with context
-        const commandContext = {
-          models: models || [],
-          selectedConversation: currentConversation,
-          temperature: temperature,
-          currentMessage: currentMessage,
-        };
-        const parsed = commandParser.parseLocalizedInput(
-          input,
-          currentLocale,
-          commandContext,
-        );
-        setParsedCommand(parsed);
-
-        // Show prompt list and set command mode
-        setShowPromptList(true);
-        setPromptInputValue(partialCommand);
-        setCommandMode(true);
-
-        // Get command suggestions
-        const suggestions = commandParser.getLocalizedCommandSuggestions(
-          partialCommand,
-          'en',
-        );
-        setAvailableCommands(suggestions.slice(0, 5)); // Limit to 5 suggestions
-      } else {
-        setShowPromptList(false);
-        setPromptInputValue('');
-        setCommandMode(false);
-        setParsedCommand(null);
-        setAvailableCommands([]);
-      }
-    },
-    [commandParser, currentConversation, models, temperature],
-  );
-
-  const handlePromptSelect = (prompt: Prompt) => {
-    // Track prompt usage for sorting
-    incrementPromptUsage(prompt.id);
-
-    const parsedVariables = parseVariables(prompt.content);
-    setVariables(parsedVariables);
-
-    if (parsedVariables.length > 0) {
-      setPromptForVariableModal(prompt);  // Store the selected prompt for the variable modal
-      setIsModalVisible(true);
-    } else {
-      setTextFieldValue((prevContent) => {
-        const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
-        return updatedContent;
-      });
-      updatePromptListVisibility(prompt.content);
-    }
-  };
-
-  const handleModelSelect = (model: OpenAIModel) => {
-    // Track model usage for sorting
-    incrementModelUsage(model.id);
-
-    // Hide the model list
-    setShowModelList(false);
-    setActiveModelIndex(0);
-    setModelInputValue(''); // Clear filter
-    setTextFieldValue(''); // Clear input field
-
-    // Use the conversation from props or context
-    const conversation = selectedConversation || currentConversation;
-
-    if (conversation && contextHandleUpdateConversation) {
-      contextHandleUpdateConversation(conversation, {
-        key: 'model',
-        value: model,
-      });
-    }
-
-    // Also call onModelChange if provided
-    if (onModelChange) {
-      onModelChange(model);
-    }
-  };
-
-  const handleSubmit = (updatedVariables: string[]) => {
-    const newContent = textFieldValue?.replace(
-      /{{(.*?)}}/g,
-      (match, variable) => {
-        const index = variables.indexOf(variable);
-        return updatedVariables[index];
-      },
+    // Use variableMap for cleaner replacement with default value support
+    const contentWithVariables = replaceVariablesWithMap(
+      selectedPromptForModal.content,
+      variableMap,
     );
+
+    // Replace the /prompt text in the input with the filled-in content
+    const newContent = textFieldValue?.replace(/\/\w*$/, contentWithVariables);
     setTextFieldValue(newContent);
 
+    // Track which prompt was used and the variable values
+    setUsedPromptId(selectedPromptForModal.id);
+    setUsedPromptVariables(variableMap);
+
     setFilePreviews([]);
+    setSelectedPromptForModal(null);
 
     if (textareaRef?.current) {
       textareaRef.current.focus();
     }
   };
 
-  /**
-   * Handle command selection from the command list
-   */
-  const handleCommandSelect = (command: CommandDefinition) => {
-    // Check if this command should execute immediately (same logic as PromptList)
-    const shouldExecuteImmediately = [
-      'enableAgents',
-      'disableAgents',
-      'settings',
-      'privacyPolicy',
-    ].includes(command.command);
-
-    // Handle model command specially - show model selection list
-    if (command.command === 'model') {
-      setShowModelList(true);
-      setActiveModelIndex(0);
-      setTextFieldValue('');
-      setModelInputValue(''); // Clear model filter
-      setShowPromptList(false);
-      return;
-    }
-
-    if (shouldExecuteImmediately) {
-      // Execute immediately like the mouse click path
-      const commandContext = {
-        models: models || [],
-        selectedConversation: currentConversation,
-        temperature: temperature,
-        currentMessage: currentMessage,
-      };
-
-      const parsed = commandParser.parseInput(
-        `/${command.command}`,
-        commandContext,
-      );
-      if (parsed && parsed.valid) {
-        const executionResult = commandParser.executeCommand(
-          parsed,
-          commandContext,
-        );
-
-        if (executionResult.success) {
-          // Handle chat responses - but skip for pure utility commands that only open dialogs
-          const isPureUtilityCommand = ['settings', 'privacyPolicy'].includes(
-            command.command,
-          );
-          if (
-            executionResult.chatResponse &&
-            onAddChatMessages &&
-            !isPureUtilityCommand
-          ) {
-            const userMessage: Message = {
-              role: 'user',
-              content: executionResult.chatResponse.userMessage,
-              messageType: MessageType.TEXT,
-            };
-
-            const assistantMessage: Message = {
-              role: 'assistant',
-              content: executionResult.chatResponse.assistantMessage,
-              messageType: MessageType.TEXT,
-            };
-
-            onAddChatMessages(userMessage, assistantMessage);
-          }
-
-          // Handle settings changes
-          if (executionResult.settingsChange) {
-            if (
-              executionResult.settingsChange.temperature !== undefined &&
-              onTemperatureChange
-            ) {
-              onTemperatureChange(executionResult.settingsChange.temperature);
-            }
-
-            if (
-              executionResult.settingsChange.agentSettings?.enabled !==
-                undefined &&
-              onAgentToggleChange
-            ) {
-              onAgentToggleChange(
-                executionResult.settingsChange.agentSettings.enabled,
-              );
-              setAgentToggleEnabled(
-                executionResult.settingsChange.agentSettings.enabled,
-              );
-              if (typeof window !== 'undefined') {
-                localStorage.setItem(
-                  'chatAgentsEnabled',
-                  JSON.stringify(
-                    executionResult.settingsChange.agentSettings.enabled,
-                  ),
-                );
-              }
-            }
-
-            if (executionResult.settingsChange.model && onModelChange) {
-              onModelChange(executionResult.settingsChange.model);
-            }
-          }
-
-          // Handle utility actions
-          if (executionResult.utilityAction) {
-            handleUtilityAction(executionResult.utilityAction);
-          }
-        } else {
-          // Command execution failed, handle silently
-          // Commands should execute without toast notifications
-        }
-      }
-
-      // Clear input and close command mode (same as immediate execution)
-      setTextFieldValue('');
-      setCommandMode(false);
-      setParsedCommand(null);
-      setShowPromptList(false);
-    } else {
-      // Regular command selection - replace text and handle normally
-      setTextFieldValue((prevValue) => {
-        const newValue = prevValue?.replace(/\/\w*$/, `/${command.command} `);
-        return newValue;
-      });
-
-      // If it's an agent command, set the forced agent
-      if (command.type === CommandType.AGENT) {
-        switch (command.command) {
-          case 'search':
-            setForcedAgent(AgentType.WEB_SEARCH);
-            break;
-          case 'code':
-            setForcedAgent(AgentType.CODE_INTERPRETER);
-            break;
-          case 'url':
-            setForcedAgent(AgentType.URL_PULL);
-            break;
-          case 'knowledge':
-            setForcedAgent(AgentType.LOCAL_KNOWLEDGE);
-            break;
-          case 'standard':
-          case 'noAgents':
-            setForcedAgent(AgentType.STANDARD_CHAT);
-            break;
-        }
-      }
-
-      setShowPromptList(false);
-      setCommandMode(false);
-
-      if (textareaRef?.current) {
-        textareaRef.current.focus();
-      }
-    }
-  };
-
-  /**
-   * Handle utility actions from commands
-   */
-  const handleUtilityAction = (action: string) => {
-    switch (action) {
-      case 'open_settings':
-        if (onSettingsOpen) {
-          onSettingsOpen();
-        } else {
-          console.log('Opening settings dialog');
-        }
-        break;
-      case 'open_privacy_policy':
-        if (onPrivacyPolicyOpen) {
-          onPrivacyPolicyOpen();
-        } else {
-          console.log('Opening privacy policy in settings');
-        }
-        break;
-      case 'new_chat':
-        if (onNewConversation) {
-          onNewConversation();
-        } else {
-          console.log('Starting new conversation');
-        }
-        break;
-      case 'regenerate_response':
-        if (onRegenerate) {
-          onRegenerate();
-        } else {
-          console.log('Regenerating response');
-        }
-        break;
-      case 'show_help':
-        // Help is handled via toast message, no additional action needed
-        break;
-      default:
-        console.log('Unknown utility action:', action);
-    }
-  };
-
-  useEffect(() => {
-    if (promptListRef.current) {
-      promptListRef.current.scrollTop = activePromptIndex * 30;
-    }
-  }, [activePromptIndex]);
-
   useEffect(() => {
     if (textareaRef && textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
       textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
       textareaRef.current.style.overflow = `${
-        textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
+        textareaRef?.current?.scrollHeight > UI_CONSTANTS.TEXTAREA.MAX_HEIGHT
+          ? 'auto'
+          : 'hidden'
       }`;
+
+      // Store scroll height in state for use in render
+      setTextareaScrollHeight(textareaRef.current.scrollHeight);
+
+      // Check if textarea is multiline - single line is typically ~44px or less
+      // Only consider it multiline if scrollHeight exceeds threshold to avoid false positives
+      setIsMultiline(
+        textareaRef.current.scrollHeight >
+          UI_CONSTANTS.TEXTAREA.MULTILINE_THRESHOLD,
+      );
     }
-  }, [textFieldValue, textareaRef]);
+  }, [
+    textFieldValue,
+    searchMode,
+    selectedToneId,
+    textareaRef,
+    setTextareaScrollHeight,
+    setIsMultiline,
+  ]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -984,14 +392,6 @@ export const ChatInput = ({
       ) {
         setShowPromptList(false);
       }
-
-      if (
-        modelListRef.current &&
-        !modelListRef.current.contains(e.target as Node)
-      ) {
-        setShowModelList(false);
-        setActiveModelIndex(0);
-      }
     };
 
     window.addEventListener('click', handleOutsideClick);
@@ -999,83 +399,89 @@ export const ChatInput = ({
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
+    // Refs and setState functions are stable and don't need to be dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 600;
-    const fullPlaceholder = t('chatInputPlaceholderFull') || '';
-    const trimmedPlaceholder = isMobile
-      ? t('chatInputPlaceholder')
-      : fullPlaceholder;
-    setPlaceholderText(trimmedPlaceholder);
-  }, [t]);
+    setTimeout(() => {
+      setPlaceholderText(t('Ask Anything'));
+    }, 0);
+  }, [t, setPlaceholderText]);
 
+  // Notify parent when transcription status changes
+  useEffect(() => {
+    onTranscriptionStatusChange?.(transcriptionStatus);
+  }, [transcriptionStatus, onTranscriptionStatusChange]);
+
+  // Clear file attachments when switching conversations
+  useEffect(() => {
+    setTimeout(() => {
+      setFilePreviews([]);
+      setFileFieldValue(null);
+      setImageFieldValue(null);
+      setUploadProgress({});
+      setSubmitType('TEXT');
+    }, 0);
+    // setState functions are stable and don't need to be dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation?.id]);
+
+  // File upload handler
   const handleFiles = (files: FileList | File[]) => {
     const filesArray = Array.from(files);
 
     if (filesArray.length > 0) {
-      onFileUpload(
-        filesArray,
-        setSubmitType,
-        setFilePreviews,
-        setFileFieldValue,
-        setImageFieldValue,
-        setUploadProgress,
-      );
+      handleFileUpload(filesArray);
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: handleFiles,
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+      'application/pdf': ['.pdf'],
+      'application/msword': ['.doc'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        ['.docx'],
+      'application/vnd.ms-excel': ['.xls'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
+        '.xlsx',
+      ],
+      'application/vnd.ms-powerpoint': ['.ppt'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        ['.pptx'],
+      'text/plain': ['.txt'],
+      'text/markdown': ['.md'],
+    },
+    maxSize: FILE_SIZE_LIMITS.FILE_MAX_BYTES,
+    maxFiles: 5,
+    noClick: true, // Don't trigger file picker on click
+    noKeyboard: true, // Don't trigger on keyboard
+  });
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
+  const preventSubmission = (): boolean =>
+    isTranscriptionLocked ||
+    shouldPreventSubmission(
+      isTranscribing,
+      isStreaming,
+      filePreviews,
+      uploadProgress,
+    );
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = e.dataTransfer.files;
-      handleFiles(files);
-      try {
-        e.dataTransfer.clearData();
-      } catch (err: any) {
-        // e.target.value = ""
-      }
-    }
-  };
-
-  const preventSubmission = (): boolean => {
-    return isTranscribing || messageIsStreaming;
-  };
+  const inputPlaceholder = isTranscribing
+    ? t('transcribingChatPlaceholder')
+    : searchMode === SearchMode.ALWAYS
+      ? 'Search the web'
+      : placeholderText;
 
   return (
     <div
-      onDragEnter={handleDragEnter}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      className={`bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50 transition-colors ${
-        isDragOver
-          ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700'
-          : ''
-      }`}
+      {...getRootProps()}
+      className={`bg-white dark:bg-[#212121] transition-colors ${isDragActive ? 'bg-blue-50 dark:bg-blue-900/30 border-t border-blue-300 dark:border-blue-700' : ''}`}
     >
-      {isDragOver && (
+      <input {...getInputProps()} />
+      {isDragActive && (
         <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 dark:bg-blue-900/30 backdrop-blur-sm z-10 pointer-events-none">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
             <div className="text-blue-500 mb-2">
@@ -1098,306 +504,180 @@ export const ChatInput = ({
         </div>
       )}
 
-      {filePreviews.length > 0 && (
-        <div className="px-4 py-2 max-h-52 overflow-y-auto">
-          <div className="w-full flex justify-center items-center space-x-2">
+      <div className="sticky bottom-0 bg-white dark:bg-[#212121]">
+        {filePreviews.length > 0 && (
+          <div className="max-h-52 overflow-y-auto">
             <ChatFileUploadPreviews
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
+              uploadProgress={uploadProgress}
             />
           </div>
+        )}
+
+        {/* Transcription Progress Indicator - Shows when large file transcription is pending */}
+        {pendingConversationTranscription && (
+          <div className="px-4 py-2">
+            <TranscriptionProgressIndicator
+              startedAt={pendingConversationTranscription.startedAt}
+              filename={pendingConversationTranscription.filename}
+              progress={pendingConversationTranscription.progress}
+            />
+          </div>
+        )}
+
+        {/* Artifact Context Bar - Shows when code editor is open */}
+        {isArtifactOpen && (
+          <ArtifactContextBar
+            fileName={fileName}
+            language={language}
+            onClose={closeArtifact}
+          />
+        )}
+
+        <div className="items-center pt-4">
+          <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
+            <ChatInputImageCapture
+              ref={cameraRef}
+              setSubmitType={setSubmitType}
+              prompt={textFieldValue}
+              setFilePreviews={setFilePreviews}
+              setFileFieldValue={setFileFieldValue}
+              setImageFieldValue={setImageFieldValue}
+              setUploadProgress={setUploadProgress}
+              visible={false}
+              hasCameraSupport={true}
+            />
+
+            <div className="relative mx-auto w-full max-w-3xl flex-grow px-2 sm:px-4">
+              <div
+                className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode === SearchMode.ALWAYS || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode !== SearchMode.ALWAYS && !selectedToneId ? '!rounded-2xl' : ''}`}
+              >
+                <MessageTextarea
+                  textareaRef={textareaRef}
+                  value={textFieldValue}
+                  placeholder={inputPlaceholder}
+                  disabled={preventSubmission()}
+                  searchMode={searchMode}
+                  selectedToneId={selectedToneId}
+                  textareaScrollHeight={textareaScrollHeight}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  onCompositionStart={() => setIsTyping(true)}
+                  onCompositionEnd={() => setIsTyping(false)}
+                />
+
+                {/* Bottom row with badges and controls */}
+                <div
+                  className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
+                    searchMode === SearchMode.ALWAYS ||
+                    selectedToneId ||
+                    isMultiline
+                      ? 'bottom-2'
+                      : 'top-1/2 transform -translate-y-1/2'
+                  }`}
+                >
+                  {/* Note: ChatDropdown is now part of InputControlsBar - kept here for consistency */}
+                </div>
+
+                <InputControlsBar
+                  onCameraClick={() => {
+                    cameraRef.current?.triggerCamera();
+                  }}
+                  showDisclaimer={showDisclaimer}
+                  tones={tones}
+                  isStreaming={isStreaming}
+                  handleStopConversation={handleStopConversation}
+                  preventSubmission={preventSubmission}
+                  handleSend={handleSend}
+                />
+
+                {/* Badges displayed after dropdown */}
+                <div
+                  className={`absolute left-14 flex items-center gap-2 z-[10000] transition-all duration-200 ${
+                    searchMode === SearchMode.ALWAYS ||
+                    selectedToneId ||
+                    isMultiline
+                      ? 'bottom-2'
+                      : 'top-1/2 transform -translate-y-1/2'
+                  }`}
+                >
+                  {searchMode === SearchMode.ALWAYS && (
+                    <SearchModeBadge
+                      onRemove={() =>
+                        setSearchMode(
+                          selectedConversation?.defaultSearchMode ??
+                            SearchMode.OFF,
+                        )
+                      }
+                    />
+                  )}
+
+                  {selectedToneId && (
+                    <ToneBadge
+                      toneId={selectedToneId}
+                      tones={tones}
+                      onRemove={() => setSelectedToneId(null)}
+                    />
+                  )}
+                </div>
+
+                <div
+                  className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 z-[9999] transition-all duration-200 ease-in-out ${
+                    showScrollDownButton && !isFocused
+                      ? 'opacity-100 scale-100 pointer-events-auto'
+                      : 'opacity-0 scale-90 pointer-events-none'
+                  }`}
+                >
+                  <button
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none dark:bg-gray-700 dark:text-neutral-200 transition-shadow"
+                    onClick={(e) => {
+                      onScrollDownClick();
+                      e.currentTarget.blur(); // Remove focus after click
+                    }}
+                    aria-label={t('chat.scrollToBottom')}
+                  >
+                    <IconArrowDown size={18} />
+                  </button>
+                </div>
+
+                {showPromptList && filteredPrompts.length > 0 && (
+                  <div className="absolute bottom-12 w-full">
+                    <PromptList
+                      activePromptIndex={activePromptIndex}
+                      prompts={filteredPrompts}
+                      onSelect={handleInitModal}
+                      onMouseOver={setActivePromptIndex}
+                      promptListRef={promptListRef}
+                      folders={folders}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {isModalVisible && selectedPromptForModal && (
+              <VariableModal
+                prompt={selectedPromptForModal}
+                variables={variables}
+                onSubmit={handleSubmit}
+                onClose={() => {
+                  setIsModalVisible(false);
+                  setSelectedPromptForModal(null);
+                }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      {showDisclaimer && (
+        <div className="px-3 pt-1 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-1 md:pb-3">
+          {t('chatDisclaimer')}
         </div>
       )}
-
-      <div className={'flex justify-center'}>
-        {!messageIsStreaming &&
-          !filePreviews.length &&
-          selectedConversation &&
-          selectedConversation.messages.length > 0 && (
-            <button
-              className="max-h-52 overflow-y-auto flex items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
-              onClick={onRegenerate}
-            >
-              <IconRepeat size={16} /> {t('Regenerate response')}
-            </button>
-          )}
-      </div>
-
-      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
-        <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
-          <ChatInputFile
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
-
-          <ChatInputImageCapture
-            ref={cameraRef}
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setFilePreviews={setFilePreviews}
-            setImageFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-            visible={false}
-            hasCameraSupport={true}
-          />
-
-          <ChatDropdown
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-            setTextFieldValue={setTextFieldValue}
-            handleSend={handleSend}
-            textFieldValue={textFieldValue}
-            onCameraClick={() => {
-              cameraRef.current?.triggerCamera();
-            }}
-            onSend={onSend}
-            setRequestStatusMessage={setRequestStatusMessage}
-            setProgress={setProgress}
-            apiKey={apiKey}
-            pluginKeys={pluginKeys}
-            systemPrompt={systemPrompt}
-            temperature={temperature}
-          />
-
-          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
-            <div className="absolute left-2 top-1 flex items-center space-x-1">
-              <ChatInputVoiceCapture
-                setTextFieldValue={setTextFieldValue}
-                setIsTranscribing={setIsTranscribing}
-              />
-              <ChatInputAgentToggle
-                enabled={agentToggleEnabled}
-                onToggle={() => {
-                  const newValue = !agentToggleEnabled;
-                  setAgentToggleEnabled(newValue);
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem(
-                      'chatAgentsEnabled',
-                      JSON.stringify(newValue),
-                    );
-                  }
-                }}
-                disabled={isTranscribing || messageIsStreaming}
-              />
-            </div>
-
-            <textarea
-              ref={textareaRef}
-              className={
-                'm-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-20 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-20 lg:' +
-                (isTranscribing ? ' animate-pulse' : '')
-              }
-              style={{
-                resize: 'none',
-                bottom: `${textareaRef?.current?.scrollHeight}px`,
-                maxHeight: '400px',
-                overflow: `${
-                  textareaRef.current && textareaRef.current.scrollHeight > 400
-                    ? 'auto'
-                    : 'hidden'
-                }`,
-              }}
-              placeholder={
-                isTranscribing
-                  ? t('transcribingChatPlaceholder')
-                  : placeholderText
-              }
-              value={textFieldValue}
-              rows={1}
-              onCompositionStart={() => setIsTyping(true)}
-              onCompositionEnd={() => setIsTyping(false)}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              disabled={preventSubmission()}
-            />
-
-            <div className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200">
-              <ChatInputSubmitButton
-                messageIsStreaming={messageIsStreaming}
-                isTranscribing={isTranscribing}
-                handleSend={handleSend}
-                handleStopConversation={handleStopConversation}
-                preventSubmission={preventSubmission}
-              />
-            </div>
-
-            {showScrollDownButton && (
-              <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-                <button
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                  onClick={onScrollDownClick}
-                >
-                  <IconArrowDown size={18} />
-                </button>
-              </div>
-            )}
-
-            {showPromptList &&
-              (filteredCommands.length > 0 || filteredPrompts.length > 0) && (
-                <div className="absolute bottom-12 w-full">
-                  <PromptList
-                    activePromptIndex={activePromptIndex}
-                    prompts={sortedFilteredPrompts}
-                    commands={filteredCommands}
-                    showCommands={commandMode}
-                    onSelect={handleDropdownItemSelection}
-                    onMouseOver={setActivePromptIndex}
-                    promptListRef={promptListRef}
-                    onImmediateCommandExecution={(command) => {
-                      // Execute the command immediately with context
-                      const commandContext = {
-                        models: models || [],
-                        selectedConversation: currentConversation,
-                        temperature: temperature,
-                        currentMessage: currentMessage,
-                      };
-
-                      const parsed = commandParser.parseInput(
-                        `/${command.command}`,
-                        commandContext,
-                      );
-                      if (parsed && parsed.valid) {
-                        const executionResult = commandParser.executeCommand(
-                          parsed,
-                          commandContext,
-                        );
-
-                        if (executionResult.success) {
-                          // Handle chat responses - but skip for pure utility commands that only open dialogs
-                          const isPureUtilityCommand = [
-                            'settings',
-                            'privacyPolicy',
-                          ].includes(command.command);
-                          if (
-                            executionResult.chatResponse &&
-                            onAddChatMessages &&
-                            !isPureUtilityCommand
-                          ) {
-                            const userMessage: Message = {
-                              role: 'user',
-                              content: executionResult.chatResponse.userMessage,
-                              messageType: MessageType.TEXT,
-                            };
-
-                            const assistantMessage: Message = {
-                              role: 'assistant',
-                              content:
-                                executionResult.chatResponse.assistantMessage,
-                              messageType: MessageType.TEXT,
-                            };
-
-                            onAddChatMessages(userMessage, assistantMessage);
-                          }
-
-                          // Handle settings changes
-                          if (executionResult.settingsChange) {
-                            if (
-                              executionResult.settingsChange.temperature !==
-                                undefined &&
-                              onTemperatureChange
-                            ) {
-                              onTemperatureChange(
-                                executionResult.settingsChange.temperature,
-                              );
-                            }
-
-                            if (
-                              executionResult.settingsChange.agentSettings
-                                ?.enabled !== undefined &&
-                              onAgentToggleChange
-                            ) {
-                              onAgentToggleChange(
-                                executionResult.settingsChange.agentSettings
-                                  .enabled,
-                              );
-                              setAgentToggleEnabled(
-                                executionResult.settingsChange.agentSettings
-                                  .enabled,
-                              );
-                              if (typeof window !== 'undefined') {
-                                localStorage.setItem(
-                                  'chatAgentsEnabled',
-                                  JSON.stringify(
-                                    executionResult.settingsChange.agentSettings
-                                      .enabled,
-                                  ),
-                                );
-                              }
-                            }
-
-                            if (
-                              executionResult.settingsChange.model &&
-                              onModelChange
-                            ) {
-                              onModelChange(
-                                executionResult.settingsChange.model,
-                              );
-                            }
-                          }
-
-                          // Handle utility actions
-                          if (executionResult.utilityAction) {
-                            handleUtilityAction(executionResult.utilityAction);
-                          }
-                        } else {
-                          toast.error(
-                            executionResult.error || 'Command execution failed',
-                          );
-                        }
-                      }
-
-                      // Clear input and close command mode
-                      setTextFieldValue('');
-                      setCommandMode(false);
-                      setParsedCommand(null);
-                      setShowPromptList(false);
-                    }}
-                  />
-                </div>
-              )}
-
-            {showModelList && models && models.length > 0 && (
-              <div className="absolute bottom-12 w-full">
-                <ModelList
-                  models={sortedFilteredModels}
-                  activeModelIndex={activeModelIndex}
-                  onSelect={() => {
-                    if (sortedFilteredModels.length > 0) {
-                      handleModelSelect(sortedFilteredModels[activeModelIndex]);
-                    }
-                  }}
-                  onMouseOver={setActiveModelIndex}
-                  modelListRef={modelListRef}
-                />
-              </div>
-            )}
-          </div>
-
-          {isModalVisible && promptForVariableModal && (
-            <VariableModal
-              prompt={promptForVariableModal}
-              variables={variables}
-              onSubmit={handleSubmit}
-              onClose={() => {
-                setIsModalVisible(false);
-                setPromptForVariableModal(null);  // Clear prompt for variable modal when closing
-              }}
-            />
-          )}
-        </div>
-      </div>
-      <div className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
-        {t('chatDisclaimer')}
-      </div>
     </div>
   );
 };
