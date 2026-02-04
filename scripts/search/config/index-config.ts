@@ -89,7 +89,7 @@ export function getIndexConfig(
         filterable: true,
         retrievable: true,
         stored: true,
-        sortable: false,
+        sortable: true,
         facetable: false,
         key: false,
         synonymMaps: [],
