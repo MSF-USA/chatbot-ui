@@ -124,7 +124,7 @@ export default function CodeArtifact({
       </div>
 
       {/* Code Editor */}
-      <div className="flex-1 overflow-hidden min-h-0">
+      <div className="flex-1 overflow-hidden min-h-0 min-w-0">
         <CodeEditor theme={theme} />
       </div>
 
